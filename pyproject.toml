@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hhu-ai-avatar"
+version = "0.1.0"
+description = "河海大学大创项目：基于人工智能的综合性虚拟形象探索与应用（带记忆与情感的 AI 虚拟形象底座）"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "edge-tts>=6.1",
+    "openai>=1.30",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+# 语音识别（中文强，较重）
+asr = ["funasr>=1.0"]
+# 音频分析扩展（mp3 等格式，需 ffmpeg）
+audio = ["librosa>=0.10", "soundfile>=0.12"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
