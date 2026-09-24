@@ -5,6 +5,8 @@ Avatar 类把 ASR / LLM / 记忆 / 情绪 / TTS / 口型串成一条闭环，
 """
 from __future__ import annotations
 
+import json
+import re
 import sys
 from typing import Optional
 
@@ -15,6 +17,10 @@ from .config import config
 from .ears.asr import ASREngine, TextInputEngine
 from .face.lipsync import LipSyncEngine
 from .mouth.tts import EdgeTTSEngine, TTSEngine
+
+
+def _clamp(x: float, lo: float = -1.0, hi: float = 1.0) -> float:
+    return max(lo, min(hi, x))
 
 
 class Avatar:
@@ -55,15 +61,70 @@ class Avatar:
         ] + self.memory.get_short_term()
 
     def _extract_facts(self, text: str) -> None:
-        """从用户输入提取简单事实写入长期记忆（规则版，后续可换 LLM 抽取）。"""
-        import re
-
+        """从用户输入提取简单事实写入长期记忆（规则版，LLM 不可用时的回退）。"""
         m = re.search(r"我(?:叫|是)([^\s，。！？,.!?]{1,10})", text)
         if m:
             self.memory.remember_user("名字", m.group(1))
         m = re.search(r"我(?:喜欢|爱|讨厌)([^\s，。！？,.!?]{1,20})", text)
         if m:
             self.memory.remember_user("偏好", m.group(1))
+
+    # ------------------------------------------------------------------ LLM 认知分析
+    _ANALYZE_PROMPT = (
+        "分析用户这句话，只输出 JSON（不要任何其他文字、不要代码块）。\n"
+        '格式：{{"emotion": {{"valence": -1到1, "arousal": -1到1}}, '
+        '"facts": [{{"type": "类型", "content": "内容"}}]}}\n'
+        "valence 负面为负、正面为正；arousal 平静为负、激动为正。\n"
+        "facts 是这句话里值得长期记住的用户本人信息（名字、爱好、身份、重要事件等），没有则为 []。\n"
+        "注意：type「名字」专指用户本人的名字；宠物或他人的名字用「宠物名」「他人名字」，不要用「名字」。\n"
+        "用户的话：{text}"
+    )
+
+    def _analyze_with_llm(self, user_text: str) -> tuple[float, float, list[dict]]:
+        """让 LLM 判断情绪 + 提取值得记的事实，返回 (dv, da, facts)。"""
+        raw = self.llm.chat(
+            [{"role": "user", "content": self._ANALYZE_PROMPT.format(text=user_text)}],
+            temperature=0,
+        )
+        data = json.loads(self._extract_json(raw))
+        emo = data.get("emotion", {})
+        dv = _clamp(float(emo.get("valence", 0.0)))
+        da = _clamp(float(emo.get("arousal", 0.0)))
+        facts = data.get("facts") or []
+        return dv, da, facts
+
+    @staticmethod
+    def _extract_json(raw: str) -> str:
+        """从 LLM 输出里抠出 JSON（容忍代码块包裹）。"""
+        m = re.search(r"\{.*\}", raw, re.DOTALL)
+        return m.group(0) if m else raw
+
+    def _store_fact(self, fact: dict) -> None:
+        """把 LLM 提取的一条事实写入长期记忆。"""
+        ftype = str(fact.get("type", "事实"))
+        content = str(fact.get("content", "")).strip()
+        if not content:
+            return
+        if ftype in ("名字", "姓名", "称呼"):
+            self.memory.remember_user("名字", content)
+        elif ftype in ("偏好", "爱好", "喜欢"):
+            self.memory.remember_user("偏好", content)
+        else:
+            self.memory.remember(f"{ftype}: {content}", memory_type="fact", importance=0.6)
+
+    def _analyze(self, user_text: str) -> None:
+        """LLM 分析情绪 + 记忆提取；不可用或失败时回退规则。"""
+        if self._llm_available:
+            try:
+                dv, da, facts = self._analyze_with_llm(user_text)
+                self.emotion.update_from(dv, da)
+                for f in facts:
+                    self._store_fact(f)
+                return
+            except Exception:
+                pass  # 解析失败，回退规则
+        self._extract_facts(user_text)
+        self.emotion.update(user_text)
 
     def _fallback_reply(self, user_text: str, decision: Decision) -> str:
         """无 LLM 时的规则回复（保证 demo 能跑通全链路）。"""
@@ -87,9 +148,8 @@ class Avatar:
         """处理一条用户输入，返回回复 + 情绪 + 决策 + 音频路径。"""
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
-        self._extract_facts(user_text)
-        # 2. 情绪更新
-        self.emotion.update(user_text)
+        # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
+        self._analyze(user_text)
         # 3. 行为决策
         decision = self.emotion.decide(user_text)
         # 4. LLM 回复（无 key 降级）

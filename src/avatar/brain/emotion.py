@@ -118,6 +118,13 @@ class EmotionEngine:
         self.state.arousal = _clamp(self.state.arousal + da)
         return self.state
 
+    def update_from(self, dv: float, da: float) -> EmotionState:
+        """用外部（如 LLM）提供的情绪增量更新状态，返回新状态。"""
+        self.decay_step()
+        self.state.valence = _clamp(self.state.valence + dv)
+        self.state.arousal = _clamp(self.state.arousal + da)
+        return self.state
+
     # ------------------------------------------------------------------ 意图分类
     @staticmethod
     def classify_intent(text: str) -> str:
