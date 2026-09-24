@@ -23,6 +23,13 @@ def test_decay_toward_neutral():
     assert abs(e.state.valence) < abs(v0)  # 情绪衰减
 
 
+def test_distress_lowers_arousal():
+    e = EmotionEngine()
+    e.update("我很难过，好伤心")
+    assert e.state.valence < 0
+    assert e.state.arousal < 0  # 难过是低唤醒，应把 arousal 往下拉
+
+
 def test_intent_classify():
     assert EmotionEngine.classify_intent("我好难过") == "情感倾诉"
     assert EmotionEngine.classify_intent("什么是大模型？") == "提问"

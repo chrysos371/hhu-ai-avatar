@@ -58,6 +58,11 @@ _NEGATIVE = [
 _HIGH_AROUSAL = [
     "哈哈", "兴奋", "激动", "生气", "愤怒", "崩溃", "着急", "急死", "疯狂", "超级", "惊喜",
 ]
+# 低唤醒词（难过/疲惫类）：降唤醒度，让负面情绪「沉下来」而非「躁起来」
+_LOW_AROUSAL = [
+    "难过", "伤心", "累", "疲惫", "孤独", "寂寞", "沮丧", "失望", "无聊", "委屈",
+    "低落", "平静", "放松", "困",
+]
 
 
 class EmotionEngine:
@@ -85,6 +90,9 @@ class EmotionEngine:
         for w in _HIGH_AROUSAL:
             if w in text:
                 da += 0.25
+        for w in _LOW_AROUSAL:
+            if w in text:
+                da -= 0.25
         if text.count("！") + text.count("!") >= 2:
             da += 0.2
         return _clamp(dv), _clamp(da)
