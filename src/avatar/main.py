@@ -36,10 +36,10 @@ class Avatar:
         self._llm_available = self.llm.available
 
     # ------------------------------------------------------------------ 提示词
-    def _system_prompt(self, decision: Decision) -> str:
+    def _system_prompt(self, decision: Decision, user_text: str = "") -> str:
         profile = self.memory.get_user_profile()
         profile_str = "；".join(f"{k}={v}" for k, v in profile.items()) or "（暂无）"
-        facts = self.memory.recall(limit=5)
+        facts = self.memory.recall(query=user_text, limit=5)
         facts_str = "；".join(r["content"] for r in facts) or "（暂无）"
         return (
             f"你是{config.avatar_name}，{config.avatar_persona}。\n"
@@ -49,10 +49,10 @@ class Avatar:
             f"回复要自然、口语化、简短（1~3 句话），像个真实的伙伴。"
         )
 
-    def _messages(self, decision: Decision) -> list[dict]:
-        return [{"role": "system", "content": self._system_prompt(decision)}] + (
-            self.memory.get_short_term()
-        )
+    def _messages(self, decision: Decision, user_text: str = "") -> list[dict]:
+        return [
+            {"role": "system", "content": self._system_prompt(decision, user_text)}
+        ] + self.memory.get_short_term()
 
     def _extract_facts(self, text: str) -> None:
         """从用户输入提取简单事实写入长期记忆（规则版，后续可换 LLM 抽取）。"""
@@ -94,7 +94,9 @@ class Avatar:
         decision = self.emotion.decide(user_text)
         # 4. LLM 回复（无 key 降级）
         if self._llm_available:
-            reply = self.llm.chat(self._messages(decision), temperature=decision.temperature)
+            reply = self.llm.chat(
+                self._messages(decision, user_text), temperature=decision.temperature
+            )
         else:
             reply = self._fallback_reply(user_text, decision)
         # 5. 短期记忆记下回复

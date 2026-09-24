@@ -13,6 +13,7 @@
 """
 from __future__ import annotations
 
+import re
 import sqlite3
 import time
 from collections import deque
@@ -74,6 +75,30 @@ def _now() -> float:
     return time.time()
 
 
+# 检索停用词：切分 query 时过滤掉，只保留有区分度的实词
+_STOPWORDS = {
+    "的", "了", "吗", "呢", "吧", "啊", "呀", "哦", "嗯", "嘛",
+    "我", "你", "他", "她", "它", "您", "咱",
+    "是", "在", "有", "和", "与", "就", "都", "很", "也", "还", "又", "再",
+    "要", "会", "能", "可", "想",
+    "这", "那", "个", "些", "们",
+    "我们", "你们", "他们", "她们", "它们", "自己", "大家",
+    "什么", "怎么", "为什么", "谁", "哪里", "哪儿", "多少", "如何",
+    "这个", "那个", "这些", "那些", "一个", "一下",
+    "今天", "明天", "昨天", "现在", "刚才", "已经", "正在",
+    "觉得", "感觉", "知道", "记得", "记住", "忘记",
+    "叫", "喜欢", "讨厌", "希望", "想", "要",
+}
+
+
+def _tokenize(text: str) -> list[str]:
+    """把 query 切成有区分度的关键词（简单中文切分：按停用词/标点分隔）。"""
+    text = re.sub(r"[^一-鿿A-Za-z0-9]", " ", text)
+    for sw in sorted(_STOPWORDS, key=len, reverse=True):
+        text = text.replace(sw, " ")
+    return [seg for seg in text.split() if seg]
+
+
 class MemoryStore:
     """两级记忆存储：短期工作记忆 + 长期持久化记忆。"""
 
@@ -133,20 +158,28 @@ class MemoryStore:
     ) -> list[dict[str, Any]]:
         """检索长期记忆。
 
-        - 有 query：关键词匹配（占位实现，后续可换向量检索）
+        - 有 query：按关键词匹配 + 命中数计分，返回最相关的
         - 无 query：按重要度 + 最近访问排序
         """
+        tokens = _tokenize(query) if query else []
+        if tokens:
+            like = " OR ".join(["content LIKE ?"] * len(tokens))
+            sql = "SELECT * FROM memory_fragments WHERE " + like
+            params: list[Any] = [f"%{t}%" for t in tokens]
+            if memory_type:
+                sql += " AND memory_type = ?"
+                params.append(memory_type)
+            rows = self._conn.execute(sql, params).fetchall()
+            # 命中关键词越多越相关；同分按重要度、最近访问排序
+            scored = [(sum(1 for t in tokens if t in r["content"]), r) for r in rows]
+            scored.sort(key=lambda x: (-x[0], -x[1]["importance"], -x[1]["last_accessed"]))
+            return [dict(r) for _, r in scored[:limit]]
+
         sql = "SELECT * FROM memory_fragments"
-        conds: list[str] = []
-        params: list[Any] = []
+        params = []
         if memory_type:
-            conds.append("memory_type = ?")
+            sql += " WHERE memory_type = ?"
             params.append(memory_type)
-        if query:
-            conds.append("content LIKE ?")
-            params.append(f"%{query}%")
-        if conds:
-            sql += " WHERE " + " AND ".join(conds)
         sql += " ORDER BY importance DESC, last_accessed DESC LIMIT ?"
         params.append(limit)
         return [dict(r) for r in self._conn.execute(sql, params).fetchall()]

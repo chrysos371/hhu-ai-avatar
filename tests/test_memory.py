@@ -2,7 +2,7 @@
 import os
 import tempfile
 
-from avatar.brain.memory import MemoryStore
+from avatar.brain.memory import MemoryStore, _tokenize
 
 
 def _tmp_store(**kw) -> MemoryStore:
@@ -39,4 +39,47 @@ def test_forget():
     fid = store.remember("要忘记的内容")
     store.forget(fid)
     assert all(r["id"] != fid for r in store.recall(query="忘记"))
+    store.close()
+
+
+def test_tokenize_stopwords():
+    assert _tokenize("我喜欢打篮球") == ["打篮球"]
+    assert _tokenize("我叫王小明") == ["王小明"]
+    assert _tokenize("你还记得我叫什么吗") == []  # 纯功能词，无实词
+
+
+def test_recall_by_keyword_related():
+    store = _tmp_store()
+    store.remember("我喜欢打篮球", importance=0.5)
+    store.remember("我养了一只猫", importance=0.5)
+    store.remember("我下周要考试", importance=0.5)
+    results = store.recall(query="篮球", limit=3)
+    assert any("篮球" in r["content"] for r in results)
+    store.close()
+
+
+def test_recall_sentence_extracts_keywords():
+    store = _tmp_store()
+    store.remember("我喜欢打篮球", importance=0.5)
+    store.remember("我养了一只猫", importance=0.9)
+    results = store.recall(query="我平时喜欢打篮球吗", limit=3)
+    assert "篮球" in results[0]["content"]  # 相关命中排最前，即使「猫」重要度更高
+    store.close()
+
+
+def test_recall_scores_by_hit_count():
+    store = _tmp_store()
+    fid_multi = store.remember("我喜欢打篮球和踢足球", importance=0.3)
+    store.remember("我喜欢猫", importance=0.9)
+    results = store.recall(query="篮球 足球", limit=2)
+    assert results[0]["id"] == fid_multi  # 命中两个关键词的排最前
+    store.close()
+
+
+def test_recall_no_query_returns_by_importance():
+    store = _tmp_store()
+    store.remember("不重要的事", importance=0.1)
+    fid_imp = store.remember("很重要的事", importance=0.9)
+    results = store.recall(limit=5)
+    assert results[0]["id"] == fid_imp
     store.close()

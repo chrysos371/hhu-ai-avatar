@@ -63,6 +63,19 @@ _LOW_AROUSAL = [
     "难过", "伤心", "累", "疲惫", "孤独", "寂寞", "沮丧", "失望", "无聊", "委屈",
     "低落", "平静", "放松", "困",
 ]
+# 否定词：紧邻情绪词时反转其极性（如「不开心」「不难过」）
+_NEGATORS = ["一点也不", "并不", "不太", "才不", "毫不", "不", "没", "别", "无"]
+
+
+def _is_negated(text: str, word: str) -> bool:
+    """判断 text 中的 word 是否被否定词紧邻修饰（如「不开心」中的「开心」）。"""
+    idx = text.find(word)
+    if idx <= 0:
+        return False
+    for neg in _NEGATORS:
+        if text[max(0, idx - len(neg)):idx] == neg:
+            return True
+    return False
 
 
 class EmotionEngine:
@@ -83,16 +96,16 @@ class EmotionEngine:
         dv = da = 0.0
         for w in _POSITIVE:
             if w in text:
-                dv += 0.3
+                dv += -0.3 if _is_negated(text, w) else 0.3
         for w in _NEGATIVE:
             if w in text:
-                dv -= 0.3
+                dv += 0.3 if _is_negated(text, w) else -0.3
         for w in _HIGH_AROUSAL:
             if w in text:
-                da += 0.25
+                da += -0.25 if _is_negated(text, w) else 0.25
         for w in _LOW_AROUSAL:
             if w in text:
-                da -= 0.25
+                da += 0.25 if _is_negated(text, w) else -0.25
         if text.count("！") + text.count("!") >= 2:
             da += 0.2
         return _clamp(dv), _clamp(da)
