@@ -52,6 +52,25 @@ cp .env.example .env
 # 编辑 .env 填入 LLM_API_KEY（不填也能跑 demo 的规则回复模式）
 ```
 
+### 本地 Ollama（免费、离线，推荐）
+
+没有云端 API key 时，用本地大模型：
+
+```bash
+# 1. 安装 Ollama
+winget install --id Ollama.Ollama -e
+
+# 2. 拉中文模型
+ollama pull qwen2.5:7b
+
+# 3. 配置 .env 指向本地 Ollama
+# LLM_BASE_URL=http://localhost:11434/v1
+# LLM_API_KEY=ollama
+# LLM_MODEL=qwen2.5:7b
+```
+
+首次加载模型约需 1~2 分钟，之后每轮推理 <1s（RTX 5070 8GB 可流畅跑 7B 模型）。
+
 ### 3. 运行交互式对话
 
 ```bash
