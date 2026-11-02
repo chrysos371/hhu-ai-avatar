@@ -1,18 +1,22 @@
-"""情绪模型与行为决策树测试。"""
+"""情绪模型与行为决策树测试。
+
+情绪词极性检查 user_state（用户最新观测）；state 现在代表独立的角色表达。
+"""
 from avatar.brain.emotion import EmotionEngine
 
 
 def test_positive_input_raises_valence_and_arousal():
     e = EmotionEngine()
     e.update("今天太开心了哈哈")
-    assert e.state.valence > 0
-    assert e.state.arousal > 0
+    assert e.user_state.valence > 0
+    assert e.user_state.arousal > 0
+    assert e.state.valence > 0  # 角色仍可分享正面情绪
 
 
 def test_negative_input_lowers_valence():
     e = EmotionEngine()
     e.update("我很难过，好伤心")
-    assert e.state.valence < 0
+    assert e.user_state.valence < 0
 
 
 def test_decay_toward_neutral():
@@ -26,8 +30,8 @@ def test_decay_toward_neutral():
 def test_distress_lowers_arousal():
     e = EmotionEngine()
     e.update("我很难过，好伤心")
-    assert e.state.valence < 0
-    assert e.state.arousal < 0  # 难过是低唤醒，应把 arousal 往下拉
+    assert e.user_state.valence < 0
+    assert e.user_state.arousal < 0  # 难过是低唤醒，应把 arousal 往下拉
 
 
 def test_intent_classify():
@@ -48,32 +52,47 @@ def test_negation_positive_word_flips_to_negative():
     """「我不开心」应判负面，而非因「开心」判正面。"""
     e = EmotionEngine()
     e.update("我不开心")
-    assert e.state.valence < 0
+    assert e.user_state.valence < 0
 
 
 def test_negation_negative_word_flips_to_positive():
     """「我不难过」应判正面（否定负面）。"""
     e = EmotionEngine()
     e.update("我不难过")
-    assert e.state.valence > 0
+    assert e.user_state.valence > 0
 
 
 def test_multi_char_negation():
     """多字否定词「一点也不」同样生效。"""
     e = EmotionEngine()
     e.update("一点也不开心")
-    assert e.state.valence < 0
+    assert e.user_state.valence < 0
 
 
 def test_plain_positive_still_positive():
     """无否定时正面词仍判正面（避免误伤）。"""
     e = EmotionEngine()
     e.update("今天真开心")
-    assert e.state.valence > 0
+    assert e.user_state.valence > 0
 
 
 def test_negation_flips_arousal():
     """「没生气」应降低唤醒度（否定高唤醒词）。"""
     e = EmotionEngine()
     e.update("我没生气")
-    assert e.state.arousal < 0
+    assert e.user_state.arousal < 0
+
+
+def test_angry_user_gets_calm_response_instead_of_lively_style():
+    e = EmotionEngine()
+    e.update("我生气了，简直要崩溃！！")
+    d = e.decide("我生气了，简直要崩溃！！")
+    assert "活泼" not in d.style
+    assert "安抚" in d.style
+    assert int(d.speech_rate.rstrip("%")) <= 0
+
+
+def test_excited_positive_user_still_gets_lively_response():
+    e = EmotionEngine()
+    e.update("太开心了，超级兴奋！！")
+    assert "活泼" in e.decide("太开心了，超级兴奋！！").style

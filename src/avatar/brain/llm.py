@@ -41,3 +41,19 @@ class LLMEngine:
             max_tokens=max_tokens,
         )
         return resp.choices[0].message.content or ""
+
+    def chat_tools(self, messages: list[dict], *, tools: list[dict],
+                   temperature: float = 0.2, max_tokens: int = 768) -> dict:
+        """Preserve native tool calls; ordinary chat and cognitive analysis stay unchanged."""
+        if not self.available or self._client is None:
+            raise RuntimeError('LLM未配置，不能进行原生工具选择。')
+        options = dict(model=self.model, messages=messages, temperature=temperature,
+                       max_tokens=max_tokens, timeout=45)
+        if tools:
+            options['tools'] = tools
+        response = self._client.chat.completions.create(**options)
+        return response.choices[0].message.model_dump(exclude_none=True)
+
+    def chat_web(self, messages: list[dict]) -> str:
+        """Bounded synthesis after a tool chain, without exposing more tools."""
+        return self.chat_tools(messages, tools=[]).get('content') or ''

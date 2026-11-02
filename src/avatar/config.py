@@ -26,10 +26,19 @@ class LLMConfig:
 
 
 @dataclass
+class EmbeddingConfig:
+    model: str = field(default_factory=lambda: _get('EMBEDDING_MODEL', ''))
+    base_url: str = field(default_factory=lambda: _get('EMBEDDING_BASE_URL', 'http://localhost:11434'))
+    timeout: float = field(default_factory=lambda: float(_get('EMBEDDING_TIMEOUT', '10')))
+    min_similarity: float = field(default_factory=lambda: float(_get('EMBEDDING_MIN_SIMILARITY', '0.45')))
+
+
+@dataclass
 class Config:
     """项目全局配置。"""
 
     llm: LLMConfig = field(default_factory=LLMConfig)
+    embedding: EmbeddingConfig = field(default_factory=EmbeddingConfig)
     avatar_name: str = field(default_factory=lambda: _get("AVATAR_NAME", "小海"))
     avatar_persona: str = field(
         default_factory=lambda: _get("AVATAR_PERSONA", "一个温柔又有点好奇心的AI伙伴")

@@ -83,3 +83,60 @@ def test_recall_no_query_returns_by_importance():
     results = store.recall(limit=5)
     assert results[0]["id"] == fid_imp
     store.close()
+
+def test_profile_latest_value_not_access_time():
+    store = MemoryStore(':memory:')
+    try:
+        old = store.remember_user('名字', '旧名字')
+        store.remember_user('名字', '新名字')
+        store.touch(old)
+        assert store.get_user_profile()['名字'] == '新名字'
+    finally:
+        store.close()
+
+def test_profile_preserves_distinct_preferences_and_deduplicates():
+    store = MemoryStore(':memory:')
+    try:
+        store.remember_user('偏好', '篮球')
+        store.remember_user('偏好', '游泳')
+        store.remember_user('偏好', '篮球')
+        profile = store.get_user_profile()['偏好']
+        assert '篮球' in profile and '游泳' in profile
+        assert len(store.recall(memory_type='user_profile')) == 2
+    finally:
+        store.close()
+
+def test_recall_type_filter_applies_to_all_keywords():
+    store = MemoryStore(':memory:')
+    try:
+        store.remember('篮球', memory_type='episode')
+        store.remember('足球', memory_type='fact')
+        rows = store.recall('篮球 足球', memory_type='fact')
+        assert len(rows) == 1 and rows[0]['content'] == '足球'
+    finally:
+        store.close()
+
+
+def test_profile_can_change_back_to_previous_name():
+    store = MemoryStore(':memory:')
+    try:
+        store.remember_user('名字', '小明')
+        store.remember_user('名字', '小红')
+        store.remember_user('名字', '小明')
+        assert store.get_user_profile()['名字'] == '小明'
+    finally:
+        store.close()
+
+
+def test_interrupted_transaction_rolls_back():
+    store = MemoryStore(':memory:')
+    try:
+        try:
+            with store.transaction():
+                store.remember('partial fact')
+                raise KeyboardInterrupt()
+        except KeyboardInterrupt:
+            pass
+        assert store.recall() == []
+    finally:
+        store.close()
