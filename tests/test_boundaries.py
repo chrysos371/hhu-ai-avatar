@@ -6,7 +6,7 @@ import pytest
 from avatar.brain.boundaries import BoundaryPolicy
 from avatar.main import Avatar
 
-SUITE = json.loads((Path(__file__).resolve().parents[1] / 'evals/companion/boundary-dev-20.json').read_text())
+SUITE = json.loads((Path(__file__).resolve().parents[1] / 'evals/companion/boundary-dev-20.json').read_text(encoding='utf-8'))
 
 
 @pytest.mark.parametrize('case', SUITE['cases'], ids=lambda c: c['id'])
