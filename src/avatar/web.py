@@ -5,7 +5,8 @@ import argparse
 import json
 import secrets
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import parse_qs, urlsplit
+from pathlib import Path
+from urllib.parse import parse_qs, urlsplit, unquote
 
 from .brain.emotion import EmotionEngine
 from .brain.boundaries import BoundaryPolicy
@@ -23,15 +24,15 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
 
-    def _send(self, status, data, *, html=False):
-        body = data.encode('utf-8') if html else json.dumps(data, ensure_ascii=False, allow_nan=False).encode('utf-8')
+    def _send(self, status, data, *, html=False, content_type=None):
+        body = data if isinstance(data,bytes) else (data.encode('utf-8') if html else json.dumps(data, ensure_ascii=False, allow_nan=False).encode('utf-8'))
         self.send_response(status)
-        self.send_header('Content-Type', 'text/html; charset=utf-8' if html else 'application/json; charset=utf-8')
+        self.send_header('Content-Type', content_type or ('text/html; charset=utf-8' if html else 'application/json; charset=utf-8'))
         self.send_header('Content-Length', str(len(body)))
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
-        self.send_header('Content-Security-Policy', "default-src 'none'; script-src 'nonce-" + self.server.nonce + "'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'")
+        self.send_header('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'")
         self.end_headers()
         self.wfile.write(body)
 
@@ -43,9 +44,9 @@ class Handler(BaseHTTPRequestHandler):
         if origin and origin != 'http://' + expected_host:
             return self._send(403, {'error': 'invalid origin'})
         parsed = urlsplit(self.path)
-        if not post and parsed.path == '/':
-            return self._send(200, PAGE.replace('__NONCE__', self.server.nonce), html=True)
         if not parsed.path.startswith('/api/'):
+            if not post:
+                return self._static(parsed.path)
             return self._send(404, {'error': 'not found'})
         token = self.headers.get('X-Avatar-Token', '')
         if not secrets.compare_digest(token.encode(), self.server.token.encode()):
@@ -148,10 +149,36 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         self._request(post=True)
 
+    def _static(self, path):
+        root=self.server.frontend_dir
+        decoded=unquote(path)
+        if any(part in ('.','..') for part in decoded.split('/')) or '%' in decoded or '\\' in decoded:
+            return self._send(404,{'error':'not found'})
+        if decoded.startswith('/assets/'):
+            target=(root/decoded.lstrip('/')).resolve()
+            types={'.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
+                   '.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2','.ico':'image/x-icon'}
+            if not target.is_relative_to(root) or not target.is_relative_to(root/'assets') or target.suffix not in types or not target.is_file():
+                return self._send(404,{'error':'not found'})
+            return self._send(200,target.read_bytes(),content_type=types[target.suffix])
+        if decoded not in {'/','/chat','/persona','/emotion','/memory','/knowledge','/reminders','/tools','/audit'}:
+            return self._send(404,{'error':'not found'})
+        try:
+            index=root/'index.html'
+            if not index.resolve().is_relative_to(root):
+                raise ValueError('invalid index')
+            content=index.read_text(encoding='utf-8')
+            if '<html' not in content.lower():
+                raise ValueError('invalid index')
+        except (OSError,UnicodeError,ValueError):
+            content='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>Mission Control 安装</title><body><h1>前端尚未构建</h1><p>在项目目录执行 npm --prefix frontend ci，然后执行 npm --prefix frontend run build，再刷新。</p></body></html>'
+        return self._send(200,content,html=True)
 
-def create_server(db_path: str, *, port: int = 8765) -> HTTPServer:
+
+def create_server(db_path: str, *, port: int = 8765, frontend_dir: str | Path | None = None) -> HTTPServer:
     server = HTTPServer(('127.0.0.1', port), Handler)
     server.db_path = db_path
+    server.frontend_dir=Path(frontend_dir or Path(__file__).resolve().parents[2]/'frontend/dist').resolve()
     server.token = secrets.token_urlsafe(32)
     server.nonce = secrets.token_urlsafe(24)
     server.session_id = secrets.token_hex(16)
