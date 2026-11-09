@@ -18,7 +18,7 @@
 
 使用说明、CLI记忆命令和兼容性变化见 [docs/backend.md](docs/backend.md)。
 
-新增本机记忆工作台：在仓库根目录运行 `python start_web.py`，打开终端提供的完整链接，即可对话、查看记忆来源与历史、纠错、删除、反馈召回不相关，以及管理明确创建的提醒。长对话增加带来源编号的摘要，可单独删除原话。时间衰减只影响排名，身份/偏好不自动遗忘。详见 [记忆工作台与提醒](docs/记忆工作台与提醒.md)；当前为单用户模式。
+本机管理界面已升级为 **Mission Control**：先执行 `./scripts/frontend.sh run build`，再运行 `python start_web.py` 并打开终端完整链接。支持对话观测、人设版本、定时情绪表达覆盖、记忆来源与纠错、知识导入检索、提醒与审计；管理变更统一先预览再确认。详见 [Mission Control 后台](docs/Mission-Control后台.md)；当前为单用户本机模式。
 
 可选 [MCP 助手工具](docs/MCP联网工具.md)：安装 `requirements-web.txt` 后，可在统一工具管线中搜索网页、读取正文、查询天气、检索授权资料目录，以及查询/创建/取消本机 SQLite 提醒。每轮最多调用三次并返回状态轨迹。
 
