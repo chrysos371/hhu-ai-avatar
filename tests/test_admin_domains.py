@@ -251,3 +251,16 @@ def test_knowledge_semantic_dedup_and_fallback_preserve_confirmed_preview(admin)
         len(p["accepted"]) == 2
         and p["semantic_status"] == "unavailable_lexical_fallback"
     )
+
+
+def test_profile_correction_preview_matches_stored_value_with_chinese_colon(admin):
+    s, ops = admin
+    fid = s.memory.remember_user("名字", "旧名")
+    d = ops.create_draft(
+        "memory.batch",
+        {"actions": [{"id": fid, "action": "correct", "content": "名字：新名"}]},
+    )
+    assert d.diff[0]["after"] == "名字: 新名"
+    result = ops.confirm(d.draft_id, d.confirmation_token)
+    new_id = result["result"]["actions"][0]["new_id"]
+    assert s.memory.inspect(new_id)["content"] == d.diff[0]["after"]

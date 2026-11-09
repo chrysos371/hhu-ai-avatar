@@ -181,6 +181,18 @@ class MemoryBatchExecutor:
                 or not 1 <= len(a["content"].strip()) <= 4000
             ):
                 raise ValueError("invalid correction")
+            if a["action"] == "correct":
+                content = a["content"].strip()
+                key = row.get("profile_key")
+                if key:
+                    for separator in (":", "："):
+                        if content.startswith(key + separator):
+                            content = content[len(key) + 1 :].strip()
+                            break
+                    if not content:
+                        raise ValueError("profile value must be non-empty")
+                    content = key + ": " + content
+                a["content"] = content
             diff.append(
                 {
                     "field": f"memory.{a['id']}",
