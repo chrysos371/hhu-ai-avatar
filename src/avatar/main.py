@@ -259,9 +259,41 @@ class Avatar:
 
     @staticmethod
     def _extract_json(raw: str) -> str:
-        """从 LLM 输出里抠出 JSON（容忍代码块包裹）。"""
-        m = re.search(r"\{.*\}", raw, re.DOTALL)
-        return m.group(0) if m else raw
+        """从 LLM 输出里抠出第一个完整的 JSON 对象。
+
+        容忍 Markdown 代码块、前后说明文字、嵌套花括号，以及字符串里出现
+        ``{`` / ``}``。找不到平衡的 ``{...}`` 时退回去掉围栏后的原文，
+        交给 ``json.loads`` 报错。
+        """
+        text = (raw or "").strip()
+        fence = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL | re.IGNORECASE)
+        if fence:
+            text = fence.group(1).strip()
+        start = text.find("{")
+        if start < 0:
+            return text
+        depth = 0
+        in_string = False
+        escaped = False
+        for i in range(start, len(text)):
+            ch = text[i]
+            if in_string:
+                if escaped:
+                    escaped = False
+                elif ch == "\\":
+                    escaped = True
+                elif ch == '"':
+                    in_string = False
+                continue
+            if ch == '"':
+                in_string = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[start:i + 1]
+        return text[start:]
 
     def _store_fact(self, fact: dict) -> None:
         """把 LLM 提取的一条事实写入长期记忆。"""
