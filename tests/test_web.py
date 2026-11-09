@@ -61,6 +61,17 @@ def test_web_manages_real_memory_and_sources(api):
     assert request('/api/memories?history=1')[1]['memories'] == []
 
 
+def test_web_keeps_boundary_state_between_requests_and_releases_after_recovery(api):
+    request, _ = api
+    first = request('/api/chat', {'text': '我现在想伤害自己。'})[1]
+    assert first['boundary']['route'] == 'crisis'
+    second = request('/api/chat', {'text': '我还没有联系任何人。'})[1]
+    assert second['boundary']['route'] == 'crisis'
+    recovery = request('/api/chat', {'text': '我已经联系朋友陪我，目前没有伤害自己的想法。'})[1]
+    assert recovery['boundary']['route'] == 'recovery'
+    assert request('/api/chat', {'text': '说一句普通的问候。'})[1]['boundary']['route'] == 'normal'
+
+
 def test_web_rejects_cross_origin_and_bad_input(api):
     request, fid = api
     assert request('/api/forget', {'id': fid}, origin='https://evil.example')[0] == 403

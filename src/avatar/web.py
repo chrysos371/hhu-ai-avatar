@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlsplit
 
 from .brain.emotion import EmotionEngine
+from .brain.boundaries import BoundaryPolicy
 from .brain.memory import MemoryStore
 from .brain.reminders import ReminderStore
 from .brain.summaries import SummaryStore
@@ -81,6 +82,7 @@ class Handler(BaseHTTPRequestHandler):
                 avatar = Avatar(db_path=self.server.db_path, session_id=self.server.session_id)
                 memory = avatar.memory
                 avatar.emotion = self.server.emotion
+                avatar.boundaries = self.server.boundaries
                 if self.server.context_revision != memory.context_revision:
                     self.server.short_term = []
                 for message in self.server.short_term:
@@ -156,6 +158,7 @@ def create_server(db_path: str, *, port: int = 8765) -> HTTPServer:
     server.short_term = []
     server.context_revision = None
     server.emotion = EmotionEngine()
+    server.boundaries = BoundaryPolicy()
     return server
 
 

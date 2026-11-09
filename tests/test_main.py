@@ -40,6 +40,14 @@ def test_rule_identity_is_not_name(make_avatar):
     assert '名字' not in ava.memory.get_user_profile()
 
 
+def test_minimal_step_request_has_focused_format_without_changing_other_requests(make_avatar):
+    ava = make_avatar()
+    text = '给我一个最小步骤。'
+    prompt = ava._system_prompt(ava.emotion.decide(text), text)
+    assert '严格只写两行' in prompt and '完成标志' in prompt
+    assert '严格只写两行' not in ava._system_prompt(ava.emotion.decide('我想倾诉。'), '我想倾诉。')
+
+
 def test_reminder_commands_and_close_in_real_pipeline(make_avatar):
     ava = make_avatar()
     result = ava.respond('提醒我2099年12月1日下午3点答辩')

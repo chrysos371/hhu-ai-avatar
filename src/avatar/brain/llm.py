@@ -6,6 +6,7 @@ from typing import Optional
 from openai import OpenAI
 
 from ..config import config
+from .analysis_protocol import ANALYSIS_RESPONSE_FORMAT
 
 
 class LLMEngine:
@@ -53,6 +54,15 @@ class LLMEngine:
             options['tools'] = tools
         response = self._client.chat.completions.create(**options)
         return response.choices[0].message.model_dump(exclude_none=True)
+
+    def chat_analysis(self, messages: list[dict], temperature: float = 0) -> str:
+        """Request constrained JSON; unsupported endpoints fail into visible rule fallback."""
+        if not self.available or self._client is None:
+            raise RuntimeError('LLM 未配置')
+        response = self._client.chat.completions.create(
+            model=self.model, messages=messages, temperature=temperature, max_tokens=512,
+            response_format=ANALYSIS_RESPONSE_FORMAT, timeout=45)
+        return response.choices[0].message.content or ''
 
     def chat_web(self, messages: list[dict]) -> str:
         """Bounded synthesis after a tool chain, without exposing more tools."""

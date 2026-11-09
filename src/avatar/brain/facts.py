@@ -11,7 +11,7 @@ _HYPOTHETICAL = re.compile(r"假如|假设|如果|要是|倘若|假装|比如|�
 _QUOTED = re.compile(r"[\"'“”‘’「」『』]|(?:他说|她说|朋友说|我说)[：:]")
 _PAST = re.compile(r"以前|曾经|过去|原来|之前")
 _NAME = re.compile(r"(?:我叫|我的名字是|我的姓名是|以后叫我|请叫我|叫我)([^\s，,。！？!?；;：:]{1,10})")
-_PREFERENCE = re.compile(r"我(?:现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})")
+_PREFERENCE = re.compile(r"(?:现在|目前|已经)?我(?:现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})")
 _NAME_TYPES = {"名字", "姓名", "称呼"}
 _PREFERENCE_TYPES = {"偏好", "爱好", "喜欢"}
 _SELF_ASSERTION = re.compile(r"^我(?:是|在|住在|养了|考试|毕业|参加|获得|通过|失去|找到|换了)")
@@ -106,7 +106,7 @@ def _temporal_preferences(text: str, context=None) -> list[dict]:
             if match:
                 reference = match.group(2)
     results = []
-    old_pattern = re.compile(r'我(?:以前|曾经|过去|原来|之前|现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})')
+    old_pattern = re.compile(r'(?:现在|目前|已经)?我(?:以前|曾经|过去|原来|之前|现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})')
     ellipsis = re.compile(r'(?:但是|不过|但|而)?(?:我)?(?:现在已经|现在|目前|已经|又)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)了?')
     repeated_object = re.compile(r'(?:但是|不过|但|而)?(?:现在已经|现在|目前|已经|又)(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})')
     for sentence in _safe_sentences(text):
@@ -115,8 +115,22 @@ def _temporal_preferences(text: str, context=None) -> list[dict]:
         # Skipped quoted/unsafe sentences must not silently preserve its topic.
         local_reference = reference if text.lstrip().startswith(sentence) else None
         reference = None
-        for clause in re.split(r'[，,。！？!?；;]', sentence):
+        self_chain = False
+        for clause in re.split(r'[，,。！？!?；;]|(?=(?:也|还)(?:不再喜欢|不喜欢|不爱|讨厌|喜欢|爱))', sentence):
             clause = clause.strip()
+            if not clause:
+                continue
+            coordinated = re.fullmatch(r'(?:也|还)(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)(.+)', clause)
+            if coordinated and self_chain:
+                fact = _explicit_fact('我' + ''.join(coordinated.groups()))
+                if fact:
+                    obj = coordinated.group(2).removesuffix('了')
+                    objects.add(canonical_preference_object(obj))
+                    local_reference = obj if len(objects) == 1 else None
+                    results.append(dict(fact, evidence=sentence, subject='self',
+                                        modality='asserted', temporal='current'))
+                    continue
+            self_chain = False
             original = old_pattern.fullmatch(clause)
             if original and original.group(2).removesuffix('了'):
                 obj = original.group(2).removesuffix('了')
@@ -124,6 +138,7 @@ def _temporal_preferences(text: str, context=None) -> list[dict]:
                 local_reference = obj if len(objects) == 1 else None
                 explicit = _explicit_fact(clause)
                 if explicit:
+                    self_chain = True
                     results.append(dict(explicit, evidence=clause, subject='self',
                                         modality='asserted', temporal='current'))
                 continue
