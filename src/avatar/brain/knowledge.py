@@ -148,7 +148,7 @@ class KnowledgeService:
             return (
                 self.snapshot(p),
                 [{"field": "knowledge.source", "before": dict(row), "after": None}],
-                ["移除该知识来源及其切片；用户记忆不变。"],
+                ["移除该知识来源及其切片，不可撤销；用户记忆不变。"],
             )
         if set(p) != {"title", "text"}:
             raise ValueError("invalid import")
