@@ -6,10 +6,12 @@ import type { ChatResult } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
 import { AvatarStage } from "./AvatarStage";
+import { VoiceInput } from "./VoiceInput";
 export function ChatPage() {
   const speech = useSpeechPlayer();
   const [text, setText] = useState("");
   const [useWeb, setUseWeb] = useState(false);
+  const [voiceBusy, setVoiceBusy] = useState(false);
   const [messages, setMessages] = useState<
     { role: "user" | "assistant"; text: string; result?: ChatResult }[]
   >([]);
@@ -29,7 +31,7 @@ export function ChatPage() {
     onSettled: () => setUseWeb(false),
   });
   function submit() {
-    if (!text.trim() || send.isPending) return;
+    if (!text.trim() || send.isPending || voiceBusy) return;
     speech.stop();
     const value = text.trim();
     setMessages((m) => [...m, { role: "user", text: value }]);
@@ -76,7 +78,7 @@ export function ChatPage() {
               <small>{m.role === "user" ? "你" : "小海"}</small>
               <div>{m.text}</div>
               {m.result && <button type="button" className="button secondary speech-read"
-                disabled={speech.active === i && speech.status === "loading" || m.text.length > 2000}
+                disabled={voiceBusy || speech.active === i && speech.status === "loading" || m.text.length > 2000}
                 title={m.text.length > 2000 ? "这段回复超过 2000 字，请选择较短内容朗读" : undefined}
                 onClick={() => void speech.play(i, m.result!)}>
                 <Volume2 size={14} />{speech.active === i && speech.status === "loading" ? "准备语音…" : "朗读回复"}
@@ -127,6 +129,8 @@ export function ChatPage() {
           )}
         </div>
         <ErrorMessage error={send.error} />
+        <VoiceInput disabled={send.isPending} beforeCapture={speech.stop} onBusyChange={setVoiceBusy}
+          onTranscript={value => setText(old => old ? old + "\n" + value : value)} />
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -150,13 +154,13 @@ export function ChatPage() {
                 type="checkbox"
                 checked={useWeb}
                 onChange={(e) => setUseWeb(e.target.checked)}
-                disabled={send.isPending}
+                disabled={send.isPending || voiceBusy}
               />
               本轮允许联网工具
             </label>
             <button
               className="button"
-              disabled={send.isPending || !text.trim()}
+              disabled={send.isPending || voiceBusy || !text.trim()}
             >
               <Send size={14} />
               {send.isPending ? "等待回复…" : "发送消息"}

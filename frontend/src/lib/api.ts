@@ -106,6 +106,15 @@ export async function fetchSpeechAudio(id: string, signal: AbortSignal) {
   if (!response.ok) await decode<never>(response);
   return response.blob();
 }
+export async function transcribeAudio(audio: Blob, signal: AbortSignal) {
+  if (audio.size === 0 || audio.size > 6 * 1024 * 1024)
+    throw new Error("请选择不超过 6 MiB、60 秒内的 PCM WAV 文件。");
+  const response = await fetch("/api/v1/speech/transcribe", {
+    method: "POST", body: audio, signal, cache: "no-store",
+    headers: { "Content-Type": "audio/wav", "X-Avatar-Token": readToken() },
+  });
+  return decode<{ transcript: string }>(response);
+}
 export function formatTime(timestamp: number | null | undefined) {
   return timestamp == null || !Number.isFinite(timestamp)
     ? "—"
