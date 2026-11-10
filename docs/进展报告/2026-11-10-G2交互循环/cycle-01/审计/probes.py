@@ -80,6 +80,28 @@ def main():
             result['quiet_noise_lipsync']={'input_rms':float(np.sqrt(np.mean(samples**2))),
                 'peak_mouth_open':max(frame.mouth_open for frame in frames),
                 'open_fraction':sum(frame.mouth_open>0.05 for frame in frames)/len(frames)}
+            def multi_runner(job):
+                for index in range(20):
+                    job.token.checkpoint()
+                    job.emit('text',{'text':f'frame {index}。'})
+                    threading.Event().wait(0.03)
+                return {'reply':'complete'}
+            server.turns.runner=multi_runner
+            key='audit_subscribers_1234567890'
+            assert request('/api/v1/turns',{'request_id':key,'text':'subscriber fixture'})[0]==202
+            def subscribe():
+                req=urllib.request.Request(base+f'/api/v1/turns/{key}/events',headers={'X-Avatar-Token':server.token})
+                return urllib.request.urlopen(req,timeout=5)
+            first,second=subscribe(),subscribe()
+            first.readline()
+            first.fp.raw._sock.shutdown(socket.SHUT_RDWR)
+            first.close()
+            received=second.read().decode();second.close()
+            result['multiple_subscribers']={'surviving_stream_has_result':'event: result' in received,
+                'surviving_stream_was_cancelled':'event: cancelled' in received,
+                'final_status':server.turns.get(key).status}
+            code,wire=request(f'/api/v1/turns/{key}/events?after=9999')
+            result['future_cursor']={'http_status':code,'empty_stream':not wire}
             started=[]; original=server.process_request_thread
             def tracked(*a): started.append(time.perf_counter()); return original(*a)
             server.process_request_thread=tracked
