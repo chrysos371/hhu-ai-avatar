@@ -272,3 +272,17 @@ def test_nested_frozen_interaction_suite_is_protected_from_training():
     row = normalize_dialogue('cped','train','copied-eval', [text,'老师您好，我发烧身体不适，想请明天一天假，恳请批准，谢谢老师。'])
     accepted, rejected = data.screen_candidates([row],protected,source_policy={'cped':{'language':'zh','use':'experimental-sft'}})
     assert not accepted and 'eval_overlap' in rejected[0]['reasons']
+
+
+def test_named_source_grounding_fixtures_are_protected_from_training():
+    from avatar.lab import data
+    text = '我喜欢喝可乐。请帮我写一封信。'
+    protected, hashes = data.evaluation_texts()
+    assert text in protected
+    assert 'evals/interaction/cycle-02/disclosure-grounding-v2.json' in hashes
+    row = data.normalize_dialogue('cped', 'train', 'named-fixture-overlap',
+                                 [text, '这是一段仅用于检查数据隔离的测试回复。'])
+    accepted, rejected = data.screen_candidates([row], protected,
+        source_policy={'cped': {'language': 'zh', 'use': 'experimental-sft'}})
+    assert not accepted
+    assert 'eval_overlap' in rejected[0]['reasons']

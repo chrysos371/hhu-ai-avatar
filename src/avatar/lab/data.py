@@ -65,7 +65,7 @@ def normalize_dialogue(source, split, source_id, texts):
 
 def evaluation_texts(root=None):
     # Discover declarative suites across directories, excluding changing review
-    # outputs unless they actually declare cases/turns. Keep legacy metadata hashes.
+    # outputs unless they declare cases/turns or named input fixtures. Keep legacy metadata hashes.
     files = sorted((root or PROJECT / "evals").rglob("*.json"))
     if root is None:
         files += sorted((PROJECT / "experiments/style").glob("*suite.json"))
@@ -78,6 +78,12 @@ def evaluation_texts(root=None):
             for case in cases:
                 if isinstance(case, dict) and isinstance(case.get("turns"), list):
                     suite_texts.extend(text for text in case["turns"] if isinstance(text, str))
+        if isinstance(value, dict):
+            for field in ('positive_fixtures', 'negative_fixtures'):
+                fixtures = value.get(field, [])
+                if isinstance(fixtures, list):
+                    suite_texts.extend(row['input'] for row in fixtures
+                        if isinstance(row, dict) and isinstance(row.get('input'), str))
         texts.extend(suite_texts)
         if (root is not None or suite_texts or p.parent == PROJECT / "evals/companion"
                 or p.parent == PROJECT / "experiments/style"):
