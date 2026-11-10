@@ -1,0 +1,76 @@
+FFF..                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count[16000] _
+
+sr = 16000
+
+    @pytest.mark.parametrize('sr',[16000,24000,48000])
+    def test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count(sr):
+        anchor=SPEC['anchors'][0]
+        samples=synthesize(SPEC,anchor,sr,'harmonic',180,.03,11)
+        coefficients=np.array([1.])
+        for frequency,bandwidth in zip(anchor['formants_hz'],SPEC['bandwidths_hz']):
+            radius=np.exp(-np.pi*bandwidth/sr)
+            coefficients=np.convolve(coefficients,[1,-2*radius*np.cos(2*np.pi*frequency/sr),radius*radius])
+        restored=np.fft.rfft(samples)*np.fft.rfft(coefficients,n=len(samples))
+        index=lambda frequency:round(frequency*len(samples)/sr)
+        ratio=abs(restored[index(27*180)])/abs(restored[index(180)])
+>       assert ratio==pytest.approx(1/27,rel=.01,abs=1e-5)
+E       assert np.float64(3....535778244e-07) == 0.037037037037037035 ± 3.7e-04
+E         
+E         comparison failed
+E         Obtained: 3.7118167535778244e-07
+E         Expected: 0.037037037037037035 ± 3.7e-04
+
+tests/test_analytic_lipsync_fixture.py:24: AssertionError
+_ test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count[24000] _
+
+sr = 24000
+
+    @pytest.mark.parametrize('sr',[16000,24000,48000])
+    def test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count(sr):
+        anchor=SPEC['anchors'][0]
+        samples=synthesize(SPEC,anchor,sr,'harmonic',180,.03,11)
+        coefficients=np.array([1.])
+        for frequency,bandwidth in zip(anchor['formants_hz'],SPEC['bandwidths_hz']):
+            radius=np.exp(-np.pi*bandwidth/sr)
+            coefficients=np.convolve(coefficients,[1,-2*radius*np.cos(2*np.pi*frequency/sr),radius*radius])
+        restored=np.fft.rfft(samples)*np.fft.rfft(coefficients,n=len(samples))
+        index=lambda frequency:round(frequency*len(samples)/sr)
+        ratio=abs(restored[index(27*180)])/abs(restored[index(180)])
+>       assert ratio==pytest.approx(1/27,rel=.01,abs=1e-5)
+E       assert np.float64(3....791017934e-06) == 0.037037037037037035 ± 3.7e-04
+E         
+E         comparison failed
+E         Obtained: 3.342031791017934e-06
+E         Expected: 0.037037037037037035 ± 3.7e-04
+
+tests/test_analytic_lipsync_fixture.py:24: AssertionError
+_ test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count[48000] _
+
+sr = 48000
+
+    @pytest.mark.parametrize('sr',[16000,24000,48000])
+    def test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count(sr):
+        anchor=SPEC['anchors'][0]
+        samples=synthesize(SPEC,anchor,sr,'harmonic',180,.03,11)
+        coefficients=np.array([1.])
+        for frequency,bandwidth in zip(anchor['formants_hz'],SPEC['bandwidths_hz']):
+            radius=np.exp(-np.pi*bandwidth/sr)
+            coefficients=np.convolve(coefficients,[1,-2*radius*np.cos(2*np.pi*frequency/sr),radius*radius])
+        restored=np.fft.rfft(samples)*np.fft.rfft(coefficients,n=len(samples))
+        index=lambda frequency:round(frequency*len(samples)/sr)
+        ratio=abs(restored[index(27*180)])/abs(restored[index(180)])
+>       assert ratio==pytest.approx(1/27,rel=.01,abs=1e-5)
+E       assert np.float64(4....280325094e-06) == 0.037037037037037035 ± 3.7e-04
+E         
+E         comparison failed
+E         Obtained: 4.718946280325094e-06
+E         Expected: 0.037037037037037035 ± 3.7e-04
+
+tests/test_analytic_lipsync_fixture.py:24: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_analytic_lipsync_fixture.py::test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count[16000]
+FAILED tests/test_analytic_lipsync_fixture.py::test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count[24000]
+FAILED tests/test_analytic_lipsync_fixture.py::test_harmonic_below_cutoff_is_not_dropped_at_fractional_harmonic_count[48000]
+3 failed, 2 passed in 0.75s
