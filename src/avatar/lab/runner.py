@@ -420,6 +420,32 @@ class Fallbacks(logging.Handler):
             self.events.append(record.msg)
 
 
+def run_raw_case(case, backend):
+    """Raw model has only minimal identity and transcript; no Avatar state or analysis."""
+    from avatar.config import config
+    model = ReplyScopedModel(backend, arm="base")
+    messages = [{"role": "system", "content": f"你是{config.avatar_name}，{config.avatar_persona}。"}]
+    turns = []
+    for text in case['turns']:
+        messages.append({'role': 'user', 'content': text})
+        before = len(model.calls)
+        started = time.perf_counter()
+        try:
+            reply = model.chat(messages)
+            item = {'user': text, 'reply': reply}
+            messages.append({'role': 'assistant', 'content': reply})
+        except Exception as exc:
+            item = {'user': text, 'reply': '', 'error': type(exc).__name__}
+        calls = model.calls[before:]
+        item.update(wall_seconds=time.perf_counter()-started, calls=calls,
+                    analysis_fallback=False, reply_fallback=False,
+                    truncated=any(c.get('truncated', False) for c in calls))
+        turns.append(item)
+        if item.get('error'):break
+    return {'id': case['id'], 'turns': turns,
+            'unavailable_backend_action': case.get('before_last_action')}
+
+
 def run_suite(suite, backend, output, *, arms=("base",)):
     from avatar.main import Avatar
     from avatar.brain.emotion import EmotionEngine
@@ -428,6 +454,19 @@ def run_suite(suite, backend, output, *, arms=("base",)):
     assessments = {}
     output = Path(output)
     for arm in arms:
+        if arm == 'raw_base':
+            rows, scores = [], []
+            for case in suite['cases']:
+                row = run_raw_case(case, backend)
+                rows.append(row)
+                # Backend route IDs are inapplicable to a model with no router.
+                raw_case = {k:v for k,v in case.items() if k != 'expected_routes'}
+                score = assess(raw_case, row['turns'])
+                score['backend_route_checks'] = 'not_applicable'
+                scores.append(score)
+                write_json(output / 'results.partial.json', {**results, arm: rows})
+            results[arm], assessments[arm] = rows, scores
+            continue
         arm_results = []
         scores = []
         for case in suite["cases"]:
@@ -512,6 +551,7 @@ def evaluate(
     adapter=None,
     smoke=False,
     style=False,
+    include_raw=False,
 ):
     suite = json.loads(Path(suite_path).read_text())
     if not suite.get("cases") or len({c["id"] for c in suite["cases"]}) != len(
@@ -530,11 +570,16 @@ def evaluate(
     config.avatar_name = "小海"
     config.avatar_persona = "一个温柔又有点好奇心的AI伙伴"
     arms = ARMS if style else ("base",)
+    if include_raw:
+        arms = ("raw_base",) + tuple(arms)
     manifest = {
         "kind": "offline-fixture" if smoke else "real-local-model",
         "suite_sha256": sha(suite_path),
         "backend": source_state(),
         "arms": arms,
+        "raw_base_definition": "minimal identity + full transcript; no Avatar analysis, memory, guard or adapter" if include_raw else None,
+        "raw_route_checks": "not_applicable" if include_raw else None,
+        "raw_forget_action": "not available; original transcript retained" if include_raw else None,
         "style_hint": STYLE_HINT,
         "analysis_adapter": False,
         "fresh_state_per_case": True,

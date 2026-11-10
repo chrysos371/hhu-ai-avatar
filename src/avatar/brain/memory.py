@@ -16,6 +16,8 @@ from __future__ import annotations
 import re
 import logging
 import sqlite3
+import threading
+import weakref
 import time
 from collections import deque
 from contextlib import contextmanager
@@ -28,6 +30,19 @@ from .embeddings import normalized_vector
 from .preferences import canonical_preference_object
 
 logger = logging.getLogger(__name__)
+_DATABASE_LOCKS = weakref.WeakValueDictionary()
+_DATABASE_LOCKS_GUARD = threading.Lock()
+
+
+def _database_lock(path):
+    key = str(Path(path).resolve())
+    with _DATABASE_LOCKS_GUARD:
+        lock = _DATABASE_LOCKS.get(key)
+        if lock is None:
+            lock = threading.RLock()
+            _DATABASE_LOCKS[key] = lock
+        return lock
+
 
 # 建表 SQL（翻译自 AIRI schema）
 _SCHEMA = """
@@ -174,12 +189,18 @@ class MemoryStore:
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         self._conn = sqlite3.connect(db_path)
         self._conn.row_factory = sqlite3.Row
-        self._conn.executescript(_SCHEMA)
-        self._conn.commit()
+        self._transaction_lock = _database_lock(db_path)
         self._transaction_depth = 0
         self._embedder = embedder
         self.semantic_threshold = semantic_threshold
-        self._migrate()
+        with self._transaction_lock:
+            try:
+                self._conn.executescript(_SCHEMA)
+                self._conn.commit()
+                self._migrate()
+            except BaseException:
+                self._conn.close()
+                raise
         self._seen_context_revision = self.context_revision
 
     def _migrate(self) -> None:
@@ -247,6 +268,13 @@ class MemoryStore:
 
     @contextmanager
     def transaction(self):
+        """Serialize same-process writers before SQLite read-to-write upgrades."""
+        with self._transaction_lock:
+            with self._transaction_unlocked():
+                yield
+
+    @contextmanager
+    def _transaction_unlocked(self):
         """原子写入一批记忆，失败时回滚；支持嵌套调用。"""
         savepoint = f"memory_batch_{self._transaction_depth}"
         # Initial migration runs before context tracking is initialized.

@@ -16,6 +16,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+qq = ["nonebot2[httpx,websockets]==2.5.0", "nonebot-adapter-qq==1.7.3", "nonebot-adapter-onebot==2.4.6", "websockets>=14,<17"]
 web = ["mcp>=1.27.2,<2", "ddgs==9.16.1"]
 # 语音识别（中文强，较重）
 asr = ["funasr>=1.0"]
@@ -24,3 +25,6 @@ audio = ["librosa>=0.10", "soundfile>=0.12"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"avatar.characters" = ["catalog.json"]

@@ -8,7 +8,9 @@ export function OperationConfirmDialog({
   draft,
   onClose,
   onApplied,
+  apiPrefix = "",
 }: {
+  apiPrefix?: string;
   draft: Draft;
   onClose: () => void;
   onApplied?: (result: { audit_id: number }) => void;
@@ -45,7 +47,7 @@ export function OperationConfirmDialog({
   const confirm = useMutation({
     mutationFn: () =>
       apiRequest<{ audit_id: number }>(
-        "/operations/" + draft.draft_id + "/confirm",
+        apiPrefix + "/operations/" + draft.draft_id + "/confirm",
         {
           method: "POST",
           body: { confirmation_token: draft.confirmation_token },

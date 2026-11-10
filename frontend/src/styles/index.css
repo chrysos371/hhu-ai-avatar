@@ -736,3 +736,22 @@ meter::-webkit-meter-optimum-value {
   background: #78bdcd;
   border-radius: 4px;
 }
+
+/* Character gallery: original community previews, never cropped into unrelated designs. */
+.character-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:20px;align-items:start}
+.character-list{padding:14px;display:flex;flex-direction:column;gap:8px;max-height:850px;overflow:auto}
+.character-choice{display:flex;align-items:center;gap:10px;text-align:left;width:100%;background:transparent;color:inherit;border:1px solid transparent;border-radius:10px;padding:12px 8px}
+.character-choice:hover,.character-choice.selected{background:#202f3e}
+.character-choice strong{display:block;font-size:13px}.character-choice small{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.character-orb{width:12px;height:32px;border-radius:8px;flex-shrink:0;opacity:.85}
+.character-engine{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:14px}
+.character-stage{display:grid;grid-template-columns:minmax(160px,.8fr) minmax(0,1.2fr);gap:24px;padding:24px}
+.character-portrait{height:430px;border:1px solid;border-radius:18px;overflow:hidden;background:#fafbfc;display:flex;align-items:center;justify-content:center}
+.character-portrait img{width:100%;height:100%;object-fit:contain}.character-visual h2{margin-top:18px}
+.character-placeholder{display:flex;align-items:center;flex-direction:column;gap:20px;text-align:center;padding:16px}
+.character-credits{font-size:12px;color:var(--muted);margin-top:18px}.character-credits a{text-decoration:underline}
+.character-messages{height:400px;overflow:auto;padding:12px 0;margin:8px 0 18px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.character-conversation .chat-message{margin-bottom:12px}.character-conversation textarea{width:100%;resize:vertical}
+.character-editor{margin-top:24px;border-top:1px solid var(--border);padding-top:16px}.character-editor label{display:block;margin-top:12px}.character-editor input,.character-editor textarea{width:100%;margin:6px 0 12px}
+@media(max-width:1150px){.character-layout{grid-template-columns:170px minmax(0,1fr)}.character-stage{grid-template-columns:1fr}.character-portrait{height:340px}.character-visual{max-width:320px;margin:auto}.character-messages{height:320px}}
+@media(max-width:650px){.character-layout{display:block}.character-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:230px;margin-bottom:16px}.character-list>.eyebrow{grid-column:1/-1}.character-stage{padding:16px}.character-engine{align-items:flex-start}.character-choice{padding:8px 4px}}

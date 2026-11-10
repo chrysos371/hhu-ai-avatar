@@ -257,3 +257,19 @@ def test_automatic_export_rejects_data_tampering_and_keeps_split_disjoint(
     (pool / "candidates.jsonl").write_text("{}\n")
     with pytest.raises(ValueError, match="hash"):
         data.export_pilot(pool, tmp_path / "bad")
+
+
+def test_raw_ablation_never_calls_analysis_or_adapter():
+    from avatar.lab.runner import run_raw_case
+    calls=[]
+    class Backend:
+        def generate(self,messages,kind,adapter):
+            calls.append((messages.copy(),kind,adapter))
+            return {'reply':'原始模型回复','seconds':0,'new_tokens':1,'adapter_enabled':adapter}
+    row=run_raw_case({'id':'raw-test','turns':['我叫小林','我叫什么'],
+                      'before_last_action':'forget_name'},Backend())
+    assert len(row['turns'])==2
+    assert all(kind=='reply' and adapter is False for _,kind,adapter in calls)
+    assert len(calls[0][0])==2 and len(calls[1][0])==4
+    assert '现实与关系边界' not in calls[0][0][0]['content']
+    assert row['unavailable_backend_action']=='forget_name'

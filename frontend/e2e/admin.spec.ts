@@ -106,7 +106,7 @@ test("knowledge upload previews, cancel preserves sources, confirm imports; narr
     ),
   ).toBe(true);
 });
-test("all nine routes survive reload and ordinary chat exposes collapsed trace", async ({
+test("all eleven routes survive reload and ordinary chat exposes collapsed trace", async ({
   page,
 }) => {
   for (const [path, title] of [
@@ -115,6 +115,8 @@ test("all nine routes survive reload and ordinary chat exposes collapsed trace",
     ["/persona", "人设管理"],
     ["/emotion", "情绪干预"],
     ["/memory", "记忆中枢"],
+    ["/qq", "QQ 会话管理"],
+    ["/characters", "角色馆"],
     ["/knowledge", "知识与学习"],
     ["/reminders", "提醒"],
     ["/tools", "工具"],
@@ -140,4 +142,64 @@ test("all nine routes survive reload and ordinary chat exposes collapsed trace",
     path: "../data/mission-control/dashboard.png",
     fullPage: true,
   });
+});
+test("QQ memory correction is confirmed, audited and isolated from another account", async ({ page }) => {
+  await page.getByRole('link', { name: 'QQ 会话' }).click();
+  await expect(page.getByRole('heading', { name: 'QQ 会话管理' })).toBeVisible();
+  const select = page.getByLabel('选择 QQ 会话');
+  await select.selectOption({ label: '私聊 23456' });
+  await page.getByRole('button', { name: /\[active\] 名字: 浏览器QQ原名/ }).click();
+  await page.getByLabel('纠正后的事实').fill('浏览器QQ新名');
+  await page.getByRole('button', { name: '预览纠错' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: '取消', exact: true }).click();
+  await expect(page.getByRole('button', { name: /\[active\] 名字: 浏览器QQ原名/ })).toBeVisible();
+  await page.getByRole('button', { name: '预览纠错' }).click();
+  await page.getByRole('button', { name: '确认执行' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /\[active\] 名字: 浏览器QQ新名/ })).toBeVisible();
+  await expect(page.getByText(/memory.batch · success/)).toBeVisible();
+  await select.selectOption({ label: '私聊 34567' });
+  await expect(page.getByRole('button', { name: /\[active\] 名字: 其他QQ原名/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /\[active\] 名字: 浏览器QQ新名/ })).toHaveCount(0);
+});
+test("character switching keeps separate conversations and persona changes require confirmation", async ({ page }) => {
+  await page.getByRole('link', {name:'角色馆'}).click();
+  await expect(page.getByRole('heading',{name:'角色馆',exact:true})).toBeVisible();
+  await page.getByLabel('发给当前角色').fill('我叫浏览器角色用户');
+  await page.getByRole('button',{name:'发送',exact:true}).click();
+  await expect(page.getByText('这是当前角色的离线测试回复。')).toBeVisible();
+  await page.getByRole('button',{name:/GPT · 白龙娘/}).click();
+  await expect(page.getByText('我叫浏览器角色用户')).toHaveCount(0);
+  await page.getByRole('button',{name:/DeepSeek · 鲸鱼娘/}).click();
+  await expect(page.getByText('我叫浏览器角色用户')).toBeVisible();
+  await page.getByText(/编辑这个角色的人设/).click();
+  await page.getByLabel('角色称呼').fill('浏览器鲸鱼');
+  await page.getByRole('button',{name:'预览人设修改'}).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button',{name:'取消',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'鲸鱼娘',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'预览人设修改'}).click();
+  await page.getByRole('button',{name:'确认执行'}).click();
+  await expect(page.getByRole('heading',{name:'浏览器鲸鱼',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:/GPT · 白龙娘/}).click();
+  await expect(page.getByRole('heading',{name:'白龙娘',exact:true})).toBeVisible();
+});
+test('shared facts are opt-in, revocable and undoable from the character gallery', async ({page})=>{
+  await page.getByRole('link',{name:'角色馆'}).click();
+  await page.getByText('管理跨角色共享事实',{exact:true}).click();
+  await page.getByLabel('事实类型').selectOption('diet');
+  await page.getByLabel('共享内容',{exact:true}).fill('浏览器测试：不吃花生');
+  await page.getByRole('checkbox',{name:'GPT · 白龙娘',exact:true}).check();
+  await page.getByRole('button',{name:'保存共享事实',exact:true}).click();
+  await expect(page.getByText('浏览器测试：不吃花生 · GPT · 白龙娘',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'撤销共享',exact:true}).click();
+  await expect(page.getByText('浏览器测试：不吃花生 · GPT · 白龙娘',{exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'撤回最近一次事实操作',exact:true}).click();
+  await expect(page.getByText('浏览器测试：不吃花生 · GPT · 白龙娘',{exact:true})).toBeVisible();
+  await page.getByText('模型配置',{exact:true}).click();
+  await expect(page.getByLabel('当前角色使用的模型')).toHaveValue('default');
+  await page.getByLabel('当前角色使用的模型').selectOption('default');
+  await page.getByRole('button',{name:'应用模型',exact:true}).click();
+  await expect(page.getByRole('button',{name:'应用模型',exact:true})).toBeDisabled();
 });

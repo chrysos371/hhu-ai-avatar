@@ -6,7 +6,8 @@ import argparse
 import json
 import secrets
 import re
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
+import threading
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit, unquote
 
@@ -25,11 +26,50 @@ def _public(row):
     )
 
 
+class ManagementServer(ThreadingHTTPServer):
+    """Bounded connections keep browser preconnects and model calls off the accept loop."""
+    daemon_threads = True
+    block_on_close = False
+    request_queue_size = 32
+
+    def __init__(self, *args, **kwargs):
+        self.connection_slots = threading.BoundedSemaphore(16)
+        self.chat_lock = threading.Lock()
+        super().__init__(*args, **kwargs)
+
+    def process_request(self, request, client_address):
+        if not self.connection_slots.acquire(blocking=False):
+            self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request, client_address)
+        except BaseException:
+            self.connection_slots.release()
+            raise
+
+    def process_request_thread(self, request, client_address):
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self.connection_slots.release()
+
+
 class Handler(BaseHTTPRequestHandler):
+    def setup(self):
+        self.request.settimeout(10)
+        super().setup()
+
     def log_message(self, *args):
         pass
 
     def _send(self, status, data, *, html=False, content_type=None):
+        try:
+            return self._write_response(status, data, html=html, content_type=content_type)
+        except (BrokenPipeError, ConnectionResetError):
+            # Navigation may cancel an in-flight image/API response; never retry a write.
+            self.close_connection = True
+
+    def _write_response(self, status, data, *, html=False, content_type=None):
         if (
             self.path.startswith("/api/v1/")
             and isinstance(data, dict)
@@ -253,6 +293,10 @@ class Handler(BaseHTTPRequestHandler):
         self._request(post=True)
 
     def _chat(self, user_text, use_web=False):
+        with self.server.chat_lock:
+            return self._chat_serial(user_text, use_web)
+
+    def _chat_serial(self, user_text, use_web=False):
         from .main import Avatar
 
         avatar = Avatar(db_path=self.server.db_path, session_id=self.server.session_id)
@@ -264,7 +308,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.server.short_term = []
             for message in self.server.short_term:
                 memory.add_short_term(message["role"], message["content"])
-            result = avatar.respond(user_text, use_web=use_web)
+            from .conversation.service import execute_turn
+            result = execute_turn(avatar, user_text, channel='web', use_web=use_web)
             self.server.short_term = memory.get_short_term()
             self.server.context_revision = memory.context_revision
             return result
@@ -367,6 +412,8 @@ class Handler(BaseHTTPRequestHandler):
             "/persona",
             "/emotion",
             "/memory",
+            "/qq",
+            "/characters",
             "/knowledge",
             "/reminders",
             "/tools",
@@ -399,7 +446,7 @@ def create_server(
     legacy_writes: bool = True,
     knowledge_embedder=None,
 ) -> HTTPServer:
-    server = HTTPServer(("127.0.0.1", port), Handler)
+    server = ManagementServer(("127.0.0.1", port), Handler)
     server.db_path = db_path
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder

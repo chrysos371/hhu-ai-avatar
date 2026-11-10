@@ -4,6 +4,7 @@ import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import {
   Activity,
+  Sparkles,
   BookOpen,
   BrainCircuit,
   Clock3,
@@ -20,9 +21,11 @@ import {
 export const navigation = [
   { path: "/", label: "总览", icon: Gauge },
   { path: "/chat", label: "对话观测", icon: MessageSquare },
+  { path: "/characters", label: "角色馆", icon: Sparkles },
   { path: "/persona", label: "人设管理", icon: BrainCircuit },
   { path: "/emotion", label: "情绪干预", icon: Activity },
   { path: "/memory", label: "记忆中枢", icon: ScanLine },
+  { path: "/qq", label: "QQ 会话", icon: MessageSquare },
   { path: "/knowledge", label: "知识与学习", icon: BookOpen },
   { path: "/reminders", label: "提醒", icon: Clock3 },
   { path: "/tools", label: "工具", icon: Wrench },

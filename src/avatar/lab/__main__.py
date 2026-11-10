@@ -56,6 +56,7 @@ def main():
             c.add_argument("--adapter", type=Path)
             c.add_argument("--smoke", action="store_true")
             c.add_argument("--style", action="store_true")
+            c.add_argument("--include-raw", action="store_true")
         else:
             c.add_argument("--data", type=Path, required=True)
             if name == "train":
@@ -119,6 +120,7 @@ def main():
             adapter=a.adapter,
             smoke=a.smoke,
             style=a.style,
+            include_raw=a.include_raw,
         )
         result = json.loads((a.output / "comparison.json").read_text())
     elif a.command in ("train", "verify-reload"):

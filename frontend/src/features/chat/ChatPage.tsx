@@ -56,6 +56,8 @@ export function ChatPage() {
               {m.result?.trace && (
                 <details className="trace">
                   <summary>本轮决策与来源</summary>
+                  <h3>模型与运行状态</h3>
+                  <pre>{JSON.stringify({model:m.result.trace.model, profile:m.result.trace.model_profile, persona_version:m.result.trace.persona_version, analysis:m.result.trace.analysis_status, reply_degraded:m.result.trace.reply_degraded, protocol_fallbacks:m.result.trace.protocol_fallbacks, total_ms:m.result.trace.total_ms},null,2)}</pre>
                   {m.result.trace.guard?.guarded && (
                     <p className="notice">本轮由安全或现实边界规则直接回应。</p>
                   )}

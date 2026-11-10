@@ -118,6 +118,10 @@ TOOLS = REGISTRY.schemas
 def _intent(text, explicit=False):
     if text.startswith('/search '):
         return 'web_search', {'query': text.partition(' ')[2].strip()}
+    if text.startswith('/docs '):
+        return 'search_documents', {'query': text.partition(' ')[2].strip()}
+    if text.startswith('/weather '):
+        return 'get_weather', {'location': text.partition(' ')[2].strip()}
     if text.startswith('/read '):
         return 'read_webpage', {'url': text.partition(' ')[2].strip()}
     if explicit:
@@ -152,20 +156,25 @@ def _data(result):
 
 
 class WebAgent:
-    def __init__(self, *, connect=None, max_calls=3, memory_db_path=None, document_roots=None):
+    def __init__(self, *, connect=None, max_calls=3, memory_db_path=None, document_roots=None, allowed_tools=None, system_prompt=None):
         if type(max_calls) is not int or not 1 <= max_calls <= 3:
             raise ValueError('max_calls must be 1..3')
         if connect is None:
             connect = web_session if memory_db_path is None else partial(
                 assistant_session, memory_db_path, document_roots if document_roots is not None else os.getenv('AVATAR_DOCUMENT_ROOTS', ''))
         self.connect, self.max_calls = connect, max_calls
+        self.allowed_tools = set(allowed_tools) if allowed_tools is not None else REGISTRY.names
+        if not self.allowed_tools <= {t['function']['name'] for t in TOOLS}:
+            raise ValueError('Unknown allowed tool')
+        self.tools = [t for t in TOOLS if t['function']['name'] in self.allowed_tools]
+        self.system_prompt = system_prompt or _SYSTEM
 
     def run(self, user_text: str, llm=None) -> dict:
         return asyncio.run(self._run(user_text, llm))
 
     async def _run(self, user_text, llm):
         trace, sources, seen, returned = [], {}, set(), []
-        messages = [{'role': 'system', 'content': _SYSTEM}, {'role': 'user', 'content': user_text}]
+        messages = [{'role': 'system', 'content': self.system_prompt}, {'role': 'user', 'content': user_text}]
         reply = ''
 
         async def invoke(session, name, args, routing):
@@ -173,6 +182,8 @@ class WebAgent:
             event = dict(tool=name, arguments=args, routing=routing, status='rejected')
             trace.append(event)
             try:
+                if name not in self.allowed_tools:
+                    raise ValueError("本通道不允许此工具。")
                 args = REGISTRY.validate(name, args)
                 key = (name, json.dumps(args, sort_keys=True, ensure_ascii=False))
                 if key in seen:
@@ -235,7 +246,7 @@ class WebAgent:
                             reply = await synthesize()
                             break
                         try:
-                            turn = await asyncio.to_thread(llm.chat_tools, messages, tools=TOOLS)
+                            turn = await asyncio.to_thread(llm.chat_tools, messages, tools=self.tools)
                             if not isinstance(turn, dict):
                                 raise ValueError('模型没有返回工具调用结构。')
                         except Exception:

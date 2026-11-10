@@ -136,6 +136,13 @@ export interface ChatResult {
   emotion: string;
   strategy: string;
   trace: {
+    model?: string | null;
+    model_profile?: string;
+    persona_version?: number | null;
+    analysis_status?: string;
+    reply_degraded?: boolean;
+    protocol_fallbacks?: string[];
+    total_ms?: number;
     recalled_memories: { id: number; content: string; status: string }[];
     knowledge_sources?: unknown[];
     decision: Record<string, unknown>;

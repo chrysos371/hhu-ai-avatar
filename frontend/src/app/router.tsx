@@ -14,6 +14,8 @@ import { KnowledgePage } from "../features/knowledge/KnowledgePage";
 import { RemindersPage } from "../features/reminders/RemindersPage";
 import { ToolsPage } from "../features/tools/ToolsPage";
 import { AuditPage } from "../features/audit/AuditPage";
+import { QQPage } from "../features/qq/QQPage";
+import { CharactersPage } from "../features/characters/CharactersPage";
 export function createRouter() {
   return createBrowserRouter([
     {
@@ -22,6 +24,7 @@ export function createRouter() {
       children: [
         { path: "/", element: <DashboardPage /> },
         { path: "/chat", element: <ChatPage /> },
+        { path: "/characters", element: <CharactersPage /> },
         { path: "/persona", element: <PersonaPage /> },
         {
           path: "/emotion",
@@ -32,6 +35,7 @@ export function createRouter() {
           ),
         },
         { path: "/memory", element: <MemoryPage /> },
+        { path: "/qq", element: <QQPage /> },
         { path: "/knowledge", element: <KnowledgePage /> },
         { path: "/reminders", element: <RemindersPage /> },
         { path: "/tools", element: <ToolsPage /> },

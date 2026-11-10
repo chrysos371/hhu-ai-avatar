@@ -159,6 +159,10 @@ class OperationService:
             )
 
     def confirm(self, draft_id, confirmation_token):
+        with self.memory._transaction_lock:
+            return self._confirm_locked(draft_id, confirmation_token)
+
+    def _confirm_locked(self, draft_id, confirmation_token):
         if (
             not isinstance(confirmation_token, str)
             or not 16 <= len(confirmation_token) <= 256

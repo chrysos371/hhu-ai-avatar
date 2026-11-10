@@ -4,11 +4,15 @@ from pathlib import Path
 
 
 def search_documents(query: str, limit: int = 5) -> dict:
+    return search_documents_in(query, limit, os.getenv('AVATAR_DOCUMENT_ROOTS', ''))
+
+
+def search_documents_in(query: str, limit: int, document_roots: str) -> dict:
     if not isinstance(query, str) or not query.strip() or len(query) > 200:
         raise ValueError('请输入1～200字的查询。')
     if type(limit) is not int or not 1 <= limit <= 10:
         raise ValueError('limit必须在1～10之间。')
-    roots = [Path(p).resolve() for p in os.getenv('AVATAR_DOCUMENT_ROOTS', '').split(os.pathsep) if p.strip()]
+    roots = [Path(p).resolve() for p in document_roots.split(os.pathsep) if p.strip()]
     if not roots:
         raise ValueError('请先配置 AVATAR_DOCUMENT_ROOTS 白名单目录。')
     rows, scanned = [], 0
@@ -16,7 +20,7 @@ def search_documents(query: str, limit: int = 5) -> dict:
         if not root.is_dir():
             continue
         for directory, dirs, files in os.walk(root, followlinks=False):
-            dirs[:] = [d for d in dirs if not d.startswith('.') and not (Path(directory)/d).is_symlink() and not (Path(directory)/d).is_junction()]
+            dirs[:] = [d for d in dirs if not d.startswith('.') and not (Path(directory)/d).is_symlink() and not getattr(Path(directory)/d, 'is_junction', lambda: False)()]
             for name in files:
                 scanned += 1
                 if scanned > 2000:

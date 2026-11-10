@@ -29,6 +29,12 @@ class V1API:
         self.ops = OperationService(self.store)
 
     def handle(self, post, path, query, data):
+        if path == '/characters' or path.startswith('/characters/'):
+            from .characters.api import handle
+            return handle(self.server, post, path, query, data)
+        if path == '/qq/contexts' or path.startswith('/qq/contexts/'):
+            from .channels.qq.admin_api import handle
+            return handle(self.server, post, path, query, data)
         get = lambda key, default=None: query.get(key, [default])[0]
 
         def integer(key, default=None):
@@ -51,6 +57,10 @@ class V1API:
                 "counts": self.store.system_counts(),
                 "legacy_writes_enabled": self.server.legacy_writes,
             }
+        if not post and path == '/turn-traces':
+            exists = self.memory._conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='conversation_turn_traces'").fetchone()
+            return 200, ([json.loads(row[0]) for row in self.memory._conn.execute(
+                'SELECT data FROM conversation_turn_traces ORDER BY created_at DESC LIMIT 40')] if exists else [])
         if not post and path == "/audit":
             return 200, self.store.list_audit(
                 limit=integer("limit", 100),
@@ -90,6 +100,7 @@ class V1API:
                 public(self.memory.inspect(i)) for i in result.get("recalled_ids", [])
             ]
             result["trace"] = {
+                **result.get("trace", {}),
                 "recalled_memories": [
                     {"id": r["id"], "content": r["content"], "status": r["status"]}
                     for r in recalled
