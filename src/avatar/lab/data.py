@@ -64,21 +64,26 @@ def normalize_dialogue(source, split, source_id, texts):
 
 
 def evaluation_texts(root=None):
-    files = sorted((root or PROJECT / "evals/companion").glob("*.json"))
+    # Discover declarative suites across directories, excluding changing review
+    # outputs unless they actually declare cases/turns. Keep legacy metadata hashes.
+    files = sorted((root or PROJECT / "evals").rglob("*.json"))
     if root is None:
         files += sorted((PROJECT / "experiments/style").glob("*suite.json"))
-    texts = []
+    texts, hashes = [], {}
     for p in files:
         value = json.loads(p.read_text())
         cases = value.get("cases", []) if isinstance(value, dict) else []
+        suite_texts = []
         if isinstance(cases, list):
-            for c in cases:
-                if isinstance(c, dict) and isinstance(c.get("turns"), list):
-                    texts.extend(c["turns"])
-    return texts, {
-        str(p.relative_to(PROJECT)) if p.is_relative_to(PROJECT) else str(p): sha(p)
-        for p in files
-    }
+            for case in cases:
+                if isinstance(case, dict) and isinstance(case.get("turns"), list):
+                    suite_texts.extend(text for text in case["turns"] if isinstance(text, str))
+        texts.extend(suite_texts)
+        if (root is not None or suite_texts or p.parent == PROJECT / "evals/companion"
+                or p.parent == PROJECT / "experiments/style"):
+            key = str(p.relative_to(PROJECT)) if p.is_relative_to(PROJECT) else str(p)
+            hashes[key] = sha(p)
+    return texts, hashes
 
 
 def screen_candidates(rows, protected, *, source_policy):

@@ -94,3 +94,5 @@ CUDA_VISIBLE_DEVICES='' /data/Users/zyyh/envs/hhu-ai-avatar-train/bin/python -m 
 ```
 
 可选 torch 测试用极小随机 Qwen3 在 CPU 更新 LoRA、保存重载，并验证 disable_adapter 异常恢复；它不加载 4B、不占用 GPU、不评价模型能力。核心环境没有 torch 时该项会跳过。
+
+2026-11-10 G2 第二轮：训练保护现在递归发现 `evals/` 下声明式 `cases/turns` 套件，新增交互评测已纳入。旧自动筛选池的保护哈希已过时，后续导出/训练前须重新筛选；不得直接修改 manifest 绕过门禁。过去的 200/50 导出保留为历史实验材料，不宣称通过新保护集合。见 `docs/进展报告/2026-11-10-G2交互循环/cycle-02/审计/issues/G2C2-008.md`。

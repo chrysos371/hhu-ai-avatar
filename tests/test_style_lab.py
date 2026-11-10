@@ -260,3 +260,15 @@ def test_automatic_export_rejects_data_tampering_and_keeps_split_disjoint(
     (pool / "candidates.jsonl").write_text("{}\n")
     with pytest.raises(ValueError, match="hash"):
         data.export_pilot(pool, tmp_path / "bad")
+
+
+def test_nested_frozen_interaction_suite_is_protected_from_training():
+    import json
+    from avatar.lab import data
+    spec = data.PROJECT / 'evals/interaction/cycle-02/real-model-cases.json'
+    text = next(case['turns'][0] for case in json.loads(spec.read_text())['cases'] if case['id'] == 'deliverable')
+    protected, hashes = data.evaluation_texts()
+    assert text in protected and str(spec.relative_to(data.PROJECT)) in hashes
+    row = normalize_dialogue('cped','train','copied-eval', [text,'老师您好，我发烧身体不适，想请明天一天假，恳请批准，谢谢老师。'])
+    accepted, rejected = data.screen_candidates([row],protected,source_policy={'cped':{'language':'zh','use':'experimental-sft'}})
+    assert not accepted and 'eval_overlap' in rejected[0]['reasons']
