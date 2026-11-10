@@ -6,6 +6,8 @@ import argparse
 import json
 import secrets
 import re
+import logging
+import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import threading
 from pathlib import Path
@@ -18,6 +20,8 @@ from .brain.reminders import ReminderStore
 from .brain.summaries import SummaryStore
 from .brain.operations import OperationError
 from .turns import TurnCoordinator
+
+logger = logging.getLogger(__name__)
 
 
 def _public(row):
@@ -272,7 +276,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send(exc.status, {"error": exc.message})
         except (ValueError, TypeError, UnicodeError) as exc:
             self._send(400, {"error": str(exc)})
-        except Exception:
+        except Exception as exc:
+            logger.error('request failed (%s):\n%s', type(exc).__name__, ''.join(traceback.format_tb(exc.__traceback__)))
             self._send(500, {"error": "操作失败，请检查数据库或模型服务。"})
         finally:
             if memory is not None:
