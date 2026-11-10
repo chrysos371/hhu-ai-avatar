@@ -1,0 +1,87 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+____ test_source_deleted_before_repair_never_sends_obsolete_draft_to_model _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-123/test_source_deleted_before_rep0')
+
+    def test_source_deleted_before_repair_never_sends_obsolete_draft_to_model(tmp_path):
+        class Streaming(Model):
+            def __init__(self):self.calls=0;self.repairs=[]
+            def stream_chat(self,messages,**kwargs):
+                self.calls+=1
+                if self.calls==1:
+                    writer.forget(fragment)
+                    return '老师，我是旧名。'
+                self.repairs.append(messages)
+                return '老师，我是【姓名】。'
+        path=str(tmp_path/'source.db');model=Streaming()
+        avatar=Avatar(db_path=path,llm=model,task_contract_enabled=True,delivery_check_enabled=True)
+        fragment=avatar.memory.remember_user('名字','旧名');writer=MemoryStore(path)
+        try:
+            with pytest.raises(Cancelled):
+                avatar.respond('给老师写一条消息，保留【姓名】。',cancel=CancellationToken())
+>           assert not model.repairs
+E           assert not [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...tent': '老师，我是旧名。'}, {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：["missing_literal:【姓名】"]。仍须遵守原任务和安全边界，不得补造未知信息。'}]]
+E            +  where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...tent': '老师，我是旧名。'}, {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：["missing_literal:【姓名】"]。仍须遵守原任务和安全边界，不得补造未知信息。'}]] = <test_task_context.test_source_deleted_before_repair_never_sends_obsolete_draft_to_model.<locals>.Streaming object at 0x7f9a3ca601c0>.repairs
+
+tests/test_task_context.py:29: AssertionError
+________ test_explicit_memory_change_clears_derived_task_source[forget] ________
+
+operation = 'forget'
+
+    @pytest.mark.parametrize('operation',['forget','correct'])
+    def test_explicit_memory_change_clears_derived_task_source(operation):
+        avatar=Avatar(db_path=':memory:',llm=Model(),task_contract_enabled=True,delivery_check_enabled=True)
+        fragment=avatar.memory.remember_user('名字','旧名')
+        try:
+            avatar.respond('给老师写一条消息，保留“旧名”。')
+            assert avatar.tasks.current is not None
+            if operation=='forget':avatar.forget_memory(fragment)
+            else:avatar.correct_memory(fragment,'名字: 新名')
+>           assert avatar.tasks.current is None
+E           AssertionError: assert TaskContract(source='给老师写一条消息，保留“旧名”。', perspective='', recipient='老师', required_literals=['旧名'], forbidden_literals=[]) is None
+E            +  where TaskContract(source='给老师写一条消息，保留“旧名”。', perspective='', recipient='老师', required_literals=['旧名'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7f9a3c8d6bf0>.current
+E            +    where <avatar.brain.tasks.TaskTracker object at 0x7f9a3c8d6bf0> = <avatar.main.Avatar object at 0x7f9a3c8d7f10>.tasks
+
+tests/test_task_context.py:43: AssertionError
+_______ test_explicit_memory_change_clears_derived_task_source[correct] ________
+
+operation = 'correct'
+
+    @pytest.mark.parametrize('operation',['forget','correct'])
+    def test_explicit_memory_change_clears_derived_task_source(operation):
+        avatar=Avatar(db_path=':memory:',llm=Model(),task_contract_enabled=True,delivery_check_enabled=True)
+        fragment=avatar.memory.remember_user('名字','旧名')
+        try:
+            avatar.respond('给老师写一条消息，保留“旧名”。')
+            assert avatar.tasks.current is not None
+            if operation=='forget':avatar.forget_memory(fragment)
+            else:avatar.correct_memory(fragment,'名字: 新名')
+>           assert avatar.tasks.current is None
+E           AssertionError: assert TaskContract(source='给老师写一条消息，保留“旧名”。', perspective='', recipient='老师', required_literals=['旧名'], forbidden_literals=[]) is None
+E            +  where TaskContract(source='给老师写一条消息，保留“旧名”。', perspective='', recipient='老师', required_literals=['旧名'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7f9a3c97a530>.current
+E            +    where <avatar.brain.tasks.TaskTracker object at 0x7f9a3c97a530> = <avatar.main.Avatar object at 0x7f9a3c97ae90>.tasks
+
+tests/test_task_context.py:43: AssertionError
+__________ test_external_revision_does_not_reuse_old_task_on_followup __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-123/test_external_revision_does_no0')
+
+    def test_external_revision_does_not_reuse_old_task_on_followup(tmp_path):
+        path=str(tmp_path/'external.db')
+        avatar=Avatar(db_path=path,llm=Model(),task_contract_enabled=True,delivery_check_enabled=True)
+        fragment=avatar.memory.remember_user('名字','旧名');writer=MemoryStore(path)
+        try:
+            avatar.respond('给老师写一条消息，保留“旧名”。')
+            writer.forget(fragment)
+            result=avatar.respond('再短一点。')
+>           assert result['task'] is None
+E           AssertionError: assert {'source': '给老师写一条消息，保留“旧名”。\n最新修改：再短一点。', 'perspective': '', 'recipient': '老师', 'required_literals': ['旧名'], ...} is None
+
+tests/test_task_context.py:55: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_task_context.py::test_source_deleted_before_repair_never_sends_obsolete_draft_to_model
+FAILED tests/test_task_context.py::test_explicit_memory_change_clears_derived_task_source[forget]
+FAILED tests/test_task_context.py::test_explicit_memory_change_clears_derived_task_source[correct]
+FAILED tests/test_task_context.py::test_external_revision_does_not_reuse_old_task_on_followup
+4 failed in 0.78s
