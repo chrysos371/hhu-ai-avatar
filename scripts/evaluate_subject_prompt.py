@@ -17,6 +17,7 @@ from evaluate_real_interaction import sha, save, checks
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--provider',type=Path,required=True)
+    parser.add_argument('--model-key',default='qwen3-4b-q4_k_m')
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     if args.output.exists():raise ValueError('Use a new output file')
@@ -24,7 +25,10 @@ def main():
     extra_path=Path('evals/interaction/cycle-02/subject-ownership-dev16.json')
     original=json.loads(original_path.read_text());extra=json.loads(extra_path.read_text())
     provider=json.loads(args.provider.read_text())
-    assert provider['model_revision']==original['revision']
+    registry=json.loads(Path('evals/interaction/cycle-02/model-scale-protocol.json').read_text())
+    selected=next(item for item in registry['models'] if item['model_id']==args.model_key)
+    assert provider['model_revision']==selected['revision'] and provider['model_sha256']==selected['sha256']
+    assert provider.get('model_id','qwen3-4b-q4_k_m')==args.model_key
     assert all(provider['configuration'][key]==original['inference'][key] for key in ['temperature','seed','max_tokens_cap','thinking'])
     config.embedding.model=''
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
@@ -32,7 +36,7 @@ def main():
         'spec_sha256':{str(p):sha(p) for p in [original_path,extra_path]},
         'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py')]},
         'protocol':extra,'rows':[]}
-    engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model='qwen3-4b-q4_k_m',timeout=180,max_retries=0)
+    engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model=args.model_key,timeout=180,max_retries=0)
     try:
         for index,case in enumerate(original['cases']+extra['cases']):
             family='original' if index<len(original['cases']) else 'additional'

@@ -23,6 +23,7 @@ def sha(path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=Path, required=True)
+    parser.add_argument('--model-key', default='qwen3-4b-q4_k_m')
     parser.add_argument('--metadata', type=Path, required=True)
     parser.add_argument('--ready', type=Path, required=True)
     parser.add_argument('--trace', type=Path, required=True)
@@ -30,14 +31,21 @@ def main():
     if args.ready.exists() or args.trace.exists():
         raise ValueError('Use new evidence paths')
     metadata = json.loads(args.metadata.read_text())
+    registry = json.loads(Path('evals/interaction/cycle-02/model-scale-protocol.json').read_text())
+    specification = next(item for item in registry['models'] if item['model_id'] == args.model_key)
+    assert metadata['path'] == specification['file']
+    assert metadata['lfs']['oid'] == specification['sha256']
+    if 'revision' in metadata:
+        assert metadata['revision'] == specification['revision']
+
     digest = sha(args.model)
-    assert digest == metadata['lfs']['oid']
+    assert digest == specification['sha256']
     snapshot = subprocess.check_output(['nvidia-smi','--query-gpu=index,uuid,memory.free,utilization.gpu',
         '--format=csv,noheader,nounits'],text=True)
     available = []
     for line in snapshot.splitlines():
         index, uid, free, utilization = (part.strip() for part in line.split(','))
-        if int(free)>=16384 and int(utilization)<=85:
+        if int(free)>=specification['required_free_mib'] and int(utilization)<=20:
             available.append((int(free),-int(utilization),uid,int(index)))
     if not available:
         raise RuntimeError('No GPU meets current headroom gate')
@@ -117,7 +125,7 @@ def main():
                             for chunk in response:
                                 text=chunk['choices'][0]['text'];parts.append(text)
                                 if first is None and text:first=time.monotonic()-started
-                                obj={'id':identifier,'object':'chat.completion.chunk','model':'qwen3-4b-q4_k_m',
+                                obj={'id':identifier,'object':'chat.completion.chunk','model':args.model_key,
                                     'choices':[{'index':0,'delta':{'content':text},'finish_reason':chunk['choices'][0]['finish_reason']}]}
                                 self.wfile.write(('data: '+json.dumps(obj,ensure_ascii=False)+'\n\n').encode());self.wfile.flush()
                             self.wfile.write(b'data: [DONE]\n\n');self.wfile.flush()
@@ -126,7 +134,7 @@ def main():
                     else:
                         text=response['choices'][0]['text'];parts=[text];usage=response.get('usage')
                         first=time.monotonic()-started
-                        self.send_json(200,{'id':identifier,'object':'chat.completion','model':'qwen3-4b-q4_k_m',
+                        self.send_json(200,{'id':identifier,'object':'chat.completion','model':args.model_key,
                             'choices':[{'index':0,'message':{'role':'assistant','content':text},
                                 'finish_reason':response['choices'][0]['finish_reason']}],'usage':usage})
                 except (BrokenPipeError,ConnectionResetError):
@@ -142,7 +150,9 @@ def main():
     server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
     server.daemon_threads=True
     args.ready.write_text(json.dumps({'url':f'http://127.0.0.1:{server.server_port}/v1',
-        'model_sha256':digest,'model_revision':'bc640142c66e1fdd12af0bd68f40445458f3869b',
+        'model_sha256':digest,'model_revision':specification['revision'],'model_id':args.model_key,
+        'registry_sha256':sha('evals/interaction/cycle-02/model-scale-protocol.json'),
+        'gguf_general_name':model.metadata.get('general.name'),
         'template_sha256':hashlib.sha256(template_text.encode()).hexdigest(),
         'gpu_snapshot_before':snapshot,'chosen_gpu':{'index':chosen[3],'uuid':chosen[2],'free_mib':chosen[0]},
         'configuration':{'n_gpu_layers':-1,'n_ctx':8192,'n_batch_prompt_tokens':256,'concurrent_sequences':1,
