@@ -1,0 +1,15 @@
+{
+  "version":1,
+  "scope":"Real pinned4B native streaming and ephemeral Web orchestration; finite speaker-source engineering checks, not general semantic approval",
+  "regression_suite":"evals/interaction/cycle-04/speaker-scope.json",
+  "arms":["native_stream","web_ephemeral"],
+  "early_stop":"Stop on first engineering violation, save partial result; conversational name checks are reported separately and never relabelled as engineering success",
+  "additional_cases":[
+    {"id":"protected_real_and_character_query","turns":["我叫陈宁。","我来扮演小说角色。","我叫林悦。","故事里我叫什么名字？"],"profile":{"名字":"陈宁"},"response_check":{"all":["林悦"],"none":["陈宁"]}},
+    {"id":"real_exit_preference","turns":["我喜欢骑车。","我来扮演故事里的角色。","我喜欢游泳。","回到现实。","现在不喜欢了。"],"profile":{"偏好":"喜欢骑车"}},
+    {"id":"past_role_control","turns":["我扮演过小说角色。","我叫陈宁。"],"profile":{"名字":"陈宁"}},
+    {"id":"example_control","turns":["比如，我来扮演小说角色。","我叫陈宁。"],"profile":{"名字":"陈宁"}}
+  ],
+  "privacy":"Only synthetic public names, local provider, no cloud embedding or tool calls",
+  "limits":["Controls and original16 are known regression; additional4 frozen before native execution","Web arm calls actual run_chat lifecycle, not application HTTP or browser","No human naturalness or general coreference approval"]
+}
