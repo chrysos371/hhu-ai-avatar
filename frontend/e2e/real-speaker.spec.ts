@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 const token = 'mission-control-disposable-e2e-token';
 type ScopeRow = { input: string; reply: string | null; scope: string; blocked: boolean;
@@ -13,9 +15,18 @@ test('real character speech stays separate from user memory and reminder authori
   const screenshot = join(folder, 'real-speaker-browser.png');
   if (existsSync(output) || existsSync(screenshot)) throw Error('Use fresh speaker evidence paths');
   mkdirSync(folder, { recursive: true });
+  const provenance = {
+    sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+    createdUtc: new Date().toISOString(),
+    provider: JSON.parse(readFileSync(process.env.AVATAR_E2E_LLM_PROVIDER ?? '', 'utf8')),
+    sourceSha256: Object.fromEntries(['../src/avatar/main.py', '../src/avatar/brain/speaker_scope.py',
+      '../src/avatar/web.py', 'e2e/real-speaker.spec.ts'].map(path => [path,
+      createHash('sha256').update(readFileSync(path)).digest('hex')])),
+  };
   const rows: ScopeRow[] = [];
   const save = (complete: boolean) => writeFileSync(output, JSON.stringify({
     scope: 'Actual pinned local model and application HTTP/SSE/browser; synthetic source ownership and action authority only',
+    ...provenance,
     rows, executionComplete: complete, semanticApproved: false,
   }, null, 2) + '\n');
   save(false);
