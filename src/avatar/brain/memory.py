@@ -93,7 +93,8 @@ CREATE TABLE IF NOT EXISTS memory_messages (
     role TEXT NOT NULL,
     content TEXT NOT NULL,
     session_id TEXT NOT NULL,
-    created_at REAL NOT NULL
+    created_at REAL NOT NULL,
+    context_tracked INTEGER NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS memory_sources (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,6 +105,13 @@ CREATE TABLE IF NOT EXISTS memory_sources (
 );
 CREATE INDEX IF NOT EXISTS idx_sources_fragment ON memory_sources(fragment_id);
 CREATE INDEX IF NOT EXISTS idx_sources_message ON memory_sources(source_message_id);
+CREATE TABLE IF NOT EXISTS memory_response_context (
+    message_id INTEGER NOT NULL,
+    source_type TEXT NOT NULL CHECK(source_type IN ('fragment','message')),
+    source_id INTEGER NOT NULL,
+    PRIMARY KEY(message_id,source_type,source_id)
+);
+CREATE INDEX IF NOT EXISTS idx_response_context_source ON memory_response_context(source_type,source_id);
 -- Corrections can merge two previously independent version chains. Keep the
 -- extra link instead of rewriting either chain's historical predecessor.
 CREATE TABLE IF NOT EXISTS memory_version_links (
@@ -192,6 +200,9 @@ class MemoryStore:
             'bad_hits': 'INTEGER NOT NULL DEFAULT 0',
         }
         with self.transaction():
+            message_columns = {row['name'] for row in self._conn.execute('PRAGMA table_info(memory_messages)')}
+            if 'context_tracked' not in message_columns:
+                self._conn.execute('ALTER TABLE memory_messages ADD COLUMN context_tracked INTEGER NOT NULL DEFAULT 0')
             columns = {row['name'] for row in self._conn.execute('PRAGMA table_info(memory_fragments)')}
             for name, declaration in additions.items():
                 if name not in columns:
@@ -323,16 +334,23 @@ class MemoryStore:
         """会话结束时清空短期窗口。"""
         self._short_term.clear()
 
-    def add_message(self, role: str, content: str, session_id: str) -> int:
+    def add_message(self, role: str, content: str, session_id: str, *, context_ids=None, source_message_ids=None) -> int:
         """Persist a conversation message independently of the context window."""
         if role not in ('user', 'assistant', 'system'):
             raise ValueError('unsupported message role')
-        cur = self._conn.execute(
-            'INSERT INTO memory_messages (role, content, session_id, created_at) VALUES (?, ?, ?, ?)',
-            (role, content, session_id, _now()),
-        )
-        self._commit()
-        return cur.lastrowid
+        tracked = role == 'assistant' and (context_ids is not None or source_message_ids is not None)
+        with self.transaction():
+            cur = self._conn.execute(
+                'INSERT INTO memory_messages (role, content, session_id, created_at,context_tracked) VALUES (?, ?, ?, ?,?)',
+                (role, content, session_id, _now(), int(tracked)),
+            )
+            message_id = cur.lastrowid
+            if tracked:
+                dependencies = [('fragment', int(i)) for i in set(context_ids or [])]
+                dependencies += [('message', int(i)) for i in set(source_message_ids or [])]
+                self._conn.executemany('INSERT INTO memory_response_context VALUES (?,?,?)',
+                    [(message_id, kind, identifier) for kind, identifier in dependencies])
+            return message_id
 
     def _add_source(self, fragment_id: int, source_message_id: Optional[int], evidence: Optional[str]) -> None:
         if source_message_id is None and evidence is None:
@@ -499,6 +517,7 @@ class MemoryStore:
                 f'SELECT DISTINCT source_message_id FROM memory_sources WHERE fragment_id IN ({marks}) '
                 'AND source_message_id IS NOT NULL', ids,
             ).fetchall()
+            self._redact_responses(ids, [row['source_message_id'] for row in messages])
             for message in messages:
                 mid = message['source_message_id']
                 self._conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?", (mid,))
@@ -511,6 +530,26 @@ class MemoryStore:
                                   ('memory_fragments', 'id')):
                 self._conn.execute(f'DELETE FROM {table} WHERE {column} IN ({marks})', ids)
             self._invalidate_context()
+
+    def _redact_responses(self, fragment_ids=(), source_message_ids=()):
+        fragment_ids, source_message_ids = list(fragment_ids), list(source_message_ids)
+        fragments = ','.join('?' for _ in fragment_ids) or 'NULL'
+        sources = ','.join('?' for _ in source_message_ids) or 'NULL'
+        response_ids = [row[0] for row in self._conn.execute(
+            f"""WITH RECURSIVE impacted(id) AS (
+                SELECT id FROM memory_messages WHERE role='assistant' AND context_tracked=0
+                UNION SELECT message_id FROM memory_response_context
+                    WHERE source_type='fragment' AND source_id IN ({fragments})
+                UNION SELECT message_id FROM memory_response_context
+                    WHERE source_type='message' AND source_id IN ({sources})
+                UNION SELECT c.message_id FROM memory_response_context c JOIN impacted i
+                    ON c.source_type='message' AND c.source_id=i.id
+            ) SELECT id FROM impacted""", fragment_ids + source_message_ids)]
+        for offset in range(0, len(response_ids), 500):
+            batch = response_ids[offset:offset+500]
+            marks = ','.join('?' for _ in batch)
+            self._conn.execute(f"UPDATE memory_messages SET content='[redacted]',context_tracked=1 WHERE id IN ({marks})", batch)
+            self._conn.execute(f'DELETE FROM memory_response_context WHERE message_id IN ({marks})', batch)
 
     def _version_ids(self, fragment_id: int) -> list[int]:
         """All connected predecessors, successors and correction merge links."""

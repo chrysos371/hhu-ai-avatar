@@ -95,6 +95,7 @@ class SummaryStore:
                                        (message_id,)).fetchall()
             for fact in linked:
                 self.memory.forget(fact['fragment_id'])
+            self.memory._redact_responses(source_message_ids=[message_id])
             self.conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?", (message_id,))
             self.conn.execute("UPDATE memory_sources SET evidence='[redacted]' WHERE source_message_id=?", (message_id,))
             self.memory._invalidate_context()

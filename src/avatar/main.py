@@ -420,6 +420,8 @@ class Avatar:
         self._cancel_token = cancel
         self.analysis_mode = 'boundary_or_tool_rules'
         self._checkpoint()
+        self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
+        turn_context_revision = self.memory.context_revision
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
         self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
@@ -476,6 +478,13 @@ class Avatar:
         decision.temperature=_clamp(decision.temperature+managed.get('temperature_bias',0),0,1.5)
         effective=override['data'] if override else {'valence':self.emotion.state.valence,'arousal':self.emotion.state.arousal}
         web_result = {'sources': [], 'tool_calls': []}
+        response_context_ids = {row['id'] for row in self._turn_facts}
+        response_context_ids.update(row[0] for row in self.memory._conn.execute(
+            "SELECT id FROM memory_fragments WHERE memory_type='user_profile' AND status='active'"))
+        response_source_ids = {row['id'] for row in self.memory._conn.execute(
+            'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
+            (self.session_id, self.memory.short_term_limit))}
+        response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
         # 4. LLM 回复（无 key 降级）
         if boundary.reply is not None:
             reply = boundary.reply
@@ -549,8 +558,13 @@ class Avatar:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         self._checkpoint()
         # 5. 短期记忆记下回复
-        self.memory.add_short_term("assistant", reply)
-        self.memory.add_message('assistant', reply, self.session_id)
+        with self.memory.transaction():
+            if self.memory.context_revision != turn_context_revision:
+                raise Cancelled('context changed before reply commit')
+            self._checkpoint()
+            self.memory.add_short_term("assistant", reply)
+            self.memory.add_message('assistant', reply, self.session_id,
+                context_ids=response_context_ids, source_message_ids=response_source_ids)
         # 6. TTS（可选）
         audio_path = None
         lip_sync_frames = None

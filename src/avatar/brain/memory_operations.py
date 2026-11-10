@@ -204,7 +204,7 @@ class MemoryBatchExecutor:
             )
             if a["action"] == "forget":
                 warnings.append(
-                    f"彻底删除记忆{a['id']}及其{len(chain)}个相关版本，不可撤销；共享原话会脱敏。"
+                    f"彻底删除记忆{a['id']}及其{len(chain)}个相关版本，不可撤销；共享原话与相关助手回复会脱敏；旧记录无法追踪来源的助手内容将保守清理。"
                 )
         return self.snapshot(p), diff, warnings
 
