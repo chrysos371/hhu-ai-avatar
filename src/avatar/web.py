@@ -17,6 +17,7 @@ from .brain.memory import MemoryStore
 from .brain.reminders import ReminderStore
 from .brain.summaries import SummaryStore
 from .brain.operations import OperationError
+from .turns import TurnCoordinator
 
 
 def _public(row):
@@ -101,6 +102,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(403, {"error": "请使用启动终端提供的完整链接打开页面。"})
         memory = None
         try:
+            if not post and re.fullmatch(r'/api/v1/turns/[A-Za-z0-9_-]{20,100}/events', parsed.path):
+                return self._turn_events(parsed)
             if not post and parsed.path.startswith("/api/v1/speech/audio/"):
                 audio, content_type = self.server.speech.read(parsed.path.rsplit("/", 1)[-1])
                 return self._send(200, audio, content_type=content_type)
@@ -282,24 +285,51 @@ class Handler(BaseHTTPRequestHandler):
         self._request(post=True)
 
     def _chat(self, user_text, use_web=False):
-        from .main import Avatar
+        return run_chat(self.server, user_text, use_web)
 
-        with self.server.state_lock:
-            avatar = Avatar(db_path=self.server.db_path, session_id=self.server.session_id)
-            memory = avatar.memory
-            try:
-                avatar.emotion = self.server.emotion
-                avatar.boundaries = self.server.boundaries
-                if self.server.context_revision != memory.context_revision:
-                    self.server.short_term = []
-                for message in self.server.short_term:
-                    memory.add_short_term(message["role"], message["content"])
-                result = avatar.respond(user_text, use_web=use_web)
-                self.server.short_term = memory.get_short_term()
-                self.server.context_revision = memory.context_revision
-                return result
-            finally:
-                memory.close()
+    def _turn_events(self, parsed):
+        job = self.server.turns.get(parsed.path.split('/')[-2])
+        query = parse_qs(parsed.query)
+        try:
+            cursor = int(query.get('after', ['-1'])[0])
+            if cursor < -1:
+                raise ValueError()
+        except ValueError:
+            raise OperationError(422, 'invalid_cursor', '事件游标无效。') from None
+        with job.changed:
+            if job.subscribers >= 2:
+                raise OperationError(429, 'too_many_subscribers', '本轮已有事件连接。')
+            job.subscribers += 1
+        try:
+            self.connection.settimeout(20)
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
+            self.send_header('Cache-Control', 'no-store')
+            self.send_header('X-Content-Type-Options', 'nosniff')
+            self.end_headers()
+            while True:
+                with job.changed:
+                    pending = job.events[cursor+1:]
+                    terminal = job.status in ('completed', 'cancelled', 'failed')
+                    if not pending and not terminal:
+                        job.changed.wait(10)
+                        pending = job.events[cursor+1:]
+                        terminal = job.status in ('completed', 'cancelled', 'failed')
+                for event in pending:
+                    self.wfile.write(('id: '+str(event['id'])+'\nevent: '+event['event']+'\ndata: '
+                        +json.dumps(event['data'], ensure_ascii=False, allow_nan=False)+'\n\n').encode())
+                    self.wfile.flush()
+                    cursor = event['id']
+                if terminal:
+                    break
+                if not pending:
+                    self.wfile.write(b': heartbeat\n\n')
+                    self.wfile.flush()
+        except (ConnectionError, TimeoutError):
+            job.token.cancel()
+        finally:
+            with job.changed:
+                job.subscribers -= 1
 
     def _knowledge_upload(self, parsed):
         from .brain.knowledge import KnowledgeService, MAX_BYTES
@@ -421,6 +451,48 @@ class Handler(BaseHTTPRequestHandler):
         return self._send(200, content, html=True)
 
 
+def run_chat(server, user_text, use_web=False, *, job=None):
+    from .main import Avatar
+    token = job.token if job else None
+    while not server.state_lock.acquire(timeout=0.05):
+        if token:
+            token.checkpoint()
+    avatar = None
+    try:
+        if token:
+            token.checkpoint()
+        avatar = Avatar(db_path=server.db_path, session_id=server.session_id)
+        memory = avatar.memory
+        avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
+        if server.context_revision != memory.context_revision:
+            server.short_term = []
+        for message in server.short_term:
+            memory.add_short_term(message['role'], message['content'])
+        result = avatar.respond(user_text, use_web=use_web, **(
+            {'cancel': token, 'on_delta': lambda text: job.emit('text', {'text': text})} if job else {}))
+        if job:
+            from .web_api import enrich_chat_result
+            result = enrich_chat_result(server, memory, result)
+        return result
+    finally:
+        if avatar:
+            server.short_term = avatar.memory.get_short_term()
+            server.context_revision = avatar.memory.context_revision
+            avatar.memory.close()
+            if hasattr(avatar.llm, 'close'):
+                avatar.llm.close()
+        server.state_lock.release()
+
+
+class AvatarHTTPServer(ThreadingHTTPServer):
+    daemon_threads = True
+
+    def server_close(self):
+        if hasattr(self, 'turns'):
+            self.turns.close()
+        super().server_close()
+
+
 def create_server(
     db_path: str,
     *,
@@ -431,7 +503,7 @@ def create_server(
     speech_engine=None,
     asr_engine=None,
 ) -> ThreadingHTTPServer:
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = AvatarHTTPServer(("127.0.0.1", port), Handler)
     server.daemon_threads = True
     server.state_lock = threading.RLock()
     from .speech import SpeechService
@@ -452,6 +524,7 @@ def create_server(
     server.context_revision = None
     server.emotion = EmotionEngine()
     server.boundaries = BoundaryPolicy()
+    server.turns = TurnCoordinator(db_path, lambda job: run_chat(server, job.text, job.use_web, job=job))
     return server
 
 

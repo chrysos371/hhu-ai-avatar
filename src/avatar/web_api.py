@@ -19,6 +19,57 @@ def public(row):
     return {k: v for k, v in row.items() if k != "content_vector"} if row else None
 
 
+def enrich_chat_result(server, memory, result):
+    recalled = [
+        public(memory.inspect(i)) for i in result.get("recalled_ids", [])
+    ]
+    result["trace"] = {
+        "recalled_memories": [
+            {"id": r["id"], "content": r["content"], "status": r["status"]}
+            for r in recalled
+            if r
+        ],
+        "knowledge_sources": result.get("knowledge_sources", []),
+        "knowledge_retrieval_degraded": result.get(
+            "knowledge_retrieval_degraded", False
+        ),
+        "decision": {
+            k: result.get(k)
+            for k in (
+                "strategy",
+                "style",
+                "user_emotion",
+                "emotion",
+                "user_valence",
+                "user_arousal",
+                "valence",
+                "arousal",
+            )
+        },
+        "guard": result.get("boundary"),
+        "verifier": {
+            "available": False,
+            "reason": "未配置通用语义验证器",
+            "delivery_check": result.get("delivery_check"),
+        },
+        "tool_calls": [
+            {"tool": c.get("tool"), "status": c.get("status")}
+            for c in result.get("tool_calls", [])
+        ],
+    }
+    server.chat_events.append(
+        {
+            "timestamp": time.time(),
+            "strategy": result.get("strategy"),
+            "route": result.get("boundary", {}).get("route"),
+            "valence": result.get("valence"),
+            "arousal": result.get("arousal"),
+        }
+    )
+    server.chat_events[:] = server.chat_events[-100:]
+    return result
+
+
 class V1API:
     def __init__(self, server, memory, chat):
         self.server = server
@@ -35,6 +86,14 @@ class V1API:
             return 201, self.server.speech.synthesize(data)
         if not post and path == "/speech/capabilities":
             return 200, self.server.transcription.capabilities()
+        if post and path == '/turns':
+            return 202, self.server.turns.submit(data).public()
+        if (match := re.fullmatch(r'/turns/([A-Za-z0-9_-]{20,100})(/cancel)?', path)):
+            if post and match[2] == '/cancel' and data == {}:
+                return 200, self.server.turns.cancel(match[1])
+            if not post and not match[2]:
+                return 200, self.server.turns.get(match[1]).public()
+            raise OperationError(422, 'invalid_turn_operation')
 
         def integer(key, default=None):
             try:
@@ -91,54 +150,7 @@ class V1API:
             ):
                 raise OperationError(422, "invalid_chat")
             result = self.chat(text, use_web)
-            recalled = [
-                public(self.memory.inspect(i)) for i in result.get("recalled_ids", [])
-            ]
-            result["trace"] = {
-                "recalled_memories": [
-                    {"id": r["id"], "content": r["content"], "status": r["status"]}
-                    for r in recalled
-                    if r
-                ],
-                "knowledge_sources": result.get("knowledge_sources", []),
-                "knowledge_retrieval_degraded": result.get(
-                    "knowledge_retrieval_degraded", False
-                ),
-                "decision": {
-                    k: result.get(k)
-                    for k in (
-                        "strategy",
-                        "style",
-                        "user_emotion",
-                        "emotion",
-                        "user_valence",
-                        "user_arousal",
-                        "valence",
-                        "arousal",
-                    )
-                },
-                "guard": result.get("boundary"),
-                "verifier": {
-                    "available": False,
-                    "reason": "未配置通用语义验证器",
-                    "delivery_check": result.get("delivery_check"),
-                },
-                "tool_calls": [
-                    {"tool": c.get("tool"), "status": c.get("status")}
-                    for c in result.get("tool_calls", [])
-                ],
-            }
-            self.server.chat_events.append(
-                {
-                    "timestamp": time.time(),
-                    "strategy": result.get("strategy"),
-                    "route": result.get("boundary", {}).get("route"),
-                    "valence": result.get("valence"),
-                    "arousal": result.get("arousal"),
-                }
-            )
-            self.server.chat_events[:] = self.server.chat_events[-100:]
-            return 200, result
+            return 200, enrich_chat_result(self.server, self.memory, result)
         if not post and path == "/persona":
             return 200, PersonaService(self.store).current()
         if not post and path == "/persona/history":
