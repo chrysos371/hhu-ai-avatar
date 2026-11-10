@@ -11,7 +11,7 @@ _HYPOTHETICAL = re.compile(r"假如|假设|如果|要是|倘若|假装|比如|�
 _QUOTED = re.compile(r"[\"'“”‘’「」『』]|(?:他说|她说|朋友说|我说)[：:]")
 _PAST = re.compile(r"以前|曾经|过去|原来|之前")
 _NAME = re.compile(r"(?:我叫|我的名字是|我的姓名是|以后叫我|请叫我|叫我)([^\s，,。！？!?；;：:]{1,10})")
-_PREFERENCE = re.compile(r"(?:现在|目前|已经)?我(?:现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})")
+_PREFERENCE = re.compile(r"(?:但是|不过|但|而)?(?:现在|目前|已经)?我(?:现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})")
 _NAME_TYPES = {"名字", "姓名", "称呼"}
 _PREFERENCE_TYPES = {"偏好", "爱好", "喜欢"}
 _SELF_ASSERTION = re.compile(r"^我(?:是|在|住在|养了|考试|毕业|参加|获得|通过|失去|找到|换了)")
@@ -106,7 +106,7 @@ def _temporal_preferences(text: str, context=None) -> list[dict]:
             if match:
                 reference = match.group(2)
     results = []
-    old_pattern = re.compile(r'(?:现在|目前|已经)?我(?:以前|曾经|过去|原来|之前|现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})')
+    old_pattern = re.compile(r'(?:但是|不过|但|而)?(?:现在|目前|已经)?我(?:以前|曾经|过去|原来|之前|现在|目前|已经)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})')
     ellipsis = re.compile(r'(?:但是|不过|但|而)?(?:我)?(?:现在已经|现在|目前|已经|又)?(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)了?')
     repeated_object = re.compile(r'(?:但是|不过|但|而)?(?:现在已经|现在|目前|已经|又)(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)([^\s，,。！？!?；;：:]{1,30})')
     for sentence in _safe_sentences(text):
@@ -120,7 +120,7 @@ def _temporal_preferences(text: str, context=None) -> list[dict]:
             clause = clause.strip()
             if not clause:
                 continue
-            coordinated = re.fullmatch(r'(?:也|还)(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)(.+)', clause)
+            coordinated = re.fullmatch(r'(?:也|还|更)(不再喜欢|不喜欢|不爱|讨厌|喜欢|爱)(.+)', clause)
             if coordinated and self_chain:
                 fact = _explicit_fact('我' + ''.join(coordinated.groups()))
                 if fact:
