@@ -11,6 +11,8 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:18765",
     headless: true,
+    channel: "chromium",
+    launchOptions: { args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] },
     trace: "retain-on-failure",
   },
   webServer: {
