@@ -480,13 +480,20 @@ def run_chat(server, user_text, use_web=False, *, job=None):
             token.checkpoint()
         avatar = Avatar(db_path=server.db_path, session_id=server.session_id, fast_analysis=job is not None,
                         subject_prompt_enabled=server.identity_grounding,
-                        profile_grounding_enabled=server.profile_grounding)
+                        profile_grounding_enabled=server.profile_grounding,
+                        task_contract_enabled=server.task_delivery_check,
+                        delivery_check_enabled=server.task_delivery_check,
+                        literal_composition_enabled=server.literal_composition)
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         if server.context_revision != memory.context_revision:
             server.short_term = []
         for message in server.short_term:
             memory.add_short_term(message['role'], message['content'])
+            # Reconstruct only from the current, privacy-valid short-term window.
+            # This is pure parsing: never replay tools, reminders or model calls.
+            if server.task_delivery_check and message['role'] == 'user':
+                avatar.tasks.update(message['content'])
         result = avatar.respond(user_text, use_web=use_web, **(
             {'cancel': token, 'on_delta': lambda text: job.emit('text', {'text': text})} if job else {}))
         if job:
@@ -559,7 +566,11 @@ def create_server(
     header_timeout=10,
     identity_grounding=False,
     profile_grounding=False,
+    task_delivery_check=False,
+    literal_composition=False,
 ) -> ThreadingHTTPServer:
+    if literal_composition and not task_delivery_check:
+        raise ValueError('Literal composition requires task delivery checks')
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,
                                max_connections=max_connections, header_timeout=header_timeout)
     server.daemon_threads = True
@@ -571,6 +582,8 @@ def create_server(
     server.db_path = db_path
     server.identity_grounding = identity_grounding
     server.profile_grounding = profile_grounding
+    server.task_delivery_check = task_delivery_check
+    server.literal_composition = literal_composition
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []
@@ -603,7 +616,13 @@ def main():
                         help='实验性已确认资料查询与偏好归属纠正；启用后模型文本整段检查再发送，默认关闭')
     parser.add_argument('--identity-grounding', action='store_true',
                         help='启用已验证画像的身份约束提示；需先在目标模型完成评测')
+    parser.add_argument('--task-delivery-check', action='store_true',
+                        help='实验性写作原文约束与一次交付修正，默认关闭；从当前短期窗口恢复任务')
+    parser.add_argument('--literal-composition', action='store_true',
+                        help='实验性固定原文槽位修正，需同时开启--task-delivery-check及模型JSON schema支持')
     args = parser.parse_args()
+    if args.literal_composition and not args.task_delivery_check:
+        parser.error('--literal-composition 需要 --task-delivery-check')
     if not 0 <= args.port <= 65535:
         parser.error("--port 必须在 0–65535 之间，0 表示自动分配空闲端口")
     from .brain.embeddings import OllamaEmbeddingProvider
@@ -630,7 +649,9 @@ def main():
         server = create_server(args.db, port=args.port, legacy_writes=False,
                                knowledge_embedder=embedder, asr_engine=asr,
                                identity_grounding=args.identity_grounding,
-                               profile_grounding=args.profile_grounding)
+                               profile_grounding=args.profile_grounding,
+                               task_delivery_check=args.task_delivery_check,
+                               literal_composition=args.literal_composition)
     except OSError as exc:
         parser.exit(2, f"无法监听 127.0.0.1:{args.port}（{exc.strerror}）；请用 --port 指定空闲端口。\n")
     print(
