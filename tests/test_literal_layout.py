@@ -62,3 +62,19 @@ def test_literal_composition_requires_explicit_contract_and_check_optins(tmp_pat
     path=tmp_path/'must-not-create.db'
     with pytest.raises(ValueError):Avatar(db_path=str(path),literal_composition_enabled=True)
     assert not path.exists()
+
+
+def test_active_writing_contract_keeps_first_person_in_user_draft():
+    class Model:
+        available=True
+        def chat_analysis(self,*args,**kwargs):return '{}'
+        def chat(self,*args,**kwargs):return '我喜欢网球。'
+    avatar=Avatar(db_path=':memory:',llm=Model(),task_contract_enabled=True,
+                  delivery_check_enabled=True,profile_grounding_enabled=True)
+    avatar.memory.remember_user('偏好','喜欢网球')
+    try:
+        result=avatar.respond('起草一段文字，保留“我喜欢网球”。')
+        assert result['reply']=='我喜欢网球。'
+        assert not result['delivery_check']['remaining_issues']
+        assert result['profile_grounding']['action'] is None
+    finally:avatar.memory.close()

@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_active_writing_contract_keeps_first_person_in_user_draft _________
+
+    def test_active_writing_contract_keeps_first_person_in_user_draft():
+        class Model:
+            available=True
+            def chat_analysis(self,*args,**kwargs):return '{}'
+            def chat(self,*args,**kwargs):return '我喜欢网球。'
+        avatar=Avatar(db_path=':memory:',llm=Model(),task_contract_enabled=True,
+                      delivery_check_enabled=True,profile_grounding_enabled=True)
+        avatar.memory.remember_user('偏好','喜欢网球')
+        try:
+            result=avatar.respond('起草一段文字，保留“我喜欢网球”。')
+>           assert result['reply']=='我喜欢网球。'
+E           AssertionError: assert '目前关于你的偏好记录是：喜欢网球。' == '我喜欢网球。'
+E             
+E             - 我喜欢网球。
+E             + 目前关于你的偏好记录是：喜欢网球。
+
+tests/test_literal_layout.py:77: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_literal_layout.py::test_active_writing_contract_keeps_first_person_in_user_draft
+1 failed in 0.72s
