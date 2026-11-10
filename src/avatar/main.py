@@ -635,7 +635,8 @@ class Avatar:
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
             reply, output_adjustment = output_checker(reply)
-        if self.profile_grounding_enabled and generation_mode == 'llm':
+        writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
+        if self.profile_grounding_enabled and generation_mode == 'llm' and not writing_contract_active:
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
         # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
