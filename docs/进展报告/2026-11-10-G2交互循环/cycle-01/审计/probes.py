@@ -64,6 +64,9 @@ def main():
             replay_code,replay=request(f'/api/v1/turns/{job}/events')
             result['forgotten_data_cache']={'status_after_forget':code,'cached_result_contains_erased_name':'审计专用甲'.encode() in body,
                 'event_replay_status':replay_code,'event_replay_contains_erased_name':'审计专用甲'.encode() in replay}
+            check=MemoryStore(path)
+            result['forgotten_data_cache']['persisted_assistant_contains_erased_name']=any('审计专用甲' in row[0] for row in check._conn.execute("SELECT content FROM memory_messages WHERE role='assistant'"))
+            check.close()
             coordinator=TurnCoordinator(str(Path(folder)/'ttl.db'),lambda job:{'reply':'done'},ttl=1)
             old=coordinator.submit({'request_id':'audit_expiry_request_123456','text':'expiry'})
             with old.changed: old.changed.wait_for(lambda:old.status=='completed',timeout=3)

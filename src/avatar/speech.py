@@ -34,6 +34,13 @@ class SpeechService:
         self._active_lock = threading.Lock()
         self._active = {}
         self._cancelled = OrderedDict()
+        self._epoch = 0
+
+    def clear(self):
+        with self._lock:
+            self._epoch += 1
+            self._audio.clear()
+        self.close()
 
     def cancel(self, request_id):
         if not isinstance(request_id, str) or not re.fullmatch(r'[A-Za-z0-9_-]{20,100}', request_id):
@@ -80,6 +87,8 @@ class SpeechService:
             raise OperationError(429, "speech_busy", "正在生成其他语音，请稍后重试。")
         token = CancellationToken()
         try:
+            with self._lock:
+                epoch = self._epoch
             with self._active_lock:
                 if request_id in self._cancelled:
                     token.cancel()
@@ -117,6 +126,8 @@ class SpeechService:
             key, expires = secrets.token_urlsafe(24), self.clock() + self.ttl
             token.checkpoint()
             with self._lock:
+                if epoch != self._epoch:
+                    raise Cancelled('speech context erased')
                 self._prune()
                 while self._audio and (len(self._audio) >= self.max_items
                         or sum(len(item[1]) for item in self._audio.values()) + len(audio) > self.MAX_CACHE_BYTES):

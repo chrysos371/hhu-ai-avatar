@@ -106,6 +106,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(403, {"error": "请使用启动终端提供的完整链接打开页面。"})
         memory = None
         try:
+            self.server.turns.refresh_privacy()
             if not post and re.fullmatch(r'/api/v1/turns/[A-Za-z0-9_-]{20,100}/events', parsed.path):
                 return self._turn_events(parsed)
             if not post and parsed.path.startswith("/api/v1/speech/audio/"):
@@ -163,6 +164,7 @@ class Handler(BaseHTTPRequestHandler):
                         parse_qs(parsed.query),
                         data,
                     )
+                    self.server.turns.refresh_privacy()
                     return self._send(
                         code,
                         {"data": result, "error": None, "request_id": self.request_id},
@@ -271,6 +273,7 @@ class Handler(BaseHTTPRequestHandler):
                 result = {"reminders": reminders.claim_due()}
             else:
                 return self._send(404, {"error": "not found"})
+            self.server.turns.refresh_privacy()
             self._send(200, result)
         except OperationError as exc:
             self._send(exc.status, {"error": exc.message})
@@ -533,7 +536,8 @@ def create_server(
     server.context_revision = None
     server.emotion = EmotionEngine()
     server.boundaries = BoundaryPolicy()
-    server.turns = TurnCoordinator(db_path, lambda job: run_chat(server, job.text, job.use_web, job=job))
+    server.turns = TurnCoordinator(db_path, lambda job: run_chat(server, job.text, job.use_web, job=job),
+                                   on_invalidate=server.speech.clear)
     return server
 
 

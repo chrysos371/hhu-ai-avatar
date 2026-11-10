@@ -313,6 +313,9 @@ class MemoryStore:
         self._conn.execute('DELETE FROM memory_summary_items')
         if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='operation_drafts' AND type='table'").fetchone():
             self._conn.execute("UPDATE operation_drafts SET parameters_json='{}',baseline_json='{}',diff_json='[]',warnings_json='[]',token_hash='' WHERE operation_type='memory.batch'")
+        if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='runtime_turn_ledger' AND type='table'").fetchone():
+            # Preserve request IDs against replay, remove fingerprints derived from erased text.
+            self._conn.execute("UPDATE runtime_turn_ledger SET fingerprint=''")
         self.clear_short_term()
         self._seen_context_revision = self.context_revision
 

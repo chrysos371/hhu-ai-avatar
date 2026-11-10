@@ -9,6 +9,7 @@ import re
 import sqlite3
 import threading
 import time
+from pathlib import Path
 
 from .brain.operations import OperationError
 from .cancellation import CancellationToken, Cancelled
@@ -43,7 +44,7 @@ class Turn:
 
 
 class TurnCoordinator:
-    def __init__(self, db_path, runner, *, ttl=900, max_jobs=32):
+    def __init__(self, db_path, runner, *, ttl=900, max_jobs=32, on_invalidate=None):
         self.db_path, self.runner = db_path, runner
         self.ttl, self.max_jobs = ttl, max_jobs
         self._lock = threading.Lock()
@@ -51,6 +52,31 @@ class TurnCoordinator:
         self._active = None
         self._thread = None
         self._closed = False
+        self._revision = None
+        self._on_invalidate = on_invalidate
+
+    def refresh_privacy(self):
+        if self.db_path == ':memory:' or not Path(self.db_path).exists():
+            return
+        with sqlite3.connect(self.db_path, timeout=5) as conn:
+            if not conn.execute("SELECT 1 FROM sqlite_master WHERE name='memory_context_revision'").fetchone():
+                return
+            revision = conn.execute('SELECT revision FROM memory_context_revision WHERE id=1').fetchone()[0]
+        with self._lock:
+            if self._revision is None:
+                self._revision = revision
+                return
+            if revision <= self._revision:
+                return
+            self._revision = revision
+            jobs = tuple(self._jobs.values())
+            self._jobs.clear()
+            for job in jobs:
+                self._redact(job, 'redacted')
+        for job in jobs:
+            job.token.cancel()
+        if self._on_invalidate:
+            self._on_invalidate()
 
     @staticmethod
     def validate(data):
@@ -72,6 +98,8 @@ class TurnCoordinator:
                 return
             row = conn.execute('SELECT fingerprint FROM runtime_turn_ledger WHERE request_id=?', (request_id,)).fetchone()
             if row:
+                if row[0] == '':
+                    raise OperationError(410, 'turn_expired', '此请求已处理并清理，不会重复执行。')
                 if row[0] != fingerprint:
                     raise OperationError(409, 'request_id_conflict', '请求编号已用于另一条消息。')
                 raise OperationError(410, 'turn_expired', '此请求已接收，运行记录已过期或进程已重启；不会重复执行。')
@@ -80,6 +108,7 @@ class TurnCoordinator:
 
     def submit(self, data):
         request_id, text, use_web = self.validate(data)
+        self.refresh_privacy()
         fingerprint = hashlib.sha256(json.dumps([text, use_web], ensure_ascii=False).encode()).hexdigest()
         with self._lock:
             if self._closed:
@@ -133,6 +162,7 @@ class TurnCoordinator:
                 job.emit(kind, data)
 
     def get(self, job_id):
+        self.refresh_privacy()
         with self._lock:
             self._prune_locked()
             job = self._jobs.get(job_id)
