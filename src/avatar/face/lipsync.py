@@ -119,9 +119,11 @@ class LipSyncEngine:
 
         times = np.arange(n) * self.hop_ms / 1000.0
         # 能量（RMS）与静音判定
-        energy = np.sqrt(np.mean(frames**2, axis=1) + 1e-12)
+        energy = np.sqrt(np.mean(frames**2, axis=1))
         peak = energy.max() if energy.size else 0.0
-        energy_norm = energy / (peak + 1e-12)
+        if not np.isfinite(peak) or peak <= 1e-8:
+            return [LipSyncFrame(float(t), 0.0, "", 0.0) for t in times]
+        energy_norm = energy / peak
         silence = energy < peak * self.silence_ratio
 
         order = min(2 + sr // 1000, 24)

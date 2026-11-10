@@ -28,3 +28,10 @@ def test_analyze_sine_returns_valid_frames():
     assert len(frames) > 0
     for f in frames:
         assert 0.0 <= f.mouth_open <= 1.0
+
+def test_silent_audio_returns_finite_closed_frames():
+    for sig in (np.zeros(12000, dtype=np.float32),
+                np.full(12000, 1e-9, dtype=np.float32)):
+        frames = LipSyncEngine().analyze(sig, 24000)
+        assert frames
+        assert all(f.mouth_open == 0 and f.vowel == '' and f.energy == 0 for f in frames)
