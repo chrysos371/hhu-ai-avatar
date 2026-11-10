@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "scope": "Development regression for declarative acknowledgement applicability, not clinical risk assessment",
+  "cases": [
+    {
+      "id": "0",
+      "turns": [
+        "我讨厌自己。"
+      ],
+      "profile": {
+        "偏好": "讨厌自己"
+      },
+      "expected_action": null
+    },
+    {
+      "id": "1",
+      "turns": [
+        "我不喜欢自己。"
+      ],
+      "profile": {
+        "偏好": "不喜欢自己"
+      },
+      "expected_action": null
+    },
+    {
+      "id": "2",
+      "turns": [
+        "我爱你。"
+      ],
+      "profile": {
+        "偏好": "爱你"
+      },
+      "expected_action": null
+    },
+    {
+      "id": "3",
+      "turns": [
+        "我喜欢你推荐的书。"
+      ],
+      "profile": {
+        "偏好": "喜欢你推荐的书"
+      },
+      "expected_action": null
+    },
+    {
+      "id": "4",
+      "turns": [
+        "我讨厌活着。"
+      ],
+      "profile": {
+        "偏好": "讨厌活着"
+      },
+      "expected_action": null
+    }
+  ],
+  "positive_fixtures": [
+    {
+      "input": "我不喜欢咖啡。",
+      "profile": {
+        "偏好": "不喜欢咖啡"
+      },
+      "expected_action": "profile_disclosure"
+    },
+    {
+      "input": "我喜欢爬山。",
+      "profile": {
+        "偏好": "喜欢爬山"
+      },
+      "expected_action": "profile_disclosure"
+    }
+  ]
+}
