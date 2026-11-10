@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Protocol
 
 import edge_tts
+from ..cancellation import CancellationToken
 
 
 class TTSEngine(Protocol):
@@ -26,12 +27,15 @@ class EdgeTTSEngine:
     def synthesize(
         self, text: str, out_path: str, rate: str = "+0%", pitch: str = "+0Hz"
     ) -> str:
-        """合成语音到 out_path（mp3），返回路径。"""
+        return self.synthesize_cancellable(text, out_path, rate, pitch)
+
+    def synthesize_cancellable(self, text, out_path, rate="+0%", pitch="+0Hz", *, cancel=None):
+        """合成到 MP3；取消时关闭本机异步网络任务。"""
 
         async def _run() -> None:
             communicate = edge_tts.Communicate(text, self.voice, rate=rate, pitch=pitch)
             await asyncio.wait_for(communicate.save(out_path), timeout=self.timeout)
 
         Path(out_path).parent.mkdir(parents=True, exist_ok=True)
-        asyncio.run(_run())
+        (cancel or CancellationToken()).run_async(_run)
         return out_path

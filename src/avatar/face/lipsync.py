@@ -107,7 +107,7 @@ class LipSyncEngine:
         self.smooth = smooth
         self.close_every = close_every
 
-    def analyze(self, samples: np.ndarray, sr: int) -> list[LipSyncFrame]:
+    def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
         """分析音频，返回逐帧口型参数序列。"""
         if len(samples) == 0:
             return []
@@ -131,6 +131,8 @@ class LipSyncEngine:
         vowels: list[str] = [""] * n
 
         for i in range(n):
+            if cancel:
+                cancel.checkpoint()
             if silence[i]:
                 mouth[i] = 0.0
                 continue
