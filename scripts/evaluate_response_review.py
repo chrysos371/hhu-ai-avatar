@@ -63,8 +63,16 @@ def main():
         'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/brain/response_review.py'),Path('src/avatar/brain/llm.py')]},
         'rows':[],'production_activation_approved':False,'human_reviewed':False,'semantic_approved':False}
     try:
+        save(args.output,report)
         started=time.perf_counter()
-        report['warmup']={'judgment':reviewer.review('你好。','你好。',{}),'seconds':time.perf_counter()-started}
+        warmup={'valid':False}
+        try:
+            warmup.update(judgment=reviewer.review('你好。','你好。',{}),valid=True)
+        except Exception as exc:
+            warmup['error']={'type':type(exc).__name__,'message':str(exc)[:200]}
+        warmup.update(raw_judgment=recorder.last_raw,seconds=time.perf_counter()-started)
+        report['warmup']=warmup
+        save(args.output,report)
         for case in spec['cases']:
             row={key:case[key] for key in ['id','split','expected_verdict','expected_category']}
             row.update(valid=False,matched=False,error=None)
