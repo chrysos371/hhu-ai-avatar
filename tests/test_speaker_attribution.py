@@ -47,3 +47,73 @@ def test_web_keeps_speaker_scope_across_ephemeral_instances(tmp_path,monkeypatch
         try:assert reader.get_user_profile()=={'名字':'陈宁'}
         finally:reader.close()
     finally:server.server_close()
+
+@pytest.mark.parametrize('declaration',[
+    '我扮演过小说角色。',
+    '我扮演小说角色时会很紧张。',
+    '比如，我来扮演小说角色。',
+    '也许我来扮演小说角色。',
+    '我想知道，我来扮演小说角色是否合适。',
+    '如果讨论剧情。假如我来扮演小说角色。',
+])
+def test_past_general_or_hypothetical_role_discussion_is_not_a_declaration(declaration):
+    bot=Avatar(db_path=':memory:',llm=Offline())
+    try:
+        bot.respond(declaration)
+        bot.respond('我叫陈宁。')
+        assert bot.memory.get_user_profile().get('名字')=='陈宁'
+    finally:bot.memory.close()
+
+
+def test_model_proposed_role_facts_are_rejected_even_with_literal_evidence():
+    class Proposing:
+        available=True
+        def chat_analysis(self,messages,**kwargs):
+            text=messages[-1]['content']
+            facts=[]
+            if '我叫林悦' in text:
+                facts=[dict(type='名字',content='林悦',evidence='我叫林悦',subject='self',modality='asserted',temporal='current')]
+            return json.dumps({'emotion':{'valence':0.1,'arousal':0.2},'facts':facts})
+        def chat(self,*args,**kwargs):return '好的，继续故事。'
+    bot=Avatar(db_path=':memory:',llm=Proposing())
+    try:
+        bot.respond('我来扮演小说角色。')
+        result=bot.respond('我叫林悦。')
+        assert result['analysis_mode']=='llm'
+        assert bot.memory.get_user_profile()=={}
+        assert result['speaker_attribution']['persistent_facts_allowed'] is False
+    finally:bot.memory.close()
+
+
+def test_external_source_erasure_clears_derived_speaker_context(tmp_path):
+    path=str(tmp_path/'erase.db');bot=Avatar(db_path=path,llm=Offline())
+    writer=MemoryStore(path)
+    try:
+        bot.respond('我喜欢骑车。')
+        fragment=bot.list_memories()[0]['id']
+        bot.respond('我来扮演小说角色。')
+        bot.respond('我喜欢游泳。')
+        writer.forget(fragment)
+        bot.respond('现在不喜欢了。')
+        assert bot.memory.get_user_profile()=={}
+        result=bot.respond('我叫陈宁。')
+        assert result['speaker_attribution']['scope']=='current_user'
+        assert bot.memory.get_user_profile()=={'名字':'陈宁'}
+    finally:writer.close();bot.memory.close()
+
+
+def test_fictional_query_does_not_take_real_profile_shortcut():
+    class Echo:
+        available=True
+        def chat_analysis(self,*args,**kwargs):return '{"emotion":{},"facts":[]}'
+        def chat(self,*args,**kwargs):return '故事里你叫林悦。'
+    bot=Avatar(db_path=':memory:',llm=Echo(),profile_grounding_enabled=True,subject_prompt_enabled=True)
+    try:
+        bot.respond('我叫陈宁。')
+        bot.respond('我来扮演小说角色。')
+        bot.respond('我叫林悦。')
+        result=bot.respond('我叫什么名字？')
+        assert result['generation_mode']=='llm'
+        assert result['profile_grounding']['action'] is None
+        assert bot.memory.get_user_profile()=={'名字':'陈宁'}
+    finally:bot.memory.close()

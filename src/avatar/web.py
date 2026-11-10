@@ -486,6 +486,7 @@ def run_chat(server, user_text, use_web=False, *, job=None):
                         literal_composition_enabled=server.literal_composition)
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
+        avatar.speaker_scope = server.speaker_scope
         if server.context_revision != memory.context_revision:
             server.short_term = []
         for message in server.short_term:
@@ -597,6 +598,8 @@ def create_server(
     server.context_revision = None
     server.emotion = EmotionEngine()
     server.boundaries = BoundaryPolicy()
+    from .brain.speaker_scope import SpeakerScope
+    server.speaker_scope = SpeakerScope()
     server.turns = TurnCoordinator(db_path, lambda job: run_chat(server, job.text, job.use_web, job=job),
                                    on_invalidate=server.speech.clear)
     return server

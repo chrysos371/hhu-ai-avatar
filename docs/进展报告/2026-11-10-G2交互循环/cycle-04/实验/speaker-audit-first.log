@@ -1,0 +1,85 @@
+..................FFF......                                              [100%]
+=================================== FAILURES ===================================
+_ test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6211\u626e\u6f14\u8fc7\u5c0f\u8bf4\u89d2\u8272\u3002] _
+
+declaration = '我扮演过小说角色。'
+
+    @pytest.mark.parametrize('declaration',[
+        '我扮演过小说角色。',
+        '我扮演小说角色时会很紧张。',
+        '比如，我来扮演小说角色。',
+        '也许我来扮演小说角色。',
+        '我想知道，我来扮演小说角色是否合适。',
+        '如果讨论剧情。假如我来扮演小说角色。',
+    ])
+    def test_past_general_or_hypothetical_role_discussion_is_not_a_declaration(declaration):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            bot.respond(declaration)
+            bot.respond('我叫陈宁。')
+>           assert bot.memory.get_user_profile().get('名字')=='陈宁'
+E           AssertionError: assert None == '陈宁'
+E            +  where None = <built-in method get of dict object at 0x7f18d858b1c0>('名字')
+E            +    where <built-in method get of dict object at 0x7f18d858b1c0> = {}.get
+E            +      where {} = get_user_profile()
+E            +        where get_user_profile = <avatar.brain.memory.MemoryStore object at 0x7f18d85176a0>.get_user_profile
+E            +          where <avatar.brain.memory.MemoryStore object at 0x7f18d85176a0> = <avatar.main.Avatar object at 0x7f18d8517fd0>.memory
+
+tests/test_speaker_attribution.py:64: AssertionError
+_ test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6211\u626e\u6f14\u5c0f\u8bf4\u89d2\u8272\u65f6\u4f1a\u5f88\u7d27\u5f20\u3002] _
+
+declaration = '我扮演小说角色时会很紧张。'
+
+    @pytest.mark.parametrize('declaration',[
+        '我扮演过小说角色。',
+        '我扮演小说角色时会很紧张。',
+        '比如，我来扮演小说角色。',
+        '也许我来扮演小说角色。',
+        '我想知道，我来扮演小说角色是否合适。',
+        '如果讨论剧情。假如我来扮演小说角色。',
+    ])
+    def test_past_general_or_hypothetical_role_discussion_is_not_a_declaration(declaration):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            bot.respond(declaration)
+            bot.respond('我叫陈宁。')
+>           assert bot.memory.get_user_profile().get('名字')=='陈宁'
+E           AssertionError: assert None == '陈宁'
+E            +  where None = <built-in method get of dict object at 0x7f18d872f880>('名字')
+E            +    where <built-in method get of dict object at 0x7f18d872f880> = {}.get
+E            +      where {} = get_user_profile()
+E            +        where get_user_profile = <avatar.brain.memory.MemoryStore object at 0x7f18d83ebb50>.get_user_profile
+E            +          where <avatar.brain.memory.MemoryStore object at 0x7f18d83ebb50> = <avatar.main.Avatar object at 0x7f18d83ebc10>.memory
+
+tests/test_speaker_attribution.py:64: AssertionError
+_ test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6bd4\u5982\uff0c\u6211\u6765\u626e\u6f14\u5c0f\u8bf4\u89d2\u8272\u3002] _
+
+declaration = '比如，我来扮演小说角色。'
+
+    @pytest.mark.parametrize('declaration',[
+        '我扮演过小说角色。',
+        '我扮演小说角色时会很紧张。',
+        '比如，我来扮演小说角色。',
+        '也许我来扮演小说角色。',
+        '我想知道，我来扮演小说角色是否合适。',
+        '如果讨论剧情。假如我来扮演小说角色。',
+    ])
+    def test_past_general_or_hypothetical_role_discussion_is_not_a_declaration(declaration):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            bot.respond(declaration)
+            bot.respond('我叫陈宁。')
+>           assert bot.memory.get_user_profile().get('名字')=='陈宁'
+E           AssertionError: assert None == '陈宁'
+E            +  where None = <built-in method get of dict object at 0x7f18d8542bc0>('名字')
+E            +    where <built-in method get of dict object at 0x7f18d8542bc0> = {}.get
+E            +      where {} = get_user_profile()
+E            +        where get_user_profile = <avatar.brain.memory.MemoryStore object at 0x7f18d83fbaf0>.get_user_profile
+E            +          where <avatar.brain.memory.MemoryStore object at 0x7f18d83fbaf0> = <avatar.main.Avatar object at 0x7f18d83fbbe0>.memory
+
+tests/test_speaker_attribution.py:64: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_attribution.py::test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6211\u626e\u6f14\u8fc7\u5c0f\u8bf4\u89d2\u8272\u3002]
+FAILED tests/test_speaker_attribution.py::test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6211\u626e\u6f14\u5c0f\u8bf4\u89d2\u8272\u65f6\u4f1a\u5f88\u7d27\u5f20\u3002]
+FAILED tests/test_speaker_attribution.py::test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6bd4\u5982\uff0c\u6211\u6765\u626e\u6f14\u5c0f\u8bf4\u89d2\u8272\u3002]
+3 failed, 24 passed in 0.96s

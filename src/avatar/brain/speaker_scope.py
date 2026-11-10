@@ -1,0 +1,73 @@
+"""Explicit speaker attribution, independent of literary/safety routing.
+
+Only clear user roleplay declarations change scope. This is a bounded session
+control, not general coreference resolution. No fictional source is retained in
+the three-turn factual context. Mixed turns admit only the last explicit real
+segment; earlier segments are conservatively omitted.
+"""
+import re
+from collections import deque
+
+from .facts import _mask_quoted
+
+
+_ENTRY = re.compile(
+    r'^(?:(?:接下来|现在|从现在起)[，,\s]*)?'
+    r'我(?:来|要|将|会)?(?:扮演|饰演)(?:[^。！？!?；;，,\n]{0,40})(?:角色|人物)')
+_EXIT = re.compile(r'^(?:回到现实|停止扮演|退出角色|不演了|结束角色扮演)')
+_REAL = re.compile(r'^现实中的(?=我)')
+
+
+class SpeakerScope:
+    def __init__(self):
+        self.clear(None)
+
+    def clear(self, revision):
+        self.revision = revision
+        self.scope = 'current_user'
+        self.fact_text = ''
+        self.context = []
+        self._real_context = deque(maxlen=3)
+
+    @property
+    def allows_facts(self):
+        return self.scope == 'current_user'
+
+    def observe(self, text: str, revision: int):
+        if self.revision != revision:
+            self.clear(revision)
+        clean = _mask_quoted(text)
+        start = 0 if self.allows_facts else len(text)
+        # Conditions/questions govern the whole sentence, including comma tails.
+        for sentence in re.finditer(r'[^。！？!?；;\n]+[。！？!?；;]?', clean):
+            value = sentence.group()
+            if re.search(r'如果|假如|假设|要是|倘若|是否|[？?]|(?:吗|么|呢)[。！!；;]?$', value):
+                continue
+            for clause in re.finditer(r'[^，,。！？!?；;\n]+', value):
+                raw = clause.group()
+                trimmed = raw.lstrip()
+                offset = sentence.start() + clause.start() + len(raw) - len(trimmed)
+                entry, exit_, real = _ENTRY.match(trimmed), _EXIT.match(trimmed), _REAL.match(trimmed)
+                if entry:
+                    self.scope = 'fictional_character'
+                    self._real_context.clear()
+                    start = len(text)
+                elif exit_ or real:
+                    self.scope = 'current_user'
+                    self._real_context.clear()
+                    start = offset + (exit_ or real).end()
+        self.fact_text = text[start:].lstrip('，,。；; \n') if self.allows_facts else ''
+        self.context = list(self._real_context)
+        if self.fact_text:
+            self._real_context.append(self.fact_text)
+
+    def data(self):
+        return {'scope': self.scope, 'persistent_facts_allowed': self.allows_facts,
+                'version': 1, 'general_coreference_verified': False}
+
+    def prompt(self):
+        if self.allows_facts:
+            return ''
+        return ('说话者来源：用户明确在扮演虚构角色；当前第一人称是故事角色，'
+                '不是真实用户画像，不要更新真人资料或用真人姓名替换角色姓名。'
+                '没有明确退出前保持这一归属；现实安全判断仍按既有安全规则执行。\n')
