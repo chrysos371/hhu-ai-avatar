@@ -59,3 +59,59 @@ def review_profile_reply(user_text: str, reply: str, profile: dict) -> tuple[str
         if re.search(pattern, unquoted):
             return _preference_reply(profile), 'copied_preference'
     return reply, None
+
+
+# These clauses deliberately cover introductions, not arbitrary conversation.
+_RELATION = r'(?:朋友|室友|同学|同桌|同事|姐姐|妹妹|哥哥|弟弟|家人)'
+_OTHER_DECLARATION = re.compile(
+    r'(?:(?:我的?|我有一个)?' + _RELATION + r'|他|她)'
+    r'(?:叫[^\s，,。！？!?；;：“”]{1,10}|(?:很)?喜欢[^\s，,。！？!?；;：“”]{1,20}|'
+    r'说[“「\"][^。！？!?\n]{1,40}[”」\"])')
+_INTRO_TAILS = {'我们刚认识', '我们第一次聊天', '我们刚开始聊天',
+                '这是他的自我介绍', '这是她的自我介绍'}
+_NON_DECLARATION = re.compile(
+    r'[？?]|什么|怎么|如何|为什么|哪(?:个|些|种|里|儿)|是否|能不能|是不是|有没有|'
+    r'帮我|请帮|建议|计划|难过|伤心|害怕|担心|焦虑|痛苦|心情|伤害|自杀|不想活|'
+    r'因为|所以|虽然|而且|并且|但是今天|但今天')
+
+
+def acknowledge_disclosure(user_text: str, profile: dict) -> tuple[str | None, str | None]:
+    """Compose a confirmation only when every clause belongs to a narrow grammar.
+
+    Input facts must independently agree with active records. An unrecognized
+    clause keeps the normal response path, preserving tasks and emotional talk.
+    """
+    from .facts import _explicit_fact, rule_facts
+
+    if _CREATIVE.search(user_text) or _NON_DECLARATION.search(user_text):
+        return None, None
+    clauses = [c.strip() for c in re.split(r'[，,。！!；;\n]', user_text) if c.strip()]
+    if not clauses:
+        return None, None
+    has_other = False
+    for clause in clauses:
+        if _explicit_fact(clause):
+            continue
+        if re.fullmatch(r'(?:更|也|还)(?:不喜欢|喜欢|不爱|爱|讨厌)[^\s，,。！？!?；;：]{1,20}', clause):
+            continue
+        if _OTHER_DECLARATION.fullmatch(clause):
+            has_other = True
+            continue
+        if clause not in _INTRO_TAILS:
+            return None, None
+    facts = rule_facts(user_text)
+    values = _preferences(profile)
+    confirmed_name = any(f['type'] == '名字' and f['content'] == profile.get('名字') for f in facts)
+    confirmed_preference = any(f['type'] == '偏好' and f['content'] in values for f in facts)
+    if confirmed_name or confirmed_preference:
+        reply = f'你好，{profile["名字"]}。' if confirmed_name else ''
+        reply += '谢谢你告诉我。'
+        if confirmed_preference:
+            reply += _preference_reply(profile)
+        return reply, 'profile_disclosure'
+    # A failed self-profile match must not silently become a third-party route.
+    if facts:
+        return None, None
+    if has_other:
+        return '谢谢你介绍身边的人。', 'third_party_introduction'
+    return None, None

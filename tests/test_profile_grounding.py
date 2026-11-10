@@ -74,7 +74,7 @@ def test_lookup_uses_current_name_and_preserves_deletion_provenance(grounded_ava
 def test_guard_buffers_and_replaces_whole_reply_before_delta(grounded_avatar):
     avatar, model = grounded_avatar
     deltas = []
-    result = avatar.respond('我喜欢网球。', cancel=CancellationToken(), on_delta=deltas.append)
+    result = avatar.respond('我喜欢网球，请随便聊聊。', cancel=CancellationToken(), on_delta=deltas.append)
     assert result['profile_grounding']['action'] == 'copied_preference'
     assert result['generation_mode'] == 'llm'
     assert result['profile_grounding']['stream_buffered']
@@ -87,7 +87,7 @@ def test_cancel_after_guarded_delta_never_commits_assistant(grounded_avatar):
     avatar, model = grounded_avatar
     token = CancellationToken()
     with pytest.raises(Cancelled):
-        avatar.respond('我喜欢网球。', cancel=token, on_delta=lambda text: token.cancel())
+        avatar.respond('我喜欢网球，请随便聊聊。', cancel=token, on_delta=lambda text: token.cancel())
     assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0] == 0
 
 

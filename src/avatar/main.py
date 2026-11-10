@@ -18,7 +18,7 @@ from .brain.emotion import Decision, EmotionEngine
 from .brain.boundaries import BoundaryPolicy, BOUNDARY_PROMPT
 from .brain.embeddings import OllamaEmbeddingProvider
 from .brain.facts import rule_facts, supported_fact
-from .brain.profile_grounding import lookup_profile, review_profile_reply
+from .brain.profile_grounding import lookup_profile, review_profile_reply, acknowledge_disclosure
 from .brain.llm import LLMEngine
 from .cancellation import CancellationToken, Cancelled
 from .brain.memory import MemoryStore
@@ -508,6 +508,8 @@ class Avatar:
         grounding_action = None
         profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
         profile_reply, lookup_action = lookup_profile(user_text, profile) if self.profile_grounding_enabled else (None, None)
+        if self.profile_grounding_enabled and profile_reply is None:
+            profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
         if boundary.reply is not None:
             reply = boundary.reply
         elif reminder is not None:
@@ -525,7 +527,7 @@ class Avatar:
             reply = web_result['reply']
         elif profile_reply is not None:
             reply, grounding_action = profile_reply, lookup_action
-            generation_mode = 'profile_lookup'
+            generation_mode = 'profile_lookup' if lookup_action in {'name_lookup', 'preference_lookup'} else 'profile_grounded'
         elif self._llm_available:
             try:
                 if cancel is not None and hasattr(self.llm, 'stream_chat'):
@@ -562,7 +564,7 @@ class Avatar:
         delivery_issues = []
         repair_attempted = False
         repair_succeeded = False
-        if self.delivery_check_enabled and generation_mode != 'profile_lookup' and boundary.reply is None and reminder is None and not reminder_error and not use_web:
+        if self.delivery_check_enabled and generation_mode not in {'profile_lookup', 'profile_grounded'} and boundary.reply is None and reminder is None and not reminder_error and not use_web:
             delivery_issues = self.tasks.inspect(reply)
             if delivery_issues and self._llm_available:
                 repair_attempted = True
@@ -639,7 +641,7 @@ class Avatar:
             "generation_mode": generation_mode,
             "identity_grounding": self.subject_prompt_enabled,
             "profile_grounding": {"enabled": self.profile_grounding_enabled,
-                                  "action": grounding_action, "scope": "profile_lookup_and_copied_preference",
+                                  "action": grounding_action, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2,
                                   "semantic_verifier": False,
                                   "stream_buffered": self.profile_grounding_enabled and generation_mode == "llm"},
             "user_emotion": self.emotion.user_state.label(),

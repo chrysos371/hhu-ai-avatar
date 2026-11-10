@@ -49,6 +49,7 @@ def main():
         'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py'),Path('src/avatar/brain/profile_grounding.py')]},
         'comparison': 'subject_prompt_both_arms_profile_grounding_candidate' if args.profile_grounding else 'subject_prompt_candidate_only',
         'grounding_protocol':json.loads(Path('evals/interaction/cycle-02/profile-grounding-protocol.json').read_text()) if args.profile_grounding else None,
+        'disclosure_protocol':json.loads(Path('evals/interaction/cycle-02/disclosure-grounding-v2.json').read_text()) if args.profile_grounding else None,
         'protocol':extra,'prospective_protocol':prospective,'measurement_policy':policy,'supplemental_protocol':supplemental,
         'additional_spec_sha256':{str(p):sha(p) for p in [args.policy,args.supplemental,args.turn_suite] if p},'rows':[]}
     engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model=args.model_key,timeout=180,max_retries=0)
