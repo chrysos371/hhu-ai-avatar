@@ -297,14 +297,18 @@ class Handler(BaseHTTPRequestHandler):
 
     def _turn_events(self, parsed):
         job = self.server.turns.get(parsed.path.split('/')[-2])
-        query = parse_qs(parsed.query)
+        query = parse_qs(parsed.query, keep_blank_values=True)
         try:
+            if set(query) - {'after'} or len(query.get('after',['-1'])) != 1:
+                raise ValueError()
             cursor = int(query.get('after', ['-1'])[0])
             if cursor < -1:
                 raise ValueError()
         except ValueError:
             raise OperationError(422, 'invalid_cursor', '事件游标无效。') from None
         with job.changed:
+            if cursor >= len(job.events):
+                raise OperationError(422, 'invalid_cursor', '事件游标超出当前范围。')
             if job.subscribers >= 2:
                 raise OperationError(429, 'too_many_subscribers', '本轮已有事件连接。')
             job.subscribers += 1

@@ -4,6 +4,9 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 import json
 import logging
+import hashlib
+import platform
+import subprocess
 import socket
 import tempfile
 import threading
@@ -29,6 +32,12 @@ def main():
     if args.output.exists(): parser.error('use a new output path')
     config.llm.api_key = ''; config.embedding.model = ''
     result, logs = {}, []
+    result['environment'] = {'python':platform.python_version(),
+        'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        'source_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [
+            Path(__file__),Path('src/avatar/web.py'),Path('src/avatar/turns.py'),Path('src/avatar/brain/memory.py'),
+            Path('src/avatar/cancellation.py'),Path('src/avatar/face/lipsync.py'),Path('src/avatar/main.py')]}}
+
     class Capture(logging.Handler):
         def emit(self, record):
             if len(logs) < 8: logs.append(record.getMessage())

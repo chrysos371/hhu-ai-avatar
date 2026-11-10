@@ -37,3 +37,27 @@ def test_disconnecting_one_subscriber_preserves_the_surviving_stream(tmp_path):
         assert server.turns.get(key).status == 'completed'
     finally:
         server.shutdown();worker.join();server.server_close()
+
+
+def test_event_cursor_rejects_future_ambiguous_and_malformed_values(tmp_path):
+    server = create_server(str(tmp_path/'cursor.db'),port=0)
+    server.turns.runner = lambda job: {'reply':'complete'}
+    data = {'request_id':'cursor_request_1234567890','text':'fixture'}
+    job = server.turns.submit(data)
+    with job.changed:
+        job.changed.wait_for(lambda:job.status=='completed',timeout=3)
+    worker = threading.Thread(target=server.serve_forever,daemon=True)
+    worker.start()
+    base = f'http://127.0.0.1:{server.server_port}/api/v1/turns/{job.id}/events'
+    try:
+        for query in ('after=9999','after=abc','after=-2','after=0&after=1','unknown=1','after='):
+            request = urllib.request.Request(base+'?'+query,headers={'X-Avatar-Token':server.token})
+            try:
+                urllib.request.urlopen(request).close()
+                raise AssertionError('invalid cursor accepted: '+query)
+            except urllib.error.HTTPError as response:
+                assert response.code == 422
+        with urllib.request.urlopen(urllib.request.Request(base+'?after=-1',headers={'X-Avatar-Token':server.token})) as response:
+            assert b'event: result' in response.read()
+    finally:
+        server.shutdown();worker.join();server.server_close()
