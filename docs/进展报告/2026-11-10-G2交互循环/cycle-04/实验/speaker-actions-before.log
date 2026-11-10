@@ -1,0 +1,53 @@
+FFF.                                                                     [100%]
+=================================== FAILURES ===================================
+__________________ test_character_cannot_create_real_reminder __________________
+
+    def test_character_cannot_create_real_reminder():
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            bot.respond('我来扮演小说角色。')
+            result=bot.respond('提醒我明天9点带伞。')
+>           assert bot.reminders.list()==[]
+E           AssertionError: assert [{'id': 1, 't...0884283, ...}] == []
+E             
+E             Left contains one more item: {'id': 1, 'title': '带伞', 'due_at': 1794445200.0, 'created_at': 1794339598.0884283, ...}
+E             Use -v to get more diff
+
+tests/test_speaker_actions.py:12: AssertionError
+__________________ test_character_cannot_cancel_real_reminder __________________
+
+    def test_character_cannot_cancel_real_reminder():
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            reminder=bot.reminders.create('提醒我明天9点带伞。')
+            bot.respond('我来扮演小说角色。')
+            bot.respond(f'取消提醒{reminder["id"]}')
+>           assert bot.reminders.list()[0]['status']=='pending'
+E           AssertionError: assert 'cancelled' == 'pending'
+E             
+E             - pending
+E             + cancelled
+
+tests/test_speaker_actions.py:24: AssertionError
+_____________ test_character_tool_flag_does_not_dispatch_web_agent _____________
+
+    def test_character_tool_flag_does_not_dispatch_web_agent():
+        class Agent:
+            calls=0
+            def run(self,*args,**kwargs):
+                self.calls+=1
+                return {'reply':'已执行工具。','sources':[],'tool_calls':[]}
+        agent=Agent();bot=Avatar(db_path=':memory:',llm=Offline(),web_agent=agent)
+        try:
+            bot.respond('我来扮演小说角色。')
+            result=bot.respond('请帮我设置明天的提醒。',use_web=True)
+>           assert agent.calls==0
+E           assert 1 == 0
+E            +  where 1 = <test_speaker_actions.test_character_tool_flag_does_not_dispatch_web_agent.<locals>.Agent object at 0x7ff1326cf0d0>.calls
+
+tests/test_speaker_actions.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_actions.py::test_character_cannot_create_real_reminder
+FAILED tests/test_speaker_actions.py::test_character_cannot_cancel_real_reminder
+FAILED tests/test_speaker_actions.py::test_character_tool_flag_does_not_dispatch_web_agent
+3 failed, 1 passed in 0.73s

@@ -1,0 +1,52 @@
+"""Character speech must not silently authorize real persistent actions."""
+from avatar.main import Avatar
+from avatar.brain.reminders import ReminderStore
+
+class Offline: available=False
+
+def test_character_cannot_create_real_reminder():
+    bot=Avatar(db_path=':memory:',llm=Offline())
+    try:
+        bot.respond('我来扮演小说角色。')
+        result=bot.respond('提醒我明天9点带伞。')
+        assert bot.reminders.list()==[]
+        assert result['reminder'] is None
+        assert '退出角色' in result['reply']
+    finally:bot.memory.close()
+
+
+def test_character_cannot_cancel_real_reminder():
+    bot=Avatar(db_path=':memory:',llm=Offline())
+    try:
+        reminder=bot.reminders.create('提醒我明天9点带伞。')
+        bot.respond('我来扮演小说角色。')
+        bot.respond(f'取消提醒{reminder["id"]}')
+        assert bot.reminders.list()[0]['status']=='pending'
+    finally:bot.memory.close()
+
+
+def test_character_tool_flag_does_not_dispatch_web_agent():
+    class Agent:
+        calls=0
+        def run(self,*args,**kwargs):
+            self.calls+=1
+            return {'reply':'已执行工具。','sources':[],'tool_calls':[]}
+    agent=Agent();bot=Avatar(db_path=':memory:',llm=Offline(),web_agent=agent)
+    try:
+        bot.respond('我来扮演小说角色。')
+        result=bot.respond('请帮我设置明天的提醒。',use_web=True)
+        assert agent.calls==0
+        assert result['tool_calls']==[]
+        assert '退出角色' in result['reply']
+    finally:bot.memory.close()
+
+
+def test_real_user_can_resume_actions_after_explicit_exit():
+    bot=Avatar(db_path=':memory:',llm=Offline())
+    try:
+        bot.respond('我来扮演小说角色。')
+        bot.respond('回到现实。')
+        result=bot.respond('提醒我明天9点带伞。')
+        assert result['reminder'] is not None
+        assert len(bot.reminders.list())==1
+    finally:bot.memory.close()
