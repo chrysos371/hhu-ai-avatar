@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "scope": "Deterministic energy endpointing development fixtures; not a speech classifier or human recording benchmark",
+  "parameters": {"rmsThreshold": 0.006, "voiceMs": 240, "silenceMs": 1200, "noSpeechMs": 8000, "maxMs": 60000, "windowMs": 20},
+  "rates": [16000, 48000],
+  "chunkSizes": [128, 4096],
+  "seed": 20261110,
+  "cases": [
+    {"id": "silence", "segments": [["silence", 10000]], "expected": "no_speech", "targetMs": 8000},
+    {"id": "low_noise", "segments": [["noise", 10000, 0.0003]], "expected": "no_speech", "targetMs": 8000},
+    {"id": "voice_pause", "segments": [["silence", 500], ["tone", 1400, 0.04], ["silence", 2000]], "expected": "pause", "targetMs": 3100},
+    {"id": "brief_hesitation", "segments": [["tone", 1000, 0.04], ["silence", 700], ["tone", 1000, 0.04], ["silence", 2000]], "expected": "pause", "targetMs": 3900},
+    {"id": "short_click", "segments": [["noise", 100, 0.1], ["silence", 9000]], "expected": "no_speech", "targetMs": 8000},
+    {"id": "continuous", "segments": [["tone", 61000, 0.04]], "expected": "limit", "targetMs": 60000},
+    {"id": "noisy_room_limitation", "segments": [["noise", 61000, 0.025]], "expected": "limit", "targetMs": 60000, "limitation": "Energy alone misclassifies loud nonspeech as speech; explicit known false activation"},
+    {"id": "quiet_voice_limitation", "segments": [["tone", 1000, 0.004], ["silence", 9000]], "expected": "no_speech", "targetMs": 8000, "limitation": "Below fixed threshold voice is missed; manual stop and opt-out retained"}
+  ],
+  "gates": {"reasonMatches": "all deterministic fixtures", "maxAbsoluteTimingErrorMs": 40, "preserveStart": true, "neverAutoSend": true, "cancelReleasesMic": true}
+}
