@@ -74,8 +74,12 @@ class Handler(BaseHTTPRequestHandler):
             "Content-Security-Policy",
             "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; media-src 'self' blob:; img-src 'self' data:; font-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'",
         )
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.end_headers()
+            self.wfile.write(body)
+        except (ConnectionError, TimeoutError):
+            # Cancellation can close the browser socket while TTS is finishing.
+            pass
 
     def _request(self, post=False):
         self.request_id = secrets.token_hex(12)
@@ -86,6 +90,8 @@ class Handler(BaseHTTPRequestHandler):
         if origin and origin != "http://" + expected_host:
             return self._send(403, {"error": "invalid origin"})
         parsed = urlsplit(self.path)
+        if parsed.path == "/healthz" and not post:
+            return self._send(200, {"status": "ok", "mode": "single-user-local"})
         if not parsed.path.startswith("/api/"):
             if not post:
                 return self._static(parsed.path)
@@ -457,6 +463,8 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--asr-model", help="已安装的本机 FunASR 模型目录；默认不启用识别")
     args = parser.parse_args()
+    if not 0 <= args.port <= 65535:
+        parser.error("--port 必须在 0–65535 之间，0 表示自动分配空闲端口")
     from .brain.embeddings import OllamaEmbeddingProvider
 
     embedder = (
@@ -473,8 +481,11 @@ def main():
             parser.error("--asr-model 必须指向已安装的本机模型目录")
         from .ears.asr import FunASREngine
         asr = FunASREngine(model=str(model), device="cpu")
-    server = create_server(args.db, port=args.port, legacy_writes=False,
-                           knowledge_embedder=embedder, asr_engine=asr)
+    try:
+        server = create_server(args.db, port=args.port, legacy_writes=False,
+                               knowledge_embedder=embedder, asr_engine=asr)
+    except OSError as exc:
+        parser.exit(2, f"无法监听 127.0.0.1:{args.port}（{exc.strerror}）；请用 --port 指定空闲端口。\n")
     print(
         f"本机管理页面：http://127.0.0.1:{server.server_port}/#{server.token}",
         flush=True,
