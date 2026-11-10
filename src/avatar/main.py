@@ -118,7 +118,7 @@ class Avatar:
                 '完成标志：做完该动作后能看到的结果。动作里不能包含然后、再、接着等第二步，'
                 '不要把休息、喝水替代用户的实际任务，不要附带安慰或追问。'
             )
-        profile = self.memory.get_user_profile()
+        profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
         facts = self._turn_facts if self._turn_facts is not None else self.memory.recall(query=user_text, limit=5)
         memory_data = json.dumps({'profile': profile, 'facts': [r['content'] for r in facts],
                                   'due_reminders': self._due_reminders}, ensure_ascii=False)
@@ -506,7 +506,7 @@ class Avatar:
         # 4. LLM 回复（无 key 与调用故障分别标记）
         generation_mode = 'rules'
         grounding_action = None
-        profile = self.memory.get_user_profile()
+        profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
         profile_reply, lookup_action = lookup_profile(user_text, profile) if self.profile_grounding_enabled else (None, None)
         if boundary.reply is not None:
             reply = boundary.reply
@@ -562,7 +562,7 @@ class Avatar:
         delivery_issues = []
         repair_attempted = False
         repair_succeeded = False
-        if self.delivery_check_enabled and boundary.reply is None and reminder is None and not reminder_error and not use_web:
+        if self.delivery_check_enabled and generation_mode != 'profile_lookup' and boundary.reply is None and reminder is None and not reminder_error and not use_web:
             delivery_issues = self.tasks.inspect(reply)
             if delivery_issues and self._llm_available:
                 repair_attempted = True

@@ -479,7 +479,8 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         if token:
             token.checkpoint()
         avatar = Avatar(db_path=server.db_path, session_id=server.session_id, fast_analysis=job is not None,
-                        subject_prompt_enabled=server.identity_grounding)
+                        subject_prompt_enabled=server.identity_grounding,
+                        profile_grounding_enabled=server.profile_grounding)
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         if server.context_revision != memory.context_revision:
@@ -557,6 +558,7 @@ def create_server(
     max_connections=32,
     header_timeout=10,
     identity_grounding=False,
+    profile_grounding=False,
 ) -> ThreadingHTTPServer:
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,
                                max_connections=max_connections, header_timeout=header_timeout)
@@ -568,6 +570,7 @@ def create_server(
     server.transcription = TranscriptionService(asr_engine)
     server.db_path = db_path
     server.identity_grounding = identity_grounding
+    server.profile_grounding = profile_grounding
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []
@@ -596,6 +599,8 @@ def main():
     parser.add_argument('--asr-backend', choices=('funasr', 'faster-whisper'), default='funasr')
     parser.add_argument('--asr-device', choices=('cpu', 'cuda'), default='cpu',
                         help='CUDA 设备可见性由 CUDA_VISIBLE_DEVICES 显式控制')
+    parser.add_argument('--profile-grounding', action='store_true',
+                        help='实验性已确认资料查询与偏好归属纠正；启用后模型文本整段检查再发送，默认关闭')
     parser.add_argument('--identity-grounding', action='store_true',
                         help='启用已验证画像的身份约束提示；需先在目标模型完成评测')
     args = parser.parse_args()
@@ -624,7 +629,8 @@ def main():
     try:
         server = create_server(args.db, port=args.port, legacy_writes=False,
                                knowledge_embedder=embedder, asr_engine=asr,
-                               identity_grounding=args.identity_grounding)
+                               identity_grounding=args.identity_grounding,
+                               profile_grounding=args.profile_grounding)
     except OSError as exc:
         parser.exit(2, f"无法监听 127.0.0.1:{args.port}（{exc.strerror}）；请用 --port 指定空闲端口。\n")
     print(

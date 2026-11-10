@@ -37,7 +37,8 @@ if os.getenv("AVATAR_E2E_EMPTY_PROFILE") != "1":
 memory.close()
 server = create_server(
     str(Path(folder.name) / "browser.db"), port=18765, legacy_writes=False,
-    identity_grounding=os.getenv("AVATAR_E2E_IDENTITY_GROUNDING") == "1"
+    identity_grounding=os.getenv("AVATAR_E2E_IDENTITY_GROUNDING") == "1",
+    profile_grounding=os.getenv("AVATAR_E2E_PROFILE_GROUNDING") == "1"
 )
 
 # Offline fixtures exercise real browser codecs/AudioWorklet without network or models.

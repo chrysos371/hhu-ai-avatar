@@ -27,5 +27,14 @@ test('real verified identity does not bind a friend name to the user', async ({ 
   expect(known).toContain('温禾'); expect(known).not.toContain('我叫温禾');
   const decisions = await page.locator('.trace pre').allTextContents();
   expect(decisions.some(text => text.includes('"identity_grounding": true'))).toBe(true);
-  writeFileSync(output, JSON.stringify({ scope: 'actual local model through HTTP/SSE/browser, disposable profile', replies, identityGroundingObserved: true }, null, 2)+'\n', { flag: 'wx' });
+  let profileGroundingObserved = false;
+  if (process.env.AVATAR_E2E_PROFILE_GROUNDING === '1') {
+    expect(decisions.some(text => text.includes('"generation_mode": "profile_lookup"'))).toBe(true);
+    expect(decisions.some(text => text.includes('"action": "name_lookup"'))).toBe(true);
+    await say('我喜欢网球。');
+    const preference = await say('我的爱好是什么？');
+    expect(preference).toContain('网球'); expect(preference).not.toContain('我喜欢网球');
+    profileGroundingObserved = true;
+  }
+  writeFileSync(output, JSON.stringify({ scope: 'actual local model through HTTP/SSE/browser, disposable profile', replies, identityGroundingObserved: true, profileGroundingObserved }, null, 2)+'\n', { flag: 'wx' });
 });

@@ -30,7 +30,7 @@ def _preference_reply(profile: dict) -> str:
     values = _preferences(profile)
     if not values:
         return '目前没有足够记录确认你的偏好，你可以告诉我你喜欢什么。'
-    return '目前关于你的偏好记录是：' + '；'.join('你' + item for item in values) + '。'
+    return '目前关于你的偏好记录是：' + '；'.join(values) + '。'
 
 
 def lookup_profile(user_text: str, profile: dict) -> tuple[str | None, str | None]:
