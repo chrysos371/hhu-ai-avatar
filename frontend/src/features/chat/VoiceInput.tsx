@@ -11,7 +11,7 @@ export function VoiceInput({ disabled, beforeCapture, onTranscript, onBusyChange
   const capabilities = useQuery({ queryKey: ["speech-capabilities"],
     queryFn: () => apiRequest<{ asr_enabled: boolean; reason: string | null }>("/speech/capabilities"), retry: false });
   const [status, setStatus] = useState("idle");
-  const [autoEndpoint, setAutoEndpoint] = useState(true);
+  const [autoEndpoint, setAutoEndpoint] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
@@ -89,7 +89,7 @@ export function VoiceInput({ disabled, beforeCapture, onTranscript, onBusyChange
     </div>
     <label className="muted"><input type="checkbox" checked={autoEndpoint} disabled={busy}
       onChange={event => setAutoEndpoint(event.target.checked)} /> 停顿后自动结束录音</label>
-    <p className="muted">自动结束在停顿约 1.2 秒后识别；8 秒未检测到语音会释放麦克风。轻声或噪声环境可关闭，识别后仍需检查并发送。</p>
+    <p className="muted">默认手动结束录音。开启自动结束后，停顿约 1.2 秒就会识别，8 秒未检测到语音会释放麦克风；轻声或较长停顿可能提前截断，请检查草稿。</p>
     {message && <p className="notice" role="status">{message}</p>}
     <p className="muted" role="status">{status === "requesting" ? "正在等待麦克风权限…" : status === "recording" ? "正在录音，最长 60 秒…" : status === "transcribing" || status === "finishing" ? "正在识别录音…" : enabled ? "语音在本机识别；结果填入消息框，检查后发送。支持 60 秒内的 PCM WAV。" : capabilities.isError ? "无法查询语音识别状态，文字输入仍可使用。" : capabilities.data?.reason ?? "正在查询语音识别状态…"}</p>
     {error && <p className="notice" role="alert">{error}</p>}

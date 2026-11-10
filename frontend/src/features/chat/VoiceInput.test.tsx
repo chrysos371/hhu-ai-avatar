@@ -37,6 +37,9 @@ it("fills the draft through a callback without sending a chat request", async ()
     .mockResolvedValueOnce({ ok: true, json: async () => ({ data: { transcript: "识别结果" } }) });
   vi.stubGlobal("fetch", fetch);
   const transcript = setup();
+  expect(screen.getByLabelText("停顿后自动结束录音")).not.toBeChecked();
+  fireEvent.click(screen.getByLabelText("停顿后自动结束录音"));
+  expect(screen.getByLabelText("停顿后自动结束录音")).toBeChecked();
   const input = screen.getByLabelText("上传 WAV 语音");
   await waitFor(() => expect(input).toBeEnabled());
   fireEvent.change(input, { target: { files: [new File(["wave"], "recording.wav")] } });

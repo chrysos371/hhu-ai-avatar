@@ -4,6 +4,8 @@ const token = 'mission-control-disposable-e2e-token';
 async function microphone(page: Page, tone: boolean) {
   await page.goto('/chat#' + token);
   await expect(page.getByLabel('上传 WAV 语音')).toBeEnabled();
+  await expect(page.getByLabel('停顿后自动结束录音')).not.toBeChecked();
+  await page.getByLabel('停顿后自动结束录音').check();
   await page.evaluate(async playTone => {
     const context = new AudioContext({ sampleRate: 48000 });
     const destination = context.createMediaStreamDestination();
