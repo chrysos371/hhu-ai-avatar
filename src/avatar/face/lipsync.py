@@ -4,7 +4,7 @@
 1. 音频分帧，用 LPC 提取前两个共振峰 F1/F2
 2. 共振峰在元音四边形中定位元音（A/E/I/O/U）
 3. 元音 → 张嘴幅度（A 最大，U 最小），叠加音量包络加权
-4. 静音检测 → 闭嘴；长句强制自然停顿闭嘴；移动平均平滑
+4. 静音检测 → 闭嘴；移动平均平滑；可选装饰性周期闭口（默认关闭）
 
 与 AIRI 的差异：本方案基于声学共振峰，可解释、无模型依赖，
 并可扩展中文元音与声调。
@@ -99,7 +99,7 @@ class LipSyncEngine:
         hop_ms: float = 10.0,
         silence_ratio: float = 0.05,
         smooth: int = 3,
-        close_every: float = 0.3,  # 长句每间隔多少秒强制自然闭嘴
+        close_every: float | None = None,  # 显式装饰选项，不代表检测到发音停顿
         silence_rms: float = 0.001,
     ):
         self.frame_ms = frame_ms
@@ -157,12 +157,13 @@ class LipSyncEngine:
             kernel = np.ones(self.smooth) / self.smooth
             mouth = np.convolve(mouth, kernel, mode="same")
 
-        # 长句强制自然闭嘴：每 close_every 秒，若正在张嘴则插入短暂闭合
-        hop = int(sr * self.hop_ms / 1000)
-        close_every_frames = max(1, int(self.close_every * sr / hop))
-        for i in range(close_every_frames, n, close_every_frames):
-            if mouth[i] > 0.3:
-                mouth[i] = 0.05
+        # Optional cosmetic motion; no acoustic evidence of a pause is implied.
+        if self.close_every is not None:
+            hop = int(sr * self.hop_ms / 1000)
+            close_every_frames = max(1, int(self.close_every * sr / hop))
+            for i in range(close_every_frames, n, close_every_frames):
+                if mouth[i] > 0.3:
+                    mouth[i] = 0.05
 
         mouth = np.clip(mouth, 0.0, 1.0)
         mouth[silence] = 0.0
