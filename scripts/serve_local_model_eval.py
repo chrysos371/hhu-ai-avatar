@@ -52,6 +52,16 @@ def main():
     model = Llama(model_path=str(args.model),n_gpu_layers=-1,n_ctx=8192,n_batch=256,
         n_threads=4,seed=42,flash_attn=True,verbose=True)
     load_seconds = time.monotonic()-start
+    allocated = []
+    raw_processes = subprocess.check_output(['nvidia-smi','--query-compute-apps=pid,used_memory',
+        '--format=csv,noheader,nounits'], text=True)
+    for line in raw_processes.splitlines():
+        pid, used = (part.strip() for part in line.split(','))
+        if int(pid) == os.getpid():
+            allocated.append(int(used))
+    if not allocated or max(allocated) < 1024:
+        raise RuntimeError('No substantial model allocation on GPU; refusing unverified offload')
+
     # Use the official template embedded in the hash-verified GGUF, with explicit thinking=False.
     template_text = model.metadata['tokenizer.chat_template']
     env = Environment(undefined=StrictUndefined)
@@ -137,6 +147,7 @@ def main():
         'configuration':{'n_gpu_layers':-1,'n_ctx':8192,'n_batch_prompt_tokens':256,'concurrent_sequences':1,
             'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'flash_attention':True},
         'llama_cpp_python':version('llama-cpp-python'),'load_seconds':load_seconds,
+        'provider_source_sha256':sha(__file__),'process_gpu_mib_after_load':allocated,
         'pid':os.getpid()},indent=2)+'\n')
     try:server.serve_forever()
     finally:server.server_close();trace.close();model.close()

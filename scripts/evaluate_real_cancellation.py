@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import threading
 import time
 
@@ -21,6 +22,14 @@ def main():
     protocol=json.loads(path.read_text());provider=json.loads(args.provider.read_text())
     engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model='qwen3-4b-q4_k_m',timeout=180,max_retries=0)
     rows=[]
+    report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        'source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'protocol_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+        'protocol':protocol,'provider':provider,'rows':rows,'execution_status':'running'}
+    def save():
+        temp=args.output.with_suffix('.tmp')
+        temp.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');temp.replace(args.output)
+    with args.output.open('x') as target:json.dump(report,target,ensure_ascii=False,indent=2)
     try:
         for trial in range(protocol['trials']):
             prior=len(args.trace.read_text().splitlines())
@@ -53,15 +62,15 @@ def main():
                 'outcome':outcome,'worker_alive':worker.is_alive(),'received_text':''.join(parts),
                 'provider_trace':trace,'provider_iterator_closed':bool(trace) and trace[0]['outcome']=='client_disconnected',
                 'recovery_reply':recovery,'recovery_seconds':time.perf_counter()-begin})
+            save()
             print(trial,outcome,elapsed,repr(recovery),flush=True)
     finally:engine.close()
     p95=max(row['cancel_join_seconds'] for row in rows)  # N=5, nearest-rank p95 is max.
-    report={'protocol_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'protocol':protocol,
-        'provider':provider,'rows':rows,'local_cancel_p95_seconds':p95,
-        'all_provider_iterators_closed':all(row['provider_iterator_closed'] for row in rows),
-        'passes_gate':p95<.5 and all(row['outcome']==['cancelled'] and not row['worker_alive']
-            and row['provider_iterator_closed'] and row['recovery_reply'].strip()=='2' for row in rows)}
-    with args.output.open('x') as target:json.dump(report,target,ensure_ascii=False,indent=2)
+    report.update(execution_status='complete',local_cancel_p95_seconds=p95,
+        all_provider_iterators_closed=all(row['provider_iterator_closed'] for row in rows),
+        passes_gate=p95<.5 and all(row['outcome']==['cancelled'] and not row['worker_alive']
+            and row['provider_iterator_closed'] and row['recovery_reply'].strip()=='2' for row in rows))
+    save()
     print('passes_gate',report['passes_gate'],flush=True)
 
 

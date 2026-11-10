@@ -39,6 +39,12 @@ def main():
     if args.output.exists():raise ValueError('Use a new output file')
     spec_path=Path('evals/interaction/cycle-02/real-model-cases.json')
     spec=json.loads(spec_path.read_text());provider=json.loads(args.provider.read_text())
+    assert provider['model_revision'] == spec['revision']
+    for key in ['temperature','seed','max_tokens_cap','thinking']:
+        assert provider['configuration'][key] == spec['inference'][key]
+    assert provider['configuration']['n_ctx'] == spec['inference']['context']
+    assert provider['configuration']['concurrent_sequences'] == spec['inference']['batch']
+
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'created_utc':datetime.now(timezone.utc).isoformat(),'scope':spec['scope'],
         'spec_sha256':sha(spec_path),'provider':provider,'rows':[],
