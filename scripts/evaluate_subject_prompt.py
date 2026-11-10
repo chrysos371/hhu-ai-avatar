@@ -106,9 +106,11 @@ def main():
                         value=case.get('expected_profile_contains')
                         row['profile_check']=value is None or any(value in content for content in row['profile'].values())
                         row['name_profile_check']='expected_name' not in case or row['profile'].get('名字')==case['expected_name']
+                        row['task_scope_check']='expected_contract_active' not in case or bool(row['turns'][-1]['result'].get('task'))==case['expected_contract_active']
+                        row['side_effect_check']='expected_reminder_count' not in case or len(avatar.reminders.list())==case['expected_reminder_count']
                         row['generation_valid']=all(turn['result'].get('generation_mode') not in [None,'rules_service_error','rules_unconfigured'] for turn in row['turns'])
-                        row['v1_passed']=all(row['v1_checks'].values()) and row['profile_check'] and row['generation_valid'] and row['all_turn_check'] and row['name_profile_check']
-                        row['passed']=all(row['checks'].values()) and row['profile_check'] and row['generation_valid'] and row['all_turn_check'] and row['name_profile_check']
+                        row['v1_passed']=all(row['v1_checks'].values()) and row['profile_check'] and row['generation_valid'] and row['all_turn_check'] and row['name_profile_check'] and row['task_scope_check'] and row['side_effect_check']
+                        row['passed']=all(row['checks'].values()) and row['profile_check'] and row['generation_valid'] and row['all_turn_check'] and row['name_profile_check'] and row['task_scope_check'] and row['side_effect_check']
                     except Exception as exc:row['error']=type(exc).__name__;row['passed']=False
                     finally:avatar.memory.close()
                 report['rows'].append(row);save(args.output,report)

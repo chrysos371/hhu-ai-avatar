@@ -1,0 +1,89 @@
+FF.F.FF.                                                                 [100%]
+=================================== FAILURES ===================================
+_ test_writing_reminder_text_is_separate_from_authorized_reminder_action[r01] __
+
+case = {'id': 'r01', 'turns': ['请写一条提醒，包含“不要忘记带伞”。'], 'final_checks': {'all': ['不要忘记带伞']}, 'expected_contract_active': True, ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_writing_reminder_text_is_separate_from_authorized_reminder_action(case):
+        class Offline:
+            available=False
+        avatar=Avatar(db_path=':memory:',llm=Offline(),task_contract_enabled=True,delivery_check_enabled=True)
+        try:
+            for text in case['turns']:result=avatar.respond(text)
+>           assert bool(result['task'])==case['expected_contract_active']
+E           assert False == True
+E            +  where False = bool(None)
+
+tests/test_reminder_writing_scope.py:16: AssertionError
+_ test_writing_reminder_text_is_separate_from_authorized_reminder_action[r02] __
+
+case = {'id': 'r02', 'turns': ['帮我拟一条提醒，原样保留【事项】。'], 'final_checks': {'all': ['【事项】']}, 'expected_contract_active': True, ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_writing_reminder_text_is_separate_from_authorized_reminder_action(case):
+        class Offline:
+            available=False
+        avatar=Avatar(db_path=':memory:',llm=Offline(),task_contract_enabled=True,delivery_check_enabled=True)
+        try:
+            for text in case['turns']:result=avatar.respond(text)
+>           assert bool(result['task'])==case['expected_contract_active']
+E           assert False == True
+E            +  where False = bool(None)
+
+tests/test_reminder_writing_scope.py:16: AssertionError
+_ test_writing_reminder_text_is_separate_from_authorized_reminder_action[r04] __
+
+case = {'id': 'r04', 'turns': ['请写一条提醒，包含“明天带伞”，不要真正创建提醒。'], 'final_checks': {'all': ['明天带伞']}, 'expected_contract_active': True, ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_writing_reminder_text_is_separate_from_authorized_reminder_action(case):
+        class Offline:
+            available=False
+        avatar=Avatar(db_path=':memory:',llm=Offline(),task_contract_enabled=True,delivery_check_enabled=True)
+        try:
+            for text in case['turns']:result=avatar.respond(text)
+>           assert bool(result['task'])==case['expected_contract_active']
+E           assert False == True
+E            +  where False = bool(None)
+
+tests/test_reminder_writing_scope.py:16: AssertionError
+_ test_writing_reminder_text_is_separate_from_authorized_reminder_action[r06] __
+
+case = {'id': 'r06', 'turns': ['请改写这条提醒，保留“带水杯”。'], 'final_checks': {'all': ['带水杯']}, 'expected_contract_active': True, ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_writing_reminder_text_is_separate_from_authorized_reminder_action(case):
+        class Offline:
+            available=False
+        avatar=Avatar(db_path=':memory:',llm=Offline(),task_contract_enabled=True,delivery_check_enabled=True)
+        try:
+            for text in case['turns']:result=avatar.respond(text)
+>           assert bool(result['task'])==case['expected_contract_active']
+E           assert False == True
+E            +  where False = bool(None)
+
+tests/test_reminder_writing_scope.py:16: AssertionError
+_ test_writing_reminder_text_is_separate_from_authorized_reminder_action[r07] __
+
+case = {'id': 'r07', 'turns': ['我喜欢网球。', '起草一条提醒，保留“我喜欢网球”。'], 'final_checks': {'all': ['我喜欢网球']}, 'expected_contract_active': True, ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_writing_reminder_text_is_separate_from_authorized_reminder_action(case):
+        class Offline:
+            available=False
+        avatar=Avatar(db_path=':memory:',llm=Offline(),task_contract_enabled=True,delivery_check_enabled=True)
+        try:
+            for text in case['turns']:result=avatar.respond(text)
+>           assert bool(result['task'])==case['expected_contract_active']
+E           assert False == True
+E            +  where False = bool(None)
+
+tests/test_reminder_writing_scope.py:16: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_writing_scope.py::test_writing_reminder_text_is_separate_from_authorized_reminder_action[r01]
+FAILED tests/test_reminder_writing_scope.py::test_writing_reminder_text_is_separate_from_authorized_reminder_action[r02]
+FAILED tests/test_reminder_writing_scope.py::test_writing_reminder_text_is_separate_from_authorized_reminder_action[r04]
+FAILED tests/test_reminder_writing_scope.py::test_writing_reminder_text_is_separate_from_authorized_reminder_action[r06]
+FAILED tests/test_reminder_writing_scope.py::test_writing_reminder_text_is_separate_from_authorized_reminder_action[r07]
+5 failed, 3 passed in 0.75s
