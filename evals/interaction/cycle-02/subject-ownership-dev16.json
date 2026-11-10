@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "scope": "Frozen additional subject-ownership development assertions, not independent semantic approval",
+  "cases": [
+    {
+      "id": "sport_a",
+      "turns": [
+        "我的室友叫陆舟，他喜欢篮球；我喜欢羽毛球。",
+        "我平时喜欢什么运动？"
+      ],
+      "final_checks": {
+        "all": [
+          "羽毛球"
+        ],
+        "none": [
+          "我喜欢羽毛球",
+          "我更喜欢羽毛球",
+          "你喜欢篮球"
+        ]
+      },
+      "expected_profile_contains": "羽毛球"
+    },
+    {
+      "id": "sport_b",
+      "turns": [
+        "我喜欢骑车，我妹妹喜欢画画。",
+        "你记得我喜欢什么吗？"
+      ],
+      "final_checks": {
+        "all": [
+          "骑车"
+        ],
+        "none": [
+          "我喜欢骑车",
+          "我更喜欢骑车",
+          "你喜欢画画"
+        ]
+      },
+      "expected_profile_contains": "骑车"
+    },
+    {
+      "id": "hobby_a",
+      "turns": [
+        "我朋友喜欢唱歌，而我喜欢摄影。",
+        "我喜欢哪种爱好？"
+      ],
+      "final_checks": {
+        "all": [
+          "摄影"
+        ],
+        "none": [
+          "我喜欢摄影",
+          "我更喜欢摄影",
+          "你喜欢唱歌"
+        ]
+      },
+      "expected_profile_contains": "摄影"
+    },
+    {
+      "id": "hobby_b",
+      "turns": [
+        "我的同学爱打游戏，我喜欢看书。",
+        "我的爱好是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "看书"
+        ],
+        "none": [
+          "我喜欢看书",
+          "我更喜欢看书",
+          "你喜欢打游戏"
+        ]
+      },
+      "expected_profile_contains": "看书"
+    },
+    {
+      "id": "drink_a",
+      "turns": [
+        "我喜欢喝红茶，我弟弟喜欢可乐。",
+        "我喜欢喝什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "红茶"
+        ],
+        "none": [
+          "我喜欢红茶",
+          "我更喜欢红茶",
+          "你喜欢可乐"
+        ]
+      },
+      "expected_profile_contains": "红茶"
+    },
+    {
+      "id": "drink_b",
+      "turns": [
+        "我同桌喜欢咖啡，我喜欢绿茶。",
+        "我喝东西有什么偏好？"
+      ],
+      "final_checks": {
+        "all": [
+          "绿茶"
+        ],
+        "none": [
+          "我喜欢绿茶",
+          "我更喜欢绿茶",
+          "你喜欢咖啡"
+        ]
+      },
+      "expected_profile_contains": "绿茶"
+    },
+    {
+      "id": "food_a",
+      "turns": [
+        "我喜欢苹果，我朋友喜欢香蕉。",
+        "我喜欢什么水果？"
+      ],
+      "final_checks": {
+        "all": [
+          "苹果"
+        ],
+        "none": [
+          "我喜欢苹果",
+          "我更喜欢苹果",
+          "你喜欢香蕉"
+        ]
+      },
+      "expected_profile_contains": "苹果"
+    },
+    {
+      "id": "food_b",
+      "turns": [
+        "我的姐姐喜欢面条，我喜欢米饭。",
+        "我更喜欢吃什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "米饭"
+        ],
+        "none": [
+          "我喜欢米饭",
+          "我更喜欢米饭",
+          "你喜欢面条"
+        ]
+      },
+      "expected_profile_contains": "米饭"
+    },
+    {
+      "id": "negative_a",
+      "turns": [
+        "我不喜欢游泳，我喜欢爬山。",
+        "我喜欢的活动是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "爬山"
+        ],
+        "none": [
+          "我喜欢爬山",
+          "我更喜欢爬山",
+          "你喜欢游泳"
+        ]
+      },
+      "expected_profile_contains": "爬山"
+    },
+    {
+      "id": "negative_b",
+      "turns": [
+        "我不喜欢咖啡，我喜欢牛奶。",
+        "我喜欢喝什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "牛奶"
+        ],
+        "none": [
+          "我喜欢牛奶",
+          "我更喜欢牛奶",
+          "你喜欢咖啡"
+        ]
+      },
+      "expected_profile_contains": "牛奶"
+    },
+    {
+      "id": "quoted_a",
+      "turns": [
+        "朋友说“我喜欢游泳”，而我喜欢跑步。",
+        "我自己喜欢什么运动？"
+      ],
+      "final_checks": {
+        "all": [
+          "跑步"
+        ],
+        "none": [
+          "我喜欢跑步",
+          "我更喜欢跑步",
+          "你喜欢游泳"
+        ]
+      },
+      "expected_profile_contains": "跑步"
+    },
+    {
+      "id": "quoted_b",
+      "turns": [
+        "室友说他喜欢足球，但我喜欢网球。",
+        "我偏好哪种球类？"
+      ],
+      "final_checks": {
+        "all": [
+          "网球"
+        ],
+        "none": [
+          "我喜欢网球",
+          "我更喜欢网球",
+          "你喜欢足球"
+        ]
+      },
+      "expected_profile_contains": "网球"
+    },
+    {
+      "id": "name_a",
+      "turns": [
+        "我叫沈青，我的室友叫江禾。",
+        "我叫什么名字？"
+      ],
+      "final_checks": {
+        "all": [
+          "沈青"
+        ],
+        "none": [
+          "我叫沈青",
+          "你叫江禾"
+        ]
+      },
+      "expected_profile_contains": "沈青"
+    },
+    {
+      "id": "name_b",
+      "turns": [
+        "我同学叫白露，我叫唐宁。",
+        "我叫什么名字？"
+      ],
+      "final_checks": {
+        "all": [
+          "唐宁"
+        ],
+        "none": [
+          "我叫唐宁",
+          "你叫白露"
+        ]
+      },
+      "expected_profile_contains": "唐宁"
+    },
+    {
+      "id": "update_a",
+      "turns": [
+        "我喜欢喝可乐。",
+        "我现在不喜欢可乐了，更喜欢豆浆。",
+        "我现在喜欢喝什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "豆浆"
+        ],
+        "none": [
+          "我喜欢豆浆",
+          "我更喜欢豆浆",
+          "你现在喜欢可乐"
+        ]
+      },
+      "expected_profile_contains": "豆浆"
+    },
+    {
+      "id": "unknown_self",
+      "turns": [
+        "我的朋友叫柳林，我们第一次聊天。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "没有",
+          "还没",
+          "未提",
+          "告诉",
+          "不记得",
+          "无法确认"
+        ],
+        "none": [
+          "你叫柳林"
+        ]
+      },
+      "expected_profile_contains": null
+    }
+  ],
+  "comparison": "G2 fast_analysis in both arms; only explicit user-vs-avatar ownership instruction differs; temp0/seed42/pinned same4B",
+  "also_run": "evals/interaction/cycle-02/real-model-cases.json (20 original scenes)",
+  "gate": {
+    "all_36_objective_scenarios_pass": true,
+    "no_new_failures_vs_baseline": true,
+    "expected_profiles_correct": true,
+    "service_fallbacks": 0
+  },
+  "release_policy": "Keep candidate disabled if gate fails; preserve failures and do not change frozen assertions based on model outputs. Lexical false flags separately reviewed, not silently rewritten."
+}
