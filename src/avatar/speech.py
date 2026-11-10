@@ -15,7 +15,7 @@ import time
 from .brain.operations import OperationError
 from .face.lipsync import LipSyncEngine
 from .mouth.tts import EdgeTTSEngine
-from .utils.audio import load_audio, downsample_for_analysis
+from .utils.audio import load_audio, downsample_for_analysis, AudioDurationError
 from .cancellation import CancellationToken, Cancelled
 
 
@@ -106,7 +106,7 @@ class SpeechService:
                 content_type = "audio/wav" if audio[:4] == b"RIFF" and audio[8:12] == b"WAVE" else "audio/mpeg"
                 frames, duration, warning = [], None, None
                 try:
-                    samples, sr = load_audio(target)
+                    samples, sr = load_audio(target, max_seconds=self.MAX_SECONDS)
                     duration = len(samples) / sr
                     if not 0 < duration <= self.MAX_SECONDS:
                         raise OperationError(422, "speech_too_long", "语音超过 120 秒，请缩短朗读内容。")
@@ -114,6 +114,8 @@ class SpeechService:
                     samples, sr = downsample_for_analysis(samples, sr, cancel=token)
                     frames = [asdict(frame) | {"mouth_open": min(1.0, frame.mouth_open * intensity)}
                               for frame in LipSyncEngine().analyze(samples, sr, cancel=token)]
+                except AudioDurationError:
+                    raise OperationError(422, "speech_too_long", "语音超过 120 秒，请缩短朗读内容。") from None
                 except Cancelled:
                     raise
                 except OperationError:

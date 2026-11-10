@@ -1,5 +1,6 @@
 """Isolated signal/decoder probes. Run from repository root with core audio extras."""
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -64,6 +65,7 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     result={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        'source_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path('src/avatar/utils/audio.py'),Path('src/avatar/speech.py'),Path(__file__)]},
         'aliasing':alias_probe(),'decoder':decode_probe()}
     with args.output.open('x') as target:json.dump(result,target,ensure_ascii=False,indent=2)
     print(json.dumps(result,ensure_ascii=False,indent=2))

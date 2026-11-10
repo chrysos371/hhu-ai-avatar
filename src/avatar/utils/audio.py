@@ -1,6 +1,7 @@
 """音频工具：加载与分帧。"""
 from __future__ import annotations
 
+import math
 import wave
 from pathlib import Path
 from typing import Union
@@ -8,7 +9,17 @@ from typing import Union
 import numpy as np
 
 
-def load_wav(path: Union[str, Path]) -> tuple[np.ndarray, int]:
+class AudioDurationError(ValueError):
+    """Audio exceeds the caller's decoding duration budget."""
+
+
+def _frame_budget(max_seconds, sr):
+    if not math.isfinite(max_seconds) or max_seconds <= 0 or sr <= 0:
+        raise ValueError('Invalid audio decoding budget')
+    return math.floor(max_seconds * sr)
+
+
+def load_wav(path: Union[str, Path], *, max_seconds: float | None = None) -> tuple[np.ndarray, int]:
     """读取 16-bit PCM wav，返回 (float32 样本 [-1,1], 采样率)。
 
     仅用标准库，多声道取平均转单声道。
@@ -18,32 +29,52 @@ def load_wav(path: Union[str, Path]) -> tuple[np.ndarray, int]:
             raise ValueError("Only uncompressed 16-bit PCM WAV is supported")
         sr = wf.getframerate()
         ch = wf.getnchannels()
-        data = wf.readframes(wf.getnframes())
+        frames = wf.getnframes()
+        if max_seconds is not None and frames > _frame_budget(max_seconds, sr):
+            raise AudioDurationError('Audio exceeds duration budget')
+        data = wf.readframes(frames)
     samples = np.frombuffer(data, dtype=np.int16).astype(np.float32) / 32768.0
     if ch > 1:
         samples = samples.reshape(-1, ch).mean(axis=1)
     return samples.astype(np.float32), sr
 
 
-def load_audio(path: Union[str, Path]) -> tuple[np.ndarray, int]:
+def load_audio(path: Union[str, Path], *, max_seconds: float | None = None) -> tuple[np.ndarray, int]:
     """加载音频；PCM WAV 用标准库，其他格式优先 soundfile 再用 librosa。"""
     with open(path, "rb") as stream:
         header = stream.read(12)
     if header[:4] == b"RIFF" and header[8:12] == b"WAVE":
-        return load_wav(path)
+        return load_wav(path, max_seconds=max_seconds)
     try:
         import soundfile as sf
-        samples, sr = sf.read(str(path), dtype="float32", always_2d=True)
+        options = {}
+        if max_seconds is not None:
+            info = sf.info(str(path))
+            budget = _frame_budget(max_seconds, info.samplerate)
+            if info.frames > budget:
+                raise AudioDurationError('Audio exceeds duration budget')
+            # Do not trust metadata alone: request at most one frame beyond the cap.
+            options['frames'] = budget + 1
+        samples, sr = sf.read(str(path), dtype="float32", always_2d=True, **options)
+        if max_seconds is not None and len(samples) > _frame_budget(max_seconds, sr):
+            raise AudioDurationError('Audio exceeds duration budget')
         return samples.mean(axis=1), int(sr)
     except (ImportError, RuntimeError):
         pass
     try:
         import librosa  # type: ignore
 
-        y, sr = librosa.load(str(path), sr=None, mono=True)
+        options = {}
+        if max_seconds is not None:
+            source_sr = librosa.get_samplerate(str(path))
+            _frame_budget(max_seconds, source_sr)
+            options['duration'] = max_seconds + 1 / source_sr
+        y, sr = librosa.load(str(path), sr=None, mono=True, **options)
+        if max_seconds is not None and len(y) > _frame_budget(max_seconds, sr):
+            raise AudioDurationError('Audio exceeds duration budget')
         return y.astype(np.float32), int(sr)
     except ImportError:
-        return load_wav(path)
+        return load_wav(path, max_seconds=max_seconds)
 
 
 def frame_signal(

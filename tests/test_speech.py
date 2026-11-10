@@ -121,3 +121,13 @@ def test_audio_http_requires_header_token_and_never_returns_local_path(tmp_path)
         server.shutdown()
         thread.join()
         server.server_close()
+
+
+def test_duration_budget_rejects_before_decode_and_releases_busy_slot():
+    service = SpeechService(WaveTTS())
+    service.MAX_SECONDS = .1
+    with pytest.raises(OperationError) as exc:
+        service.synthesize({'text': '超出限额'})
+    assert exc.value.status == 422 and exc.value.code == 'speech_too_long'
+    service.MAX_SECONDS = 1
+    assert service.synthesize({'text': '恢复'})['duration'] == .5
