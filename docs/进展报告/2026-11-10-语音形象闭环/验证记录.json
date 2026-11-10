@@ -1,0 +1,70 @@
+{
+  "recorded_at": "2026-11-10T18:47:04.896270+08:00",
+  "base_commit": "c488008",
+  "last_implementation_commit": "abc7d56",
+  "author": "spinner-bot",
+  "python_regression": {
+    "passed": 589,
+    "skipped": 1,
+    "summary": "589 passed, 1 skipped in 24.23s",
+    "skip_reason": "optional torch dependency not installed"
+  },
+  "frontend": {
+    "component_tests_passed": 25,
+    "typecheck": "passed",
+    "lint": "passed",
+    "production_build": "passed"
+  },
+  "chromium": {
+    "offline_tests_passed": 9,
+    "real_edge_tts_playback_test_passed": 1,
+    "real_test_seconds": 8.2,
+    "microphone": "Chromium synthetic microphone through actual AudioWorklet; fixed ASR fixture"
+  },
+  "real_tts": {
+    "status": "passed",
+    "python": "3.10.12",
+    "elapsed_seconds": 4.11,
+    "audio_bytes": 32976,
+    "content_type": "audio/mpeg",
+    "duration_seconds": 5.496,
+    "lip_frames": 548,
+    "warning": null,
+    "has_nonzero_mouth": true
+  },
+  "real_asr_model_test": "not performed; no model downloaded",
+  "commands": [
+    "mkdir -p .test-tmp",
+    "python -m pytest tests/ --basetemp=.test-tmp/speech-completion -q",
+    "./scripts/frontend.sh run build",
+    "./scripts/frontend.sh run lint",
+    "./scripts/frontend.sh run test -- --run",
+    "./scripts/frontend.sh run e2e -- --reporter=line",
+    "AVATAR_E2E_REAL_TTS=1 ./scripts/frontend.sh run e2e -- speech.spec.ts --grep 'playback follows' --reporter=line"
+  ],
+  "implementation_commits": [
+    "143868f docs(plan): define speech and browser avatar milestones",
+    "531bb2c fix(web): initialize shared session lock after integration",
+    "5081391 feat(speech): serve authenticated audio and emotion driven lip timelines",
+    "4037b07 feat(avatar): play speech with clock synced browser character",
+    "e5851eb feat(asr): add opt in local WAV transcription without automatic actions",
+    "c53758e feat(voice): capture microphone audio and review transcripts before sending",
+    "cba293d test(voice): verify playback lip sync and microphone flows in Chromium",
+    "abc7d56 fix(runtime): handle cancelled clients and expose local process health"
+  ],
+  "environment": {
+    "python": "3.10.12",
+    "node": "22.14.0",
+    "chromium": "141.0.7390.37",
+    "packages": {
+      "numpy": "2.2.6",
+      "openai": "3.49.0",
+      "edge-tts": "7.3.1",
+      "soundfile": "0.14.0",
+      "librosa": "0.11.0",
+      "pytest": "9.2.0",
+      "mcp": "1.30.0",
+      "ddgs": "9.16.1"
+    }
+  }
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小海 · 网页语音与最小形象阶段汇报</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#dce9f0;background:#0d1620;line-height:1.7;color-scheme:dark}
+*{box-sizing:border-box}body{max-width:1120px;margin:0 auto;padding:40px 24px 80px}a{color:#92dbdf}h1{font-size:clamp(28px,5vw,46px);line-height:1.3;margin:12px 0}h2{margin:0 0 16px;font-size:22px}h3{margin:12px 0 8px;font-size:17px}p{margin:10px 0}.eyebrow{font-size:12px;letter-spacing:3px;color:#8ac6ce}.muted,small{color:#9db1c2}.lead{font-size:18px;max-width:850px}.panel{background:#142331;border:1px solid #2a4354;border-radius:16px;padding:28px;margin:24px 0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0}.stat{padding:20px;border:1px solid #315262;border-radius:12px;background:#172c3a}.stat strong{display:block;color:#a6e6dc;font-size:32px}.chain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.node{padding:20px;border-radius:10px;background:#1a3641;border-top:3px solid #72c6b1}.pending{border-color:#d6b875;background:#302e25}.badge{display:inline-block;border-radius:20px;padding:3px 12px;background:#1d463e;color:#b2e8d9;font-size:12px}.warning{background:#4b4228;color:#ebd6a7}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:14px 10px;border-bottom:1px solid #2e4655;vertical-align:top}th{color:#97cbd1}code{background:#0c1b26;border-radius:4px;padding:2px 6px;overflow-wrap:anywhere}img{max-width:100%;height:auto;border-radius:10px;border:1px solid #315262}.gallery{display:grid;grid-template-columns:3fr 1fr;gap:20px;align-items:start}.notice{border-left:3px solid #d6b875;padding:10px 18px;background:#302e25}.links{display:flex;gap:20px;flex-wrap:wrap}li{margin:6px 0}details{padding:12px 0}summary{cursor:pointer;color:#a7d8de}footer{margin-top:36px;border-top:1px solid #2e4655;padding-top:18px;color:#9db1c2;font-size:13px}
+@media(max-width:720px){body{padding:24px 16px}.stats,.chain{grid-template-columns:repeat(2,1fr)}.panel{padding:20px}.gallery{grid-template-columns:1fr}table{display:block;overflow:auto}.gallery img{max-height:700px;object-fit:contain;object-position:top}}
+@media print{:root{color:#182b38;background:white}body{padding:0}.panel,.stat,.node{background:#f4f8fa;color:#182b38;break-inside:avoid}.stats strong,a{color:#245e68}.muted,small,footer{color:#445e6b}.notice{background:#faf4e6}code{background:#edf1f3}.gallery img{max-height:500px;object-fit:contain;object-position:top}}
+</style>
+<header>
+  <div class="eyebrow">HHU / AVATAR · 2026-11-10 · SPINNER-BOT</div>
+  <h1>让小海在网页中<br>说话、呈现表情、回应声音</h1>
+  <p class="lead">从文本后台推进到可演示的最小角色交互：真实 TTS 播放、播放时钟口型与 SVG 形象已经接通。可选麦克风/WAV 转写先进入草稿，检查后发送。</p>
+  <span class="badge">真实 TTS 与浏览器播放通过</span>
+  <span class="badge warning">真实 ASR 与物理设备待验收</span>
+  <div class="links"><a href="阶段总结.md">Markdown 总结</a><a href="进展.md">全过程记录</a><a href="验证记录.json">验证证据</a><a href="../../网页语音与最小形象.md">运行说明</a></div>
+</header>
+<div class="stats">
+  <div class="stat"><strong>589</strong>Python 回归通过<small> · 1 项可选 torch 跳过</small></div>
+  <div class="stat"><strong>25</strong>前端组件通过<small> · 类型 / lint / 构建通过</small></div>
+  <div class="stat"><strong>9 + 1</strong>浏览器流程通过<small> · 离线 + 真实在线 TTS</small></div>
+  <div class="stat"><strong>548</strong>真实探测音频口型帧<small> · 5.496 秒 MP3</small></div>
+</div>
+<section class="panel">
+  <h2>远期链路推进到哪里</h2>
+  <div class="chain">
+    <div class="node pending"><h3>听 · 输入</h3><p>AudioWorklet 录音 / WAV 上传 / 本机 ASR 适配</p><small>浏览器采集通过；真实识别质量待验证</small></div>
+    <div class="node"><h3>思 · 决策</h3><p>复用既有记忆、PAD 情绪与安全边界</p><small>识别结果先确认，才进入对话</small></div>
+    <div class="node"><h3>演 · 呈现</h3><p>Edge-TTS → MP3 → 秒时间轴口型 → SVG</p><small>以实际播放进度驱动，暂停 / 停止闭嘴</small></div>
+    <div class="node"><h3>记 · 持久化</h3><p>沿用已确认的文本对话和来源记忆</p><small>转写与朗读本身不新增对话事实</small></div>
+  </div>
+  <p class="notice">工程回归与接口接通不代表陪伴质量已达标。没有在本轮重评真实 LLM、训练新模型或验证真实中文 ASR，也没有接入正式 Live2D / Godot 渲染框架。</p>
+</section>
+<section class="panel">
+  <h2>浏览器现场</h2>
+  <p class="muted">真实 Edge-TTS 生成并播放 MP3；截图中文字来自离线规则回复。浏览器麦克风验收使用 Chromium 模拟设备与固定识别结果。</p>
+  <div class="gallery"><a href="browser-desktop.png"><img src="browser-desktop.png" alt="桌面对话页：小海形象、语音播放器与停止控制" loading="lazy"></a><a href="browser-mobile.png"><img src="browser-mobile.png" alt="390 像素窄屏下的对话页与语音输入控件" loading="lazy"></a></div>
+</section>
+<section class="panel">
+  <h2>实现与故障处理</h2>
+  <table><thead><tr><th>能力</th><th>交付行为</th><th>限制</th></tr></thead><tbody>
+    <tr><td>按需朗读</td><td>文字先交付，主动点击后合成；失败保留文字并允许重试</td><td>在线 Edge-TTS；30 秒网络合成超时，2000 字 / 次</td></tr>
+    <tr><td>同步与表情</td><td>语速、音调、嘴型强度来自情绪决策；播放器 currentTime 二分取帧</td><td>中文元音和真实音画延迟尚未量化</td></tr>
+    <tr><td>声音输入</td><td>最长 60 秒，麦克风与 WAV 共用本机识别；结果追加草稿</td><td>默认关闭识别；需已有 FunASR 本机模型，CPU 运行</td></tr>
+    <tr><td>缓存与取消</td><td>令牌头读取音频，Blob URL 播放；取消迟到响应、离开页面释放资源</td><td>8 条 / 32 MiB / 15 分钟缓存，上游合成尚不能真正取消</td></tr>
+    <tr><td>运行容错</td><td>进程健康检查、端口冲突提示、客户端断开容错</td><td>健康响应不等于依赖服务就绪；未做多日长时运行</td></tr>
+  </tbody></table>
+</section>
+<section class="panel">
+  <h2>验证证据与范围</h2>
+  <ul>
+    <li>Python 3.10.12 全量 <strong>589 passed, 1 skipped</strong>；隔离临时数据库，约 24.23 秒。</li>
+    <li>前端 25 项组件测试，类型、lint、生产构建通过；锁定依赖保持不变。</li>
+    <li>9 项 Chromium 离线测试涵盖管理流程、播放器、口型、失败重试、录音回填和资源释放。</li>
+    <li>独立真实 Edge-TTS：<strong>32976 字节 / 5.496 秒 / 548 帧</strong>，合成与分析 4.11 秒，无降级。</li>
+    <li>真实在线 TTS → MP3 → Chromium 播放 → SVG 同步，最终复核 <strong>1 passed / 8.2 秒</strong>。</li>
+    <li>补齐上次合并遗漏的会话锁初始化；真实 socket RST 验证取消请求后服务继续响应。</li>
+  </ul>
+  <details><summary>复现命令与资料</summary>
+    <p><code>mkdir -p .test-tmp</code><br><code>python -m pytest tests/ --basetemp=.test-tmp/speech-completion -q</code><br><code>./scripts/frontend.sh run build</code><br><code>./scripts/frontend.sh run lint</code><br><code>./scripts/frontend.sh run test -- --run</code><br><code>./scripts/frontend.sh run e2e -- --reporter=line</code></p>
+    <p>真实服务单测需显式设置 <code>AVATAR_E2E_REAL_TTS=1</code>，选择 <code>speech.spec.ts</code> 中 <code>playback follows</code> 用例。详见 <a href="验证记录.json">机器可读验证记录</a>。</p>
+  </details>
+</section>
+<section class="panel">
+  <h2>下一阶段按证据推进</h2>
+  <table><thead><tr><th>优先级</th><th>工作</th><th>进入下一阶段的依据</th></tr></thead><tbody>
+    <tr><td>P0</td><td>目标设备真实 ASR、物理麦克风、静音与噪声</td><td>记录识别错误与延迟，保留草稿确认，避免误发送</td></tr>
+    <tr><td>P1</td><td>中文口型与音画延迟量化</td><td>独立语料指标和基线对照，再调整算法</td></tr>
+    <tr><td>P1</td><td>流式回复、分段 TTS、真正取消与打断</td><td>不播放过时音频，不重复写入记忆或提醒</td></tr>
+    <tr><td>P1</td><td>多日运行、断网、重启与进程管理</td><td>可重复启动、故障保留文字与已确认数据</td></tr>
+    <tr><td>P2</td><td>真实对话独立评测与模型策略；正式渲染框架</td><td>先验证交互质量，再投入训练与大型渲染资源</td></tr>
+  </tbody></table>
+</section>
+<footer>作者 spinner-bot · 起点 c488008 · 最后实现提交 abc7d56。所有本轮实现按功能小步提交；原始音频和用户数据库不入版本库。<br>本报告为已完成阶段的证据归档，剩余验收项保持明确状态。</footer>
+</html>

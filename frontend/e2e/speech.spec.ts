@@ -25,12 +25,14 @@ test("playback follows the audio clock, pause and stop close the mouth", async (
   await expect(page.locator(".avatar-stage")).toHaveAttribute("data-mouth-open", "0.000");
   await player.evaluate((audio: HTMLAudioElement) => { audio.currentTime = 0.1; return audio.play(); });
   await expect(page.locator(".avatar-stage")).toHaveAttribute("aria-label", "小海，正在说话");
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "../data/speech-demo/browser-desktop.png", fullPage: true });
   await page.getByRole("button", { name: "停止播放", exact: true }).click();
   await expect(player).not.toHaveAttribute("src");
   await expect(page.locator(".avatar-stage")).toHaveAttribute("data-mouth-open", "0.000");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "../data/speech-demo/browser-mobile.png", fullPage: true });
 });
 test("speech failure keeps the text and permits retry", async ({ page }) => {
