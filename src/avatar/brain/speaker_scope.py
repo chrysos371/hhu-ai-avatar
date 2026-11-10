@@ -13,8 +13,8 @@ from .facts import _mask_quoted
 
 _ENTRY = re.compile(
     r'^(?:(?:接下来|现在|从现在起)[，,\s]*)?'
-    r'我(?:来|要|将|会)?(?:扮演|饰演)(?:[^。！？!?；;，,\n]{0,40})(?:角色|人物)')
-_EXIT = re.compile(r'^(?:回到现实|停止扮演|退出角色|不演了|结束角色扮演)')
+    r'我(?:来|要|将|会)?(?:扮演|饰演)(?!过)(?:[^。！？!?；;，,\n]{0,40})(?:角色|人物)\s*$')
+_EXIT = re.compile(r'^(?:回到现实|停止扮演|退出角色|不演了|结束角色扮演)(?:吧)?\s*$')
 _REAL = re.compile(r'^现实中的(?=我)')
 
 
@@ -41,7 +41,7 @@ class SpeakerScope:
         # Conditions/questions govern the whole sentence, including comma tails.
         for sentence in re.finditer(r'[^。！？!?；;\n]+[。！？!?；;]?', clean):
             value = sentence.group()
-            if re.search(r'如果|假如|假设|要是|倘若|是否|[？?]|(?:吗|么|呢)[。！!；;]?$', value):
+            if re.search(r'如果|假如|假设|要是|倘若|比如|例如|也许|可能|是否|[？?]|(?:吗|么|呢)[。！!；;]?$', value):
                 continue
             for clause in re.finditer(r'[^，,。！？!?；;\n]+', value):
                 raw = clause.group()
