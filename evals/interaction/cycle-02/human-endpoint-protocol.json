@@ -1,0 +1,10 @@
+{
+  "scope": "Existing frozen 40 AISHELL read-speech development files, no new independent test set and no physical microphone",
+  "manifest": "data/g2-cycle-02/aishell/manifest.json",
+  "augmentation": "Append 10 seconds of exact silence; preserve all original frames, use same augmented input for baseline",
+  "endpoint": "Unchanged EnergyEndpoint defaults from frozen endpointing-protocol.json, chunk size4096, native16000Hz",
+  "asr": "Same local faster-whisper-small revision/quantization; GPU chosen at launch, batch1, beam5, zh, no conditioning, simplified-Chinese initial prompt",
+  "comparison": "Alternate full augmented clip and automatically stopped clip order per sample; retain all outputs; no_speech maps to full reference deletion",
+  "gate": {"all_40_have_pause_endpoint": true, "aggregate_cer_not_worse_than_full": true, "no_individual_increased_edit_distance": true},
+  "limits": "No human speech-boundary labels. Clip duration difference is not speech endpoint error. CER is an indirect information-loss check; synthetic appended silence and read speech cannot represent real noisy conversations. Do not tune threshold on these outputs."
+}
