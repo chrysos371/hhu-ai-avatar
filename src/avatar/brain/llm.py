@@ -116,6 +116,11 @@ class LLMEngine:
         return self.stream_chat(messages, temperature=0, max_tokens=384, cancel=cancel,
                                 response_format=REVIEW_FORMATS[version])
 
+    def compose_literal_slots(self, messages, layout, *, cancel=None):
+        """Plan surrounding text; immutable user literals are rendered locally."""
+        return self.stream_chat(layout.messages(messages), temperature=0, max_tokens=512,
+            cancel=cancel, on_delta=None, response_format=layout.response_format)
+
     def close(self):
         if self._client is not None:
             self._client.close()

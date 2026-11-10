@@ -25,11 +25,13 @@ def main():
     parser.add_argument('--turn-suite',type=Path,help='Run only this prospective per-turn suite')
     parser.add_argument('--regression-suite',type=Path,help='Include a frozen related regression suite before the prospective suite')
     parser.add_argument('--task-delivery',action='store_true',help='Profile/identity fixed on in both arms; task contract and repair only in candidate')
+    parser.add_argument('--literal-composition',action='store_true',help='Task checks fixed on in both arms; only candidate uses immutable literal slot repair')
     parser.add_argument('--profile-grounding',action='store_true',
         help='Compare fixed subject prompt in both arms; candidate also enables narrow profile grounding')
     args=parser.parse_args()
-    if args.task_delivery and args.profile_grounding:
+    if sum([args.task_delivery,args.profile_grounding,args.literal_composition])>1:
         parser.error('Use one comparison mode')
+    task_mode = args.task_delivery or args.literal_composition
     if args.regression_suite and not args.turn_suite:
         parser.error('Regression companion requires a prospective suite')
     if args.output.exists():raise ValueError('Use a new output file')
@@ -55,8 +57,9 @@ def main():
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'created_utc':datetime.now(timezone.utc).isoformat(),'provider':provider,
         'spec_sha256':{str(p):sha(p) for p in [original_path,extra_path]},
-        'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py'),Path('src/avatar/brain/profile_grounding.py'),Path('src/avatar/brain/tasks.py')]},
-        'comparison': 'profile_and_identity_both_arms_task_delivery_candidate' if args.task_delivery else 'subject_prompt_both_arms_profile_grounding_candidate' if args.profile_grounding else 'subject_prompt_candidate_only',
+        'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py'),Path('src/avatar/brain/profile_grounding.py'),Path('src/avatar/brain/tasks.py'),Path('src/avatar/brain/literal_layout.py')]},
+        'comparison': 'task_checks_both_arms_literal_composition_candidate' if args.literal_composition else 'profile_and_identity_both_arms_task_delivery_candidate' if args.task_delivery else 'subject_prompt_both_arms_profile_grounding_candidate' if args.profile_grounding else 'subject_prompt_candidate_only',
+        'literal_composition_protocol':json.loads(Path('evals/interaction/cycle-03/literal-slots-protocol.json').read_text()) if args.literal_composition else None,
         'regression_protocol':regression,
         'grounding_protocol':json.loads(Path('evals/interaction/cycle-02/profile-grounding-protocol.json').read_text()) if args.profile_grounding else None,
         'disclosure_protocol':json.loads(Path('evals/interaction/cycle-02/disclosure-grounding-v2.json').read_text()) if args.profile_grounding else None,
@@ -76,15 +79,16 @@ def main():
                 row={'id':case['id'],'family':family,'mode':mode,'turns':[],'error':None}
                 with tempfile.TemporaryDirectory(prefix='avatar-subject-eval-') as folder:
                     avatar=Avatar(db_path=str(Path(folder)/'eval.db'),llm=engine,
-                        fast_analysis=True,subject_prompt_enabled=args.task_delivery or args.profile_grounding or mode=='candidate',
-                        profile_grounding_enabled=args.task_delivery or (args.profile_grounding and mode=='candidate'),
-                        task_contract_enabled=args.task_delivery and mode=='candidate',
-                        delivery_check_enabled=args.task_delivery and mode=='candidate',session_id='paired-subject-eval')
+                        fast_analysis=True,subject_prompt_enabled=task_mode or args.profile_grounding or mode=='candidate',
+                        profile_grounding_enabled=task_mode or (args.profile_grounding and mode=='candidate'),
+                        task_contract_enabled=args.literal_composition or (args.task_delivery and mode=='candidate'),
+                        delivery_check_enabled=args.literal_composition or (args.task_delivery and mode=='candidate'),
+                        literal_composition_enabled=args.literal_composition and mode=='candidate',session_id='paired-subject-eval')
                     try:
                         for text in case['turns']:
                             started=time.perf_counter()
                             visible=[]
-                            options={'on_delta':lambda piece:visible.append({'text':piece,'seconds':time.perf_counter()-started})} if args.task_delivery else {}
+                            options={'on_delta':lambda piece:visible.append({'text':piece,'seconds':time.perf_counter()-started})} if task_mode else {}
                             result=avatar.respond(text,cancel=CancellationToken(),**options)
                             row['turns'].append({'input':text,'result':result,'seconds':time.perf_counter()-started,
                                 'profile_at_turn':avatar.memory.get_user_profile(),'visible':visible})

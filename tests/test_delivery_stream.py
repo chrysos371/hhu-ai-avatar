@@ -46,7 +46,8 @@ def test_cancelled_repair_propagates_and_never_emits_or_commits_draft():
     finally:avatar.memory.close()
 
 
-def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_path):
+@pytest.mark.parametrize('composition',[False,True])
+def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_path,composition):
     import threading
     from avatar.brain.llm import LLMEngine
     from avatar.cancellation import Cancelled
@@ -55,7 +56,7 @@ def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_
         class Engine(LLMEngine):
             def __init__(self,**kwargs):super().__init__(**kwargs);self.repair_started=threading.Event()
             def stream_chat(self,messages,**kwargs):
-                if messages[-1]['content'].startswith('请修正上一稿'):
+                if messages[-1]['content'].startswith(('请修正上一稿','请按固定原文槽位')):
                     server.started.clear()
                     self.repair_started.set()
                     messages=messages[:-1]+[{'role':'user','content':'delay-headers'}]
@@ -64,7 +65,8 @@ def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_
         db_path=str(tmp_path/'repair.db')
         token,pieces,outcome=CancellationToken(),[],[]
         def work():
-            avatar=Avatar(db_path=db_path,llm=engine,task_contract_enabled=True,delivery_check_enabled=True)
+            avatar=Avatar(db_path=db_path,llm=engine,task_contract_enabled=True,
+                          delivery_check_enabled=True,literal_composition_enabled=composition)
             try:avatar.respond('给老师写一条消息，保留【姓名】。',cancel=token,on_delta=pieces.append)
             except Cancelled:outcome.append('cancelled')
             finally:avatar.memory.close()

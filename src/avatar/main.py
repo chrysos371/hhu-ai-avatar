@@ -28,6 +28,7 @@ from .brain.summaries import SummaryStore
 from .brain.admin_store import AdminStore
 from .brain.emotion_overrides import EmotionOverrideService
 from .brain.tasks import TaskTracker
+from .brain.literal_layout import LiteralLayout
 from datetime import datetime
 from .config import config
 from .ears.asr import ASREngine, TextInputEngine
@@ -63,7 +64,10 @@ class Avatar:
         fast_analysis: bool = False,
         subject_prompt_enabled: bool = False,
         profile_grounding_enabled: bool = False,
+        literal_composition_enabled: bool = False,
     ):
+        if literal_composition_enabled and not (task_contract_enabled and delivery_check_enabled):
+            raise ValueError('Literal composition requires task contracts and delivery checks')
         if memory is None:
             if embedder is None and config.embedding.model:
                 embedder = OllamaEmbeddingProvider(config.embedding.base_url, config.embedding.model,
@@ -96,6 +100,7 @@ class Avatar:
         self.fast_analysis = fast_analysis
         self.subject_prompt_enabled = subject_prompt_enabled
         self.profile_grounding_enabled = profile_grounding_enabled
+        self.literal_composition_enabled = literal_composition_enabled
         self.analysis_mode = 'not_run'
 
     def _checkpoint(self):
@@ -569,13 +574,16 @@ class Avatar:
         else:
             generation_mode = 'rules_unconfigured'
             reply = self._fallback_reply(user_text, decision)
+        draft_generation_mode = generation_mode
         self._checkpoint()
         # One bounded retry only for a normal local writing response. Never
         # replay tools, reminders, or replace a deterministic safety decision.
         delivery_issues = []
         repair_attempted = False
         repair_succeeded = False
-        if self.delivery_check_enabled and generation_mode not in {'profile_lookup', 'profile_grounded'} and boundary.reply is None and reminder is None and not reminder_error and not use_web:
+        repair_mode = None
+        repair_error = None
+        if delivery_guard_active and generation_mode == 'llm':
             delivery_issues = self.tasks.inspect(reply)
             if delivery_issues and self._llm_available:
                 repair_attempted = True
@@ -586,18 +594,28 @@ class Avatar:
                          + json.dumps(delivery_issues, ensure_ascii=False)
                          + '。仍须遵守原任务和安全边界，不得补造未知信息。'}
                     ]
-                    if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                    contract = self.tasks.current
+                    if self.literal_composition_enabled and (contract.required_literals or contract.forbidden_literals):
+                        repair_mode = 'literal_slots'
+                        layout = LiteralLayout(contract.required_literals, contract.forbidden_literals)
+                        corrected = layout.render(self.llm.compose_literal_slots(repair_messages, layout, cancel=cancel))
+                    elif cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        repair_mode = 'freeform'
                         corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
                             cancel=cancel, on_delta=None)
                     else:
+                        repair_mode = 'freeform'
                         corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
                     self._checkpoint()
                     if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
                         reply = corrected
                         repair_succeeded = True
+                        if repair_mode == 'literal_slots':
+                            generation_mode = 'llm_literal_composition'
                 except Cancelled:
                     raise
-                except Exception:
+                except Exception as exc:
+                    repair_error = type(exc).__name__
                     logger.warning('任务修正失败，保留原回复与检查记录')
         output_adjustment = None
         output_checker = getattr(self.boundaries, 'review_output', None)
@@ -607,10 +625,12 @@ class Avatar:
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
         # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
-        if buffer_reply and generation_mode == 'llm' and on_delta:
-            emit_checked(reply)
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
+        final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
+        repair_succeeded = repair_succeeded and not final_delivery_issues
+        if buffer_reply and generation_mode in {'llm', 'llm_literal_composition'} and on_delta:
+            emit_checked(reply)
         self._checkpoint()
         # 5. 短期记忆记下回复
         with self.memory.transaction():
@@ -643,9 +663,11 @@ class Avatar:
             "knowledge_retrieval_degraded":self._knowledge_degraded,
             "task": self.tasks.current.data() if self.tasks.current else None,
             "delivery_check": {"initial_issues": delivery_issues,
-                               "remaining_issues": self.tasks.inspect(reply) if delivery_issues else [],
+                               "remaining_issues": final_delivery_issues,
                                "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded,
-                               "stream_buffered": delivery_guard_active and generation_mode == "llm"},
+                               "repair_mode": repair_mode, "repair_error": repair_error,
+                               "draft_generation_mode": draft_generation_mode,
+                               "stream_buffered": delivery_guard_active and generation_mode in {"llm", "llm_literal_composition"}},
             "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
                          "output_adjustment": output_adjustment},
             "reply": reply,
@@ -663,7 +685,7 @@ class Avatar:
             "profile_grounding": {"enabled": self.profile_grounding_enabled,
                                   "action": grounding_action, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2,
                                   "semantic_verifier": False,
-                                  "stream_buffered": self.profile_grounding_enabled and generation_mode == "llm"},
+                                  "stream_buffered": self.profile_grounding_enabled and generation_mode in {"llm", "llm_literal_composition"}},
             "user_emotion": self.emotion.user_state.label(),
             "user_valence": round(self.emotion.user_state.valence, 2),
             "user_arousal": round(self.emotion.user_state.arousal, 2),
