@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>已完成功能审计结论 · hhu-ai-avatar</title>
+<style>
+:root{color-scheme:light;--ink:#172333;--muted:#53657a;--line:#d8e1eb;--paper:#fff;--bg:#f2f6fa;--blue:#145da0;--red:#a52222;--redbg:#fff0ef;--amber:#805600;--amberbg:#fff7df;--green:#17633c;--greenbg:#eaf7ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1120px;margin:0 auto;padding:32px 22px 64px}header,.card,section{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 14px #132b4510}header{padding:30px;margin-bottom:20px}h1{font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.2;margin:0 0 12px}h2{font-size:1.4rem;margin:0 0 14px}.sub,.muted{color:var(--muted)}.stamp{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{border:1px solid var(--line);border-radius:99px;padding:3px 10px;font-size:.88rem;background:#f8fafc}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:18px 0}.card{padding:16px}.metric{font-size:1.8rem;font-weight:750}.metric.high{color:var(--red)}.metric.mid{color:var(--amber)}section{padding:24px;margin:18px 0}table{width:100%;border-collapse:collapse}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:10px 9px}th{font-size:.9rem;color:var(--muted)}td:first-child{white-space:nowrap}.sev{display:inline-block;padding:1px 8px;border-radius:7px;font-size:.83rem;font-weight:700}.p1{color:var(--red);background:var(--redbg)}.p2{color:var(--amber);background:var(--amberbg)}a{color:var(--blue);text-decoration-thickness:1px;text-underline-offset:2px}.actions li{padding:4px 0}.note{border-left:4px solid #e0aa32;padding:10px 14px;background:var(--amberbg);margin:14px 0}.good{border-left:4px solid #309564;padding:10px 14px;background:var(--greenbg);margin:14px 0}.foot{color:var(--muted);font-size:.92rem}code{background:#eef2f6;padding:1px 4px;border-radius:4px;overflow-wrap:anywhere}
+@media(max-width:700px){main{padding:16px 10px 40px}header,section{padding:18px}table,tbody,tr,td{display:block}thead{display:none}tr{padding:9px 0;border-bottom:1px solid var(--line)}td{border:0;padding:3px 4px}td:first-child{white-space:normal;font-weight:700}}
+</style>
+</head>
+<body><main>
+<header>
+  <p class="sub">河海大学 AI 虚拟形象项目 · 内部代码审计</p>
+  <h1>已完成功能审计结论</h1>
+  <p>审计已实现并被项目文档标为可用/完成的记忆、情绪与边界、工具、工作台、语音模块及主流程。审计找到若干跨模块和边界条件问题；本报告按优先级给出证据和修复顺序。</p>
+  <div class="stamp"><span class="pill">日期：2026-11-10</span><span class="pill">基线：d241a79</span><span class="pill">审计目录：audit/2026-11-10-completed-components/</span><span class="pill">工作区：文档审计，无生产代码修改</span></div>
+</header>
+
+<div class="grid">
+  <div class="card"><div class="metric">8</div><div>单项问题记录</div></div>
+  <div class="card"><div class="metric high">3</div><div>P1 高优先级</div></div>
+  <div class="card"><div class="metric mid">5</div><div>P2 中优先级</div></div>
+  <div class="card"><div class="metric">7 + 1</div><div>静态可确认项 + 需确认时间尺度项</div></div>
+</div>
+
+<section>
+  <h2>结论摘要</h2>
+  <p>当前主要风险在于：危险情绪规则对混合时间表达存在漏判路径；联网工具的提醒写操作没有与当轮用户请求绑定；Python 3.10/3.11 环境的资料搜索会调用不存在的 API。另有记忆空词召回、全静音口型输出、语音组件未接入主流程及本机 Web 单线程阻塞等问题。</p>
+  <div class="note"><strong>审计边界：</strong>本轮只做静态代码、已有测试和文档交叉核对。没有运行全量测试、真实模型、联网写工具、ASR/TTS 或设备流程。问题记录均标明证据性质；需要运行时复现的项不能视为已经验证修复。</div>
+  <div class="good"><strong>建议顺序：</strong>先封住未经明确请求的提醒写操作并修复当前风险漏判；同时解决 Python 兼容。之后修复检索/静音确定性缺陷，再排语音链路、Web 响应隔离和情绪时间参数标定。</div>
+</section>
+
+<section>
+  <h2>问题总表</h2>
+  <table><thead><tr><th>ID / 等级</th><th>问题</th><th>主要影响</th><th>审计状态</th></tr></thead><tbody>
+    <tr><td><span class="sev p1">P1 高</span><br>AUD-001</td><td><a href="issues/AUD-001_混合历史与当前风险被整体历史标记压制.md">混合历史与当前风险被整体历史标记压制</a></td><td>明确当前自伤风险可能没有进入危机路由。</td><td>正则和分支静态确认，未运行复现。</td></tr>
+    <tr><td><span class="sev p1">P1 高</span><br>AUD-002</td><td><a href="issues/AUD-002_提醒写工具缺少当前请求授权绑定.md">提醒写工具缺少当前请求授权绑定</a></td><td>联网模式下模型误调用可能创建/取消本机提醒。</td><td>工具调用链静态确认；未执行写操作。</td></tr>
+    <tr><td><span class="sev p1">P1 高</span><br>AUD-003</td><td><a href="issues/AUD-003_文档搜索调用Python312专有路径API.md">资料搜索调用 Python 3.12 专有 API</a></td><td>Python 3.10/3.11 且资料目录含子目录时搜索中断。</td><td>兼容声明与 API 版本静态核对。</td></tr>
+    <tr><td><span class="sev p2">P2 中</span><br>AUD-004</td><td><a href="issues/AUD-004_语音模块未接入Avatar端到端主流程.md">语音模块未接入 Avatar 端到端主流程</a></td><td>不能按文档经主 API 完成音频输入、TTS 到口型帧闭环。</td><td>调用点与接口静态确认。</td></tr>
+    <tr><td><span class="sev p2">P2 中</span><br>AUD-005</td><td><a href="issues/AUD-005_全零音频被计算为张嘴状态.md">全零音频被计算为张嘴状态</a></td><td>静音时可能输出约 0.2 的张嘴幅度和错误能量。</td><td>数值路径静态推导，未运行音频用例。</td></tr>
+    <tr><td><span class="sev p2">P2 中</span><br>AUD-006</td><td><a href="issues/AUD-006_无有效检索词时非空查询退化为全库热门召回.md">无有效检索词时退化为全库热门召回</a></td><td>“嗯”等查询把高重要度但无关记忆带入本轮。</td><td>查询分支静态确认，未运行 SQLite 示例。</td></tr>
+    <tr><td><span class="sev p2">P2 中</span><br>AUD-007</td><td><a href="issues/AUD-007_角色情绪默认衰减半衰期仅约四秒.md">角色情绪默认半衰期约 4.3 秒</a></td><td>若希望跨普通轮间隔保持状态，角色情绪会过快回归中性。</td><td>公式计算已确认；目标时间尺度需项目方确认。</td></tr>
+    <tr><td><span class="sev p2">P2 中</span><br>AUD-008</td><td><a href="issues/AUD-008_本机Web单线程请求被同步模型调用占用.md">本机 Web 单线程被同步模型调用占用</a></td><td>慢模型/联网请求期间其他 API 与提醒轮询排队。</td><td>服务器和调用路径静态确认；未测延迟。</td></tr>
+  </tbody></table>
+</section>
+
+<section>
+  <h2>优先修复策略</h2>
+  <ol class="actions">
+    <li><strong>P1 安全与授权：</strong>AUD-001 按分句判断历史/当前时间作用域；AUD-002 在执行器做写授权，不以提示词代替校验。</li>
+    <li><strong>P1 兼容性：</strong>AUD-003 用 Python 3.10 可用的 junction 检测兼容层，增加最低支持版本下的目录树检查。</li>
+    <li><strong>P2 确定性行为：</strong>AUD-005 增加全静音早退；AUD-006 区分无查询与有查询但无 token。</li>
+    <li><strong>P2 集成与可用性：</strong>AUD-004 明确组件/端到端完成状态并制定统一音频—口型 API；AUD-008 设置明确请求超时并隔离长任务与提醒轮询。</li>
+    <li><strong>设计校准：</strong>AUD-007 先明确目标半衰期，再调整默认值并用模拟时钟锁定行为。</li>
+  </ol>
+  <p>修复时应为每个问题建立专属回归用例；安全路由、数据库状态、工具副作用和语言质量应分开验收。这里是建议，不代表本次已修改生产代码。</p>
+</section>
+
+<section>
+  <h2>已检查范围与未覆盖范围</h2>
+  <p><strong>已检查：</strong><code>main.py</code> 主流程、事实校验/偏好、SQLite 记忆与向量路径、情绪策略、边界路由、摘要与提醒、LLM 适配、Web 工作台、MCP 工具授权与本地文档搜索、网页读取/搜索/天气适配、ASR/TTS/口型和相关测试/设计文档。</p>
+  <p><strong>未做动态验证：</strong>全量 pytest、多 Python 版本运行、SQLite 并发/迁移实测、真实模型输出、联网服务与提示注入实测、危险情绪真人评审、ASR/TTS 真实录音和播放同步、浏览器压力与提醒延迟测量。</p>
+  <p class="foot">该报告不是全面渗透测试，也不能证明未列出的问题不存在。静态审计优先记录可从代码路径直接说明的缺陷；设计预期未给定的行为单列为需确认事项。</p>
+</section>
+
+<section>
+  <h2>审计过程与留痕</h2>
+  <p>进展日志：<a href="进展报告.md">进展报告.md</a>。每个问题有独立说明、证据、影响、建议与验收标准，位于 <code>issues/</code>。</p>
+  <p>项目文件快速入口：<a href="../../src/avatar/brain/boundaries.py">边界策略</a> · <a href="../../src/avatar/tools/web_agent.py">工具规划/校验</a> · <a href="../../src/avatar/tools/local_tools.py">资料搜索</a> · <a href="../../src/avatar/main.py">主流程</a> · <a href="../../src/avatar/face/lipsync.py">口型分析</a> · <a href="../../src/avatar/brain/memory.py">记忆召回</a> · <a href="../../src/avatar/brain/emotion.py">情绪状态</a> · <a href="../../src/avatar/web.py">本机 Web 服务</a></p>
+  <p>Python 兼容性依据：<a href="https://docs.python.org/3.12/library/pathlib.html#pathlib.Path.is_junction">Python 3.12 pathlib 文档：Path.is_junction()</a>。该 API 于 3.12 新增。</p>
+  <p class="foot">审计基线提交 <code>d241a79</code>；审计材料按单项 issue 小步提交，作者统一为 GitHub 账号名 <code>spinner-bot</code>，通过 SSH 推送。</p>
+</section>
+
+<p class="foot">hhu-ai-avatar · 审计归档 · 2026-11-10</p>
+</main></body></html>

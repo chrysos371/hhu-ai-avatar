@@ -260,3 +260,34 @@ def test_canonical_consumption_object_keeps_only_last_assertion(make_avatar, old
     ava = make_avatar([json.dumps({'emotion': {}, 'facts': candidates}), '收到'])
     ava.respond(text)
     assert ava.memory.get_user_profile() == {'偏好': new}
+
+
+def test_extract_json_plain_object():
+    raw = '{"emotion": {"valence": 0.1, "arousal": 0.0}, "facts": []}'
+    assert json.loads(Avatar._extract_json(raw))['emotion']['valence'] == 0.1
+
+
+def test_extract_json_tolerates_fence_and_trailing_prose():
+    raw = '好的，结果如下：\n```json\n{"a": {"b": 1}}\n```\n说明 {这里不是 JSON}'
+    assert Avatar._extract_json(raw) == '{"a": {"b": 1}}'
+
+
+def test_extract_json_handles_braces_inside_strings():
+    raw = '{"note": "用 {花括号} 和 } 干扰", "facts": []}'
+    assert json.loads(Avatar._extract_json(raw))['note'] == '用 {花括号} 和 } 干扰'
+
+
+def test_extract_json_without_object_returns_input():
+    assert Avatar._extract_json(' 没有 JSON ') == '没有 JSON'
+    assert Avatar._extract_json('') == ''
+
+
+def test_fenced_analysis_json_still_stores_fact(make_avatar):
+    analysis = {
+        'emotion': {'valence': 0.2, 'arousal': 0.0},
+        'facts': [proven('名字', '阿岚', '我叫阿岚')],
+    }
+    ava = make_avatar(['```json\n' + json.dumps(analysis, ensure_ascii=False) + '\n```', '你好，阿岚。'])
+    result = ava.respond('我叫阿岚')
+    assert result['reply'] == '你好，阿岚。'
+    assert ava.memory.get_user_profile() == {'名字': '阿岚'}
