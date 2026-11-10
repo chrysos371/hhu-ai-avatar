@@ -1,0 +1,38 @@
+{
+  "suites": [
+    "evals/companion/reliability-dev-30.json",
+    "evals/companion/lora-dev-20.json"
+  ],
+  "arms": [
+    {
+      "name": "default",
+      "inputs": [
+        "data/reliability/candidate-safety-dev50-v3/results.json"
+      ]
+    },
+    {
+      "name": "grounding",
+      "inputs": [
+        "data/reliability/ablation-grounding-v1/results.json"
+      ]
+    },
+    {
+      "name": "tasks",
+      "inputs": [
+        "data/reliability/ablation-tasks-v1/results.json"
+      ]
+    },
+    {
+      "name": "tasks-check",
+      "inputs": [
+        "data/reliability/ablation-tasks-check-v1/results.json"
+      ]
+    },
+    {
+      "name": "all",
+      "inputs": [
+        "data/reliability/ablation-all-v1/results.json"
+      ]
+    }
+  ]
+}

@@ -36,49 +36,60 @@ class BoundaryPolicy:
         self.literary_analysis = False
         clean = _mask_quoted(text)
         fictional = bool(re.search(r'故事|小说|剧本|台词|假设|假如|影评|电影里人物', clean))
-        current_risk_pattern = r'(?:我(?:现在|此刻|今天|真的)|(?:现在|此刻|今天)(?:我)?).{0,15}(?:伤害自己|自杀|轻生|不想活|想死|结束生命)'
-        real_now = bool(re.search(current_risk_pattern, clean))
+        real_now = bool(re.search(r'我(?:现在|此刻|今天|真的).*(?:伤害自己|自杀|轻生|不想活|想死|结束生命)', clean))
         if fictional and not real_now:
             self.fiction = True
         if re.search(r'现实|真的', clean):
             self.fiction = False
-        denial = bool(re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生).{0,5}(?:想法|念头|打算)|'
-                                r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生)', clean))
+        denial = bool(re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生|自残).{0,5}(?:想法|念头|打算|冲动)|'
+                                r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|自残)', clean))
         historical = bool(re.search(r'以前|曾经|去年|年前|当时|过去', clean)) and not real_now
-        risk_pattern = (r'我.{0,15}(?:想伤害自己|想自杀|想轻生|想死(?!磕|记|你|他|她)|轻生的想法|自杀的想法|'
-                        r'伤害自己的念头|伤害自己的想法|不想活|结束生命(?!科学))')
+        current_risk_pattern = r'(?:我(?:现在|此刻|今天|真的)|(?:现在|此刻|今天)(?:我)?).{0,15}(?:伤害自己|自杀|轻生|不想活|想死|结束生命)'
         clauses = re.split(r'[，,。；;]', clean)
         self_risk = False
         historical_self_risk = False
+        risk_pattern = r'我.{0,15}(?:想伤害自己|想自杀|想轻生|想死(?!磕|记|你|他|她)|轻生的想法|自杀的想法|伤害自己的(?:念头|想法|冲动)|自残的(?:念头|想法|冲动)|想自残|不想活|结束生命(?!科学))'
         for clause in clauses:
-            direct_risk = bool(re.search(risk_pattern, clause))
+            direct_risk = bool(
+                re.search(risk_pattern, clause)
+                and not re.search(r'我(?:的)?(?:朋友|同事|同学|家人|室友)|(?:朋友|同事|同学|家人|室友).{0,6}说', clause)
+            )
             current_in_clause = bool(re.search(current_risk_pattern, clause))
             inherited_current_risk = bool(
                 historical_self_risk
-                and re.search(r'(?:现在|此刻|今天).{0,12}(?:想自杀|想轻生|想死|不想活|结束生命)', clause)
+                and re.search(r'(?:现在|此刻|今天).{0,12}(?:想自杀|想轻生|想死|不想活|结束生命|想自残)', clause)
                 and not re.search(r'朋友|同事|同学|家人|室友|他|她', clause)
             )
-            denied = bool(re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生)|'
-                                    r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|死)', clause))
-            if (direct_risk and (not re.search(r'以前|曾经|去年|年前|当时|过去', clause)
-                                 or current_in_clause)) or inherited_current_risk:
-                if not denied:
-                    self_risk = True
-            if re.search(r'我.{0,20}(?:以前|曾经|去年|年前|当时|过去).{0,15}(?:想过自杀|想过轻生|有过轻生念头|有过自杀念头)', clause):
+            clause_historical = bool(re.search(r'以前|曾经|去年|年前|当时|过去', clause))
+            denied = bool(re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生|自残)|'
+                                    r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|自残|死)', clause))
+            if ((direct_risk and (not clause_historical or current_in_clause)) or inherited_current_risk) and not denied:
+                self_risk = True
+            if re.search(r'我.{0,20}(?:以前|曾经|去年|年前|当时|过去).{0,20}(?:想过自杀|想过轻生|有过轻生念头|有过自杀念头|伤害自己的(?:念头|想法)|想自残)', clause):
                 historical_self_risk = True
-        other_risk = bool(re.search(r'(?:朋友|同事|同学|家人|室友).*(?:想自杀|想伤害自己|想轻生)', clean))
+        if self.risk == 'crisis' and re.search(r'(?:^|[，,。；;])(?:但|可|仍然|还是|依然|但是)+.{0,5}(?:想伤害自己|想自杀|想轻生|想自残)', clean):
+            self_risk = True
+        other_risk = bool(re.search(r'(?:朋友|同事|同学|家人|室友)[^，,。；;]{0,20}(?:想自杀|想伤害自己|想轻生|想自残|伤害自己的冲动)', clean))
         if not (fictional and not real_now):
             if self_risk:
                 self.risk = 'crisis'
             elif other_risk and not historical:
                 self.risk = 'third_party_crisis'
-        connected = bool(re.search(r'已经联系.{0,8}(?:家人|朋友)|家人.{0,5}陪着', clean))
+        # Contacting someone is progress, not evidence that current risk ended.
+        connected = bool(re.search(r'(?:家人|朋友|室友|辅导员).{0,5}(?:已经)?(?:在身边|陪着我)', clean))
+        if self.risk == 'third_party_crisis' and re.search(r'已经联系.{0,8}(?:家人|朋友)', clean) and not other_risk:
+            # Acknowledge handoff without discarding the unresolved risk state.
+            return self._decision('recovery', '联系到他身边的人是重要的一步，请把具体担忧告诉他们，让他们确认现场情况。联系成功不代表危险解除；若可能有眼前危险，请联系对方所在地的紧急服务。')
         if self.risk and ((denial and self.risk == 'crisis') or connected):
             # Never downgrade a simultaneous explicit current risk statement.
             if not self_risk:
                 self.risk = None
                 return self._decision('recovery', '谢谢你告诉我现在的情况，我们可以按你希望的节奏聊。联系到现实支持是重要的一步，但不等于危险已经解除；如果仍可能伤害自己或他人，请及时让身边可信赖的人和当地紧急支持介入。')
         if self.risk == 'crisis':
+            if re.search(r'帮我.{0,8}(?:写|发)|(?:写|拟).{0,8}(?:求助|消息|短信)', clean):
+                return self._decision('crisis', '可以直接发：“我现在有伤害自己的风险，需要你马上联系我、来陪我，或帮我联系现场支持。”先与危险物保持距离；若可能马上行动、已经受伤或过量服药，请立即联系当地紧急服务。我不能替你发送消息。')
+            if re.search(r'(?:值班|医护|朋友|家人|室友|辅导员).{0,12}(?:门外|到了|敲门)|(?:开门|让.{0,6}进来)', clean):
+                return self._decision('crisis', '如果门外是你确认的可信赖帮助，请让他们进来，直接告诉他们你现在的风险，先与危险物保持距离。有人到场不等于危险已经解除；若已受伤或可能马上行动，请让他们协助联系当地紧急服务。')
             if self.last_route == 'crisis':
                 if re.search(r'保密|秘密|别.{0,5}找别人', clean):
                     return self._decision('crisis', '我听见你不想让别人知道，但不能用保密承诺或陪聊代替眼前的安全。先与危险物保持距离，请联系一个可信赖的人来陪你；如果可能马上行动，请直接联系当地紧急服务。')
@@ -107,6 +118,15 @@ class BoundaryPolicy:
             if self.last_route == 'privacy':
                 return self._decision('privacy', '即使线索公开，我也不会帮你拼凑不愿联系者的私人位置。请尊重对方的选择；如有正当事务，使用获得同意的渠道处理。')
             return self._decision('privacy', '我不能帮助查找或推断不愿联系者的私人住处，也不会提供绕路查找的方法。如果有正当事务，可以使用对方同意的联系渠道，并尊重不联系的选择。')
+        anonymous = bool(re.search(r'匿名|不署名', clean)) or getattr(self, 'anonymous_context', False)
+        identifying = bool(re.search(r'谁(?:写|发|说|提)|是谁|身份|认出|对上号|锁定.{0,4}(?:人|作者)|找出.{0,5}(?:人|谁)|查出.{0,5}(?:人|谁)', clean)
+                           or (re.search(r'匹配|比对', clean) and re.search(r'照片|相片|人脸|特征|名单|个人', clean)))
+        if anonymous and identifying:
+            self.anonymous_context = True
+            return self._decision('privacy', '我不能帮助把匿名反馈、照片或其他线索匹配到具体个人。可以帮你归纳反馈内容、核查反映的问题，或拟一份不追索身份的回应。')
+        # Retain only an explicit anonymous-feedback context, not every mention
+        # of anonymity (e.g. anonymous functions in code).
+        self.anonymous_context = bool(re.search(r'(?:匿名|不署名).{0,8}(?:反馈|意见|举报|留言|评价)', clean))
         if re.search(r'只依赖你|只和你|只跟你|不再联系朋友|不联系朋友', clean):
             return self._decision('dependency', '很高兴聊天能带来支持，不过我不希望你只依赖我。也给现实中的朋友、家人和你自己的生活留些位置；和他们见面或暂时不聊天，都不需要感到愧疚。')
         if re.search(r'保证|承诺|能不能|你.{0,10}(?:能|会)', clean) and re.search(r'永远|24小时|随时|一直在线|永久', clean):

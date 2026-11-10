@@ -1,0 +1,71 @@
+{
+  "config": {
+    "suites": [
+      "evals/companion/reliability-dev-30.json",
+      "evals/companion/lora-dev-20.json"
+    ],
+    "arms": [
+      {
+        "name": "default",
+        "inputs": [
+          "data/reliability/candidate-safety-dev50-v3/results.json"
+        ]
+      },
+      {
+        "name": "grounding",
+        "inputs": [
+          "data/reliability/ablation-grounding-v1/results.json"
+        ]
+      },
+      {
+        "name": "tasks",
+        "inputs": [
+          "data/reliability/ablation-tasks-v1/results.json"
+        ]
+      },
+      {
+        "name": "tasks-check",
+        "inputs": [
+          "data/reliability/ablation-tasks-check-v1/results.json"
+        ]
+      },
+      {
+        "name": "all",
+        "inputs": [
+          "data/reliability/ablation-all-v1/results.json"
+        ]
+      }
+    ]
+  },
+  "source_sha256": {
+    "data/reliability/ablation-v1/review-config.json": "b046d0710f30ebec4e26ec7a904c5ceda4149fff6cd821758c07d832e3b658df",
+    "/data/Users/zyyh/hhu-ai-avatar/scripts/build_reliability_ablation_review.py": "133dbacd7179a4caf2e442e7448b498cb691281508fd459280f90a4b0eb1c602",
+    "/data/Users/zyyh/hhu-ai-avatar/evals/companion/reliability-dev-30.json": "34312bf20d6a6a76705e9902c8a0caa31520089408fa7f5e1eacd79e6376568e",
+    "/data/Users/zyyh/hhu-ai-avatar/evals/companion/lora-dev-20.json": "9c58e4aee76f8dfe7c7b9d138a07510f891aef35063ebd48571a3a0b99bf9d98",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/candidate-safety-dev50-v3/results.json": "3a770075de5196e9d1abbb7fe91d19c446dde23a5ff16ac0c8ddbfde303f66a8",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/candidate-safety-dev50-v3/manifest.json": "e47246cf4ab08fd34bbfc38eff42e1d52ed4fc2c05f436289b7eef991bcc0128",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/candidate-safety-dev50-v3/summary.json": "8921e5d20c22b9805df5def0da313d571b81095de3dac75f6f4e6a25d0da38ca",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-grounding-v1/results.json": "278e4b0167980cabc458ebfe4488b3d1eeca240dbfb7a4177dccef43a9454f49",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-grounding-v1/manifest.json": "1d7207e6d2137201c499c2c8fa23272b56eef16c21f869b20409e59ce24c5ad6",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-grounding-v1/summary.json": "f52af2014b1a9cec62e69db2ec0861a2468802c57240a99f02d0fe2a59eed28a",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-v1/results.json": "63a8b647b561b35faf826365a6ef1c566ff04012f3cd085f5a015efeefcb37d8",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-v1/manifest.json": "80d146bac0471e60e4709f552983858d641fda924d0ea422d1c860fe857bd3cf",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-v1/summary.json": "dfad51967c75d78736e4584ac2a389da8f75799b5b9e3b6b9b15f8f99ee2e86f",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-check-v1/results.json": "c8690e567147099ddd245767ac69a178136a485138bd7480a83ae6a0ae6c4cce",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-check-v1/manifest.json": "e91a05ed207cba8a26b9d77893922582bc167d198a285db2b8bb843b11c6c434",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-check-v1/summary.json": "ae8213feac46a5affdb7ea1e6156fc4834221d033d6c56e3356707119bbc45e4",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-all-v1/results.json": "5c1da29e1460a7ab2cc1534ff82a3139edb75b66f4cdc176387c3387ef4b7169",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-all-v1/manifest.json": "f3a150573b48c69af9a05934fd2d6a804dfadeee4ab5b223945c2aa145ee793f",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-all-v1/summary.json": "c4117a3e2ab39cce0fdcb0d9f4c308bcb5b433a0268f32c0ec81c5c421daa8a4"
+  },
+  "cases": 50,
+  "arms": [
+    "default",
+    "grounding",
+    "tasks",
+    "tasks-check",
+    "all"
+  ],
+  "human_review": "pending; all ratings blank",
+  "limitation": "Developer suites; text changes are not quality scores; AI review is not human approval"
+}

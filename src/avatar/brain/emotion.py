@@ -223,10 +223,12 @@ class EmotionEngine:
         return "闲聊"
 
     # ------------------------------------------------------------------ 行为决策树
-    def decide(self, text: str) -> Decision:
+    def decide(self, text: str, *, expression_override: dict | None = None) -> Decision:
         """行为决策树：意图 × 情绪象限 → 回应策略。"""
         intent = self.classify_intent(text)
         state = self.state
+        if expression_override is not None:
+            state=EmotionState(valence=expression_override['valence'],arousal=expression_override['arousal'])
         v, a = state.valence, state.arousal
         label = state.label()
         uv, ua = self.infer(text)

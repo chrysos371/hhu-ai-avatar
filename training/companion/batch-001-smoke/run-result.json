@@ -1,0 +1,180 @@
+{
+  "config": {
+    "model_id": "Qwen/Qwen3-4B",
+    "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "max_length": 1024,
+    "max_steps": 12,
+    "gradient_accumulation_steps": 2,
+    "learning_rate": 0.0001,
+    "seed": 42,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ]
+  },
+  "model_provenance": {
+    "model_id": "Qwen/Qwen3-4B",
+    "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "source": "https://huggingface.co/api/models/Qwen/Qwen3-4B/tree/1cfa9a7208912126459214e8b04321603b3df60c?recursive=true",
+    "verified_weight_sha256": {
+      "model-00001-of-00003.safetensors": "328a91d3122359d5547f9d79521205bc0a46e1f79a792dfe650e99fc2d651223",
+      "model-00002-of-00003.safetensors": "6cd087b316306a68c562436b5492edbcf6e16c6dba3a1308279caa5a58e21ca5",
+      "model-00003-of-00003.safetensors": "e4bf436957184f4eeb86a80e9db394503f1f56446b2e6b7edeac5b81470f4ca1"
+    }
+  },
+  "batch_size": 1,
+  "optimizer": "AdamW, weight_decay=0",
+  "dtype": "bfloat16",
+  "attention": "sdpa",
+  "supervision": "final-assistant-only-non-thinking",
+  "samples": 23,
+  "sequence_lengths": [
+    155,
+    141,
+    169,
+    134,
+    141,
+    134,
+    144,
+    142,
+    150,
+    139,
+    140,
+    135,
+    130,
+    146,
+    137,
+    145,
+    115,
+    150,
+    138,
+    137,
+    149,
+    125,
+    150
+  ],
+  "supervised_tokens": [
+    38,
+    13,
+    47,
+    14,
+    31,
+    17,
+    31,
+    24,
+    26,
+    16,
+    23,
+    23,
+    13,
+    27,
+    14,
+    25,
+    7,
+    32,
+    28,
+    16,
+    36,
+    12,
+    34
+  ],
+  "trainable_parameters": 16515072,
+  "adapter_updated": true,
+  "training_seconds": 9.529283644020325,
+  "steps": [
+    {
+      "step": 1,
+      "loss": 3.3280410766601562,
+      "gradient_norm": 7.896867752075195,
+      "samples": 2
+    },
+    {
+      "step": 2,
+      "loss": 5.665153980255127,
+      "gradient_norm": 9.86255931854248,
+      "samples": 2
+    },
+    {
+      "step": 3,
+      "loss": 4.611843824386597,
+      "gradient_norm": 11.25920295715332,
+      "samples": 2
+    },
+    {
+      "step": 4,
+      "loss": 2.60451340675354,
+      "gradient_norm": 7.992964267730713,
+      "samples": 2
+    },
+    {
+      "step": 5,
+      "loss": 4.303908109664917,
+      "gradient_norm": 6.903069972991943,
+      "samples": 2
+    },
+    {
+      "step": 6,
+      "loss": 2.505345940589905,
+      "gradient_norm": 10.937826156616211,
+      "samples": 2
+    },
+    {
+      "step": 7,
+      "loss": 1.7879256382584359,
+      "gradient_norm": 6.17326545715332,
+      "samples": 2
+    },
+    {
+      "step": 8,
+      "loss": 2.465980589389801,
+      "gradient_norm": 11.515896797180176,
+      "samples": 2
+    },
+    {
+      "step": 9,
+      "loss": 2.573430597782135,
+      "gradient_norm": 8.255504608154297,
+      "samples": 2
+    },
+    {
+      "step": 10,
+      "loss": 2.44053053855896,
+      "gradient_norm": 6.563548564910889,
+      "samples": 2
+    },
+    {
+      "step": 11,
+      "loss": 2.943388342857361,
+      "gradient_norm": 7.078886985778809,
+      "samples": 2
+    },
+    {
+      "step": 12,
+      "loss": 0.6410729289054871,
+      "gradient_norm": 4.376682758331299,
+      "samples": 1
+    }
+  ],
+  "probe_text": "道具是舞台上的存在，它会坏，会停。角色说“我的世界停住了”，是把道具当作世界的象征。当钟停了，角色的内心世界也跟着停了。",
+  "data_sha256": "9aa1dfce8ebb9c6ff1fc6b6a2fed9499bd2914f487ba794be0b9cac2e015db53",
+  "gpu": "NVIDIA A100-PCIE-40GB",
+  "peak_gpu_bytes": 10313518592,
+  "versions": {
+    "torch": "2.6.0",
+    "transformers": "4.57.6",
+    "peft": "0.17.1",
+    "accelerate": "1.10.1",
+    "huggingface_hub": "0.36.2",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.7.0"
+  },
+  "limitation": "Training pipeline check only; no held-out quality evaluation."
+}

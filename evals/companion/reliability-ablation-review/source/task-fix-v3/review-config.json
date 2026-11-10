@@ -1,0 +1,35 @@
+{
+  "suites": [
+    "evals/companion/reliability-dev-30.json",
+    "evals/companion/task-revision-dev-10.json",
+    "evals/companion/lora-dev-20.json"
+  ],
+  "arms": [
+    {
+      "name": "default",
+      "inputs": [
+        "data/reliability/candidate-safety-dev50-v3/results.json",
+        "data/reliability/task-default-new10-v1/results.json"
+      ]
+    },
+    {
+      "name": "old-task-check",
+      "inputs": [
+        "data/reliability/ablation-tasks-check-v1/results.json",
+        "data/reliability/task-old-check-new10-v1/results.json"
+      ]
+    },
+    {
+      "name": "fixed-task-only",
+      "inputs": [
+        "data/reliability/task-fixed-tasks-v3/results.json"
+      ]
+    },
+    {
+      "name": "fixed-task-check",
+      "inputs": [
+        "data/reliability/task-fixed-check-v3/results.json"
+      ]
+    }
+  ]
+}
