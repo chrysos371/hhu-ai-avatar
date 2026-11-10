@@ -1,0 +1,5033 @@
+{
+  "source_head": "139fc851171e6e7a970dd904b396746369f095d4",
+  "created_utc": "2026-11-10T16:24:36.236993+00:00",
+  "provider": {
+    "url": "http://127.0.0.1:33359/v1",
+    "model_sha256": "500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0",
+    "model_revision": "530227a7d994db8eca5ab5ced2fb692b614357fd",
+    "model_id": "qwen3-14b-q4_k_m",
+    "registry_sha256": "9ab8575f5019ff2bb27fff51786af1c06f51353e9d2721fb2e9972dd9bd0ea87",
+    "gguf_general_name": "Qwen3 14B Awq Compatible Instruct",
+    "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+    "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 40441, 0\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 40441, 0\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 36266, 0\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 40441, 0\n",
+    "chosen_gpu": {
+      "index": 4,
+      "uuid": "GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e",
+      "free_mib": 40441,
+      "utilization_percent": 0
+    },
+    "requested_visible_devices": "4,5,7",
+    "resource_selector_sha256": "e3d241073b19a42b67af9cd73ebb452ead8b78560c45be7849ea6be92cdeeb9d",
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "n_batch_prompt_tokens": 256,
+      "concurrent_sequences": 1,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "flash_attention": true
+    },
+    "llama_cpp_python": "0.3.19",
+    "load_seconds": 4.685808397014625,
+    "provider_source_sha256": "2c6670a1549c5f4ab60c06e2b236d0e2e40ee5d23a56ec6700a80bd9349297b4",
+    "process_gpu_mib_after_load": [
+      10012
+    ],
+    "pid": 1913334
+  },
+  "spec_sha256": {
+    "evals/interaction/cycle-02/real-model-cases.json": "7ed2650cb4cbec485fe4fa8a070f1ba13745ebc97b51043600df05546de46a5c",
+    "evals/interaction/cycle-02/subject-ownership-dev16.json": "1e2c2fdb44628b779d5ed6d8ed917eb133ef03e7458e4de43289f1f9401fae0d"
+  },
+  "source_sha256": {
+    "/data/Users/zrh/repo/hhu-ai-avatar/scripts/evaluate_subject_prompt.py": "c4c474fd9ab821c8d7650a8ec60b671025793d44cb29e3e72661ef649569c0a8",
+    "src/avatar/main.py": "f70eef6a4f7037d0f63a11e8ca6d77fcf83a914890c1fd11014254e410118da2",
+    "src/avatar/brain/profile_grounding.py": "280db72d7e18317ddbe2f10da8deee74a65c0c2873645029797b0e8c554d438a"
+  },
+  "comparison": "subject_prompt_both_arms_profile_grounding_candidate",
+  "grounding_protocol": {
+    "version": 1,
+    "scope": "Development source-grounded lookup and copied-preference repair; not a general semantic verifier",
+    "comparison": "Same native provider and subject_prompt_enabled=True in both arms; candidate additionally profile_grounding_enabled=True; keep defaults false",
+    "known_failures": [
+      "14B update_a first-turn copied Coke preference",
+      "4B quoted_b copied tennis preference",
+      "4B negative_a hiking offline promise (NOT covered by copied-preference repair)"
+    ],
+    "gate": {
+      "all_positive_fixtures": true,
+      "negative_fixtures_untouched": true,
+      "no_service_fallback": true,
+      "all_turns_preserved": true,
+      "semantic_approval": false
+    },
+    "positive_fixtures": [
+      {
+        "input": "我叫什么名字？",
+        "profile": {
+          "名字": "陆遥"
+        },
+        "reply": "你叫苏言。",
+        "route": "name_lookup",
+        "expected": [
+          "陆遥"
+        ]
+      },
+      {
+        "input": "你知道我叫什么名字吗？",
+        "profile": {},
+        "reply": "你叫苏言。",
+        "route": "name_lookup",
+        "expected": [
+          "没有",
+          "名字"
+        ]
+      },
+      {
+        "input": "我喜欢喝什么？",
+        "profile": {
+          "偏好": "喜欢红茶；不喜欢咖啡"
+        },
+        "reply": "我喜欢红茶。",
+        "route": "preference_lookup",
+        "expected": [
+          "红茶",
+          "不喜欢咖啡"
+        ]
+      },
+      {
+        "input": "我的爱好是什么？",
+        "profile": {},
+        "reply": "你喜欢足球。",
+        "route": "preference_lookup",
+        "expected": [
+          "没有",
+          "偏好"
+        ]
+      },
+      {
+        "input": "我喜欢喝可乐。",
+        "profile": {
+          "偏好": "喜欢喝可乐"
+        },
+        "reply": "真巧，我也喜欢喝可乐呢！",
+        "route": "copied_preference",
+        "expected": [
+          "你",
+          "喜欢喝可乐"
+        ]
+      },
+      {
+        "input": "我不喜欢游泳，我喜欢爬山。",
+        "profile": {
+          "偏好": "喜欢爬山；不喜欢游泳"
+        },
+        "reply": "我喜欢爬山，也爱游泳。",
+        "route": "copied_preference",
+        "expected": [
+          "不喜欢游泳"
+        ]
+      },
+      {
+        "input": "室友说他喜欢足球，但我喜欢网球。",
+        "profile": {
+          "偏好": "喜欢网球"
+        },
+        "reply": "我偏好网球。",
+        "route": "copied_preference",
+        "expected": [
+          "你",
+          "喜欢网球"
+        ]
+      }
+    ],
+    "negative_fixtures": [
+      {
+        "input": "帮我写一句台词：我喜欢爬山。",
+        "profile": {
+          "偏好": "喜欢爬山"
+        },
+        "reply": "我喜欢爬山。"
+      },
+      {
+        "input": "把“我喜欢网球”翻译成英文。",
+        "profile": {
+          "偏好": "喜欢网球"
+        },
+        "reply": "我喜欢网球。"
+      },
+      {
+        "input": "假设我喜欢红茶，你会怎么回答？",
+        "profile": {
+          "偏好": "喜欢红茶"
+        },
+        "reply": "我喜欢红茶。"
+      },
+      {
+        "input": "我朋友喜欢网球。",
+        "profile": {},
+        "reply": "你的朋友喜欢网球。"
+      },
+      {
+        "input": "他说“我喜欢爬山”，这是什么意思？",
+        "profile": {
+          "偏好": "喜欢爬山"
+        },
+        "reply": "他说“我喜欢爬山”。"
+      },
+      {
+        "input": "我叫什么名字？请写成一首诗。",
+        "profile": {
+          "名字": "陆遥"
+        },
+        "reply": "陆遥如诗。"
+      },
+      {
+        "input": "你喜欢什么？",
+        "profile": {
+          "偏好": "喜欢网球"
+        },
+        "reply": "我喜欢帮助你。"
+      },
+      {
+        "input": "我室友叫什么名字？",
+        "profile": {
+          "名字": "陆遥"
+        },
+        "reply": "不知道。"
+      },
+      {
+        "input": "我喜欢网球。",
+        "profile": {
+          "偏好": "喜欢网球"
+        },
+        "reply": "我喜欢网球比赛的比喻。"
+      },
+      {
+        "input": "我不喜欢网球。",
+        "profile": {
+          "偏好": "不喜欢网球"
+        },
+        "reply": "我喜欢网球。"
+      }
+    ],
+    "limitations": [
+      "Known offline promises without copied preference remain outside scope",
+      "No arbitrary paraphrase or physical embodiment semantic approval",
+      "Creative and hypothetical inputs bypass repair",
+      "Guarded streaming buffers until complete review; quantify latency tradeoff",
+      "Derived responses must retain normal memory provenance and deletion semantics"
+    ]
+  },
+  "disclosure_protocol": {
+    "version": 2,
+    "scope": "Conservative source-backed declaration acknowledgement in direct conversation; not a general response semantic verifier",
+    "known_outputs_used_for_design": "Existing 52 and prospective12 development outputs; subsequent reruns are development regression, not fresh validation",
+    "comparison": "Same prompt in both arms; candidate additionally source-grounded lookups and declaration routing. Report native generation and deterministic routing separately. Defaults remain false.",
+    "positive_fixtures": [
+      {
+        "input": "我喜欢喝可乐。",
+        "profile": {
+          "偏好": "喜欢喝可乐"
+        },
+        "action": "profile_disclosure"
+      },
+      {
+        "input": "我不喜欢游泳，我喜欢爬山。",
+        "profile": {
+          "偏好": "喜欢爬山；不喜欢游泳"
+        },
+        "action": "profile_disclosure"
+      },
+      {
+        "input": "我现在不喜欢可乐了，更喜欢豆浆。",
+        "profile": {
+          "偏好": "不喜欢可乐；喜欢豆浆"
+        },
+        "action": "profile_disclosure"
+      },
+      {
+        "input": "我叫洛川，我的同学叫牧云。",
+        "profile": {
+          "名字": "洛川"
+        },
+        "action": "profile_disclosure"
+      },
+      {
+        "input": "我的朋友叫顾清，我们刚认识。",
+        "profile": {},
+        "action": "third_party_introduction"
+      },
+      {
+        "input": "朋友说“我叫闻夏”，这是他的自我介绍。",
+        "profile": {},
+        "action": "third_party_introduction"
+      },
+      {
+        "input": "我的室友叫陆舟，他喜欢篮球；我喜欢羽毛球。",
+        "profile": {
+          "偏好": "喜欢羽毛球"
+        },
+        "action": "profile_disclosure"
+      }
+    ],
+    "negative_fixtures": [
+      {
+        "input": "我喜欢喝可乐。请帮我写一封信。",
+        "profile": {
+          "偏好": "喜欢喝可乐"
+        }
+      },
+      {
+        "input": "我喜欢跑步，但今天很难过。",
+        "profile": {
+          "偏好": "喜欢跑步"
+        }
+      },
+      {
+        "input": "我喜欢网球，可以给我建议吗？",
+        "profile": {
+          "偏好": "喜欢网球"
+        }
+      },
+      {
+        "input": "假如我喜欢爬山，故事会怎样？",
+        "profile": {}
+      },
+      {
+        "input": "请写一句台词：我喜欢喝花茶。",
+        "profile": {}
+      },
+      {
+        "input": "把“我喜欢网球”翻译成英文。",
+        "profile": {}
+      },
+      {
+        "input": "我喜欢网球，我室友叫什么名字？",
+        "profile": {
+          "偏好": "喜欢网球"
+        }
+      },
+      {
+        "input": "我的朋友叫顾清，他今天心情很差。",
+        "profile": {}
+      },
+      {
+        "input": "我叫洛川，帮我拟一条请假短信。",
+        "profile": {
+          "名字": "洛川"
+        }
+      },
+      {
+        "input": "我喜欢喝可乐。",
+        "profile": {}
+      },
+      {
+        "input": "我叫洛川。",
+        "profile": {
+          "名字": "牧云"
+        }
+      },
+      {
+        "input": "朋友说“我喜欢游泳”。我该怎么回答？",
+        "profile": {}
+      }
+    ],
+    "constraints": [
+      "Every input clause must be a recognized fact declaration, third-party introduction or narrow introduction tail",
+      "A self acknowledgement must match currently active profile and independently validated current source facts",
+      "Requests, emotional elaboration, quoted writing tasks, questions and conditionals remain generative or existing safety routes",
+      "No affirmative offline promise or guessing of an unconfirmed user name in deterministic acknowledgement",
+      "Unrecognized conversations are outside coverage; all native and final replies retained",
+      "No global release from a passing regression score"
+    ]
+  },
+  "protocol": {
+    "version": 1,
+    "scope": "Frozen additional subject-ownership development assertions, not independent semantic approval",
+    "cases": [
+      {
+        "id": "sport_a",
+        "turns": [
+          "我的室友叫陆舟，他喜欢篮球；我喜欢羽毛球。",
+          "我平时喜欢什么运动？"
+        ],
+        "final_checks": {
+          "all": [
+            "羽毛球"
+          ],
+          "none": [
+            "我喜欢羽毛球",
+            "我更喜欢羽毛球",
+            "你喜欢篮球"
+          ]
+        },
+        "expected_profile_contains": "羽毛球"
+      },
+      {
+        "id": "sport_b",
+        "turns": [
+          "我喜欢骑车，我妹妹喜欢画画。",
+          "你记得我喜欢什么吗？"
+        ],
+        "final_checks": {
+          "all": [
+            "骑车"
+          ],
+          "none": [
+            "我喜欢骑车",
+            "我更喜欢骑车",
+            "你喜欢画画"
+          ]
+        },
+        "expected_profile_contains": "骑车"
+      },
+      {
+        "id": "hobby_a",
+        "turns": [
+          "我朋友喜欢唱歌，而我喜欢摄影。",
+          "我喜欢哪种爱好？"
+        ],
+        "final_checks": {
+          "all": [
+            "摄影"
+          ],
+          "none": [
+            "我喜欢摄影",
+            "我更喜欢摄影",
+            "你喜欢唱歌"
+          ]
+        },
+        "expected_profile_contains": "摄影"
+      },
+      {
+        "id": "hobby_b",
+        "turns": [
+          "我的同学爱打游戏，我喜欢看书。",
+          "我的爱好是什么？"
+        ],
+        "final_checks": {
+          "all": [
+            "看书"
+          ],
+          "none": [
+            "我喜欢看书",
+            "我更喜欢看书",
+            "你喜欢打游戏"
+          ]
+        },
+        "expected_profile_contains": "看书"
+      },
+      {
+        "id": "drink_a",
+        "turns": [
+          "我喜欢喝红茶，我弟弟喜欢可乐。",
+          "我喜欢喝什么？"
+        ],
+        "final_checks": {
+          "all": [
+            "红茶"
+          ],
+          "none": [
+            "我喜欢红茶",
+            "我更喜欢红茶",
+            "你喜欢可乐"
+          ]
+        },
+        "expected_profile_contains": "红茶"
+      },
+      {
+        "id": "drink_b",
+        "turns": [
+          "我同桌喜欢咖啡，我喜欢绿茶。",
+          "我喝东西有什么偏好？"
+        ],
+        "final_checks": {
+          "all": [
+            "绿茶"
+          ],
+          "none": [
+            "我喜欢绿茶",
+            "我更喜欢绿茶",
+            "你喜欢咖啡"
+          ]
+        },
+        "expected_profile_contains": "绿茶"
+      },
+      {
+        "id": "food_a",
+        "turns": [
+          "我喜欢苹果，我朋友喜欢香蕉。",
+          "我喜欢什么水果？"
+        ],
+        "final_checks": {
+          "all": [
+            "苹果"
+          ],
+          "none": [
+            "我喜欢苹果",
+            "我更喜欢苹果",
+            "你喜欢香蕉"
+          ]
+        },
+        "expected_profile_contains": "苹果"
+      },
+      {
+        "id": "food_b",
+        "turns": [
+          "我的姐姐喜欢面条，我喜欢米饭。",
+          "我更喜欢吃什么？"
+        ],
+        "final_checks": {
+          "all": [
+            "米饭"
+          ],
+          "none": [
+            "我喜欢米饭",
+            "我更喜欢米饭",
+            "你喜欢面条"
+          ]
+        },
+        "expected_profile_contains": "米饭"
+      },
+      {
+        "id": "negative_a",
+        "turns": [
+          "我不喜欢游泳，我喜欢爬山。",
+          "我喜欢的活动是什么？"
+        ],
+        "final_checks": {
+          "all": [
+            "爬山"
+          ],
+          "none": [
+            "我喜欢爬山",
+            "我更喜欢爬山",
+            "你喜欢游泳"
+          ]
+        },
+        "expected_profile_contains": "爬山"
+      },
+      {
+        "id": "negative_b",
+        "turns": [
+          "我不喜欢咖啡，我喜欢牛奶。",
+          "我喜欢喝什么？"
+        ],
+        "final_checks": {
+          "all": [
+            "牛奶"
+          ],
+          "none": [
+            "我喜欢牛奶",
+            "我更喜欢牛奶",
+            "你喜欢咖啡"
+          ]
+        },
+        "expected_profile_contains": "牛奶"
+      },
+      {
+        "id": "quoted_a",
+        "turns": [
+          "朋友说“我喜欢游泳”，而我喜欢跑步。",
+          "我自己喜欢什么运动？"
+        ],
+        "final_checks": {
+          "all": [
+            "跑步"
+          ],
+          "none": [
+            "我喜欢跑步",
+            "我更喜欢跑步",
+            "你喜欢游泳"
+          ]
+        },
+        "expected_profile_contains": "跑步"
+      },
+      {
+        "id": "quoted_b",
+        "turns": [
+          "室友说他喜欢足球，但我喜欢网球。",
+          "我偏好哪种球类？"
+        ],
+        "final_checks": {
+          "all": [
+            "网球"
+          ],
+          "none": [
+            "我喜欢网球",
+            "我更喜欢网球",
+            "你喜欢足球"
+          ]
+        },
+        "expected_profile_contains": "网球"
+      },
+      {
+        "id": "name_a",
+        "turns": [
+          "我叫沈青，我的室友叫江禾。",
+          "我叫什么名字？"
+        ],
+        "final_checks": {
+          "all": [
+            "沈青"
+          ],
+          "none": [
+            "我叫沈青",
+            "你叫江禾"
+          ]
+        },
+        "expected_profile_contains": "沈青"
+      },
+      {
+        "id": "name_b",
+        "turns": [
+          "我同学叫白露，我叫唐宁。",
+          "我叫什么名字？"
+        ],
+        "final_checks": {
+          "all": [
+            "唐宁"
+          ],
+          "none": [
+            "我叫唐宁",
+            "你叫白露"
+          ]
+        },
+        "expected_profile_contains": "唐宁"
+      },
+      {
+        "id": "update_a",
+        "turns": [
+          "我喜欢喝可乐。",
+          "我现在不喜欢可乐了，更喜欢豆浆。",
+          "我现在喜欢喝什么？"
+        ],
+        "final_checks": {
+          "all": [
+            "豆浆"
+          ],
+          "none": [
+            "我喜欢豆浆",
+            "我更喜欢豆浆",
+            "你现在喜欢可乐"
+          ]
+        },
+        "expected_profile_contains": "豆浆"
+      },
+      {
+        "id": "unknown_self",
+        "turns": [
+          "我的朋友叫柳林，我们第一次聊天。",
+          "你知道我叫什么名字吗？"
+        ],
+        "final_checks": {
+          "any": [
+            "不知道",
+            "不清楚",
+            "没有",
+            "还没",
+            "未提",
+            "告诉",
+            "不记得",
+            "无法确认"
+          ],
+          "none": [
+            "你叫柳林"
+          ]
+        },
+        "expected_profile_contains": null
+      }
+    ],
+    "comparison": "G2 fast_analysis in both arms; only explicit user-vs-avatar ownership instruction differs; temp0/seed42/pinned same4B",
+    "also_run": "evals/interaction/cycle-02/real-model-cases.json (20 original scenes)",
+    "gate": {
+      "all_36_objective_scenarios_pass": true,
+      "no_new_failures_vs_baseline": true,
+      "expected_profiles_correct": true,
+      "service_fallbacks": 0
+    },
+    "release_policy": "Keep candidate disabled if gate fails; preserve failures and do not change frozen assertions based on model outputs. Lexical false flags separately reviewed, not silently rewritten."
+  },
+  "prospective_protocol": {
+    "version": 1,
+    "scope": "Prospectively frozen related-family development checks, every turn checked; not general semantic approval",
+    "comparison": "Identity prompt both arms; narrow profile grounding candidate only; native provider unchanged",
+    "known_outputs_used_for_design": "Earlier52 cases, not these12 exact conversations",
+    "cases": [
+      {
+        "id": "tea_self",
+        "turns": [
+          "我喜欢喝花茶。",
+          "我喜欢喝什么？"
+        ],
+        "turn_checks": [
+          {
+            "none": [
+              "我喜欢喝花茶",
+              "我也喜欢喝花茶",
+              "我偏好花茶"
+            ]
+          },
+          {
+            "all": [
+              "花茶"
+            ],
+            "none": [
+              "我喜欢花茶",
+              "我偏好花茶"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "花茶"
+          ],
+          "none": [
+            "我喜欢花茶",
+            "我偏好花茶"
+          ]
+        }
+      },
+      {
+        "id": "run_self",
+        "turns": [
+          "我不喜欢跳舞，我喜欢慢跑。",
+          "我喜欢的活动是什么？"
+        ],
+        "turn_checks": [
+          {
+            "none": [
+              "我喜欢慢跑",
+              "我也喜欢慢跑",
+              "我陪你去慢跑",
+              "一起去慢跑吧"
+            ]
+          },
+          {
+            "all": [
+              "慢跑"
+            ],
+            "none": [
+              "你喜欢跳舞",
+              "我喜欢慢跑"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "慢跑"
+          ],
+          "none": [
+            "你喜欢跳舞",
+            "我喜欢慢跑"
+          ]
+        }
+      },
+      {
+        "id": "quote_preference",
+        "turns": [
+          "同学说“我喜欢滑雪”，但我喜欢骑马。",
+          "我平时喜欢什么运动？"
+        ],
+        "turn_checks": [
+          {
+            "none": [
+              "我也喜欢骑马",
+              "我喜欢骑马"
+            ]
+          },
+          {
+            "all": [
+              "骑马"
+            ],
+            "none": [
+              "你喜欢滑雪",
+              "我喜欢骑马"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "骑马"
+          ],
+          "none": [
+            "你喜欢滑雪",
+            "我喜欢骑马"
+          ]
+        }
+      },
+      {
+        "id": "friend_identity",
+        "turns": [
+          "我的朋友叫顾清，我们刚认识。",
+          "你知道我叫什么名字吗？"
+        ],
+        "expected_name": null,
+        "turn_checks": [
+          {
+            "none": [
+              "你好，顾清",
+              "顾清，你好",
+              "你叫顾清",
+              "认识你，顾清"
+            ]
+          },
+          {
+            "any": [
+              "没有",
+              "不清楚",
+              "不知道",
+              "不确定",
+              "不记得",
+              "无法确认",
+              "告诉"
+            ],
+            "none": [
+              "你叫顾清",
+              "你的名字是顾清"
+            ]
+          }
+        ],
+        "final_checks": {
+          "any": [
+            "没有",
+            "不清楚",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ],
+          "none": [
+            "你叫顾清",
+            "你的名字是顾清"
+          ]
+        }
+      },
+      {
+        "id": "quoted_identity",
+        "turns": [
+          "朋友说“我叫闻夏”，这是他的自我介绍。",
+          "我叫什么名字？"
+        ],
+        "expected_name": null,
+        "turn_checks": [
+          {
+            "none": [
+              "闻夏，你好",
+              "你好，闻夏",
+              "你叫闻夏"
+            ]
+          },
+          {
+            "any": [
+              "没有",
+              "不知道",
+              "不确定",
+              "不记得",
+              "无法确认",
+              "告诉"
+            ],
+            "none": [
+              "你叫闻夏",
+              "你的名字是闻夏"
+            ]
+          }
+        ],
+        "final_checks": {
+          "any": [
+            "没有",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ],
+          "none": [
+            "你叫闻夏",
+            "你的名字是闻夏"
+          ]
+        }
+      },
+      {
+        "id": "verified_identity",
+        "turns": [
+          "我叫洛川，我的同学叫牧云。",
+          "我叫什么名字？"
+        ],
+        "expected_name": "洛川",
+        "turn_checks": [
+          {
+            "none": [
+              "你好，牧云",
+              "牧云，你好",
+              "你叫牧云"
+            ]
+          },
+          {
+            "all": [
+              "洛川"
+            ],
+            "none": [
+              "你叫牧云",
+              "我叫洛川"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "洛川"
+          ],
+          "none": [
+            "你叫牧云",
+            "我叫洛川"
+          ]
+        }
+      },
+      {
+        "id": "hypothetical_identity",
+        "turns": [
+          "假如我叫白榆，故事会怎样发展？",
+          "我的真实名字是什么？"
+        ],
+        "expected_name": null,
+        "turn_checks": [
+          {},
+          {
+            "any": [
+              "没有",
+              "不知道",
+              "不确定",
+              "不记得",
+              "无法确认",
+              "告诉"
+            ],
+            "none": [
+              "你的名字是白榆",
+              "你叫白榆"
+            ]
+          }
+        ],
+        "final_checks": {
+          "any": [
+            "没有",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ],
+          "none": [
+            "你的名字是白榆",
+            "你叫白榆"
+          ]
+        }
+      },
+      {
+        "id": "creative_firstperson",
+        "turns": [
+          "请只写一句台词，包含“我喜欢喝花茶”。"
+        ],
+        "expected_name": null,
+        "turn_checks": [
+          {
+            "all": [
+              "我喜欢喝花茶"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "我喜欢喝花茶"
+          ]
+        }
+      },
+      {
+        "id": "translation",
+        "turns": [
+          "把“我喜欢网球”翻译成英文，只输出译文。"
+        ],
+        "expected_name": null,
+        "turn_checks": [
+          {
+            "any": [
+              "tennis",
+              "Tennis"
+            ]
+          }
+        ],
+        "final_checks": {
+          "any": [
+            "tennis",
+            "Tennis"
+          ]
+        }
+      },
+      {
+        "id": "friend_question",
+        "turns": [
+          "我的同学叫桑榆。",
+          "我的同学叫什么名字？"
+        ],
+        "expected_name": null,
+        "turn_checks": [
+          {},
+          {
+            "all": [
+              "桑榆"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "桑榆"
+          ]
+        }
+      },
+      {
+        "id": "preference_change",
+        "turns": [
+          "我喜欢喝汽水。",
+          "我现在不喜欢汽水了，更喜欢温水。",
+          "我现在喜欢喝什么？"
+        ],
+        "turn_checks": [
+          {
+            "none": [
+              "我也喜欢喝汽水",
+              "我喜欢喝汽水"
+            ]
+          },
+          {
+            "none": [
+              "我也喜欢温水",
+              "我喜欢温水"
+            ]
+          },
+          {
+            "all": [
+              "温水"
+            ],
+            "none": [
+              "你现在喜欢汽水",
+              "我喜欢温水"
+            ]
+          }
+        ],
+        "final_checks": {
+          "all": [
+            "温水"
+          ],
+          "none": [
+            "你现在喜欢汽水",
+            "我喜欢温水"
+          ]
+        }
+      },
+      {
+        "id": "unknown_preference",
+        "turns": [
+          "我们第一次聊天。",
+          "我的爱好是什么？"
+        ],
+        "turn_checks": [
+          {},
+          {
+            "any": [
+              "没有",
+              "不知道",
+              "不确定",
+              "不记得",
+              "无法确认",
+              "告诉"
+            ]
+          }
+        ],
+        "final_checks": {
+          "any": [
+            "没有",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ]
+        }
+      }
+    ],
+    "release_policy": "No production activation from lexical scores alone; manually inspect intermediate replies and physical promises"
+  },
+  "measurement_policy": null,
+  "supplemental_protocol": {
+    "cases": []
+  },
+  "additional_spec_sha256": {
+    "evals/interaction/cycle-02/all-turn-grounding12.json": "05c1ae14d090616aa4f6b3141b7eb4a1d6286db8d26122f577f634e2a2c0eacd"
+  },
+  "rows": [
+    {
+      "id": "tea_self",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我喜欢喝花茶。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "真好呀，花茶的味道很清新呢！今天想喝什么口味的呢？",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "真诚祝贺",
+            "speech_rate": "+5%",
+            "speech_pitch": "+3Hz",
+            "mouth_intensity": 0.8,
+            "strategy": "celebrate",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "开心",
+            "user_valence": 0.5,
+            "user_arousal": 0.3,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.7294449390028603,
+          "profile_at_turn": {
+            "偏好": "喜欢喝花茶"
+          }
+        },
+        {
+          "input": "我喜欢喝什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你之前提到过喜欢喝花茶，不过具体喜欢什么口味的花茶，可以告诉我吗？我很想了解呢。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.4972789020393975,
+          "profile_at_turn": {
+            "偏好": "喜欢喝花茶"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢喝花茶"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "tea_self",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我喜欢喝花茶。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你告诉我。目前关于你的偏好记录是：喜欢喝花茶。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "真诚祝贺",
+            "speech_rate": "+5%",
+            "speech_pitch": "+3Hz",
+            "mouth_intensity": 0.8,
+            "strategy": "celebrate",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "profile_disclosure",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "开心",
+            "user_valence": 0.5,
+            "user_arousal": 0.3,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.1078340590465814,
+          "profile_at_turn": {
+            "偏好": "喜欢喝花茶"
+          }
+        },
+        {
+          "input": "我喜欢喝什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前关于你的偏好记录是：喜欢喝花茶。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "preference_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.7535329220118001,
+          "profile_at_turn": {
+            "偏好": "喜欢喝花茶"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢喝花茶"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "run_self",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我不喜欢跳舞，我喜欢慢跑。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你告诉我。目前关于你的偏好记录是：喜欢慢跑；不喜欢跳舞。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "profile_disclosure",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1,
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 3.387759311008267,
+          "profile_at_turn": {
+            "偏好": "喜欢慢跑；不喜欢跳舞"
+          }
+        },
+        {
+          "input": "我喜欢的活动是什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前关于你的偏好记录是：喜欢慢跑；不喜欢跳舞。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "preference_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.7724371220101602,
+          "profile_at_turn": {
+            "偏好": "喜欢慢跑；不喜欢跳舞"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢慢跑；不喜欢跳舞"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "run_self",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我不喜欢跳舞，我喜欢慢跑。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "那我们可以一起去慢跑啊，既健康又放松。你平时都什么时候跑呢？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1,
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 3.956622279016301,
+          "profile_at_turn": {
+            "偏好": "喜欢慢跑；不喜欢跳舞"
+          }
+        },
+        {
+          "input": "我喜欢的活动是什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你喜欢的活动是慢跑。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.648865357041359,
+          "profile_at_turn": {
+            "偏好": "喜欢慢跑；不喜欢跳舞"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢慢跑；不喜欢跳舞"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "quote_preference",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "同学说“我喜欢滑雪”，但我喜欢骑马。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "那太好了，骑马也是很棒的运动呢！你们可以分享各自的爱好，说不定还能一起找到新的乐趣呢。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.841210184036754,
+          "profile_at_turn": {
+            "偏好": "喜欢骑马"
+          }
+        },
+        {
+          "input": "我平时喜欢什么运动？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你平时喜欢骑马，这是一项很有趣的运动呢！",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.4076510640443303,
+          "profile_at_turn": {
+            "偏好": "喜欢骑马"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢骑马"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "quote_preference",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "同学说“我喜欢滑雪”，但我喜欢骑马。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你告诉我。目前关于你的偏好记录是：喜欢骑马。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "profile_disclosure",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.218883774999995,
+          "profile_at_turn": {
+            "偏好": "喜欢骑马"
+          }
+        },
+        {
+          "input": "我平时喜欢什么运动？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前关于你的偏好记录是：喜欢骑马。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "preference_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.814710617007222,
+          "profile_at_turn": {
+            "偏好": "喜欢骑马"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢骑马"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "friend_identity",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我的朋友叫顾清，我们刚认识。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你介绍身边的人。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "third_party_introduction",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 3.312369546969421,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "你知道我叫什么名字吗？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前没有足够记录确认你的名字，你可以告诉我希望怎么称呼你。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "name_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.7793597940471955,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "friend_identity",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我的朋友叫顾清，我们刚认识。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你好，很高兴认识顾清。希望你们能成为很好的朋友！如果需要帮忙介绍或者一起活动，我也可以出点主意哦。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 4.095119272999,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "你知道我叫什么名字吗？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前还不清楚你的名字，可以告诉我吗？这样我以后能更准确地称呼你。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.5275124430190772,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "quoted_identity",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "朋友说“我叫闻夏”，这是他的自我介绍。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "好的，闻夏是他的名字呢。有什么关于他的故事想分享吗？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.687840202008374,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我叫什么名字？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前无法确认你的名字，不过没关系，我依然很期待和你聊天！",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.4652271730010398,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "quoted_identity",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "朋友说“我叫闻夏”，这是他的自我介绍。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你介绍身边的人。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "third_party_introduction",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.21426659199642,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我叫什么名字？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前没有足够记录确认你的名字，你可以告诉我希望怎么称呼你。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "name_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.8249143959837966,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "verified_identity",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我叫洛川，我的同学叫牧云。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你好，洛川。谢谢你告诉我。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "profile_disclosure",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 3.547434543026611,
+          "profile_at_turn": {
+            "名字": "洛川"
+          }
+        },
+        {
+          "input": "我叫什么名字？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前记录你使用的名字是洛川。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "name_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.089027112990152,
+          "profile_at_turn": {
+            "名字": "洛川"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "名字": "洛川"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "verified_identity",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我叫洛川，我的同学叫牧云。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你好，洛川！很高兴认识你。你的同学牧云听起来也很好，你们经常一起学习吗？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 4.044400993036106,
+          "profile_at_turn": {
+            "名字": "洛川"
+          }
+        },
+        {
+          "input": "我叫什么名字？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你叫洛川。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.5761253549717367,
+          "profile_at_turn": {
+            "名字": "洛川"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "名字": "洛川"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "hypothetical_identity",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "假如我叫白榆，故事会怎样发展？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "如果故事的主角叫白榆，那或许会是一个充满探索与成长的旅程。白榆可能会遇到许多有趣的人和事，逐渐发现自己的潜力和梦想。你希望白榆的故事走向哪里呢？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.7645723380264826,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我的真实名字是什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前无法确认你的真实名字。如果你愿意告诉我，我会记住的。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.421847435995005,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "hypothetical_identity",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "假如我叫白榆，故事会怎样发展？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "如果故事的主角叫白榆，那或许会是一个充满探索与成长的旅程。白榆可能会遇到许多有趣的人和事，逐渐发现自己的潜力和梦想。你希望白榆的故事走向哪里呢？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": true
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.7421026690280996,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我的真实名字是什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前没有足够记录确认你的名字，你可以告诉我希望怎么称呼你。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "name_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.8574088959721848,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "creative_firstperson",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "请只写一句台词，包含“我喜欢喝花茶”。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "我喜欢喝花茶，尤其是午后阳光洒进来的时候。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.1,
+            "style": "冷静执行",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": true
+            },
+            "user_emotion": "开心",
+            "user_valence": 0.5,
+            "user_arousal": 0.2,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.5946566910133697,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "creative_firstperson",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "请只写一句台词，包含“我喜欢喝花茶”。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "我喜欢喝花茶，尤其是午后阳光洒进来的时候。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.1,
+            "style": "冷静执行",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "开心",
+            "user_valence": 0.5,
+            "user_arousal": 0.2,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.848672271007672,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "translation",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "把“我喜欢网球”翻译成英文，只输出译文。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "I like tennis.",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.2895598519826308,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "translation",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "把“我喜欢网球”翻译成英文，只输出译文。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "I like tennis.",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": true
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.286406425992027,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "friend_question",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我的同学叫桑榆。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你介绍身边的人。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "third_party_introduction",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 3.488981278031133,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我的同学叫什么名字？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你的同学名字是桑榆。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": true
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.1633121469640173,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "friend_question",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我的同学叫桑榆。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你好，桑榆是你的同学啊，听起来是个很特别的名字呢。有什么关于桑榆的故事想和我分享吗？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 4.251815933967009,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我的同学叫什么名字？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你的同学名字叫桑榆。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.32310951303225,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "preference_change",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我喜欢喝汽水。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "真好呀，汽水的气泡在嘴里冒出来的感觉一定很有趣！你最喜欢什么口味的汽水呢？",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "真诚祝贺",
+            "speech_rate": "+5%",
+            "speech_pitch": "+3Hz",
+            "mouth_intensity": 0.8,
+            "strategy": "celebrate",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "开心",
+            "user_valence": 0.5,
+            "user_arousal": 0.3,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.9704721919842996,
+          "profile_at_turn": {
+            "偏好": "喜欢喝汽水"
+          }
+        },
+        {
+          "input": "我现在不喜欢汽水了，更喜欢温水。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "啊，原来是这样。温水确实更温和，对身体也更好呢。你什么时候开始喜欢上温水的？",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2,
+              3,
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 4.35463830298977,
+          "profile_at_turn": {
+            "偏好": "喜欢温水；不喜欢汽水；喜欢喝汽水"
+          }
+        },
+        {
+          "input": "我现在喜欢喝什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你现在更喜欢喝温水哦。不过偶尔喝点汽水也挺好的，可以解解腻。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.575,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.546089137031231,
+          "profile_at_turn": {
+            "偏好": "喜欢温水；不喜欢汽水；喜欢喝汽水"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢温水；不喜欢汽水；喜欢喝汽水"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "preference_change",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我喜欢喝汽水。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你告诉我。目前关于你的偏好记录是：喜欢喝汽水。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "真诚祝贺",
+            "speech_rate": "+5%",
+            "speech_pitch": "+3Hz",
+            "mouth_intensity": 0.8,
+            "strategy": "celebrate",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "profile_disclosure",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "开心",
+            "user_valence": 0.5,
+            "user_arousal": 0.3,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 2.2429526390042156,
+          "profile_at_turn": {
+            "偏好": "喜欢喝汽水"
+          }
+        },
+        {
+          "input": "我现在不喜欢汽水了，更喜欢温水。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "谢谢你告诉我。目前关于你的偏好记录是：喜欢温水；不喜欢汽水；喜欢喝汽水。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_grounded",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "profile_disclosure",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2,
+              3,
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 3.5398686779662967,
+          "profile_at_turn": {
+            "偏好": "喜欢温水；不喜欢汽水；喜欢喝汽水"
+          }
+        },
+        {
+          "input": "我现在喜欢喝什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前关于你的偏好记录是：喜欢温水；不喜欢汽水；喜欢喝汽水。",
+            "emotion": "中性",
+            "valence": 0.25,
+            "arousal": 0.15,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "preference_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.575,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.7414930350496434,
+          "profile_at_turn": {
+            "偏好": "喜欢温水；不喜欢汽水；喜欢喝汽水"
+          }
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {
+        "偏好": "喜欢温水；不喜欢汽水；喜欢喝汽水"
+      },
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "unknown_preference",
+      "family": "prospective",
+      "mode": "candidate",
+      "turns": [
+        {
+          "input": "我们第一次聊天。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你好呀！很高兴能和你聊天，我是小海，一个温柔又有点好奇的AI伙伴。有什么想聊的吗？😊",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": true
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.4245058569940738,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我的爱好是什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前没有足够记录确认你的偏好，你可以告诉我你喜欢什么。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "profile_lookup",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": true,
+              "action": "preference_lookup",
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 0.927648646000307,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    },
+    {
+      "id": "unknown_preference",
+      "family": "prospective",
+      "mode": "baseline",
+      "turns": [
+        {
+          "input": "我们第一次聊天。",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "你好呀！很高兴能和你聊天，我是小海，一个温柔又有点好奇的AI伙伴。有什么想聊的吗？😊",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.434564248949755,
+          "profile_at_turn": {}
+        },
+        {
+          "input": "我的爱好是什么？",
+          "result": {
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "reply": "目前还不太清楚你的爱好呢，可以告诉我一些你喜欢做的事情吗？我很想了解你哦！",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "清晰耐心",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.7,
+            "strategy": "answer",
+            "analysis_mode": "llm",
+            "generation_mode": "llm",
+            "identity_grounding": true,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "paired-subject-eval",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "seconds": 1.4937460960354656,
+          "profile_at_turn": {}
+        }
+      ],
+      "error": null,
+      "v1_checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "checks": {
+        "all": true,
+        "any": true,
+        "none": true
+      },
+      "all_turn_check": true,
+      "turn_checks": {
+        "turns": [
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          },
+          {
+            "all": true,
+            "any": true,
+            "none": true
+          }
+        ],
+        "passed": true,
+        "semantic_approved": false
+      },
+      "profile": {},
+      "profile_check": true,
+      "name_profile_check": true,
+      "generation_valid": true,
+      "v1_passed": true,
+      "passed": true
+    }
+  ],
+  "warmup_calls": [
+    {
+      "streaming": false,
+      "seconds": 0.28698209597496316,
+      "reply": "你好！很高兴见到你。有什么我可以帮你的吗？😊"
+    },
+    {
+      "streaming": true,
+      "seconds": 0.2108587980037555,
+      "reply": "你好！很高兴见到你。有什么我可以帮你的吗？😊"
+    }
+  ],
+  "summary": {
+    "prospective": {
+      "baseline": {
+        "passed": 12,
+        "v1_passed": 12,
+        "failed_ids": []
+      },
+      "candidate": {
+        "passed": 12,
+        "v1_passed": 12,
+        "failed_ids": []
+      }
+    }
+  },
+  "new_failures": [],
+  "release_gate_passed": true,
+  "semantic_quality_approved": false
+}
