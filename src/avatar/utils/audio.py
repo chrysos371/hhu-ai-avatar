@@ -14,6 +14,8 @@ def load_wav(path: Union[str, Path]) -> tuple[np.ndarray, int]:
     仅用标准库，多声道取平均转单声道。
     """
     with wave.open(str(path), "rb") as wf:
+        if wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
+            raise ValueError("Only uncompressed 16-bit PCM WAV is supported")
         sr = wf.getframerate()
         ch = wf.getnchannels()
         data = wf.readframes(wf.getnframes())
@@ -24,7 +26,17 @@ def load_wav(path: Union[str, Path]) -> tuple[np.ndarray, int]:
 
 
 def load_audio(path: Union[str, Path]) -> tuple[np.ndarray, int]:
-    """加载任意音频（wav/mp3 等）。优先 librosa，回退到标准库 wav。"""
+    """加载音频；PCM WAV 用标准库，其他格式优先 soundfile 再用 librosa。"""
+    with open(path, "rb") as stream:
+        header = stream.read(12)
+    if header[:4] == b"RIFF" and header[8:12] == b"WAVE":
+        return load_wav(path)
+    try:
+        import soundfile as sf
+        samples, sr = sf.read(str(path), dtype="float32", always_2d=True)
+        return samples.mean(axis=1), int(sr)
+    except (ImportError, RuntimeError):
+        pass
     try:
         import librosa  # type: ignore
 

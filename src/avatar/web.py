@@ -16,6 +16,7 @@ from .brain.boundaries import BoundaryPolicy
 from .brain.memory import MemoryStore
 from .brain.reminders import ReminderStore
 from .brain.summaries import SummaryStore
+from .brain.operations import OperationError
 
 
 def _public(row):
@@ -71,7 +72,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header(
             "Content-Security-Policy",
-            "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'",
+            "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; media-src 'self' blob:; img-src 'self' data:; font-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'",
         )
         self.end_headers()
         self.wfile.write(body)
@@ -94,6 +95,9 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(403, {"error": "请使用启动终端提供的完整链接打开页面。"})
         memory = None
         try:
+            if not post and parsed.path.startswith("/api/v1/speech/audio/"):
+                audio, content_type = self.server.speech.read(parsed.path.rsplit("/", 1)[-1])
+                return self._send(200, audio, content_type=content_type)
             data = {}
             if post:
                 if parsed.path == "/api/v1/knowledge/preview-file":
@@ -122,8 +126,6 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("JSON object required")
             if parsed.path.startswith("/api/v1/"):
                 from .web_api import V1API
-                from .brain.operations import OperationError
-
                 memory = MemoryStore(
                     self.server.db_path, embedder=self.server.knowledge_embedder
                 )
@@ -243,6 +245,8 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 return self._send(404, {"error": "not found"})
             self._send(200, result)
+        except OperationError as exc:
+            self._send(exc.status, {"error": exc.message})
         except (ValueError, TypeError, UnicodeError) as exc:
             self._send(400, {"error": str(exc)})
         except Exception:
@@ -404,10 +408,13 @@ def create_server(
     frontend_dir: str | Path | None = None,
     legacy_writes: bool = True,
     knowledge_embedder=None,
+    speech_engine=None,
 ) -> ThreadingHTTPServer:
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     server.daemon_threads = True
     server.state_lock = threading.RLock()
+    from .speech import SpeechService
+    server.speech = SpeechService(speech_engine)
     server.db_path = db_path
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder

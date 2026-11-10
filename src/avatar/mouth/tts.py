@@ -19,8 +19,9 @@ class TTSEngine(Protocol):
 class EdgeTTSEngine:
     """微软 Edge-TTS：免费、中文自然、零部署。输出 mp3。"""
 
-    def __init__(self, voice: str = "zh-CN-XiaoxiaoNeural"):
+    def __init__(self, voice: str = "zh-CN-XiaoxiaoNeural", timeout: float = 30.0):
         self.voice = voice
+        self.timeout = timeout
 
     def synthesize(
         self, text: str, out_path: str, rate: str = "+0%", pitch: str = "+0Hz"
@@ -29,7 +30,7 @@ class EdgeTTSEngine:
 
         async def _run() -> None:
             communicate = edge_tts.Communicate(text, self.voice, rate=rate, pitch=pitch)
-            await communicate.save(out_path)
+            await asyncio.wait_for(communicate.save(out_path), timeout=self.timeout)
 
         Path(out_path).parent.mkdir(parents=True, exist_ok=True)
         asyncio.run(_run())

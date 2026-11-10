@@ -31,6 +31,9 @@ class V1API:
     def handle(self, post, path, query, data):
         get = lambda key, default=None: query.get(key, [default])[0]
 
+        if post and path == "/speech":
+            return 201, self.server.speech.synthesize(data)
+
         def integer(key, default=None):
             try:
                 return int(get(key, default))
