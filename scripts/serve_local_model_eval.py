@@ -8,8 +8,12 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import threading
 import time
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from avatar.gpu_resources import select_available_gpu
 
 
 def sha(path):
@@ -42,15 +46,13 @@ def main():
     assert digest == specification['sha256']
     snapshot = subprocess.check_output(['nvidia-smi','--query-gpu=index,uuid,memory.free,utilization.gpu',
         '--format=csv,noheader,nounits'],text=True)
-    available = []
+    inventory = []
     for line in snapshot.splitlines():
         index, uid, free, utilization = (part.strip() for part in line.split(','))
-        if int(free)>=specification['required_free_mib'] and int(utilization)<=20:
-            available.append((int(free),-int(utilization),uid,int(index)))
-    if not available:
-        raise RuntimeError('No GPU meets current headroom gate')
-    chosen = max(available)
-    os.environ['CUDA_VISIBLE_DEVICES'] = chosen[2]
+        inventory.append({'index':int(index),'uuid':uid,'free_mib':int(free),'utilization_percent':int(utilization)})
+    requested_mask = os.environ.get('CUDA_VISIBLE_DEVICES')
+    chosen = select_available_gpu(inventory,required_free_mib=specification['required_free_mib'],visible_mask=requested_mask)
+    os.environ['CUDA_VISIBLE_DEVICES'] = chosen['uuid']
     from llama_cpp import Llama, LlamaGrammar, llama_supports_gpu_offload
     from jinja2 import Environment, StrictUndefined
     from importlib.metadata import version
@@ -154,7 +156,8 @@ def main():
         'registry_sha256':sha('evals/interaction/cycle-02/model-scale-protocol.json'),
         'gguf_general_name':model.metadata.get('general.name'),
         'template_sha256':hashlib.sha256(template_text.encode()).hexdigest(),
-        'gpu_snapshot_before':snapshot,'chosen_gpu':{'index':chosen[3],'uuid':chosen[2],'free_mib':chosen[0]},
+        'gpu_snapshot_before':snapshot,'chosen_gpu':chosen,'requested_visible_devices':requested_mask,
+        'resource_selector_sha256':sha('src/avatar/gpu_resources.py'),
         'configuration':{'n_gpu_layers':-1,'n_ctx':8192,'n_batch_prompt_tokens':256,'concurrent_sequences':1,
             'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'flash_attention':True},
         'llama_cpp_python':version('llama-cpp-python'),'load_seconds':load_seconds,

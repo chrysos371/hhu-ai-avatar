@@ -16,6 +16,7 @@ import wave
 import numpy as np
 
 from avatar.ears.asr import FasterWhisperEngine
+from avatar.gpu_resources import select_available_gpu
 from avatar.mouth.tts import EdgeTTSEngine
 from avatar.speech import SpeechService
 from avatar.utils.audio import load_audio
@@ -113,12 +114,9 @@ def evaluate_asr(corpus, model, device, gpu, output):
     before = gpu_snapshot() if device == 'cuda' else []
     chosen = None
     if device == 'cuda':
-        candidates = [row for row in before if row['free_mib'] >= 8192 and row['utilization_percent'] <= 85]
-        if gpu is not None:
-            candidates = [row for row in candidates if row['index'] == gpu]
-        if not candidates:
-            raise RuntimeError('no GPU meets the declared headroom gate')
-        chosen = max(candidates, key=lambda row: (row['free_mib'], -row['utilization_percent']))
+        chosen = select_available_gpu(before, required_free_mib=8192,
+            visible_mask=os.environ.get('CUDA_VISIBLE_DEVICES'),
+            allowed_indices={gpu} if gpu is not None else None)
         os.environ['CUDA_VISIBLE_DEVICES'] = chosen['uuid']
     start = time.perf_counter()
     engine = FasterWhisperEngine(str(model), device=device, cpu_threads=4)

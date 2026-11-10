@@ -8,6 +8,7 @@ import time
 import wave
 
 from avatar.ears.asr import FasterWhisperEngine
+from avatar.gpu_resources import select_available_gpu
 from evaluate_voice_interaction import sha, normalized, edits, save, gpu_snapshot
 
 
@@ -33,9 +34,9 @@ def main():
     if args.output.exists():raise ValueError('Use a new result path')
     manifest=json.loads((args.folder/'endpoint-manifest.json').read_text())
     assert manifest['protocol_sha256']==sha(protocol)
-    snapshot=gpu_snapshot();available=[row for row in snapshot if row['free_mib']>=8192 and row['utilization_percent']<=20]
-    if not available:raise RuntimeError('No current GPU headroom')
-    chosen=max(available,key=lambda row:(row['free_mib'],-row['utilization_percent']))
+    snapshot=gpu_snapshot()
+    chosen=select_available_gpu(snapshot,required_free_mib=8192,
+        visible_mask=os.environ.get('CUDA_VISIBLE_DEVICES'))
     os.environ['CUDA_VISIBLE_DEVICES']=chosen['uuid']
     engine=FasterWhisperEngine('models/faster-whisper-small',device='cuda')
     report={'protocol_sha256':sha(protocol),'protocol':json.loads(protocol.read_text()),

@@ -13,6 +13,7 @@ import wave
 
 from evaluate_voice_interaction import sha, normalized, edits, save, gpu_snapshot
 from avatar.ears.asr import FasterWhisperEngine
+from avatar.gpu_resources import select_available_gpu
 
 SPEC = Path('evals/interaction/cycle-02/aishell-selection.json')
 
@@ -68,10 +69,8 @@ def evaluate(folder, model, device, output):
     before = gpu_snapshot() if device == 'cuda' else []
     chosen = None
     if device == 'cuda':
-        available = [r for r in before if r['free_mib'] >= 8192 and r['utilization_percent'] <= 85]
-        if not available:
-            raise RuntimeError('No GPU currently meets headroom gate')
-        chosen = max(available, key=lambda r: (r['free_mib'], -r['utilization_percent']))
+        chosen = select_available_gpu(before, required_free_mib=8192,
+            visible_mask=os.environ.get('CUDA_VISIBLE_DEVICES'))
         os.environ['CUDA_VISIBLE_DEVICES'] = chosen['uuid']
     start = time.perf_counter()
     engine = FasterWhisperEngine(str(model), device=device)
