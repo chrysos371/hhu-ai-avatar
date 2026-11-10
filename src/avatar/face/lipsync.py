@@ -100,12 +100,16 @@ class LipSyncEngine:
         silence_ratio: float = 0.05,
         smooth: int = 3,
         close_every: float = 0.3,  # 长句每间隔多少秒强制自然闭嘴
+        silence_rms: float = 0.001,
     ):
         self.frame_ms = frame_ms
         self.hop_ms = hop_ms
         self.silence_ratio = silence_ratio
         self.smooth = smooth
         self.close_every = close_every
+        if not np.isfinite(silence_rms) or not 0 <= silence_rms <= 1:
+            raise ValueError('silence_rms must be finite and within 0..1')
+        self.silence_rms = silence_rms
 
     def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
         """分析音频，返回逐帧口型参数序列。"""
@@ -124,7 +128,7 @@ class LipSyncEngine:
         if not np.isfinite(peak) or peak <= 1e-8:
             return [LipSyncFrame(float(t), 0.0, "", 0.0) for t in times]
         energy_norm = energy / peak
-        silence = energy < peak * self.silence_ratio
+        silence = energy < max(peak * self.silence_ratio, self.silence_rms)
 
         order = min(2 + sr // 1000, 24)
         mouth = np.zeros(n, dtype=np.float64)
@@ -161,6 +165,7 @@ class LipSyncEngine:
                 mouth[i] = 0.05
 
         mouth = np.clip(mouth, 0.0, 1.0)
+        mouth[silence] = 0.0
         return [
             LipSyncFrame(
                 time=float(times[i]),

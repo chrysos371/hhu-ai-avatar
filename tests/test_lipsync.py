@@ -35,3 +35,17 @@ def test_silent_audio_returns_finite_closed_frames():
         frames = LipSyncEngine().analyze(sig, 24000)
         assert frames
         assert all(f.mouth_open == 0 and f.vowel == '' and f.energy == 0 for f in frames)
+
+def test_low_level_noise_does_not_become_full_scale_mouth_motion():
+    noise = np.random.default_rng(17).normal(0, 0.0003, 16000).astype(np.float32)
+    frames = LipSyncEngine().analyze(noise, 16000)
+    assert frames and all(frame.mouth_open == 0 for frame in frames)
+
+
+def test_smoothing_never_reopens_a_silent_pause():
+    sr = 16000
+    samples = (0.2 * np.sin(2 * np.pi * 220 * np.arange(sr) / sr)).astype(np.float32)
+    samples[int(sr*0.3):int(sr*0.7)] = 0
+    frames = LipSyncEngine(smooth=9).analyze(samples, sr)
+    assert any(frame.mouth_open > 0.05 for frame in frames if frame.time < 0.2)
+    assert all(frame.mouth_open == 0 for frame in frames if 0.32 <= frame.time <= 0.65)
