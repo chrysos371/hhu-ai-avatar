@@ -128,3 +128,26 @@ def versioned_rules(rules, family, case_id, policy=None):
                 raise ValueError('Invalid uncertainty alternatives')
             copied.setdefault('any', []).extend(value for value in additions if value not in copied.get('any', []))
     return copied
+
+
+def check_dialogue_turns(replies, rules):
+    """Literal per-turn checks; never infer semantic approval from a pass.
+
+    Require explicit coverage, including {} for deliberately unscored turns, so
+    a truncated protocol cannot silently turn into final-turn-only evaluation.
+    """
+    if len(replies) != len(rules):
+        raise ValueError('Every reply requires an explicit turn rule')
+    rows = []
+    for text, rule in zip(replies, rules):
+        if not isinstance(rule, dict) or set(rule) - {'all', 'any', 'none'}:
+            raise ValueError('Unsupported turn rule')
+        if any(not isinstance(values, list) or any(not isinstance(v, str) or not v for v in values)
+               for values in rule.values()):
+            raise ValueError('Turn rules require nonempty string literals')
+        result = {'all': all(v in text for v in rule.get('all', [])),
+                  'any': not rule.get('any') or any(v in text for v in rule['any']),
+                  'none': all(v not in text for v in rule.get('none', []))}
+        rows.append(result)
+    return {'turns': rows, 'passed': all(all(row.values()) for row in rows),
+            'semantic_approved': False}

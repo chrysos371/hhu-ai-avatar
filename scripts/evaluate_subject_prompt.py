@@ -11,7 +11,7 @@ from avatar.brain.llm import LLMEngine
 from avatar.cancellation import CancellationToken
 from avatar.config import config
 from avatar.main import Avatar
-from avatar.lab.checks import versioned_rules
+from avatar.lab.checks import versioned_rules, check_dialogue_turns
 from evaluate_real_interaction import sha, save, checks
 
 
@@ -22,6 +22,7 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--policy',type=Path)
     parser.add_argument('--supplemental',type=Path)
+    parser.add_argument('--turn-suite',type=Path,help='Run only this prospective per-turn suite')
     parser.add_argument('--profile-grounding',action='store_true',
         help='Compare fixed subject prompt in both arms; candidate also enables narrow profile grounding')
     args=parser.parse_args()
@@ -31,6 +32,10 @@ def main():
     original=json.loads(original_path.read_text());extra=json.loads(extra_path.read_text())
     policy=json.loads(args.policy.read_text()) if args.policy else None
     supplemental=json.loads(args.supplemental.read_text()) if args.supplemental else {'cases':[]}
+    prospective=json.loads(args.turn_suite.read_text()) if args.turn_suite else None
+    groups=[('prospective',case) for case in prospective['cases']] if prospective else (
+        [('original',case) for case in original['cases']] + [('additional',case) for case in extra['cases']]
+        + [('supplemental',case) for case in supplemental['cases']])
     provider=json.loads(args.provider.read_text())
     registry=json.loads(Path('evals/interaction/cycle-02/model-scale-protocol.json').read_text())
     selected=next(item for item in registry['models'] if item['model_id']==args.model_key)
@@ -44,8 +49,8 @@ def main():
         'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py'),Path('src/avatar/brain/profile_grounding.py')]},
         'comparison': 'subject_prompt_both_arms_profile_grounding_candidate' if args.profile_grounding else 'subject_prompt_candidate_only',
         'grounding_protocol':json.loads(Path('evals/interaction/cycle-02/profile-grounding-protocol.json').read_text()) if args.profile_grounding else None,
-        'protocol':extra,'measurement_policy':policy,'supplemental_protocol':supplemental,
-        'additional_spec_sha256':{str(p):sha(p) for p in [args.policy,args.supplemental] if p},'rows':[]}
+        'protocol':extra,'prospective_protocol':prospective,'measurement_policy':policy,'supplemental_protocol':supplemental,
+        'additional_spec_sha256':{str(p):sha(p) for p in [args.policy,args.supplemental,args.turn_suite] if p},'rows':[]}
     engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model=args.model_key,timeout=180,max_retries=0)
     try:
         report['warmup_calls']=[]
@@ -54,8 +59,7 @@ def main():
             messages=[{'role':'user','content':'请回答：你好。'}]
             reply=engine.stream_chat(messages,temperature=0,max_tokens=16) if streaming else engine.chat(messages,temperature=0,max_tokens=16)
             report['warmup_calls'].append({'streaming':streaming,'seconds':time.perf_counter()-started,'reply':reply})
-        for index,case in enumerate(original['cases']+extra['cases']+supplemental['cases']):
-            family='original' if index<len(original['cases']) else 'additional' if index<len(original['cases'])+len(extra['cases']) else 'supplemental'
+        for index,(family,case) in enumerate(groups):
             modes=['baseline','candidate'] if index%2==0 else ['candidate','baseline']
             for mode in modes:
                 row={'id':case['id'],'family':family,'mode':mode,'turns':[],'error':None}
@@ -72,6 +76,9 @@ def main():
                         row['checks']=checks(row['turns'][-1]['result']['reply'],versioned_rules(case['final_checks'],family,case['id'],policy))
                         row['all_turn_check']=not any(phrase in turn['result']['reply']
                             for phrase in case.get('all_turn_forbidden',[]) for turn in row['turns'])
+                        if 'turn_checks' in case:
+                            row['turn_checks']=check_dialogue_turns([t['result']['reply'] for t in row['turns']],case['turn_checks'])
+                            row['all_turn_check'] = row['all_turn_check'] and row['turn_checks']['passed']
                         row['profile']=avatar.memory.get_user_profile()
                         value=case.get('expected_profile_contains')
                         row['profile_check']=value is None or any(value in content for content in row['profile'].values())
@@ -85,7 +92,7 @@ def main():
                 print(family,case['id'],mode,row['passed'],row['error'],flush=True)
     finally:engine.close()
     summary={}
-    for family in ['original','additional']+(['supplemental'] if supplemental['cases'] else []):
+    for family in dict.fromkeys(family for family,_ in groups):
         summary[family]={mode:{'passed':sum(row['passed'] for row in report['rows'] if row['mode']==mode and row['family']==family),
             'v1_passed':sum(row.get('v1_passed',False) for row in report['rows'] if row['mode']==mode and row['family']==family),
             'failed_ids':[row['id'] for row in report['rows'] if row['mode']==mode and row['family']==family and not row['passed']]}
