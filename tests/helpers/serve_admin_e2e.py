@@ -1,5 +1,8 @@
 """Disposable, offline browser-test fixture. Never opens the user's database."""
 
+from contextlib import ExitStack
+import json
+from urllib.parse import urlsplit
 from pathlib import Path
 import os
 import tempfile
@@ -12,11 +15,20 @@ from avatar.lab.transport_fixture import controlled_provider
 
 root = Path(__file__).resolve().parents[3]
 folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=root / "runtime/tmp")
-provider_context = controlled_provider(delay=0.02)
-_, provider_url = provider_context.__enter__()
-config.llm.api_key = "local-browser-fixture"
+provider_context = ExitStack()
+if os.getenv('AVATAR_E2E_LLM_PROVIDER'):
+    evidence = json.loads(Path(os.environ['AVATAR_E2E_LLM_PROVIDER']).read_text())
+    provider_url = evidence['url']
+    parsed = urlsplit(provider_url)
+    if parsed.scheme != 'http' or parsed.hostname != '127.0.0.1' or parsed.path != '/v1':
+        raise ValueError('Real browser evaluation requires an explicit loopback provider')
+    config.llm.api_key = 'local-eval-only'
+    config.llm.model = 'qwen3-4b-q4_k_m'
+else:
+    _, provider_url = provider_context.enter_context(controlled_provider(delay=0.02))
+    config.llm.api_key = 'local-browser-fixture'
+    config.llm.model = 'fixture'
 config.llm.base_url = provider_url
-config.llm.model = "fixture"
 config.embedding.model = ""
 memory = MemoryStore(str(Path(folder.name) / "browser.db"))
 memory.remember_user("名字", "浏览器测试原名")
@@ -55,5 +67,5 @@ try:
     server.serve_forever()
 finally:
     server.server_close()
-    provider_context.__exit__(None, None, None)
+    provider_context.close()
     folder.cleanup()
