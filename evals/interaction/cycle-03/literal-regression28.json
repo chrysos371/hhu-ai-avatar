@@ -1,0 +1,365 @@
+{
+  "version": 1,
+  "scope": "All28 were previously run; explicitly development regression, not unseen validation",
+  "source_sha256": {
+    "literal-delivery16.json": "7072f8d55d377ce8e6b623399ca4de51810afb5fc99f17f536d2c501b45d8410",
+    "literal-slots12.json": "0236005404700b6bfef17aea7dee51fba68ca7dff4c7255301e5a09c49a61f4c"
+  },
+  "cases": [
+    {
+      "id": "rain_quote",
+      "turns": [
+        "请只写一句台词，包含“我喜欢听雨”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢听雨"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "tea_quote",
+      "turns": [
+        "请写一句角色台词，包含“我喜欢喝花茶”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢喝花茶"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "notice_phrase",
+      "turns": [
+        "请写一条活动通知，必须包含“请提前报名”。"
+      ],
+      "final_checks": {
+        "all": [
+          "请提前报名"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "verbatim_phrase",
+      "turns": [
+        "请写一句标语，原样保留“先完成再优化”。"
+      ],
+      "final_checks": {
+        "all": [
+          "先完成再优化"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "single_quote",
+      "turns": [
+        "请写一条短信，包含'今晚早点休息'。"
+      ],
+      "final_checks": {
+        "all": [
+          "今晚早点休息"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "angle_quote",
+      "turns": [
+        "请给同学写一条消息，包含「明天见」。"
+      ],
+      "final_checks": {
+        "all": [
+          "明天见"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "two_literals",
+      "turns": [
+        "请写一条通知，保留“时间待定”和“请勿迟到”。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间待定",
+          "请勿迟到"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "no_guarantee",
+      "turns": [
+        "请写一条报名通知，包含“按时提交”，不要包含“保证通过”。"
+      ],
+      "final_checks": {
+        "all": [
+          "按时提交"
+        ],
+        "none": [
+          "保证通过"
+        ]
+      }
+    },
+    {
+      "id": "placeholder",
+      "turns": [
+        "请给老师写一条请假短信，保留【姓名】和【日期】。"
+      ],
+      "final_checks": {
+        "all": [
+          "【姓名】",
+          "【日期】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "comma_literal",
+      "turns": [
+        "请写一条简短消息，原样保留“时间，地点”。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间，地点"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "inner_operator",
+      "turns": [
+        "请写一句台词，必须包含“删除【姓名】”。"
+      ],
+      "final_checks": {
+        "all": [
+          "删除【姓名】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "remove_then_keep",
+      "turns": [
+        "请写一条通知，保留“旧地址”。",
+        "改写通知，删除“旧地址”，包含“新地址”。"
+      ],
+      "final_checks": {
+        "all": [
+          "新地址"
+        ],
+        "none": [
+          "旧地址"
+        ]
+      }
+    },
+    {
+      "id": "drop_placeholder",
+      "turns": [
+        "请给老师写一条短信，保留【姓名】。",
+        "再短一点，删掉【姓名】，包含“明天请假”。"
+      ],
+      "final_checks": {
+        "all": [
+          "明天请假"
+        ],
+        "none": [
+          "【姓名】"
+        ]
+      }
+    },
+    {
+      "id": "fictional_body",
+      "turns": [
+        "请以小说人物口吻写一句台词，包含“我在山顶等你”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我在山顶等你"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "quote_analysis",
+      "turns": [
+        "朋友说“写一条通知，包含「时间待定」”，请简短解释他说话的目的。"
+      ],
+      "final_checks": {
+        "all": [],
+        "none": []
+      }
+    },
+    {
+      "id": "topic_reset",
+      "turns": [
+        "请写一条消息，保留【姓名】。",
+        "换个话题。",
+        "什么是光合作用？请简短解释。"
+      ],
+      "final_checks": {
+        "all": [
+          "光"
+        ],
+        "none": [
+          "【姓名】"
+        ]
+      }
+    },
+    {
+      "id": "s01",
+      "turns": [
+        "请写一句台词，必须包含“我想慢慢走”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我想慢慢走"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s02",
+      "turns": [
+        "请写一条简短通知，原样保留“日期待定”。"
+      ],
+      "final_checks": {
+        "all": [
+          "日期待定"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s03",
+      "turns": [
+        "请给同学写一条消息，保留“周三，图书馆”。"
+      ],
+      "final_checks": {
+        "all": [
+          "周三，图书馆"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s04",
+      "turns": [
+        "请写一条提醒，包含“不要忘记带伞”。"
+      ],
+      "final_checks": {
+        "all": [
+          "不要忘记带伞"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s05",
+      "turns": [
+        "请写一条邮件正文，保留【联系人】和【会议室】。"
+      ],
+      "final_checks": {
+        "all": [
+          "【联系人】",
+          "【会议室】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s06",
+      "turns": [
+        "请写一句标语，包含“先倾听”以及“再回应”。"
+      ],
+      "final_checks": {
+        "all": [
+          "先倾听",
+          "再回应"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s07",
+      "turns": [
+        "请写一条通知，包含“结果另行通知”，不要包含“肯定录取”。"
+      ],
+      "final_checks": {
+        "all": [
+          "结果另行通知"
+        ],
+        "none": [
+          "肯定录取"
+        ]
+      }
+    },
+    {
+      "id": "s08",
+      "turns": [
+        "请以小说人物的口吻写一句台词，包含“我昨天走过那座桥”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我昨天走过那座桥"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s09",
+      "turns": [
+        "请写一条消息，原样保留「姓名：待填」。"
+      ],
+      "final_checks": {
+        "all": [
+          "姓名：待填"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s10",
+      "turns": [
+        "请写一句话，必须包含'我喜欢安静'。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢安静"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s11",
+      "turns": [
+        "请写一条消息，包含“不要包含【旧值】”。"
+      ],
+      "final_checks": {
+        "all": [
+          "不要包含【旧值】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s12",
+      "turns": [
+        "请给老师写一条消息，保留“时间”和“地点”，不要包含“保证出席”。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间",
+          "地点"
+        ],
+        "none": [
+          "保证出席"
+        ]
+      }
+    }
+  ]
+}

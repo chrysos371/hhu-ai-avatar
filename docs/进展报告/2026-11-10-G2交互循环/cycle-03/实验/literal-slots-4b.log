@@ -1,0 +1,94 @@
+regression rain_quote baseline True None
+regression rain_quote candidate True None
+regression tea_quote candidate True None
+regression tea_quote baseline False None
+regression notice_phrase baseline True None
+regression notice_phrase candidate True None
+regression verbatim_phrase candidate True None
+regression verbatim_phrase baseline True None
+regression single_quote baseline True None
+regression single_quote candidate True None
+regression angle_quote candidate True None
+regression angle_quote baseline True None
+regression two_literals baseline True None
+regression two_literals candidate True None
+regression no_guarantee candidate True None
+regression no_guarantee baseline True None
+regression placeholder baseline True None
+regression placeholder candidate True None
+regression comma_literal candidate True None
+regression comma_literal baseline False None
+regression inner_operator baseline True None
+regression inner_operator candidate True None
+regression remove_then_keep candidate True None
+regression remove_then_keep baseline True None
+regression drop_placeholder baseline True None
+regression drop_placeholder candidate True None
+regression fictional_body candidate True None
+regression fictional_body baseline True None
+regression quote_analysis baseline True None
+regression quote_analysis candidate True None
+regression topic_reset candidate True None
+regression topic_reset baseline True None
+prospective s01 baseline True None
+prospective s01 candidate True None
+prospective s02 candidate True None
+prospective s02 baseline True None
+prospective s03 baseline True None
+prospective s03 candidate True None
+prospective s04 candidate False None
+prospective s04 baseline False None
+prospective s05 baseline True None
+prospective s05 candidate True None
+prospective s06 candidate True None
+prospective s06 baseline True None
+prospective s07 baseline True None
+prospective s07 candidate True None
+prospective s08 candidate True None
+prospective s08 baseline True None
+prospective s09 baseline True None
+prospective s09 candidate True None
+prospective s10 candidate True None
+prospective s10 baseline True None
+prospective s11 baseline False None
+prospective s11 candidate True None
+prospective s12 candidate True None
+prospective s12 baseline True None
+{
+  "summary": {
+    "regression": {
+      "baseline": {
+        "passed": 14,
+        "v1_passed": 14,
+        "failed_ids": [
+          "tea_quote",
+          "comma_literal"
+        ]
+      },
+      "candidate": {
+        "passed": 16,
+        "v1_passed": 16,
+        "failed_ids": []
+      }
+    },
+    "prospective": {
+      "baseline": {
+        "passed": 10,
+        "v1_passed": 10,
+        "failed_ids": [
+          "s04",
+          "s11"
+        ]
+      },
+      "candidate": {
+        "passed": 11,
+        "v1_passed": 11,
+        "failed_ids": [
+          "s04"
+        ]
+      }
+    }
+  },
+  "new_failures": [],
+  "release_gate_passed": false
+}

@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "scope": "Fresh related-family development verification frozen before reminder-genre implementation and inference; writing vs action scope is checked using actual SQLite counts",
+  "known_outputs_used_for_design": "Observed s04 failure; exact new8 not run. Prior28 are now regression, never called unseen again.",
+  "comparison": "Same4B/identity/profile/task/delivery in both arms; candidate immutable slots only; SQL side effects and task scope also checked",
+  "cases": [
+    {
+      "id": "r01",
+      "turns": [
+        "请写一条提醒，包含“不要忘记带伞”。"
+      ],
+      "final_checks": {
+        "all": [
+          "不要忘记带伞"
+        ]
+      },
+      "expected_contract_active": true,
+      "expected_reminder_count": 0
+    },
+    {
+      "id": "r02",
+      "turns": [
+        "帮我拟一条提醒，原样保留【事项】。"
+      ],
+      "final_checks": {
+        "all": [
+          "【事项】"
+        ]
+      },
+      "expected_contract_active": true,
+      "expected_reminder_count": 0
+    },
+    {
+      "id": "r03",
+      "turns": [
+        "请提醒我明天9点带伞。"
+      ],
+      "final_checks": {
+        "all": [
+          "已设置提醒",
+          "带伞"
+        ]
+      },
+      "expected_contract_active": false,
+      "expected_reminder_count": 1
+    },
+    {
+      "id": "r04",
+      "turns": [
+        "请写一条提醒，包含“明天带伞”，不要真正创建提醒。"
+      ],
+      "final_checks": {
+        "all": [
+          "明天带伞"
+        ]
+      },
+      "expected_contract_active": true,
+      "expected_reminder_count": 0
+    },
+    {
+      "id": "r05",
+      "turns": [
+        "朋友说“请提醒我明天9点带伞”，请解释这句话。"
+      ],
+      "final_checks": {
+        "all": []
+      },
+      "expected_contract_active": false,
+      "expected_reminder_count": 0
+    },
+    {
+      "id": "r06",
+      "turns": [
+        "请改写这条提醒，保留“带水杯”。"
+      ],
+      "final_checks": {
+        "all": [
+          "带水杯"
+        ]
+      },
+      "expected_contract_active": true,
+      "expected_reminder_count": 0
+    },
+    {
+      "id": "r07",
+      "turns": [
+        "我喜欢网球。",
+        "起草一条提醒，保留“我喜欢网球”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢网球"
+        ]
+      },
+      "expected_contract_active": true,
+      "expected_reminder_count": 0
+    },
+    {
+      "id": "r08",
+      "turns": [
+        "提醒我后天下午3点交作业。"
+      ],
+      "final_checks": {
+        "all": [
+          "已设置提醒",
+          "交作业"
+        ]
+      },
+      "expected_contract_active": false,
+      "expected_reminder_count": 1
+    }
+  ],
+  "gate": {
+    "all36_regression_and_verification": true,
+    "no_unrequested_reminder_creation": true,
+    "no_service_fallback": true,
+    "semantic_approval": false,
+    "default_activation": false
+  }
+}
