@@ -96,6 +96,16 @@ export async function uploadKnowledge(file: File) {
   );
   return decode<import("./types").KnowledgeDraft>(response);
 }
+export async function fetchSpeechAudio(id: string, signal: AbortSignal) {
+  if (!/^[A-Za-z0-9_-]{20,100}$/.test(id)) throw new Error("音频标识无效");
+  const response = await fetch("/api/v1/speech/audio/" + id, {
+    headers: { "X-Avatar-Token": readToken() },
+    cache: "no-store",
+    signal,
+  });
+  if (!response.ok) await decode<never>(response);
+  return response.blob();
+}
 export function formatTime(timestamp: number | null | undefined) {
   return timestamp == null || !Number.isFinite(timestamp)
     ? "—"

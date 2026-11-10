@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, Volume2, Square } from "lucide-react";
 import { apiRequest } from "../../lib/api";
 import type { ChatResult } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
+import { useSpeechPlayer } from "./useSpeechPlayer";
+import { AvatarStage } from "./AvatarStage";
 export function ChatPage() {
+  const speech = useSpeechPlayer();
   const [text, setText] = useState("");
   const [useWeb, setUseWeb] = useState(false);
   const [messages, setMessages] = useState<
@@ -27,6 +30,7 @@ export function ChatPage() {
   });
   function submit() {
     if (!text.trim() || send.isPending) return;
+    speech.stop();
     const value = text.trim();
     setMessages((m) => [...m, { role: "user", text: value }]);
     setText("");
@@ -36,8 +40,26 @@ export function ChatPage() {
     <section>
       <PageHeading
         title="对话观测"
-        description="正常对话与决策记录分开展示。调试信息默认折叠，来源文本按不可信内容处理。"
+        description="与小海聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。"
       />
+      <div className="speech-panel panel">
+        <AvatarStage mouth={speech.mouth} busy={send.isPending}
+          speaking={speech.status === "playing"}
+          valence={messages.find((_, i) => i === speech.active)?.result?.valence ?? messages.at(-1)?.result?.valence}
+          arousal={messages.find((_, i) => i === speech.active)?.result?.arousal ?? messages.at(-1)?.result?.arousal} />
+        <div className="speech-controls">
+          <h2>小海在这里</h2>
+          <p className="muted">朗读会把这段文字交给在线语音服务。默认不自动播放。</p>
+          {speech.status === "loading" && <p role="status">正在准备语音…</p>}
+          <audio ref={speech.audioRef} controls preload="none" aria-label="小海语音播放器"
+            hidden={speech.active === null || speech.status === "loading" || speech.status === "error"}
+            onPlay={speech.onPlay} onPause={speech.onPause} onEnded={speech.onEnded} onError={speech.onError} />
+          {speech.active !== null && <button type="button" className="button secondary" onClick={speech.stop}>
+            <Square size={14} />{speech.status === "loading" ? "取消朗读" : "停止播放"}</button>}
+          {speech.warning && <p className="notice">{speech.warning}</p>}
+          {speech.error && <p role="alert" className="notice">{speech.error}</p>}
+        </div>
+      </div>
       <div className="panel">
         <div className="chat-history" aria-live="polite">
           {messages.length === 0 && (
@@ -53,6 +75,12 @@ export function ChatPage() {
             <article key={i} className={"chat-message " + m.role}>
               <small>{m.role === "user" ? "你" : "小海"}</small>
               <div>{m.text}</div>
+              {m.result && <button type="button" className="button secondary speech-read"
+                disabled={speech.active === i && speech.status === "loading" || m.text.length > 2000}
+                title={m.text.length > 2000 ? "这段回复超过 2000 字，请选择较短内容朗读" : undefined}
+                onClick={() => void speech.play(i, m.result!)}>
+                <Volume2 size={14} />{speech.active === i && speech.status === "loading" ? "准备语音…" : "朗读回复"}
+              </button>}
               {m.result?.trace && (
                 <details className="trace">
                   <summary>本轮决策与来源</summary>

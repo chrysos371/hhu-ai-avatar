@@ -736,3 +736,20 @@ meter::-webkit-meter-optimum-value {
   background: #78bdcd;
   border-radius: 4px;
 }
+.speech-panel { display: flex; gap: 24px; align-items: center; }
+.speech-controls { flex: 1; min-width: 0; }
+.speech-controls audio { display: block; width: 100%; max-width: 420px; margin: 16px 0; }
+.speech-controls audio[hidden] { display: none; }
+.speech-read { margin-top: 12px; }
+.avatar-stage { width: 240px; flex-shrink: 0; text-align: center; }
+.avatar-stage svg { width: 100%; max-height: 230px; animation: avatar-breathe 5s ease-in-out infinite; }
+.avatar-aura { fill: #78bdcd0c; stroke: #78bdcd35; stroke-width: 1; }
+.avatar-caption { color: #9fc8d2; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; }
+.avatar-caption i { width: 6px; height: 6px; border-radius: 50%; background: #78bdcd; }
+.avatar-stage.speaking .avatar-aura { fill: #78bdcd20; }
+.avatar-stage.thinking .avatar-caption i { animation: avatar-breathe 1s infinite; }
+.avatar-eyes { animation: avatar-blink 6s infinite; }
+@keyframes avatar-breathe { 50% { transform: translateY(3px); opacity: .9; } }
+@keyframes avatar-blink { 0%, 45%, 49%, 100% { transform: scaleY(1); } 47% { transform: scaleY(.05); } }
+@media (max-width: 700px) { .speech-panel { flex-direction: column; gap: 12px; } .speech-controls { width: 100%; } .avatar-stage { width: 200px; } }
+@media (prefers-reduced-motion: reduce) { .avatar-stage svg, .avatar-eyes, .avatar-stage.thinking .avatar-caption i { animation: none; } }

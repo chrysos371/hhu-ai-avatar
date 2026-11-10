@@ -135,6 +135,11 @@ export interface ChatResult {
   reply: string;
   emotion: string;
   strategy: string;
+  valence?: number;
+  arousal?: number;
+  speech_rate?: string;
+  speech_pitch?: string;
+  mouth_intensity?: number;
   trace: {
     recalled_memories: { id: number; content: string; status: string }[];
     knowledge_sources?: unknown[];
@@ -147,6 +152,19 @@ export interface ChatResult {
     verifier: { available: boolean; reason: string; delivery_check?: unknown };
     tool_calls: { tool: string; status: string }[];
   };
+}
+export interface LipFrame {
+  time: number;
+  mouth_open: number;
+  vowel: string;
+  energy: number;
+}
+export interface SpeechResult {
+  audio_id: string;
+  duration: number | null;
+  frames: LipFrame[];
+  expires_at: number;
+  warning: string | null;
 }
 export interface Summary {
   items: { message_id: number; text: string; created_at: number }[];
