@@ -58,6 +58,7 @@ class Avatar:
         task_contract_enabled: bool = False,
         delivery_check_enabled: bool = False,
         grounding_prompt_enabled: bool = False,
+        fast_analysis: bool = False,
     ):
         if memory is None:
             if embedder is None and config.embedding.model:
@@ -88,6 +89,8 @@ class Avatar:
         self.delivery_check_enabled = delivery_check_enabled
         self.grounding_prompt_enabled = grounding_prompt_enabled
         self._cancel_token = None
+        self.fast_analysis = fast_analysis
+        self.analysis_mode = 'not_run'
 
     def _checkpoint(self):
         if self._cancel_token:
@@ -355,6 +358,13 @@ class Avatar:
 
     def _analyze(self, user_text: str) -> None:
         """LLM 分析情绪 + 记忆提取；不可用或失败时回退规则。"""
+        if self.fast_analysis:
+            from .brain.analysis_routing import impersonal_knowledge_question
+            if impersonal_knowledge_question(user_text):
+                self._extract_facts(user_text)
+                self.emotion.update(user_text)
+                self.analysis_mode = 'impersonal_knowledge_rules'
+                return
         if self._llm_available:
             try:
                 dv, da, facts = self._analyze_with_llm(user_text)
@@ -362,6 +372,7 @@ class Avatar:
                     for f in facts:
                         self._store_fact(f)
                 self.emotion.observe(dv, da, text=user_text)
+                self.analysis_mode = 'llm'
                 return
             except Cancelled:
                 raise
@@ -369,6 +380,7 @@ class Avatar:
                 logger.warning("认知分析失败，回退规则分析")
         self._extract_facts(user_text)
         self.emotion.update(user_text)
+        self.analysis_mode = 'rules_fallback'
 
     def _fallback_reply(self, user_text: str, decision: Decision) -> str:
         if decision.strategy == 'close':
@@ -406,6 +418,7 @@ class Avatar:
     ) -> dict:
         """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
         self._cancel_token = cancel
+        self.analysis_mode = 'boundary_or_tool_rules'
         self._checkpoint()
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
@@ -574,6 +587,7 @@ class Avatar:
             "speech_pitch": decision.speech_pitch,
             "mouth_intensity": decision.mouth_intensity,
             "strategy": decision.strategy,
+            "analysis_mode": self.analysis_mode,
             "user_emotion": self.emotion.user_state.label(),
             "user_valence": round(self.emotion.user_state.valence, 2),
             "user_arousal": round(self.emotion.user_state.arousal, 2),
