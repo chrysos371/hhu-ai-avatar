@@ -19,9 +19,10 @@ def test_character_cannot_cancel_real_reminder():
     bot=Avatar(db_path=':memory:',llm=Offline())
     try:
         reminder=bot.reminders.create('提醒我明天9点带伞。')
+        original_status=bot.reminders.list()[0]['status']
         bot.respond('我来扮演小说角色。')
         bot.respond(f'取消提醒{reminder["id"]}')
-        assert bot.reminders.list()[0]['status']=='pending'
+        assert bot.reminders.list()[0]['status']==original_status
     finally:bot.memory.close()
 
 

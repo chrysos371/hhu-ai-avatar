@@ -1,0 +1,21 @@
+.F...................................................................... [ 75%]
+........................                                                 [100%]
+=================================== FAILURES ===================================
+__________________ test_character_cannot_cancel_real_reminder __________________
+
+    def test_character_cannot_cancel_real_reminder():
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            reminder=bot.reminders.create('提醒我明天9点带伞。')
+            bot.respond('我来扮演小说角色。')
+            bot.respond(f'取消提醒{reminder["id"]}')
+>           assert bot.reminders.list()[0]['status']=='pending'
+E           AssertionError: assert 'active' == 'pending'
+E             
+E             - pending
+E             + active
+
+tests/test_speaker_actions.py:24: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_actions.py::test_character_cannot_cancel_real_reminder
+1 failed, 95 passed in 1.13s

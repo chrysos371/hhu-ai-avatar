@@ -494,16 +494,19 @@ class Avatar:
         checkpoint_context()
         reminder = None
         reminder_error = None
-        if boundary.reply is None and re.match(r'^(?:请)?提醒我', user_text.strip()):
+        reminder_request = re.match(r'^(?:请)?提醒我', user_text.strip())
+        cancel_match = re.fullmatch(
+            r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
+            user_text)
+        speaker_tool_blocked = bool(not self.speaker_scope.allows_facts
+                                    and (use_web or reminder_request or cancel_match))
+        if boundary.reply is None and reminder_request and not speaker_tool_blocked:
             try:
                 reminder = self.reminders.create(user_text)
             except ValueError as exc:
                 reminder_error = str(exc)
         cancelled_reminder_id = None
-        cancel_match = re.fullmatch(
-            r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
-            user_text)
-        if boundary.reply is None and cancel_match:
+        if boundary.reply is None and cancel_match and not speaker_tool_blocked:
             cancelled_reminder_id = int(cancel_match[1])
             try:
                 self.reminders.set_status(cancelled_reminder_id, 'cancelled')
@@ -552,6 +555,10 @@ class Avatar:
             profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
         if boundary.reply is not None:
             reply = boundary.reply
+        elif speaker_tool_blocked:
+            reply = ('当前仍在虚构角色范围内，这句话没有执行真实提醒或联网工具。'
+                     '如需执行真实操作，请先明确退出角色，再提出请求。')
+            generation_mode = 'rules_speaker_scope'
         elif reminder is not None:
             due = datetime.fromtimestamp(reminder['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
             reply = f'已设置提醒：{due}（北京时间）{reminder["title"]}。程序运行并轮询时会在本机显示。'
@@ -703,6 +710,7 @@ class Avatar:
             "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
                          "output_adjustment": output_adjustment},
             "speaker_attribution": self.speaker_scope.data(),
+            "speaker_tool_blocked": speaker_tool_blocked,
             "reply": reply,
             "emotion": ('手动表达覆盖' if override else self.emotion.state.label()),
             "valence": round(effective['valence'], 2),
