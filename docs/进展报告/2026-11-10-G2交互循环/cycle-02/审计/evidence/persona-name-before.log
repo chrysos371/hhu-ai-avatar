@@ -1,0 +1,49 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test persona-chat.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:1789802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1789802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/persona-chat.spec.ts:4:1 › confirmed persona name reaches chat and audio accessibility labels (6.1s)
+
+
+  1) e2e/persona-chat.spec.ts:4:1 › confirmed persona name reaches chat and audio accessibility labels 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: '星澜在这里' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByRole('heading', { name: '星澜在这里' })
+
+
+      20 |     const player = await page.locator('audio').getAttribute('aria-label');
+      21 |     writeFileSync(info.outputPath('persona-name.json'), JSON.stringify({ currentName: current, heading, player }, null, 2));
+    > 22 |     await expect(page.getByRole('heading', { name: '星澜在这里' })).toBeVisible();
+         |                                                                ^
+      23 |     await expect(page.locator('.avatar-stage')).toHaveAttribute('aria-label', '星澜，正在聆听');
+      24 |     await expect(page.getByLabel('星澜语音播放器')).toHaveCount(1);
+      25 |   } finally { await rename(original); }
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/persona-chat.spec.ts:22:64
+
+    Error Context: test-results/persona-chat-confirmed-per-62f97--audio-accessibility-labels/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/persona-chat-confirmed-per-62f97--audio-accessibility-labels/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/persona-chat-confirmed-per-62f97--audio-accessibility-labels/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/persona-chat.spec.ts:4:1 › confirmed persona name reaches chat and audio accessibility labels 
