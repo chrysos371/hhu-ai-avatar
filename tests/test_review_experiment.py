@@ -18,7 +18,7 @@ def test_invalid_warmup_is_preserved_and_does_not_drop_fixed_cases(tmp_path, mon
     suite=tmp_path/'suite.json'
     suite.write_text(json.dumps(dict(models=[registry['model_id']],inference=dict(temperature=0,seed=42,thinking=False),
         cases=[dict(id='actual-case',split='development',user_text='你好',draft='你好',verified_profile={},
-            expected_verdict='pass',expected_category='none')]))))
+            expected_verdict='pass',expected_category='none')])))
     class Engine:
         def __init__(self,**kwargs):self.calls=0
         def review_response(self,*args,**kwargs):
