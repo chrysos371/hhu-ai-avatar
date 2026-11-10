@@ -1,0 +1,188 @@
+FF.F......FFF.FFFF                                                       [100%]
+=================================== FAILURES ===================================
+____________________ test_explicit_speaker_scope[role_name] ____________________
+
+case = {'id': 'role_name', 'turns': ['我们来写一个小说，我来扮演故事里的角色。', '我叫林悦。'], 'profile': {}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'名字': '林悦'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '林悦'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+_________________ test_explicit_speaker_scope[role_preference] _________________
+
+case = {'id': 'role_preference', 'turns': ['接下来我扮演小说里的角色。', '我喜欢游泳。'], 'profile': {}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'偏好': '喜欢游泳'} == {}
+E             
+E             Left contains 1 more item:
+E             {'偏好': '喜欢游泳'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+_________________ test_explicit_speaker_scope[role_new_topic] __________________
+
+case = {'id': 'role_new_topic', 'turns': ['我来扮演故事中的角色。', '换个话题。', '我叫林悦。'], 'profile': {}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'名字': '林悦'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '林悦'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+___________________ test_explicit_speaker_scope[quoted_exit] ___________________
+
+case = {'id': 'quoted_exit', 'turns': ['我来扮演小说角色。', '角色说：“回到现实。”', '我叫林悦。'], 'profile': {}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'名字': '林悦'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '林悦'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+____________ test_explicit_speaker_scope[exit_no_preference_carry] _____________
+
+case = {'id': 'exit_no_preference_carry', 'turns': ['我来扮演小说角色。', '我喜欢游泳。', '退出角色。', '现在不喜欢了。'], 'profile': {}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'偏好': '喜欢游泳'} == {}
+E             
+E             Left contains 1 more item:
+E             {'偏好': '喜欢游泳'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+_________________ test_explicit_speaker_scope[same_turn_entry] _________________
+
+case = {'id': 'same_turn_entry', 'turns': ['我来扮演小说角色，我叫林悦。'], 'profile': {}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'名字': '林悦'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '林悦'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+________________ test_explicit_speaker_scope[real_self_marker] _________________
+
+case = {'id': 'real_self_marker', 'turns': ['我来扮演小说角色。', '现实中的我叫陈宁。'], 'profile': {'名字': '陈宁'}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {} == {'名字': '陈宁'}
+E             
+E             Right contains 1 more item:
+E             {'名字': '陈宁'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+___________ test_explicit_speaker_scope[real_preferences_after_exit] ___________
+
+case = {'id': 'real_preferences_after_exit', 'turns': ['我来扮演小说角色。', '我喜欢游泳。', '不演了。', '我喜欢骑车。', '现在不喜欢了。'], 'profile': {'偏好': '不喜欢骑车'}}
+
+    @pytest.mark.parametrize('case',SUITE['cases'],ids=lambda c:c['id'])
+    def test_explicit_speaker_scope(case):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            for turn in case['turns']:bot.respond(turn)
+>           assert bot.memory.get_user_profile()==case['profile']
+E           AssertionError: assert {'偏好': '不喜欢骑车；喜欢游泳'} == {'偏好': '不喜欢骑车'}
+E             
+E             Differing items:
+E             {'偏好': '不喜欢骑车；喜欢游泳'} != {'偏好': '不喜欢骑车'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:19: AssertionError
+__________________ test_scope_survives_short_term_window_wrap __________________
+
+    def test_scope_survives_short_term_window_wrap():
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            bot.respond('我来扮演小说角色。')
+            for _ in range(24):bot.respond('继续聊剧情。')
+            bot.respond('我叫林悦。')
+>           assert bot.memory.get_user_profile()=={}
+E           AssertionError: assert {'名字': '林悦'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '林悦'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:30: AssertionError
+___________ test_web_keeps_speaker_scope_across_ephemeral_instances ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-134/test_web_keeps_speaker_scope_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f15953e22f0>
+
+    def test_web_keeps_speaker_scope_across_ephemeral_instances(tmp_path,monkeypatch):
+        import avatar.main as module
+        monkeypatch.setattr(module,'LLMEngine',Offline)
+        path=str(tmp_path/'speaker.db');memory=MemoryStore(path);memory.close()
+        server=create_server(path,port=0)
+        try:
+            run_chat(server,'我来扮演小说角色。',False)
+            run_chat(server,'我叫林悦。',False)
+            reader=MemoryStore(path)
+>           try:assert reader.get_user_profile()=={}
+E           AssertionError: assert {'名字': '林悦'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '林悦'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:43: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[role_name]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[role_preference]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[role_new_topic]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[quoted_exit]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[exit_no_preference_carry]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[same_turn_entry]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[real_self_marker]
+FAILED tests/test_speaker_attribution.py::test_explicit_speaker_scope[real_preferences_after_exit]
+FAILED tests/test_speaker_attribution.py::test_scope_survives_short_term_window_wrap
+FAILED tests/test_speaker_attribution.py::test_web_keeps_speaker_scope_across_ephemeral_instances
+10 failed, 8 passed in 0.88s
