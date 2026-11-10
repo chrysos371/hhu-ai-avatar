@@ -1,0 +1,13 @@
+{
+  "scope": "Five sequential local real-model SDK cancellation trials after first text, not third-party billing or long-run tail latency",
+  "trials": 5,
+  "prompt": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。",
+  "max_tokens": 512,
+  "temperature": 0,
+  "seed": 42,
+  "cancel_trigger": "first nonempty SDK content delta",
+  "gate": {"local_cancel_p95_seconds_max": 0.5, "all_cancelled": true, "provider_iterator_closed": true, "next_request_recovers": true},
+  "recovery_prompt": "1加1等于多少？只给数字。",
+  "recovery_max_tokens": 16,
+  "provider": "Same pinned Qwen3-4B-Q4_K_M, llama-cpp-python 0.3.19/cu124 and non-thinking template as paired scenarios"
+}
