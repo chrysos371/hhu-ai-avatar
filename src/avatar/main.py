@@ -382,7 +382,7 @@ class Avatar:
         self.emotion.update(user_text)
         self.analysis_mode = 'rules_fallback'
 
-    def _fallback_reply(self, user_text: str, decision: Decision) -> str:
+    def _fallback_reply(self, user_text: str, decision: Decision, *, model_failed=False) -> str:
         if decision.strategy == 'close':
             return '好，晚安，下次再聊。'
         """无 LLM 时的规则回复（支持文本对话主流程）。"""
@@ -401,6 +401,8 @@ class Avatar:
         if decision.strategy == 'empathize' or intent == "情感倾诉":
             return "我在这里陪着你，别难过，慢慢说给我听。"
         if intent == "提问":
+            if model_failed:
+                return "模型暂时不可用，这次没有生成可靠答案，请稍后重试。"
             return "这是个好问题～（当前未接入大模型，请在 .env 配置 LLM_API_KEY）"
         if intent == "指令":
             return "我会尽力帮你，请告诉我具体希望怎么做。"
@@ -485,7 +487,8 @@ class Avatar:
             'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
             (self.session_id, self.memory.short_term_limit))}
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
-        # 4. LLM 回复（无 key 降级）
+        # 4. LLM 回复（无 key 与调用故障分别标记）
+        generation_mode = 'rules'
         if boundary.reply is not None:
             reply = boundary.reply
         elif reminder is not None:
@@ -521,12 +524,15 @@ class Avatar:
                     )
                 if not isinstance(reply, str) or not reply.strip():
                     raise ValueError("Empty LLM reply")
+                generation_mode = 'llm'
             except Cancelled:
                 raise
             except Exception:
                 logger.warning("模型回复失败，使用规则回复")
-                reply = self._fallback_reply(user_text, decision)
+                generation_mode = 'rules_service_error'
+                reply = self._fallback_reply(user_text, decision, model_failed=True)
         else:
+            generation_mode = 'rules_unconfigured'
             reply = self._fallback_reply(user_text, decision)
         self._checkpoint()
         # One bounded retry only for a normal local writing response. Never
@@ -602,6 +608,7 @@ class Avatar:
             "mouth_intensity": decision.mouth_intensity,
             "strategy": decision.strategy,
             "analysis_mode": self.analysis_mode,
+            "generation_mode": generation_mode,
             "user_emotion": self.emotion.user_state.label(),
             "user_valence": round(self.emotion.user_state.valence, 2),
             "user_arousal": round(self.emotion.user_state.arousal, 2),

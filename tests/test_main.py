@@ -329,3 +329,22 @@ def test_fenced_analysis_json_still_stores_fact(make_avatar):
     result = ava.respond('我叫阿岚')
     assert result['reply'] == '你好，阿岚。'
     assert ava.memory.get_user_profile() == {'名字': '阿岚'}
+
+
+@pytest.mark.parametrize('streaming', [False, True])
+def test_model_service_failure_is_distinct_from_unconfigured_and_can_recover(make_avatar, streaming):
+    from avatar.cancellation import CancellationToken
+    analysis = json.dumps({'emotion': {'valence': 0, 'arousal': 0}, 'facts': []})
+    avatar = make_avatar([analysis, RuntimeError('private upstream token'), analysis, '服务已经恢复。'])
+    if streaming:
+        avatar.llm.stream_chat = lambda *args, **kwargs: avatar.llm.chat(*args, **kwargs)
+    options = {'cancel': CancellationToken()} if streaming else {}
+    failed = avatar.respond('云为什么会移动？', **options)
+    assert failed['generation_mode'] == 'rules_service_error'
+    assert '暂时不可用' in failed['reply'] and '配置' not in failed['reply']
+    assert 'private' not in failed['reply'] and failed['analysis_mode'] == 'llm'
+    recovered = avatar.respond('再试一次。', **options)
+    assert recovered['generation_mode'] == 'llm' and recovered['reply'] == '服务已经恢复。'
+    unconfigured = make_avatar().respond('云为什么会移动？')
+    assert unconfigured['generation_mode'] == 'rules_unconfigured'
+    assert 'LLM_API_KEY' in unconfigured['reply']
