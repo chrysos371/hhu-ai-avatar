@@ -1,0 +1,64 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context[\u73b0\u5728\u4e0d\u559c\u6b22\u4e86\u3002] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-146/test_erasure_during_analysis_c0')
+text = '现在不喜欢了。'
+
+    @pytest.mark.parametrize('text',['现在不喜欢了。','我叫陈宁。'])
+    def test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context(tmp_path,text):
+        from avatar.cancellation import Cancelled
+        path=str(tmp_path/'mid-analysis.db');bot=Avatar(db_path=path,llm=Offline())
+        writer=MemoryStore(path)
+        try:
+            bot.respond('我喜欢骑车。')
+            fragment=bot.list_memories()[0]['id']
+            class Erasing:
+                available=True
+                def chat_analysis(self,*args,**kwargs):
+                    writer.forget(fragment)
+                    return '{"emotion":{},"facts":[]}'
+                def chat(self,*args,**kwargs):raise AssertionError('must stop before reply generation')
+            bot.llm=Erasing();bot._llm_available=True
+            with pytest.raises(Cancelled):bot.respond(text)
+>           assert bot.memory.get_user_profile()=={}
+E           AssertionError: assert {'偏好': '不喜欢骑车'} == {}
+E             
+E             Left contains 1 more item:
+E             {'偏好': '不喜欢骑车'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:137: AssertionError
+_ test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context[\u6211\u53eb\u9648\u5b81\u3002] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-146/test_erasure_during_analysis_c1')
+text = '我叫陈宁。'
+
+    @pytest.mark.parametrize('text',['现在不喜欢了。','我叫陈宁。'])
+    def test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context(tmp_path,text):
+        from avatar.cancellation import Cancelled
+        path=str(tmp_path/'mid-analysis.db');bot=Avatar(db_path=path,llm=Offline())
+        writer=MemoryStore(path)
+        try:
+            bot.respond('我喜欢骑车。')
+            fragment=bot.list_memories()[0]['id']
+            class Erasing:
+                available=True
+                def chat_analysis(self,*args,**kwargs):
+                    writer.forget(fragment)
+                    return '{"emotion":{},"facts":[]}'
+                def chat(self,*args,**kwargs):raise AssertionError('must stop before reply generation')
+            bot.llm=Erasing();bot._llm_available=True
+            with pytest.raises(Cancelled):bot.respond(text)
+>           assert bot.memory.get_user_profile()=={}
+E           AssertionError: assert {'名字': '陈宁'} == {}
+E             
+E             Left contains 1 more item:
+E             {'名字': '陈宁'}
+E             Use -v to get more diff
+
+tests/test_speaker_attribution.py:137: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_attribution.py::test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context[\u73b0\u5728\u4e0d\u559c\u6b22\u4e86\u3002]
+FAILED tests/test_speaker_attribution.py::test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context[\u6211\u53eb\u9648\u5b81\u3002]
+2 failed, 27 deselected in 0.79s

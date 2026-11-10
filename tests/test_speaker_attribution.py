@@ -117,3 +117,23 @@ def test_fictional_query_does_not_take_real_profile_shortcut():
         assert result['profile_grounding']['action'] is None
         assert bot.memory.get_user_profile()=={'名字':'陈宁'}
     finally:bot.memory.close()
+
+@pytest.mark.parametrize('text',['现在不喜欢了。','我叫陈宁。'])
+def test_erasure_during_analysis_cannot_repopulate_facts_from_stale_speaker_context(tmp_path,text):
+    from avatar.cancellation import Cancelled
+    path=str(tmp_path/'mid-analysis.db');bot=Avatar(db_path=path,llm=Offline())
+    writer=MemoryStore(path)
+    try:
+        bot.respond('我喜欢骑车。')
+        fragment=bot.list_memories()[0]['id']
+        class Erasing:
+            available=True
+            def chat_analysis(self,*args,**kwargs):
+                writer.forget(fragment)
+                return '{"emotion":{},"facts":[]}'
+            def chat(self,*args,**kwargs):raise AssertionError('must stop before reply generation')
+        bot.llm=Erasing();bot._llm_available=True
+        with pytest.raises(Cancelled):bot.respond(text)
+        assert bot.memory.get_user_profile()=={}
+        assert bot.list_memories()==[]
+    finally:writer.close();bot.memory.close()
