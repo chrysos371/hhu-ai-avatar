@@ -7,6 +7,7 @@ from openai import OpenAI, AsyncOpenAI
 
 from ..config import config
 from .analysis_protocol import ANALYSIS_RESPONSE_FORMAT
+from .response_review import REVIEW_RESPONSE_FORMAT
 from ..cancellation import CancellationToken
 
 
@@ -107,6 +108,11 @@ class LLMEngine:
     def chat_analysis_stream(self, messages, *, temperature=0, cancel=None):
         return self.stream_chat(messages, temperature=temperature, cancel=cancel,
                                 response_format=ANALYSIS_RESPONSE_FORMAT)
+
+    def review_response(self, messages, *, cancel=None):
+        """Experimental structured triage, kept separate from cognitive analysis."""
+        return self.stream_chat(messages, temperature=0, max_tokens=384, cancel=cancel,
+                                response_format=REVIEW_RESPONSE_FORMAT)
 
     def close(self):
         if self._client is not None:
