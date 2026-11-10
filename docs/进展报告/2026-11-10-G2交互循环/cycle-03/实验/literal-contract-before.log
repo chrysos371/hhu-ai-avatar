@@ -1,0 +1,324 @@
+FFFFFFFFFFFFFF...FF.FF..F                                                [100%]
+=================================== FAILURES ===================================
+___________________ test_frozen_literal_contract_scope[c01] ____________________
+
+case = {'id': 'c01', 'turns': ['请写一句台词，包含“我喜欢喝花茶”。'], 'required': ['我喜欢喝花茶'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['active']
+E       assert False == True
+E        +  where False = bool(None)
+E        +    where None = <avatar.brain.tasks.TaskTracker object at 0x7f779f22c7f0>.current
+
+tests/test_literal_contract.py:15: AssertionError
+___________________ test_frozen_literal_contract_scope[c02] ____________________
+
+case = {'id': 'c02', 'turns': ['请写一条短信，必须包含「明天见」。'], 'required': ['明天见'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['明天见']
+E             
+E             Right contains one more item: '明天见'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c03] ____________________
+
+case = {'id': 'c03', 'turns': ['写一句标语，原样保留"先完成再优化"。'], 'required': ['先完成再优化'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['active']
+E       assert False == True
+E        +  where False = bool(None)
+E        +    where None = <avatar.brain.tasks.TaskTracker object at 0x7f779f22f490>.current
+
+tests/test_literal_contract.py:15: AssertionError
+___________________ test_frozen_literal_contract_scope[c04] ____________________
+
+case = {'id': 'c04', 'turns': ["写一句话，包含'今晚早点休息'。"], 'required': ['今晚早点休息'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['active']
+E       assert False == True
+E        +  where False = bool(None)
+E        +    where None = <avatar.brain.tasks.TaskTracker object at 0x7f779f0c4280>.current
+
+tests/test_literal_contract.py:15: AssertionError
+___________________ test_frozen_literal_contract_scope[c05] ____________________
+
+case = {'id': 'c05', 'turns': ['写一条通知，不要包含“保证通过”，包含“按时提交”。'], 'required': ['按时提交'], 'forbidden': ['保证通过'], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['按时提交']
+E             
+E             Right contains one more item: '按时提交'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c06] ____________________
+
+case = {'id': 'c06', 'turns': ['写短信，保留【姓名】，不要包含“我保证”。'], 'required': ['【姓名】'], 'forbidden': ['我保证'], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+            assert tracker.current.required_literals==case['required']
+>           assert tracker.current.forbidden_literals==case['forbidden']
+E           AssertionError: assert [] == ['我保证']
+E             
+E             Right contains one more item: '我保证'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:18: AssertionError
+___________________ test_frozen_literal_contract_scope[c07] ____________________
+
+case = {'id': 'c07', 'turns': ['写一条短信，保留“甲”和“乙”。'], 'required': ['甲', '乙'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['甲', '乙']
+E             
+E             Right contains 2 more items, first extra item: '甲'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c08] ____________________
+
+case = {'id': 'c08', 'turns': ['写通知，删掉“旧地址”，保留“新地址”。'], 'required': ['新地址'], 'forbidden': ['旧地址'], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['新地址']
+E             
+E             Right contains one more item: '新地址'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c09] ____________________
+
+case = {'id': 'c09', 'turns': ['写消息，包含“删除【姓名】”。'], 'required': ['删除【姓名】'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['删除【姓名】']
+E             
+E             Right contains one more item: '删除【姓名】'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c10] ____________________
+
+case = {'id': 'c10', 'turns': ['写短信，“原句”不要改。'], 'required': ['原句'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['原句']
+E             
+E             Right contains one more item: '原句'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c11] ____________________
+
+case = {'id': 'c11', 'turns': ['写短信，保留【姓名，学号】。'], 'required': ['【姓名，学号】'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['【姓名，学号】']
+E             
+E             Right contains one more item: '【姓名，学号】'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c12] ____________________
+
+case = {'id': 'c12', 'turns': ['写短信，保留“时间，地点”。'], 'required': ['时间，地点'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['时间，地点']
+E             
+E             Right contains one more item: '时间，地点'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c13] ____________________
+
+case = {'id': 'c13', 'turns': ['写通知，保留“甲”。', '再短点，不要包含“甲”。'], 'required': [], 'forbidden': ['甲'], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+            assert tracker.current.required_literals==case['required']
+>           assert tracker.current.forbidden_literals==case['forbidden']
+E           AssertionError: assert [] == ['甲']
+E             
+E             Right contains one more item: '甲'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:18: AssertionError
+___________________ test_frozen_literal_contract_scope[c14] ____________________
+
+case = {'id': 'c14', 'turns': ['写通知，不要包含“甲”。', '再短点，必须包含“甲”。'], 'required': ['甲'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['甲']
+E             
+E             Right contains one more item: '甲'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+___________________ test_frozen_literal_contract_scope[c18] ____________________
+
+case = {'id': 'c18', 'turns': ['朋友说“写一条短信，包含「明天见」”，请解释这句话。'], 'required': [], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='朋友说“写一条短信，包含「明天见」”，请解释这句话。', perspective='', recipient='', required_literals=[], forbidden_literals=[]))
+E        +    where TaskContract(source='朋友说“写一条短信，包含「明天见」”，请解释这句话。', perspective='', recipient='', required_literals=[], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7f779f0c60e0>.current
+
+tests/test_literal_contract.py:15: AssertionError
+___________________ test_frozen_literal_contract_scope[c19] ____________________
+
+case = {'id': 'c19', 'turns': ['请解释写短信的技巧。'], 'required': [], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='请解释写短信的技巧。', perspective='', recipient='', required_literals=[], forbidden_literals=[]))
+E        +    where TaskContract(source='请解释写短信的技巧。', perspective='', recipient='', required_literals=[], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7f779f0c5d20>.current
+
+tests/test_literal_contract.py:15: AssertionError
+___________________ test_frozen_literal_contract_scope[c21] ____________________
+
+case = {'id': 'c21', 'turns': ['写短信，保留“甲”。', '再分析这条消息的语气。'], 'required': [], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='写短信，保留“甲”。\n最新修改：再分析这条消息的语气。', perspective='', recipient='', required_literals=[], forbidden_literals=[]))
+E        +    where TaskContract(source='写短信，保留“甲”。\n最新修改：再分析这条消息的语气。', perspective='', recipient='', required_literals=[], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7f779f0ed2d0>.current
+
+tests/test_literal_contract.py:15: AssertionError
+___________________ test_frozen_literal_contract_scope[c22] ____________________
+
+case = {'id': 'c22', 'turns': ['请分析并改写这条消息，保留“明天”。'], 'required': ['明天'], 'forbidden': [], ...}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_frozen_literal_contract_scope(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+        assert bool(tracker.current)==case['active']
+        if tracker.current:
+>           assert tracker.current.required_literals==case['required']
+E           AssertionError: assert [] == ['明天']
+E             
+E             Right contains one more item: '明天'
+E             Use -v to get more diff
+
+tests/test_literal_contract.py:17: AssertionError
+_______ test_quoted_task_content_cannot_change_writer_role_or_recipient ________
+
+    def test_quoted_task_content_cannot_change_writer_role_or_recipient():
+        tracker=TaskTracker()
+        tracker.update('请给我写一条短信，内容是“替我姐姐给老师解释”。')
+>       assert tracker.current.perspective==''
+E       AssertionError: assert '姐姐' == ''
+E         
+E         + 姐姐
+
+tests/test_literal_contract.py:28: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c01]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c02]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c03]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c04]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c05]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c06]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c07]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c08]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c09]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c10]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c11]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c12]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c13]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c14]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c18]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c19]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c21]
+FAILED tests/test_literal_contract.py::test_frozen_literal_contract_scope[c22]
+FAILED tests/test_literal_contract.py::test_quoted_task_content_cannot_change_writer_role_or_recipient
+19 failed, 6 passed in 0.66s
