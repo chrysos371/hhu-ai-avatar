@@ -44,7 +44,12 @@ class FixtureASR:
 
 if os.getenv("AVATAR_E2E_REAL_TTS") != "1":
     server.speech.engine = FixtureTTS()
-server.transcription.engine = FixtureASR()
+if os.getenv('AVATAR_E2E_REAL_ASR_MODEL'):
+    from avatar.ears.asr import FasterWhisperEngine
+    server.transcription.engine = FasterWhisperEngine(os.environ['AVATAR_E2E_REAL_ASR_MODEL'],
+        device=os.getenv('AVATAR_E2E_ASR_DEVICE','cpu'))
+else:
+    server.transcription.engine = FixtureASR()
 server.token = "mission-control-disposable-e2e-token"
 try:
     server.serve_forever()
