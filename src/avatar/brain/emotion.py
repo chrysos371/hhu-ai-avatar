@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 import re
 from time import monotonic
 from typing import Callable
@@ -104,10 +105,14 @@ def _has_request(text: str) -> bool:
 class EmotionEngine:
     """情绪引擎：状态维护 + 意图分类 + 行为决策。"""
 
-    def __init__(self, decay: float = 0.15, clock: Callable[[], float] | None = None):
+    def __init__(self, decay: float | None = None, clock: Callable[[], float] | None = None,
+                 half_life_seconds: float = 300.0):
         self._state = EmotionState()
         self.user_state = EmotionState()
         self.decay = decay
+        if not math.isfinite(half_life_seconds) or half_life_seconds <= 0:
+            raise ValueError('half_life_seconds must be a positive finite number')
+        self.half_life_seconds = float(half_life_seconds)
         self._clock = clock if clock is not None else monotonic
         self._last_tick = self._clock()
         self._energy = .5
@@ -135,7 +140,11 @@ class EmotionEngine:
         self._last_tick = self._clock()
 
     def _relax(self, elapsed: float) -> None:
-        factor = (1 - _clamp(self.decay, 0.0, 1.0)) ** elapsed
+        # Keep the old per-second decay argument for callers that set it;
+        # default behavior is defined by a human-readable half-life.
+        factor = ((1 - _clamp(self.decay, 0.0, 1.0)) ** elapsed
+                  if self.decay is not None
+                  else 0.5 ** (elapsed / self.half_life_seconds))
         self._state.valence *= factor
         self._state.arousal *= factor
 

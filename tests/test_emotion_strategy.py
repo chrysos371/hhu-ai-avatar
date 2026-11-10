@@ -66,6 +66,21 @@ def test_explicit_decay_step_still_relaxes_role_only():
     assert engine.state.arousal == pytest.approx(before / 2)
     assert engine.user_state.arousal == 0.8
 
+def test_default_role_emotion_half_life_is_five_minutes():
+    clock = Clock()
+    engine = EmotionEngine(clock=clock)
+    engine.observe(0.8, 0.6)
+    initial = engine.state.valence
+    clock.now += 300
+    assert engine.state.valence == pytest.approx(initial / 2)
+    clock.now += 300
+    assert engine.state.valence == pytest.approx(initial / 4)
+
+@pytest.mark.parametrize('value', [0, -1, float('inf'), float('nan')])
+def test_half_life_must_be_positive_and_finite(value):
+    with pytest.raises(ValueError, match='half_life_seconds'):
+        EmotionEngine(half_life_seconds=value)
+
 
 @pytest.mark.parametrize("text", [
     "我很难过，不要给我建议，只想说说", "我很烦，你听我说就好",
