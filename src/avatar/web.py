@@ -407,6 +407,7 @@ def create_server(
 ) -> ThreadingHTTPServer:
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     server.daemon_threads = True
+    server.state_lock = threading.RLock()
     server.db_path = db_path
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
