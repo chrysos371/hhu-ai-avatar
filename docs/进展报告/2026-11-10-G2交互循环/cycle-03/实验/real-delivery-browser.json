@@ -1,0 +1,140 @@
+{
+  "scope": "actual local model, HTTP/SSE/browser, five web turns and bounded history reconstruction; lexical checks only",
+  "rows": [
+    {
+      "input": "请写一句角色台词，包含“我喜欢喝花茶”。",
+      "reply": "我喜欢喝花茶",
+      "task": {
+        "source": "请写一句角色台词，包含“我喜欢喝花茶”。",
+        "perspective": "",
+        "recipient": "",
+        "required_literals": [
+          "我喜欢喝花茶"
+        ],
+        "forbidden_literals": []
+      },
+      "deliveryCheck": {
+        "initial_issues": [
+          "missing_literal:我喜欢喝花茶"
+        ],
+        "remaining_issues": [],
+        "repair_attempted": true,
+        "repair_succeeded": true,
+        "repair_mode": "literal_template",
+        "repair_error": null,
+        "literal_composition_enabled": true,
+        "literal_plan_version": "v2",
+        "draft_generation_mode": "llm",
+        "stream_buffered": true
+      },
+      "generationMode": "llm_literal_composition",
+      "seconds": 3.098
+    },
+    {
+      "input": "再短一点。",
+      "reply": "我喜欢喝花茶",
+      "task": {
+        "source": "请写一句角色台词，包含“我喜欢喝花茶”。\n最新修改：再短一点。",
+        "perspective": "",
+        "recipient": "",
+        "required_literals": [
+          "我喜欢喝花茶"
+        ],
+        "forbidden_literals": []
+      },
+      "deliveryCheck": {
+        "initial_issues": [
+          "missing_literal:我喜欢喝花茶"
+        ],
+        "remaining_issues": [],
+        "repair_attempted": true,
+        "repair_succeeded": true,
+        "repair_mode": "literal_template",
+        "repair_error": null,
+        "literal_composition_enabled": true,
+        "literal_plan_version": "v2",
+        "draft_generation_mode": "llm",
+        "stream_buffered": true
+      },
+      "generationMode": "llm_literal_composition",
+      "seconds": 3.006
+    },
+    {
+      "input": "改写这句台词，删掉“我喜欢喝花茶”，包含“我喜欢听雨”。",
+      "reply": "我喜欢听雨。",
+      "task": {
+        "source": "请写一句角色台词，包含“我喜欢喝花茶”。\n最新修改：再短一点。\n最新修改：改写这句台词，删掉“我喜欢喝花茶”，包含“我喜欢听雨”。",
+        "perspective": "",
+        "recipient": "",
+        "required_literals": [
+          "我喜欢听雨"
+        ],
+        "forbidden_literals": [
+          "我喜欢喝花茶"
+        ]
+      },
+      "deliveryCheck": {
+        "initial_issues": [],
+        "remaining_issues": [],
+        "repair_attempted": false,
+        "repair_succeeded": false,
+        "repair_mode": null,
+        "repair_error": null,
+        "literal_composition_enabled": true,
+        "literal_plan_version": "v2",
+        "draft_generation_mode": "llm",
+        "stream_buffered": true
+      },
+      "generationMode": "llm",
+      "seconds": 2.018
+    },
+    {
+      "input": "请写一条简短消息，原样保留“时间，地点”。",
+      "reply": "时间，地点。",
+      "task": {
+        "source": "请写一条简短消息，原样保留“时间，地点”。",
+        "perspective": "",
+        "recipient": "",
+        "required_literals": [
+          "时间，地点"
+        ],
+        "forbidden_literals": []
+      },
+      "deliveryCheck": {
+        "initial_issues": [],
+        "remaining_issues": [],
+        "repair_attempted": false,
+        "repair_succeeded": false,
+        "repair_mode": null,
+        "repair_error": null,
+        "literal_composition_enabled": true,
+        "literal_plan_version": "v2",
+        "draft_generation_mode": "llm",
+        "stream_buffered": true
+      },
+      "generationMode": "llm",
+      "seconds": 2.012
+    },
+    {
+      "input": "再问个问题，什么是二进制？",
+      "reply": "二进制是一种仅用0和1表示数字的数制，是计算机和电子设备处理数据的基础。",
+      "task": null,
+      "deliveryCheck": {
+        "initial_issues": [],
+        "remaining_issues": [],
+        "repair_attempted": false,
+        "repair_succeeded": false,
+        "repair_mode": null,
+        "repair_error": null,
+        "literal_composition_enabled": true,
+        "literal_plan_version": "v2",
+        "draft_generation_mode": "llm",
+        "stream_buffered": false
+      },
+      "generationMode": "llm",
+      "seconds": 2.021
+    }
+  ],
+  "literalRepairsObserved": 2,
+  "semanticApproved": false
+}

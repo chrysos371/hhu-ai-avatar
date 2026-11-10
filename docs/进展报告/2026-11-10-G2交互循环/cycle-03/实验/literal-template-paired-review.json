@@ -1,0 +1,85 @@
+{
+  "scope": "代理逐项复核实际8对修正稿；非独立人工、非通用语义批准",
+  "source_sha256": "ef75e59775f940a6604ffa53e42fd86571f470454b810e12d83f15ddfd8fbc2c",
+  "pairs": {
+    "rain_quote": {
+      "baseline": [
+        "我总是在雨天我喜欢听雨喜欢那淅淅沥沥的声音"
+      ],
+      "candidate": [
+        "我喜欢听雨"
+      ]
+    },
+    "tea_quote": {
+      "candidate": [
+        "我喜欢喝花茶"
+      ],
+      "baseline": [
+        "我最近迷上了喝花茶我喜欢喝花茶，尤其是那种清香的茉莉花茶。"
+      ]
+    },
+    "comma_literal": {
+      "candidate": [
+        "时间，地点"
+      ],
+      "baseline": [
+        "今晚七点，时间，地点市中心咖啡馆。"
+      ]
+    },
+    "s04": {
+      "candidate": [
+        "不要忘记带伞"
+      ],
+      "baseline": [
+        "请不要忘记带伞。"
+      ]
+    },
+    "s11": {
+      "baseline": [
+        "你好，今天过得怎么样？不要包含【旧值】不要包含【旧值】"
+      ],
+      "candidate": [
+        "不要包含【旧值】"
+      ]
+    },
+    "s12": {
+      "candidate": [
+        "关于时间和地点的安排，敬请确认。"
+      ],
+      "baseline": [
+        "时间时间地点地点"
+      ]
+    },
+    "r01": {
+      "baseline": [
+        "请不要忘记带伞。"
+      ],
+      "candidate": [
+        "不要忘记带伞"
+      ]
+    },
+    "r06": {
+      "candidate": [
+        "带水杯"
+      ],
+      "baseline": [
+        "请带水杯带水杯"
+      ]
+    }
+  },
+  "observed_v1_problem_ids": [
+    "rain_quote",
+    "tea_quote",
+    "comma_literal",
+    "s11",
+    "s12",
+    "r06"
+  ],
+  "v2_same_observed_problems": [],
+  "limitations": [
+    "部分v2回复只保留原文最小稿，未批准充分性或自然度",
+    "新12题本身未触发修正；8次修正均为已知回归",
+    "模型不可靠初审未参与放行"
+  ],
+  "semantic_approved": false
+}
