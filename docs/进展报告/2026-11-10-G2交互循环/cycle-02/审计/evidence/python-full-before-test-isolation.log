@@ -1,0 +1,66 @@
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 33%]
+........................................................................ [ 44%]
+........................................................................ [ 55%]
+........................................................................ [ 66%]
+.........................................Fs............................. [ 77%]
+........................................................................ [ 88%]
+........................................................................ [ 99%]
+.                                                                        [100%]
+=================================== FAILURES ===================================
+____ test_automatic_export_rejects_data_tampering_and_keeps_split_disjoint _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-87/test_automatic_export_rejects_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fe3d6e9f730>
+
+    def test_automatic_export_rejects_data_tampering_and_keeps_split_disjoint(
+        tmp_path, monkeypatch
+    ):
+        import json
+        from avatar.lab import data
+        from avatar.lab.common import canonical, sha
+    
+        monkeypatch.setattr(data, "evaluation_texts", lambda: ([], {}))
+        rows = [
+            normalize_dialogue(
+                "cped",
+                "train",
+                str(i),
+                ["我在准备一次讨论。", f"先把第{i}个需要讨论的问题写清楚。"],
+            )
+            for i in range(50)
+        ]
+        pool = tmp_path / "pool"
+        pool.mkdir()
+        (pool / "candidates.jsonl").write_text("".join(canonical(r) + "\n" for r in rows))
+        (pool / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "candidate_sha256": sha(pool / "candidates.jsonl"),
+                    "protected_eval_hashes": {},
+                    "screening_code_sha256": sha(data.__file__),
+                }
+            )
+        )
+        output = tmp_path / "export"
+>       report = data.export_pilot(pool, output, maximum=20)
+
+tests/test_style_lab.py:252: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/lab/data.py:365: in export_pilot
+    output = new_output(output)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/tmp/pytest-of-root/pytest-87/test_automatic_export_rejects_0/export')
+
+    def new_output(path):
+        path = Path(path).resolve()
+        if not path.is_relative_to(WORKSPACE):
+>           raise ValueError("Output must stay in this workspace")
+E           ValueError: Output must stay in this workspace
+
+src/avatar/lab/common.py:52: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_style_lab.py::test_automatic_export_rejects_data_tampering_and_keeps_split_disjoint
+1 failed, 647 passed, 1 skipped in 33.99s
