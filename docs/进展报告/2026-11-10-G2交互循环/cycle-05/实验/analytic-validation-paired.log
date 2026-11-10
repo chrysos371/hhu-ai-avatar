@@ -1,0 +1,87 @@
+{
+  "scope": "Identical synthetic waveforms and source geometry; not human or semantic approval",
+  "split": "validation",
+  "baseline_sha256": "b28b86b33937b755930ccfe29cbd80a25070d8c4075a084a02d565def8c559b9",
+  "candidate_sha256": "8dc5a002ad11dc14bc2f76052938592cc83c7847a604e69830a8823e2b6ebf16",
+  "identical_waveforms": true,
+  "identical_frame_time_vowel_energy": true,
+  "classification_case_regressions": [],
+  "sudden_closure_case_regressions": [],
+  "silence_all_closed": true,
+  "baseline_summary": {
+    "component_native_rate": {
+      "cases": 120,
+      "vowel_frame_accuracy": 0.8291666666666667,
+      "median_case_accuracy": 1.0,
+      "sudden_closures": 160,
+      "closure_eligible_frames": 4816,
+      "sudden_closure_rate": 0.03322259136212625,
+      "median_abs_formant_error_hz": 23.140900195694712,
+      "median_abs_f1_error_hz": 21.232876712328732,
+      "median_abs_f2_error_hz": 24.26614481409007,
+      "missing_f1": 0,
+      "missing_f2": 50,
+      "analysis_seconds": 8.413413617003243
+    },
+    "web_analysis_16k": {
+      "cases": 120,
+      "vowel_frame_accuracy": 0.9214285714285714,
+      "median_case_accuracy": 1.0,
+      "sudden_closures": 172,
+      "closure_eligible_frames": 4928,
+      "sudden_closure_rate": 0.0349025974025974,
+      "median_abs_formant_error_hz": 18.982387475538246,
+      "median_abs_f1_error_hz": 17.661448140900205,
+      "median_abs_f2_error_hz": 15.655577299412926,
+      "missing_f1": 0,
+      "missing_f2": 12,
+      "analysis_seconds": 6.576521568815224
+    }
+  },
+  "candidate_summary": {
+    "component_native_rate": {
+      "cases": 120,
+      "vowel_frame_accuracy": 0.8291666666666667,
+      "median_case_accuracy": 1.0,
+      "sudden_closures": 0,
+      "closure_eligible_frames": 4928,
+      "sudden_closure_rate": 0.0,
+      "median_abs_formant_error_hz": 23.140900195694712,
+      "median_abs_f1_error_hz": 21.232876712328732,
+      "median_abs_f2_error_hz": 24.26614481409007,
+      "missing_f1": 0,
+      "missing_f2": 50,
+      "analysis_seconds": 8.472930684802122
+    },
+    "web_analysis_16k": {
+      "cases": 120,
+      "vowel_frame_accuracy": 0.9214285714285714,
+      "median_case_accuracy": 1.0,
+      "sudden_closures": 0,
+      "closure_eligible_frames": 5040,
+      "sudden_closure_rate": 0.0,
+      "median_abs_formant_error_hz": 18.982387475538246,
+      "median_abs_f1_error_hz": 17.661448140900205,
+      "median_abs_f2_error_hz": 15.655577299412926,
+      "missing_f1": 0,
+      "missing_f2": 12,
+      "analysis_seconds": 6.613848181266803
+    }
+  },
+  "engineering_gate_passed": true,
+  "validation_novelty": {
+    "scope": "Clarification before first validation execution; original grid/seed/gates unchanged",
+    "development": "120 signals per route, seed11",
+    "validation": "120 signals per route, seed29",
+    "novelty": {
+      "harmonic": "90 signals per route deterministic and identical to development; known regression, not unseen",
+      "white_noise": "30 signals per route use previously unexecuted seed29; stochastic mechanism check only, not population independent or human speech"
+    },
+    "reason": "Seed affects Gaussian source only. Never count all120 as fresh speech or independent validation."
+  },
+  "human_or_semantic_approved": false,
+  "counts_per_route": {
+    "component_native_rate": 120,
+    "web_analysis_16k": 120
+  }
+}

@@ -132,11 +132,16 @@ class LipSyncEngine:
         if (not isinstance(sr, (int, np.integer)) or isinstance(sr, (bool, np.bool_))
                 or not 0 < sr <= 384000):
             raise ValueError('sample rate must be an integer within 1..384000')
-        if int(sr * self.frame_ms / 1000) < 2 or int(sr * self.hop_ms / 1000) < 1:
+        frame_samples = sr * (float(self.frame_ms) / 1000)
+        hop_samples = sr * (float(self.hop_ms) / 1000)
+        if (not np.isfinite(frame_samples) or not np.isfinite(hop_samples)
+                or max(frame_samples, hop_samples) >= np.iinfo(np.intp).max):
+            raise ValueError('frame and hop sizes exceed representable sample dimensions')
+        if int(frame_samples) < 2 or int(hop_samples) < 1:
             raise ValueError('frame and hop must span at least two and one samples')
         samples = np.asarray(samples)
         if (samples.ndim != 1 or samples.dtype.kind not in 'iuf'
-                or not np.isfinite(samples).all() or np.any(np.abs(samples) > 1)):
+                or not np.isfinite(samples).all() or np.any(samples < -1) or np.any(samples > 1)):
             raise ValueError('samples must be finite normalized mono PCM within -1..1')
         samples = samples.astype(np.float32, copy=False)
         if len(samples) == 0:
@@ -184,7 +189,7 @@ class LipSyncEngine:
             mouth = np.convolve(mouth, kernel, mode="same")
 
         # Optional cosmetic motion; no acoustic evidence of a pause is implied.
-        if self.close_every is not None:
+        if self.close_every is not None and self.close_every < n * self.hop_ms / 1000:
             hop = int(sr * self.hop_ms / 1000)
             close_every_frames = max(1, int(self.close_every * sr / hop))
             for i in range(close_every_frames, n, close_every_frames):

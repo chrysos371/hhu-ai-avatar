@@ -47,7 +47,7 @@ def legacy(revision):
     return module,hashlib.sha256(source.encode()).hexdigest()
 
 
-def run(split,arm,output):
+def run(split,arm,output,regression_replay=False):
     if output.exists():raise FileExistsError('Evidence output must be fresh')
     spec=json.loads(SPEC.read_text())
     engine_module,engine_sha=legacy(spec['baseline_revision']) if arm=='baseline' else (current,sha('src/avatar/face/lipsync.py'))
@@ -58,6 +58,8 @@ def run(split,arm,output):
     addendum=Path('evals/audio/cycle-05/validation-addendum.json')
     report['validation_novelty']=json.loads(addendum.read_text())
     report['validation_addendum_sha256']=sha(addendum)
+    report['split_use']='regression_replay' if regression_replay else split
+    report['new_stochastic_signals_per_route']=30 if split=='validation' and not regression_replay else 0
     save(output,report);started=time.perf_counter()
     try:
         for anchor,sr,rms,excitation in itertools.product(spec['anchors'],spec['sample_rates'],spec['target_rms'],spec['excitations']):
@@ -127,4 +129,5 @@ def run(split,arm,output):
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--split',choices=['development','validation'],required=True)
     p.add_argument('--arm',choices=['baseline','candidate'],required=True);p.add_argument('--output',type=Path,required=True)
-    args=p.parse_args();run(args.split,args.arm,args.output)
+    p.add_argument('--regression-replay',action='store_true',help='Previously executed validation seed; no unseen evidence')
+    args=p.parse_args();run(args.split,args.arm,args.output,args.regression_replay)

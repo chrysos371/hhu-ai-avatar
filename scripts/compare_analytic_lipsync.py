@@ -29,6 +29,7 @@ def compare(baseline, candidate, output):
         'silence_all_closed':silence,'baseline_summary':a['summary'],'candidate_summary':b['summary'],
         'engineering_gate_passed':waveform_equal and classification_equal and not regressions and not closure_regressions and silence,
         'validation_novelty':b.get('validation_novelty'), 'human_or_semantic_approved':False,
+        'candidate_split_use':b.get('split_use',b['split']),
         'counts_per_route':dict(Counter(row['route'] for row in a['rows']))}
     save(output,result);print(json.dumps(result,ensure_ascii=False,indent=2))
     if not result['engineering_gate_passed']:raise SystemExit(1)

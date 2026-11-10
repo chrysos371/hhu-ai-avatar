@@ -1,0 +1,22 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test speech.spec.ts endpointing.spec.ts generation2.spec.ts
+
+
+Running 9 tests using 1 worker
+
+(node:2059060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2059060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 e2e/endpointing.spec.ts:26:1 › automatic pause fills only a draft and releases the real audio graph (3.7s)
+  ✓  2 e2e/endpointing.spec.ts:40:1 › eight seconds of silence releases microphone without transcription or chat (9.4s)
+  ✓  3 e2e/generation2.spec.ts:13:1 › checked draft appears before completion and interruption stops the job (897ms)
+  ✓  4 e2e/generation2.spec.ts:25:1 › automatic speech is segmented and stopping it does not start the next part (2.5s)
+  ✓  5 e2e/generation2.spec.ts:36:1 › microphone input interrupts generation before recording (558ms)
+  ✓  6 e2e/speech.spec.ts:13:1 › playback follows the audio clock, pause and stop close the mouth (2.1s)
+  ✓  7 e2e/speech.spec.ts:39:1 › speech failure keeps the text and permits retry (1.8s)
+  ✓  8 e2e/speech.spec.ts:52:1 › WAV and microphone transcription fill a draft without sending it (1.2s)
+  ✓  9 e2e/speech.spec.ts:74:1 › leaving chat releases audio playback (1.9s)
+
+  9 passed (27.0s)
