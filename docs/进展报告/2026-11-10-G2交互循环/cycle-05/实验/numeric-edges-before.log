@@ -1,0 +1,175 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_____ test_minimum_signed_integer_is_not_accepted_as_normalized_pcm[int32] _____
+
+dtype = <class 'numpy.int32'>
+
+    @pytest.mark.parametrize('dtype',[np.int32,np.int64])
+    def test_minimum_signed_integer_is_not_accepted_as_normalized_pcm(dtype):
+        signal=np.full(500,np.iinfo(dtype).min,dtype=dtype)
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,16000)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:57: Failed
+_____ test_minimum_signed_integer_is_not_accepted_as_normalized_pcm[int64] _____
+
+dtype = <class 'numpy.int64'>
+
+    @pytest.mark.parametrize('dtype',[np.int32,np.int64])
+    def test_minimum_signed_integer_is_not_accepted_as_normalized_pcm(dtype):
+        signal=np.full(500,np.iinfo(dtype).min,dtype=dtype)
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,16000)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:57: Failed
+___ test_finite_but_unrepresentable_window_is_rejected_as_metadata[frame_ms] ___
+
+option = 'frame_ms'
+
+    @pytest.mark.parametrize('option',['frame_ms','hop_ms'])
+    def test_finite_but_unrepresentable_window_is_rejected_as_metadata(option):
+>       with pytest.raises(ValueError):LipSyncEngine(**{option:1e308}).analyze(np.zeros(800),16000)
+
+tests/test_lipsync_boundaries.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.face.lipsync.LipSyncEngine object at 0x7f3c22116da0>
+samples = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., ... 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0.])
+sr = 16000, cancel = None
+
+    def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
+        """分析归一化单声道有限PCM（[-1,1]），返回逐帧口型参数。"""
+        if cancel:
+            cancel.checkpoint()
+        if (not isinstance(sr, (int, np.integer)) or isinstance(sr, (bool, np.bool_))
+                or not 0 < sr <= 384000):
+            raise ValueError('sample rate must be an integer within 1..384000')
+>       if int(sr * self.frame_ms / 1000) < 2 or int(sr * self.hop_ms / 1000) < 1:
+E       OverflowError: cannot convert float infinity to integer
+
+src/avatar/face/lipsync.py:135: OverflowError
+____ test_finite_but_unrepresentable_window_is_rejected_as_metadata[hop_ms] ____
+
+option = 'hop_ms'
+
+    @pytest.mark.parametrize('option',['frame_ms','hop_ms'])
+    def test_finite_but_unrepresentable_window_is_rejected_as_metadata(option):
+>       with pytest.raises(ValueError):LipSyncEngine(**{option:1e308}).analyze(np.zeros(800),16000)
+
+tests/test_lipsync_boundaries.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.face.lipsync.LipSyncEngine object at 0x7f3c220871f0>
+samples = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., ... 0., 0., 0., 0., 0., 0., 0., 0.,
+       0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+       0.])
+sr = 16000, cancel = None
+
+    def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
+        """分析归一化单声道有限PCM（[-1,1]），返回逐帧口型参数。"""
+        if cancel:
+            cancel.checkpoint()
+        if (not isinstance(sr, (int, np.integer)) or isinstance(sr, (bool, np.bool_))
+                or not 0 < sr <= 384000):
+            raise ValueError('sample rate must be an integer within 1..384000')
+>       if int(sr * self.frame_ms / 1000) < 2 or int(sr * self.hop_ms / 1000) < 1:
+E       OverflowError: cannot convert float infinity to integer
+
+src/avatar/face/lipsync.py:135: OverflowError
+______ test_very_long_explicit_closure_interval_is_a_noop_for_short_audio ______
+
+    def test_very_long_explicit_closure_interval_is_a_noop_for_short_audio():
+        samples=(.1*np.sin(2*np.pi*300*np.arange(8000)/16000)).astype(np.float32)
+        normal=LipSyncEngine().analyze(samples,16000)
+>       long_period=LipSyncEngine(close_every=1e308).analyze(samples,16000)
+
+tests/test_lipsync_boundaries.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.face.lipsync.LipSyncEngine object at 0x7f3c22163070>
+samples = array([ 0.        ,  0.01175374,  0.02334454, ..., -0.03461171,
+       -0.02334454, -0.01175374], shape=(8000,), dtype=float32)
+sr = 16000, cancel = None
+
+    def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
+        """分析归一化单声道有限PCM（[-1,1]），返回逐帧口型参数。"""
+        if cancel:
+            cancel.checkpoint()
+        if (not isinstance(sr, (int, np.integer)) or isinstance(sr, (bool, np.bool_))
+                or not 0 < sr <= 384000):
+            raise ValueError('sample rate must be an integer within 1..384000')
+        if int(sr * self.frame_ms / 1000) < 2 or int(sr * self.hop_ms / 1000) < 1:
+            raise ValueError('frame and hop must span at least two and one samples')
+        samples = np.asarray(samples)
+        if (samples.ndim != 1 or samples.dtype.kind not in 'iuf'
+                or not np.isfinite(samples).all() or np.any(np.abs(samples) > 1)):
+            raise ValueError('samples must be finite normalized mono PCM within -1..1')
+        samples = samples.astype(np.float32, copy=False)
+        if len(samples) == 0:
+            return []
+    
+        frames = frame_signal(samples, self.frame_ms, self.hop_ms, sr)
+        n = len(frames)
+        if n == 0:
+            return []
+    
+        times = np.arange(n) * self.hop_ms / 1000.0
+        # 能量（RMS）与静音判定
+        energy = np.sqrt(np.mean(frames**2, axis=1))
+        peak = energy.max() if energy.size else 0.0
+        if not np.isfinite(peak) or peak <= 1e-8:
+            return [LipSyncFrame(float(t), 0.0, "", 0.0) for t in times]
+        energy_norm = energy / peak
+        silence = energy < max(peak * self.silence_ratio, self.silence_rms)
+    
+        order = min(2 + sr // 1000, 24)
+        mouth = np.zeros(n, dtype=np.float64)
+        vowels: list[str] = [""] * n
+    
+        for i in range(n):
+            if cancel:
+                cancel.checkpoint()
+            if silence[i]:
+                mouth[i] = 0.0
+                continue
+            a = _lpc(frames[i], order)
+            fs = _formants(a, sr)
+            f1 = float(fs[0]) if len(fs) > 0 else None
+            f2 = float(fs[1]) if len(fs) > 1 else None
+            v = _classify_vowel(f1, f2)
+            if v is None:
+                mouth[i] = 0.2 * float(energy_norm[i])
+                continue
+            vowels[i] = v
+            # 张嘴幅度 = 元音基础幅度 × (音量加权)
+            mouth[i] = _VOWEL_MOUTH[v] * (0.4 + 0.6 * float(energy_norm[i]))
+    
+        # 移动平均平滑
+        if self.smooth > 1 and n > self.smooth:
+            kernel = np.ones(self.smooth) / self.smooth
+            mouth = np.convolve(mouth, kernel, mode="same")
+    
+        # Optional cosmetic motion; no acoustic evidence of a pause is implied.
+        if self.close_every is not None:
+            hop = int(sr * self.hop_ms / 1000)
+>           close_every_frames = max(1, int(self.close_every * sr / hop))
+E           OverflowError: cannot convert float infinity to integer
+
+src/avatar/face/lipsync.py:189: OverflowError
+=============================== warnings summary ===============================
+tests/test_lipsync_boundaries.py::test_minimum_signed_integer_is_not_accepted_as_normalized_pcm[int64]
+  /data/Users/zrh/repo/envs/hhu-ai-avatar/lib/python3.10/site-packages/numpy/_core/_methods.py:135: RuntimeWarning: overflow encountered in reduce
+    ret = umr_sum(arr, axis, dtype, out, keepdims, where=where)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_lipsync_boundaries.py::test_minimum_signed_integer_is_not_accepted_as_normalized_pcm[int32]
+FAILED tests/test_lipsync_boundaries.py::test_minimum_signed_integer_is_not_accepted_as_normalized_pcm[int64]
+FAILED tests/test_lipsync_boundaries.py::test_finite_but_unrepresentable_window_is_rejected_as_metadata[frame_ms]
+FAILED tests/test_lipsync_boundaries.py::test_finite_but_unrepresentable_window_is_rejected_as_metadata[hop_ms]
+FAILED tests/test_lipsync_boundaries.py::test_very_long_explicit_closure_interval_is_a_noop_for_short_audio
+5 failed, 28 deselected, 1 warning in 0.80s

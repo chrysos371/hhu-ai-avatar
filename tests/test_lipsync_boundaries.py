@@ -50,3 +50,20 @@ def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
 def test_cancelled_empty_analysis_propagates_cancellation():
     token=CancellationToken();token.cancel()
     with pytest.raises(Cancelled):LipSyncEngine().analyze(np.zeros(0),16000,cancel=token)
+
+@pytest.mark.parametrize('dtype',[np.int32,np.int64])
+def test_minimum_signed_integer_is_not_accepted_as_normalized_pcm(dtype):
+    signal=np.full(500,np.iinfo(dtype).min,dtype=dtype)
+    with pytest.raises(ValueError):LipSyncEngine().analyze(signal,16000)
+
+
+@pytest.mark.parametrize('option',['frame_ms','hop_ms'])
+def test_finite_but_unrepresentable_window_is_rejected_as_metadata(option):
+    with pytest.raises(ValueError):LipSyncEngine(**{option:1e308}).analyze(np.zeros(800),16000)
+
+
+def test_very_long_explicit_closure_interval_is_a_noop_for_short_audio():
+    samples=(.1*np.sin(2*np.pi*300*np.arange(8000)/16000)).astype(np.float32)
+    normal=LipSyncEngine().analyze(samples,16000)
+    long_period=LipSyncEngine(close_every=1e308).analyze(samples,16000)
+    assert [frame.mouth_open for frame in long_period]==[frame.mouth_open for frame in normal]
