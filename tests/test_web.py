@@ -127,6 +127,27 @@ def test_web_summary_tracks_same_session_across_requests(api):
     request('/api/forget', {'id': fid})
     assert request('/api/summary')[1]['summary']['items'] == []
 
+def test_slow_chat_does_not_block_reminder_poll(api, monkeypatch):
+    from avatar.main import Avatar
+    request, _ = api
+    entered, release = threading.Event(), threading.Event()
+    def slow_respond(self, text, **kwargs):
+        entered.set()
+        assert release.wait(3)
+        return {'reply': 'done'}
+    monkeypatch.setattr(Avatar, 'respond', slow_respond)
+    outcome = []
+    worker = threading.Thread(target=lambda: outcome.append(request('/api/chat', {'text': '慢请求'})))
+    worker.start()
+    assert entered.wait(2)
+    try:
+        status, _ = request('/api/reminders')
+        assert status == 200
+    finally:
+        release.set()
+        worker.join(3)
+    assert outcome and outcome[0][0] == 200
+
 
 def test_web_checkbox_enables_tools_and_requires_boolean(api, monkeypatch):
     from avatar.tools.web_agent import WebAgent

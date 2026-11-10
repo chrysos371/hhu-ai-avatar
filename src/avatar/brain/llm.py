@@ -17,14 +17,18 @@ class LLMEngine:
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
         model: Optional[str] = None,
+        timeout: float = 30.0,
+        max_retries: int = 0,
     ):
         self.base_url = base_url or config.llm.base_url
         self.api_key = api_key or config.llm.api_key
         self.model = model or config.llm.model
+        self.timeout = timeout
         self.available = bool(self.api_key)
         self._client = None
         if self.available:
-            self._client = OpenAI(base_url=self.base_url, api_key=self.api_key)
+            self._client = OpenAI(base_url=self.base_url, api_key=self.api_key,
+                                  timeout=timeout, max_retries=max_retries)
 
     def chat(
         self,

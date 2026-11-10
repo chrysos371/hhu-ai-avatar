@@ -4,7 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 import secrets
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import threading
 from urllib.parse import parse_qs, urlsplit
 
 from .brain.emotion import EmotionEngine
@@ -79,17 +80,18 @@ class Handler(BaseHTTPRequestHandler):
                 use_web = data.get('use_web', False)
                 if type(use_web) is not bool:
                     raise ValueError('use_web must be boolean')
-                avatar = Avatar(db_path=self.server.db_path, session_id=self.server.session_id)
-                memory = avatar.memory
-                avatar.emotion = self.server.emotion
-                avatar.boundaries = self.server.boundaries
-                if self.server.context_revision != memory.context_revision:
-                    self.server.short_term = []
-                for message in self.server.short_term:
-                    memory.add_short_term(message['role'], message['content'])
-                result = avatar.respond(user_text, use_web=use_web)
-                self.server.short_term = memory.get_short_term()
-                self.server.context_revision = memory.context_revision
+                with self.server.state_lock:
+                    avatar = Avatar(db_path=self.server.db_path, session_id=self.server.session_id)
+                    memory = avatar.memory
+                    avatar.emotion = self.server.emotion
+                    avatar.boundaries = self.server.boundaries
+                    if self.server.context_revision != memory.context_revision:
+                        self.server.short_term = []
+                    for message in self.server.short_term:
+                        memory.add_short_term(message['role'], message['content'])
+                    result = avatar.respond(user_text, use_web=use_web)
+                    self.server.short_term = memory.get_short_term()
+                    self.server.context_revision = memory.context_revision
                 return self._send(200, result)
             memory = MemoryStore(self.server.db_path)
             reminders = ReminderStore(memory)
@@ -104,19 +106,23 @@ class Handler(BaseHTTPRequestHandler):
             elif not post and path == '/api/summary':
                 result = {'summary': SummaryStore(memory).read(self.server.session_id)}
             elif not post and path == '/api/state':
-                state = self.server.emotion.state
-                result = {'energy': self.server.emotion.energy, 'valence': state.valence,
-                          'arousal': state.arousal, 'mode': '单用户本机模式'}
+                with self.server.state_lock:
+                    state = self.server.emotion.state
+                    result = {'energy': self.server.emotion.energy, 'valence': state.valence,
+                              'arousal': state.arousal, 'mode': '单用户本机模式'}
             elif post and path == '/api/correct':
                 result = {'id': memory.correct(ident(), text('content'))}
-                self.server.short_term = []
+                with self.server.state_lock:
+                    self.server.short_term = []
             elif post and path == '/api/forget':
                 memory.forget(ident())
-                self.server.short_term = []
+                with self.server.state_lock:
+                    self.server.short_term = []
                 result = {'ok': True}
             elif post and path == '/api/forget-summary-source':
                 SummaryStore(memory).forget_source(self.server.session_id, ident())
-                self.server.short_term = []
+                with self.server.state_lock:
+                    self.server.short_term = []
                 result = {'ok': True}
             elif post and path == '/api/badhit':
                 memory.report_irrelevant(ident())
@@ -149,8 +155,9 @@ class Handler(BaseHTTPRequestHandler):
         self._request(post=True)
 
 
-def create_server(db_path: str, *, port: int = 8765) -> HTTPServer:
-    server = HTTPServer(('127.0.0.1', port), Handler)
+def create_server(db_path: str, *, port: int = 8765) -> ThreadingHTTPServer:
+    server = ThreadingHTTPServer(('127.0.0.1', port), Handler)
+    server.daemon_threads = True
     server.db_path = db_path
     server.token = secrets.token_urlsafe(32)
     server.nonce = secrets.token_urlsafe(24)
@@ -159,6 +166,7 @@ def create_server(db_path: str, *, port: int = 8765) -> HTTPServer:
     server.context_revision = None
     server.emotion = EmotionEngine()
     server.boundaries = BoundaryPolicy()
+    server.state_lock = threading.RLock()
     return server
 
 
