@@ -6,6 +6,7 @@ from urllib.parse import urlsplit
 from pathlib import Path
 import os
 import tempfile
+import subprocess
 import wave
 import numpy as np
 from avatar.config import config
@@ -57,6 +58,35 @@ class FixtureASR:
 if os.getenv("AVATAR_E2E_REAL_TTS") != "1":
     server.speech.engine = FixtureTTS()
 if os.getenv('AVATAR_E2E_REAL_ASR_MODEL'):
+    if os.getenv('AVATAR_E2E_ASR_DEVICE') == 'cuda':
+        # Check at process startup, not from a previous interactive shell snapshot.
+        raw = subprocess.check_output(['nvidia-smi',
+            '--query-gpu=index,uuid,memory.free,utilization.gpu',
+            '--format=csv,noheader,nounits'], text=True)
+        print('ASR GPU snapshot at startup:\n' + raw, flush=True)
+        mask = os.environ.get('CUDA_VISIBLE_DEVICES')
+        visible = set(mask.split(',')) if mask is not None else None
+        group = evidence['chosen_gpu']['index'] // 4 if os.getenv('AVATAR_E2E_LLM_PROVIDER') else None
+        candidates = []
+        for line in raw.splitlines():
+            index, uid, free, util = (part.strip() for part in line.split(','))
+            if (int(free) >= 8192 and int(util) <= 20
+                    and (visible is None or index in visible or uid in visible)
+                    and (group is None or int(index) // 4 == group)):
+                candidates.append((int(free), -int(util), -int(index), uid))
+        if not candidates:
+            raise RuntimeError('No currently visible GPU meets ASR headroom/group gate')
+        chosen = max(candidates)
+        os.environ['CUDA_VISIBLE_DEVICES'] = chosen[3]
+        print('ASR selected GPU UUID: ' + chosen[3], flush=True)
+        if os.getenv('AVATAR_E2E_EVIDENCE_DIR'):
+            artifact_folder = Path(os.environ['AVATAR_E2E_EVIDENCE_DIR'])
+            artifact_folder.mkdir(parents=True, exist_ok=True)
+            with (artifact_folder / 'asr-gpu-launch.json').open('x') as artifact:
+                json.dump({'snapshot': raw, 'chosen_uuid': chosen[3], 'chosen_index': -chosen[2],
+                    'free_mib': chosen[0], 'required_free_mib': 8192,
+                    'required_group': group, 'visible_mask': mask}, artifact, indent=2)
+
     from avatar.ears.asr import FasterWhisperEngine
     server.transcription.engine = FasterWhisperEngine(os.environ['AVATAR_E2E_REAL_ASR_MODEL'],
         device=os.getenv('AVATAR_E2E_ASR_DEVICE','cpu'))

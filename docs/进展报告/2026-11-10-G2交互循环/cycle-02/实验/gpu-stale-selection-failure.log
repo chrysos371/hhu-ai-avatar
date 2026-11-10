@@ -1,0 +1,14 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test real-voice.spec.ts
+
+[WebServer] Traceback (most recent call last):
+[WebServer]   File "/data/Users/zrh/repo/hhu-ai-avatar/frontend/../tests/helpers/serve_admin_e2e.py", line 61, in <module>
+[WebServer]     server.transcription.engine = FasterWhisperEngine(os.environ['AVATAR_E2E_REAL_ASR_MODEL'],
+[WebServer]   File "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/ears/asr.py", line 44, in __init__
+[WebServer]     self.model = WhisperModel(str(path), device=device,
+[WebServer]   File "/data/Users/zrh/repo/envs/hhu-ai-avatar/lib/python3.10/site-packages/faster_whisper/transcribe.py", line 689, in __init__
+[WebServer]     self.model = ctranslate2.models.Whisper(
+[WebServer] RuntimeError: CUDA failed with error out of memory
+Error: Timed out waiting 20000ms from config.webServer.
+

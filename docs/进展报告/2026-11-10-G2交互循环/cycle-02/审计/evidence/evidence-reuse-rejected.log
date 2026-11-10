@@ -1,0 +1,37 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test real-voice.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:1801130) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1801130) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/real-voice.spec.ts:5:1 › real local ASR draft reaches streamed response and real TTS playback (440ms)
+
+
+  1) e2e/real-voice.spec.ts:5:1 › real local ASR draft reaches streamed response and real TTS playback 
+
+    Error: Use a fresh real-service evidence directory
+
+       9 |   const screenshot = join(folder, 'real-voice-browser.png');
+      10 |   const timing = join(folder, 'real-voice-browser.json');
+    > 11 |   if (existsSync(screenshot) || existsSync(timing)) throw Error('Use a fresh real-service evidence directory');
+         |                                                           ^
+      12 |   await page.goto('/chat#mission-control-disposable-e2e-token');
+      13 |   await expect(page.getByLabel('上传 WAV 语音')).toBeEnabled();
+      14 |   const begin = Date.now();
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/real-voice.spec.ts:11:59
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/real-voice-real-local-ASR--e4760-ponse-and-real-TTS-playback/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/real-voice-real-local-ASR--e4760-ponse-and-real-TTS-playback/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/real-voice.spec.ts:5:1 › real local ASR draft reaches streamed response and real TTS playback 
