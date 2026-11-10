@@ -1,0 +1,109 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>G2 Cycle02 · 语音与音频检查点</title><style>body{font:17px/1.7 system-ui;max-width:1180px;margin:auto;padding:36px;background:#f4f7fb;color:#192b41}table{width:100%;border-collapse:collapse;background:white}td,th{padding:12px;border:1px solid #cbd5e1;text-align:left}h1,h2,a{color:#155e75}pre{padding:16px;background:#e5edf2;overflow:auto}code{font-size:.9em}</style><body><h1>Cycle 02 检查点：真实人声、录音端点与音频审计</h1>
+<p>作者 spinner-bot；2026-11-10。状态：语音输入与音频修复已验证，<strong>真实 4B 对照仍待推理依赖准备，不宣称 Cycle 02 已全部完成</strong>。前轮已关闭 9 项问题，本轮新增 5 项均有文档和复测；这些计数仅指 G2 两个循环，不混入更早的 11 项审计。</p>
+<h2>已推进的能力与数据</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>固定方法与实测</th>
+<th>结论边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>公开人声</td>
+<td>AISHELL-1 test 前 20 位排序说话人，每人首条/中间条，共 40 条、567 字。CPU CER 7.2310%，GPU CER 6.8783%，40/40 均成功</td>
+<td>朗读开发子集；非自由对话、非目标设备；不能证明预训练未见过这些公开录音</td>
+</tr>
+<tr>
+<td>识别时延</td>
+<td>CPU int8 中位 1.3615s / RTF 0.3031；GPU int8_float16 中位 0.1887s / RTF 0.0408</td>
+<td>相同模型版本，量化不同；不是纯硬件因果实验</td>
+</tr>
+<tr>
+<td>错例</td>
+<td>GPU 最差一条 6/17=35.29%；金融术语、同音字、数字字形仍错</td>
+<td>总 CER 通过预设 20% 门槛，不能当成逐条正确；原始结果全部保留</td>
+</tr>
+<tr>
+<td>录音自动结束</td>
+<td>RMS 0.006，连续语音 240ms、停顿 1200ms、无语音 8s、最长 60s。16/48kHz × 128/4096 分块 × 8 场景，共 32 组匹配停止原因，计时误差最大 0ms</td>
+<td>合成信号边界测试。高噪声会误激活，轻声会漏检，允许关闭；识别仍须草稿确认</td>
+</tr>
+<tr>
+<td>端点浏览器</td>
+<td>真 AudioWorklet + WebAudio 信号 + 受控 ASR：2 passed，1 秒音调后草稿约 3012ms，静音结束不转写、不发送，track 释放</td>
+<td>非物理麦克风或人声 VAD 准确率</td>
+</tr>
+<tr>
+<td>最新真实语音浏览器</td>
+<td>本机 GPU ASR → 草稿 → 可控模型 → 真实 TTS/MP3/SVG：1 passed/14.7s。草稿 904ms，发送至播放 4034ms</td>
+<td>本次模型仍受控，不能作为真实 LLM 质量证据；原 6031ms 等运行也保留，不能只挑最快值</td>
+</tr>
+<tr>
+<td>工程回归</td>
+<td>Python 648 passed/1 skipped；前端 33 passed；类型/构建/lint 通过；完整浏览器 15 passed/1 skipped，真实服务另跑通过</td>
+<td>可选 torch 跳过；真实服务默认不纳入离线套件</td>
+</tr>
+</tbody>
+</table>
+<h2>新增问题与处理</h2>
+<table>
+<thead>
+<tr>
+<th>单项文档</th>
+<th>初始复现</th>
+<th>修复后同条件结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="审计/issues/G2C2-001.md">G2C2-001 抗混叠</a></td>
+<td>48kHz/14kHz 噪声折叠为 2kHz，增益约 -0.003dB</td>
+<td>窗化 sinc 低通后 -78.02dB；24kHz/10kHz 为 -70.84dB；2kHz 通带误差≤0.150dB，时轴对齐和取消通过</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2C2-002.md">G2C2-002 解码预算</a></td>
+<td>300 秒/300KB MP3 先完整解码分配 19.2MB 再拒绝</td>
+<td>元数据提前检查 + 后端读取预算；原样本 sf.read 次数 0，保留 422 和可恢复性</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2C2-003.md">G2C2-003 测试隔离</a></td>
+<td>默认 /tmp 运行全量，旧数据导出测试因工作区门禁失败</td>
+<td>仅测试注册隔离根、继续验证越界拒绝；专项 13 passed，全量 648 passed/1 skipped</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2C2-004.md">G2C2-004 人设名称</a></td>
+<td>已确认“星澜”，对话标题/播放器仍“小海”</td>
+<td>查询当前确认版本并统一展示；原浏览器通过，管理改名后全套 15 passed/1 skipped</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2C2-005.md">G2C2-005 证据覆盖</a></td>
+<td>跨轮写同一个 JSON/截图路径，覆盖运行目录旧结果</td>
+<td>独立目录、新文件 wx 写入，故意复用时明确拒绝且 marker 保留；既往 Git 证据完整</td>
+</tr>
+</tbody>
+</table>
+<p>首轮九项原探针复测仍通过：8 并发/160 API 非 200 为 0，忘记后运行缓存/事件不可读且助手派生内容不残留，TTL 到期清理，低幅噪声闭嘴，40 空连接最多 32 处理线程，全程超时约 0.153s，其他存活订阅完成、超前游标 422。详见 <a href="审计/evidence/cycle01-regression.json">原始复测</a>。这不是安全完备性或物理存储擦除证明。</p>
+<h2>失败、资源与数据来源</h2>
+<p>一次额外复测沿用旧 GPU 0 快照，随后占用变化造成 OOM，失败已保留。入口已改为启动时采样余量、尊重显式可见掩码；真实模型联合测试要求同组。最新正向测试实际发现 0–3 满载、4–7 空闲，自动选 GPU 4，余量 40438MiB，未终止他人进程。识别实验先前选 GPU 0 时也保存了当时空闲快照；不把任意一次卡号或空闲状态当永久资源分配。</p>
+<p>AISHELL-1 上游 <a href="https://www.openslr.org/33/">OpenSLR SLR33</a> 标明 Apache-2.0。镜像 <a href="https://huggingface.co/datasets/shenyunhang/AISHELL-1">shenyunhang/AISHELL-1</a> 固定 2724409d538167445e43ebf846990319f12a1cbf；抽样先于识别。音频不入 Git，参考文本/路径/哈希在 <a href="实验/aishell-manifest.json">清单</a>。不因识别失败替换样本或事后改数字归一化。</p>
+<p>真实模型使用 <a href="https://huggingface.co/Qwen/Qwen3-4B-GGUF">Qwen 官方 GGUF</a> 固定 bc640142c66e1fdd12af0bd68f40445458f3869b、Q4_K_M。权重 2497280256 字节，SHA256 与官方 LFS oid 一致，见 <a href="实验/gguf-verified.json">核验</a>。官方 llama-cpp-python 0.3.19/cu124 wheel 下载中；同配置 20 场景已冻结于 evals/interaction/cycle-02/real-model-cases.json。依赖未准备好前没有实际 4B 分数，没有借受控输出冒充模型结果。</p>
+<h2>可复现入口与后续</h2>
+<ul>
+<li><a href="进展.md">全过程进展</a>、<a href="审计/计划.md">审计计划</a>、<a href="审计/evidence/audio-audit-final.json">最终音频探针</a></li>
+<li><a href="实验/asr-human-cpu.json">CPU 人声原始结果</a>、<a href="实验/asr-human-gpu.json">GPU 人声原始结果</a></li>
+<li><a href="实验/endpointing-before-integration.json">32 组端点结果</a>、<a href="实验/endpoint-frontend-tests.json">前端 JSON</a>、<a href="实验/python-full-after-isolation.log">Python 日志</a>、<a href="实验/browser-after-persona.log">浏览器日志</a></li>
+<li><a href="实验/auto-gpu-asr-gpu-launch.json">最新浏览器选卡快照</a>、<a href="实验/auto-gpu-real-voice-browser.json">最新语音时间</a>、<a href="实验/gpu-stale-selection-failure.log">曾发生的 OOM</a></li>
+</ul>
+<p>脚本从仓库根运行，所有输出使用新路径：</p>
+<pre><code class="language-bash">python scripts/evaluate_public_asr.py prepare
+python scripts/evaluate_public_asr.py evaluate --device cpu --output data/new-human-cpu.json
+# CUDA 需匹配 cuBLAS/cuDNN；脚本启动时选有余量的单卡
+python scripts/evaluate_public_asr.py evaluate --device cuda --output data/new-human-gpu.json
+node --experimental-strip-types scripts/evaluate_endpointing.mjs data/new-endpointing.json
+python docs/进展报告/2026-11-10-G2交互循环/cycle-02/审计/probe_audio.py --output data/new-audio-audit.json
+python -m pytest tests -q
+./scripts/frontend.sh run e2e
+</code></pre>
+<p>后续优先完成真实 4B 配对对照与完整真实模型声音链路，再决定需要改提示、路由还是模型规模。继续保留失败，若 G2 新增客观失败则先定位整改。真实口型标注、物理设备、自由对话和多日稳定性仍是未验证边界；不会凭当前工程测试数量认定远期陪伴目标已经完成。</p></body></html>
