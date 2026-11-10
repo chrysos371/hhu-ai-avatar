@@ -496,6 +496,38 @@ def run_chat(server, user_text, use_web=False, *, job=None):
 
 class AvatarHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
+    request_queue_size = 64
+
+    def __init__(self, address, handler, *, max_connections=32, header_timeout=10):
+        self.max_connections = max_connections
+        self.header_timeout = header_timeout
+        self._connection_gate = threading.BoundedSemaphore(max_connections)
+        super().__init__(address, handler)
+
+    def get_request(self):
+        connection, address = super().get_request()
+        connection.settimeout(self.header_timeout)
+        return connection, address
+
+    def process_request(self, request, client_address):
+        if not self._connection_gate.acquire(blocking=False):
+            try:
+                request.sendall(b'HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n')
+            except (ConnectionError, TimeoutError):
+                pass
+            self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request, client_address)
+        except BaseException:
+            self._connection_gate.release()
+            raise
+
+    def process_request_thread(self, request, client_address):
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self._connection_gate.release()
 
     def server_close(self):
         if hasattr(self, 'turns'):
@@ -514,8 +546,11 @@ def create_server(
     knowledge_embedder=None,
     speech_engine=None,
     asr_engine=None,
+    max_connections=32,
+    header_timeout=10,
 ) -> ThreadingHTTPServer:
-    server = AvatarHTTPServer(("127.0.0.1", port), Handler)
+    server = AvatarHTTPServer(("127.0.0.1", port), Handler,
+                               max_connections=max_connections, header_timeout=header_timeout)
     server.daemon_threads = True
     server.state_lock = threading.RLock()
     from .speech import SpeechService

@@ -8,6 +8,7 @@ import sys
 import threading
 import urllib.request
 import wave
+import time
 
 from avatar.web import Handler, create_server
 
@@ -81,3 +82,28 @@ def test_disconnected_speech_client_does_not_raise_or_break_server(tmp_path):
         server.shutdown()
         thread.join()
         server.server_close()
+
+
+def test_connection_backpressure_and_header_timeout_release_capacity(tmp_path):
+    server = create_server(str(tmp_path/'bounded.db'), port=0, max_connections=3, header_timeout=0.3)
+    worker = threading.Thread(target=server.serve_forever, daemon=True)
+    worker.start()
+    sockets = []
+    try:
+        for _ in range(3):
+            sockets.append(socket.create_connection(('127.0.0.1',server.server_port), timeout=1))
+        deadline = time.monotonic()+1
+        while server._connection_gate._value != 0 and time.monotonic() < deadline:
+            time.sleep(0.005)
+        assert server._connection_gate._value == 0
+        with socket.create_connection(('127.0.0.1',server.server_port),timeout=1) as overloaded:
+            assert b'503 Service Unavailable' in overloaded.recv(1024)
+        deadline = time.monotonic()+2
+        while server._connection_gate._value != 3 and time.monotonic() < deadline:
+            time.sleep(0.01)
+        assert server._connection_gate._value == 3
+        with urllib.request.urlopen(f'http://127.0.0.1:{server.server_port}/healthz') as response:
+            assert response.status == 200
+    finally:
+        for connection in sockets: connection.close()
+        server.shutdown();worker.join();server.server_close()
