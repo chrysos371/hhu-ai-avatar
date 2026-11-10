@@ -108,3 +108,19 @@ def test_default_keeps_existing_generation_path():
         assert result['profile_grounding']['enabled'] is False
     finally:
         avatar.memory.close()
+
+
+def test_cancel_during_complete_review_never_emits_buffered_text(monkeypatch, grounded_avatar):
+    import avatar.main as main_module
+    avatar, model = grounded_avatar
+    token, pieces = CancellationToken(), []
+    original = main_module.review_profile_reply
+    def cancel_during_review(*args):
+        reviewed = original(*args)
+        token.cancel()
+        return reviewed
+    monkeypatch.setattr(main_module, 'review_profile_reply', cancel_during_review)
+    with pytest.raises(Cancelled):
+        avatar.respond('我喜欢网球，请随便聊聊。', cancel=token, on_delta=pieces.append)
+    assert pieces == []
+    assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0] == 0

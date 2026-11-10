@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_cancel_during_complete_review_never_emits_buffered_text _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff2b93ede70>
+grounded_avatar = (<avatar.main.Avatar object at 0x7ff2152b3be0>, <test_profile_grounding.CopyingLLM object at 0x7ff2152b3ca0>)
+
+    def test_cancel_during_complete_review_never_emits_buffered_text(monkeypatch, grounded_avatar):
+        import avatar.main as main_module
+        avatar, model = grounded_avatar
+        token, pieces = CancellationToken(), []
+        original = main_module.review_profile_reply
+        def cancel_during_review(*args):
+            reviewed = original(*args)
+            token.cancel()
+            return reviewed
+        monkeypatch.setattr(main_module, 'review_profile_reply', cancel_during_review)
+        with pytest.raises(Cancelled):
+            avatar.respond('我喜欢网球，请随便聊聊。', cancel=token, on_delta=pieces.append)
+>       assert pieces == []
+E       AssertionError: assert ['目前关于你的偏好记录是：喜欢网球。'] == []
+E         
+E         Left contains one more item: '目前关于你的偏好记录是：喜欢网球。'
+E         Use -v to get more diff
+
+tests/test_profile_grounding.py:125: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_profile_grounding.py::test_cancel_during_complete_review_never_emits_buffered_text
+1 failed in 0.72s
