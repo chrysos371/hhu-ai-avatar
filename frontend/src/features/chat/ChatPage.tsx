@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageSquare, Send, Volume2, Square } from "lucide-react";
 import { streamTurn, cancelTurn, type TurnInput } from "../../lib/turns";
+import { apiRequest } from "../../lib/api";
+import type { PersonaVersion } from "../../lib/types";
 import type { ChatResult } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
@@ -9,6 +11,8 @@ import { AvatarStage } from "./AvatarStage";
 import { VoiceInput } from "./VoiceInput";
 export function ChatPage() {
   const speech = useSpeechPlayer();
+  const persona = useQuery({ queryKey: ["persona"], queryFn: () => apiRequest<PersonaVersion>("/persona"), retry: false });
+  const name = persona.data?.data.name ?? "角色";
   const [text, setText] = useState("");
   const [useWeb, setUseWeb] = useState(false);
   const [voiceBusy, setVoiceBusy] = useState(false);
@@ -66,22 +70,22 @@ export function ChatPage() {
     <section>
       <PageHeading
         title="对话观测"
-        description="与小海聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。"
+        description={`与${name}聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。`}
       />
       <div className="speech-panel panel">
-        <AvatarStage mouth={speech.mouth} busy={send.isPending}
+        <AvatarStage name={name} mouth={speech.mouth} busy={send.isPending}
           speaking={speech.status === "playing"}
           valence={messages.find((_, i) => i === speech.active)?.result?.valence ?? messages.at(-1)?.result?.valence}
           arousal={messages.find((_, i) => i === speech.active)?.result?.arousal ?? messages.at(-1)?.result?.arousal} />
         <div className="speech-controls">
-          <h2>小海在这里</h2>
+          <h2>{name}在这里</h2>
           <p className="muted">朗读会把这段文字交给在线语音服务。默认不自动播放。</p>
           <label className="checkbox-row"><input type="checkbox" checked={autoSpeak}
             onChange={e => { setAutoSpeak(e.target.checked); if (!e.target.checked) speech.stop(); }} />自动分段朗读新回复</label>
           {send.isPending && <button type="button" className="button secondary" onClick={interrupt}><Square size={14} />停止生成</button>}
           {speech.status === "loading" && <p role="status">正在准备语音…</p>}
           {speech.segment.total > 1 && <p className="muted" role="status">语音片段 {speech.segment.index} / {speech.segment.total}</p>}
-          <audio ref={speech.audioRef} controls preload="none" aria-label="小海语音播放器"
+          <audio ref={speech.audioRef} controls preload="none" aria-label={`${name}语音播放器`}
             hidden={speech.active === null || speech.status === "loading" || speech.status === "error"}
             onPlay={speech.onPlay} onPause={speech.onPause} onEnded={speech.onEnded} onError={speech.onError} />
           {speech.active !== null && <button type="button" className="button secondary" onClick={speech.stop}>
@@ -103,7 +107,7 @@ export function ChatPage() {
           )}
           {messages.map((m, i) => (
             <article key={i} className={"chat-message " + m.role}>
-              <small>{m.role === "user" ? "你" : "小海"}</small>
+              <small>{m.role === "user" ? "你" : name}</small>
               <div>{m.text}</div>
               {m.pending && <small>正在生成；最终回复会完成检查后替换此草稿。</small>}
               {m.cancelled && <small>已停止，未完成的助手内容不存入记忆。</small>}
@@ -173,7 +177,7 @@ export function ChatPage() {
               id="chat-message"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="说说现在的想法，或交给小海一个具体任务…"
+              placeholder={`说说现在的想法，或交给${name}一个具体任务…`}
               maxLength={4000}
               disabled={send.isPending}
             />

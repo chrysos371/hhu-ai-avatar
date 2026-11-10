@@ -1,13 +1,13 @@
 import type { LipFrame } from "../../lib/types";
 
-export function AvatarStage({ mouth, valence = 0, arousal = 0, busy = false, speaking = false }: {
-  mouth: LipFrame | null; valence?: number; arousal?: number; busy?: boolean; speaking?: boolean;
+export function AvatarStage({ name = "角色", mouth, valence = 0, arousal = 0, busy = false, speaking = false }: {
+  name?: string; mouth: LipFrame | null; valence?: number; arousal?: number; busy?: boolean; speaking?: boolean;
 }) {
   const open = Math.min(1, Math.max(0, mouth?.mouth_open ?? 0));
   const round = mouth?.vowel === "o" || mouth?.vowel === "u";
   const label = busy ? "正在思考" : speaking ? "正在说话" : valence < -0.2 ? "安静陪伴" : valence > 0.2 ? "愉快陪伴" : "正在聆听";
   return <div className={"avatar-stage" + (speaking ? " speaking" : "") + (busy ? " thinking" : "")}
-    role="img" aria-label={"小海，" + label} data-mouth-open={open.toFixed(3)}>
+    role="img" aria-label={name + "，" + label} data-mouth-open={open.toFixed(3)}>
     <svg viewBox="0 0 300 260" aria-hidden="true">
       <ellipse className="avatar-aura" cx="150" cy="140" rx="116" ry="105" />
       <path fill="#253b52" d="M68 135C58 35 95 12 150 12s92 23 82 123l-18 61H86z" />

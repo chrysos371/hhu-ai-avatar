@@ -18,14 +18,14 @@ test("playback follows the audio clock, pause and stop close the mouth", async (
   expect(audioResponse.ok()).toBe(true);
   expect(audioResponse.url()).not.toContain(token);
   expect(audioResponse.request().headers()["x-avatar-token"]).toBe(token);
-  const player = page.getByLabel("小海语音播放器");
+  const player = page.getByLabel(/语音播放器$/);
   await expect(player).toBeVisible();
   await expect.poll(() => player.evaluate((element: HTMLAudioElement) => element.currentTime)).toBeGreaterThan(0.05);
   await expect.poll(async () => Number(await page.locator(".avatar-stage").getAttribute("data-mouth-open"))).toBeGreaterThan(0);
   await player.evaluate((audio: HTMLAudioElement) => audio.pause());
   await expect(page.locator(".avatar-stage")).toHaveAttribute("data-mouth-open", "0.000");
   await player.evaluate((audio: HTMLAudioElement) => { audio.currentTime = 0.1; return audio.play(); });
-  await expect(page.locator(".avatar-stage")).toHaveAttribute("aria-label", "小海，正在说话");
+  await expect(page.locator(".avatar-stage")).toHaveAttribute("aria-label", /，正在说话$/);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "../data/speech-demo/browser-desktop.png", fullPage: true });
   await page.getByRole("button", { name: "停止播放", exact: true }).click();
@@ -47,7 +47,7 @@ test("speech failure keeps the text and permits retry", async ({ page }) => {
   await expect(page.locator(".chat-message.assistant > div").first()).toHaveText(text!);
   await page.unroute("**/api/v1/speech");
   await page.getByRole("button", { name: "朗读回复" }).click();
-  await expect(page.getByLabel("小海语音播放器")).toBeVisible();
+  await expect(page.getByLabel(/语音播放器$/)).toBeVisible();
 });
 test("WAV and microphone transcription fill a draft without sending it", async ({ page, context }) => {
   const errors: string[] = [];
@@ -74,7 +74,7 @@ test("WAV and microphone transcription fill a draft without sending it", async (
 test("leaving chat releases audio playback", async ({ page }) => {
   await chat(page);
   await page.getByRole("button", { name: "朗读回复" }).click();
-  const player = page.getByLabel("小海语音播放器");
+  const player = page.getByLabel(/语音播放器$/);
   await expect.poll(() => player.evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThan(0.05);
   const audio = await player.elementHandle();
   await page.getByRole("link", { name: "总览", exact: true }).click();

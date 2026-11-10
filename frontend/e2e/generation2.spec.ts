@@ -26,7 +26,7 @@ test('automatic speech is segmented and stopping it does not start the next part
   await page.getByLabel('自动分段朗读新回复').check();
   await begin(page);
   await expect(page.getByText(/语音片段 1 \/ [2-9]/)).toBeVisible({ timeout: 15000 });
-  const audio = page.getByLabel('小海语音播放器');
+  const audio = page.getByLabel(/语音播放器$/);
   await expect.poll(() => audio.evaluate((element: HTMLAudioElement) => element.currentTime)).toBeGreaterThan(0.05);
   await page.getByRole('button', { name: '停止播放', exact: true }).click();
   await expect(audio).not.toHaveAttribute('src');
