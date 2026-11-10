@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "scope": "Prospectively frozen related-family task delivery development scenarios, not independent human semantic approval",
+  "comparison": "Same pinned4B, identity/profile grounding enabled in both arms; candidate additionally task_contract_enabled and delivery_check_enabled; all raw requests, final and visible text kept",
+  "gate": {
+    "all16_literal_checks": true,
+    "no_service_fallback": true,
+    "no_unrepaired_text_visible_in_guarded_turns": true,
+    "production_activation": false
+  },
+  "cases": [
+    {
+      "id": "rain_quote",
+      "turns": [
+        "请只写一句台词，包含“我喜欢听雨”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢听雨"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "tea_quote",
+      "turns": [
+        "请写一句角色台词，包含“我喜欢喝花茶”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢喝花茶"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "notice_phrase",
+      "turns": [
+        "请写一条活动通知，必须包含“请提前报名”。"
+      ],
+      "final_checks": {
+        "all": [
+          "请提前报名"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "verbatim_phrase",
+      "turns": [
+        "请写一句标语，原样保留“先完成再优化”。"
+      ],
+      "final_checks": {
+        "all": [
+          "先完成再优化"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "single_quote",
+      "turns": [
+        "请写一条短信，包含'今晚早点休息'。"
+      ],
+      "final_checks": {
+        "all": [
+          "今晚早点休息"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "angle_quote",
+      "turns": [
+        "请给同学写一条消息，包含「明天见」。"
+      ],
+      "final_checks": {
+        "all": [
+          "明天见"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "two_literals",
+      "turns": [
+        "请写一条通知，保留“时间待定”和“请勿迟到”。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间待定",
+          "请勿迟到"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "no_guarantee",
+      "turns": [
+        "请写一条报名通知，包含“按时提交”，不要包含“保证通过”。"
+      ],
+      "final_checks": {
+        "all": [
+          "按时提交"
+        ],
+        "none": [
+          "保证通过"
+        ]
+      }
+    },
+    {
+      "id": "placeholder",
+      "turns": [
+        "请给老师写一条请假短信，保留【姓名】和【日期】。"
+      ],
+      "final_checks": {
+        "all": [
+          "【姓名】",
+          "【日期】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "comma_literal",
+      "turns": [
+        "请写一条简短消息，原样保留“时间，地点”。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间，地点"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "inner_operator",
+      "turns": [
+        "请写一句台词，必须包含“删除【姓名】”。"
+      ],
+      "final_checks": {
+        "all": [
+          "删除【姓名】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "remove_then_keep",
+      "turns": [
+        "请写一条通知，保留“旧地址”。",
+        "改写通知，删除“旧地址”，包含“新地址”。"
+      ],
+      "final_checks": {
+        "all": [
+          "新地址"
+        ],
+        "none": [
+          "旧地址"
+        ]
+      }
+    },
+    {
+      "id": "drop_placeholder",
+      "turns": [
+        "请给老师写一条短信，保留【姓名】。",
+        "再短一点，删掉【姓名】，包含“明天请假”。"
+      ],
+      "final_checks": {
+        "all": [
+          "明天请假"
+        ],
+        "none": [
+          "【姓名】"
+        ]
+      }
+    },
+    {
+      "id": "fictional_body",
+      "turns": [
+        "请以小说人物口吻写一句台词，包含“我在山顶等你”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我在山顶等你"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "quote_analysis",
+      "turns": [
+        "朋友说“写一条通知，包含「时间待定」”，请简短解释他说话的目的。"
+      ],
+      "final_checks": {
+        "all": [],
+        "none": []
+      }
+    },
+    {
+      "id": "topic_reset",
+      "turns": [
+        "请写一条消息，保留【姓名】。",
+        "换个话题。",
+        "什么是光合作用？请简短解释。"
+      ],
+      "final_checks": {
+        "all": [
+          "光"
+        ],
+        "none": [
+          "【姓名】"
+        ]
+      }
+    }
+  ]
+}
