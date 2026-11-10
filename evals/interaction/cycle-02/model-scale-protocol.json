@@ -31,5 +31,6 @@
     "evals/interaction/cycle-02/subject-ownership-dev16.json"
   ],
   "analysis": "Same family and Q4_K_M configuration, different parameter counts and quantized artifacts; report latency, memory, infrastructure fallbacks, profile/lexical checks, all raw replies. Not a pure one-variable hardware comparison.",
-  "selection_gate": "Do not select configuration unless all frozen objective checks and profile checks pass with zero service fallbacks and no regression. Independent semantic/physical/multi-day acceptance remains separate."
+  "selection_gate": "Do not select configuration unless all frozen objective checks and profile checks pass with zero service fallbacks and no regression. Independent semantic/physical/multi-day acceptance remains separate.",
+  "warmup": "Two short calls, sync then stream, before recording scenario timings; earlier 4B ablation already used a warmed provider. Preserve this difference in reporting."
 }

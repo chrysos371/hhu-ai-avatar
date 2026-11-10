@@ -38,6 +38,12 @@ def main():
         'protocol':extra,'rows':[]}
     engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model=args.model_key,timeout=180,max_retries=0)
     try:
+        report['warmup_calls']=[]
+        for streaming in [False,True]:
+            started=time.perf_counter()
+            messages=[{'role':'user','content':'请回答：你好。'}]
+            reply=engine.stream_chat(messages,temperature=0,max_tokens=16) if streaming else engine.chat(messages,temperature=0,max_tokens=16)
+            report['warmup_calls'].append({'streaming':streaming,'seconds':time.perf_counter()-started,'reply':reply})
         for index,case in enumerate(original['cases']+extra['cases']):
             family='original' if index<len(original['cases']) else 'additional'
             modes=['baseline','candidate'] if index%2==0 else ['candidate','baseline']
