@@ -223,9 +223,12 @@ def test_automatic_export_rejects_data_tampering_and_keeps_split_disjoint(
     tmp_path, monkeypatch
 ):
     import json
-    from avatar.lab import data
+    from avatar.lab import data, common
     from avatar.lab.common import canonical, sha
 
+    monkeypatch.setattr(common, "WORKSPACE", tmp_path)
+    with pytest.raises(ValueError, match="workspace"):
+        common.new_output(tmp_path.parent / "outside-test-workspace")
     monkeypatch.setattr(data, "evaluation_texts", lambda: ([], {}))
     rows = [
         normalize_dialogue(
