@@ -22,3 +22,23 @@ def test_only_repaired_delivery_is_emitted_as_delta():
         assert pieces==[result['reply']]
         assert all('【姓名】' in piece for piece in pieces)
     finally:avatar.memory.close()
+
+
+def test_cancelled_repair_propagates_and_never_emits_or_commits_draft():
+    from avatar.cancellation import Cancelled
+    class Model(StreamingDraft):
+        def __init__(self):self.calls=0
+        def chat(self,*args,**kwargs):raise Cancelled('repair transport cancelled')
+        def stream_chat(self,messages,*,on_delta=None,**kwargs):
+            self.calls+=1
+            if self.calls>1:raise Cancelled('repair transport cancelled')
+            if on_delta:on_delta('草稿未带占位符。')
+            return '草稿未带占位符。'
+    avatar=Avatar(db_path=':memory:',llm=Model(),task_contract_enabled=True,delivery_check_enabled=True)
+    pieces=[]
+    try:
+        with pytest.raises(Cancelled):
+            avatar.respond('给老师写一条消息，保留【姓名】。',cancel=CancellationToken(),on_delta=pieces.append)
+        assert not pieces
+        assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]==0
+    finally:avatar.memory.close()
