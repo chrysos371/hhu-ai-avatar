@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "scope": "Native-provider delivery buffering tradeoff, six paired fresh conversations; no population latency claim",
+  "arms": {
+    "baseline": {
+      "subject_prompt_enabled": true,
+      "profile_grounding_enabled": false
+    },
+    "candidate": {
+      "subject_prompt_enabled": true,
+      "profile_grounding_enabled": true
+    }
+  },
+  "prompts": [
+    "什么是光合作用？请用三个短句说明。",
+    "什么是勾股定理？请用三个短句说明。",
+    "为什么天空看起来是蓝色的？请用三个短句说明。"
+  ],
+  "repetitions": 2,
+  "order": "Alternate baseline/candidate order by pair index",
+  "metrics": [
+    "first_visible_seconds",
+    "complete_seconds",
+    "delta_count",
+    "guard_action",
+    "generation_mode"
+  ],
+  "limits": "One sequence at a time; same pinned model/server; report all values and median; buffering adds visible latency even when no repair; no fixed wall-clock experiment cutoff"
+}
