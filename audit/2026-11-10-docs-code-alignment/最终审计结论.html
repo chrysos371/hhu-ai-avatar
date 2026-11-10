@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>文档与代码一致性复核</title>
+<style>
+:root{color-scheme:light;--ink:#182230;--muted:#566579;--line:#d8e0e8;--bg:#f4f7fa;--card:#fff;--accent:#185abd;--warn:#a33b18}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1040px;margin:36px auto;padding:0 22px 48px}h1{font-size:2rem;line-height:1.2;margin:8px 0}h2{font-size:1.35rem;margin-top:30px}.meta,.small{color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin:16px 0;box-shadow:0 2px 10px #1020300a}.status{display:inline-block;padding:2px 10px;border-radius:99px;background:#fff1e9;color:var(--warn);font-weight:650}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.issue{border-left:4px solid var(--accent)}a{color:var(--accent)}code{background:#eef2f6;padding:1px 5px;border-radius:4px}ul{padding-left:22px}.scope{border-left:4px solid #4a8067}
+</style>
+</head>
+<body><main>
+<p class="meta">静态审计 · 2026-11-10 · 作者 spinner-bot</p>
+<h1>项目文档与代码一致性复核</h1>
+<p><span class="status">确认：存在入口文档系统性陈旧</span></p>
+<div class="card"><h2>结论</h2>
+<p>此前关于文档与代码脱节的担忧成立，但“全仓库文档普遍失真”说得过宽。问题集中在根目录开发上下文 <code>AGENTS.md</code>、未标历史版本的技术选型计划，以及 README 对语音端到端集成的表述。近期 <code>docs/backend.md</code>、工作台和 MCP 操作说明整体与现有实现相符。</p>
+<p>这类差异会影响开发优先级、接口实现和功能验收。建议优先更新 <code>AGENTS.md</code>，再修订技术计划和 README，并让项目概览链接到近期现状报告。</p></div>
+<h2>确认的问题</h2>
+<div class="grid">
+<div class="card issue"><h3>DOC-001 · AGENTS 仍以早期状态指导开发</h3><p>把已实现的可选向量检索称为预留，称“目前仅口型有测试”，并把语音模块状态描述为全链路完成。该文件是强制阅读的开发入口。</p><a href="issues/DOC-001_AGENTS开发上下文与当前实现脱节.md">查看单项报告</a></div>
+<div class="card issue"><h3>DOC-002 · 技术计划接口规格过期</h3><p>仍称向量检索未完成；写 TTS 输出 WAV，而实现输出 MP3；麦克风输入、口型帧编排也被描述为现有系统接口。</p><a href="issues/DOC-002_技术计划中的向量及音频接口规格过期.md">查看单项报告</a></div>
+<div class="card issue"><h3>DOC-003 · README 夸大语音集成状态</h3><p>README 称 ASR→LLM→TTS→口型参数为一站式编排。当前 Avatar 主流程接收文本，只能可选合成音频路径，没有调用 ASR 或口型分析。</p><a href="issues/DOC-003_README宣称语音全链路已编排但代码未接通.md">查看单项报告</a></div>
+</div>
+<h2>范围判断</h2>
+<div class="card scope"><ul>
+<li><code>docs/项目进度.md</code> 中的早期测试数量和“向量接口预留”明确标注为历史内容，本次不作为当前文档缺陷。</li>
+<li>近期后端、记忆工作台、提醒和 MCP 使用说明与对应代码大体一致。</li>
+<li>静态核对未运行测试、真实模型、ASR/TTS 设备或联网流程；本报告确认的是陈述与源码路径的差异，不评估运行时质量。</li>
+</ul></div>
+<h2>建议处理顺序</h2>
+<div class="card"><ol><li>更新 <code>AGENTS.md</code>：列出当前实现、未接通集成、现有测试范围和准确的优先事项。</li><li>将技术选型计划标为历史方案或同步当前接口，尤其是 MP3、ASR 输入与语义检索状态。</li><li>修正 README：区分组件存在、文本主流程集成、语音全链路验收三个层次。</li></ol></div>
+<p class="small">证据和复核过程见 <a href="进展报告.md">进展报告</a>。产物位于独立目录 <code>audit/2026-11-10-docs-code-alignment/</code>。</p>
+</main></body></html>
