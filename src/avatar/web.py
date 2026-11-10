@@ -308,6 +308,7 @@ class Handler(BaseHTTPRequestHandler):
             if job.subscribers >= 2:
                 raise OperationError(429, 'too_many_subscribers', '本轮已有事件连接。')
             job.subscribers += 1
+        disconnected = False
         try:
             self.connection.settimeout(20)
             self.send_response(200)
@@ -336,10 +337,12 @@ class Handler(BaseHTTPRequestHandler):
                     self.wfile.write(b': heartbeat\n\n')
                     self.wfile.flush()
         except (ConnectionError, TimeoutError):
-            job.token.cancel()
+            disconnected = True
         finally:
             with job.changed:
                 job.subscribers -= 1
+                if disconnected and job.subscribers == 0 and job.status not in ('completed','cancelled','failed','redacted','expired'):
+                    job.token.cancel()
 
     def _knowledge_upload(self, parsed):
         from .brain.knowledge import KnowledgeService, MAX_BYTES
