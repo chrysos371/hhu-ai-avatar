@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "scope": "Development source-grounded lookup and copied-preference repair; not a general semantic verifier",
+  "comparison": "Same native provider and subject_prompt_enabled=True in both arms; candidate additionally profile_grounding_enabled=True; keep defaults false",
+  "known_failures": [
+    "14B update_a first-turn copied Coke preference",
+    "4B quoted_b copied tennis preference",
+    "4B negative_a hiking offline promise (NOT covered by copied-preference repair)"
+  ],
+  "gate": {
+    "all_positive_fixtures": true,
+    "negative_fixtures_untouched": true,
+    "no_service_fallback": true,
+    "all_turns_preserved": true,
+    "semantic_approval": false
+  },
+  "positive_fixtures": [
+    {
+      "input": "我叫什么名字？",
+      "profile": {
+        "名字": "陆遥"
+      },
+      "reply": "你叫苏言。",
+      "route": "name_lookup",
+      "expected": [
+        "陆遥"
+      ]
+    },
+    {
+      "input": "你知道我叫什么名字吗？",
+      "profile": {},
+      "reply": "你叫苏言。",
+      "route": "name_lookup",
+      "expected": [
+        "没有",
+        "名字"
+      ]
+    },
+    {
+      "input": "我喜欢喝什么？",
+      "profile": {
+        "偏好": "喜欢红茶；不喜欢咖啡"
+      },
+      "reply": "我喜欢红茶。",
+      "route": "preference_lookup",
+      "expected": [
+        "红茶",
+        "不喜欢咖啡"
+      ]
+    },
+    {
+      "input": "我的爱好是什么？",
+      "profile": {},
+      "reply": "你喜欢足球。",
+      "route": "preference_lookup",
+      "expected": [
+        "没有",
+        "偏好"
+      ]
+    },
+    {
+      "input": "我喜欢喝可乐。",
+      "profile": {
+        "偏好": "喜欢喝可乐"
+      },
+      "reply": "真巧，我也喜欢喝可乐呢！",
+      "route": "copied_preference",
+      "expected": [
+        "你",
+        "喜欢喝可乐"
+      ]
+    },
+    {
+      "input": "我不喜欢游泳，我喜欢爬山。",
+      "profile": {
+        "偏好": "喜欢爬山；不喜欢游泳"
+      },
+      "reply": "我喜欢爬山，也爱游泳。",
+      "route": "copied_preference",
+      "expected": [
+        "不喜欢游泳"
+      ]
+    },
+    {
+      "input": "室友说他喜欢足球，但我喜欢网球。",
+      "profile": {
+        "偏好": "喜欢网球"
+      },
+      "reply": "我偏好网球。",
+      "route": "copied_preference",
+      "expected": [
+        "你",
+        "喜欢网球"
+      ]
+    }
+  ],
+  "negative_fixtures": [
+    {
+      "input": "帮我写一句台词：我喜欢爬山。",
+      "profile": {
+        "偏好": "喜欢爬山"
+      },
+      "reply": "我喜欢爬山。"
+    },
+    {
+      "input": "把“我喜欢网球”翻译成英文。",
+      "profile": {
+        "偏好": "喜欢网球"
+      },
+      "reply": "我喜欢网球。"
+    },
+    {
+      "input": "假设我喜欢红茶，你会怎么回答？",
+      "profile": {
+        "偏好": "喜欢红茶"
+      },
+      "reply": "我喜欢红茶。"
+    },
+    {
+      "input": "我朋友喜欢网球。",
+      "profile": {},
+      "reply": "你的朋友喜欢网球。"
+    },
+    {
+      "input": "他说“我喜欢爬山”，这是什么意思？",
+      "profile": {
+        "偏好": "喜欢爬山"
+      },
+      "reply": "他说“我喜欢爬山”。"
+    },
+    {
+      "input": "我叫什么名字？请写成一首诗。",
+      "profile": {
+        "名字": "陆遥"
+      },
+      "reply": "陆遥如诗。"
+    },
+    {
+      "input": "你喜欢什么？",
+      "profile": {
+        "偏好": "喜欢网球"
+      },
+      "reply": "我喜欢帮助你。"
+    },
+    {
+      "input": "我室友叫什么名字？",
+      "profile": {
+        "名字": "陆遥"
+      },
+      "reply": "不知道。"
+    },
+    {
+      "input": "我喜欢网球。",
+      "profile": {
+        "偏好": "喜欢网球"
+      },
+      "reply": "我喜欢网球比赛的比喻。"
+    },
+    {
+      "input": "我不喜欢网球。",
+      "profile": {
+        "偏好": "不喜欢网球"
+      },
+      "reply": "我喜欢网球。"
+    }
+  ],
+  "limitations": [
+    "Known offline promises without copied preference remain outside scope",
+    "No arbitrary paraphrase or physical embodiment semantic approval",
+    "Creative and hypothetical inputs bypass repair",
+    "Guarded streaming buffers until complete review; quantify latency tradeoff",
+    "Derived responses must retain normal memory provenance and deletion semantics"
+  ]
+}
