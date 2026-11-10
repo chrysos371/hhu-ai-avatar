@@ -184,7 +184,6 @@ class MemoryStore:
 
     def _migrate(self) -> None:
         """Add columns without replacing legacy rows; normalize each old row once."""
-        columns = {row['name'] for row in self._conn.execute('PRAGMA table_info(memory_fragments)')}
         additions = {
             'status': "TEXT NOT NULL DEFAULT 'active'",
             'valid_from': 'REAL', 'valid_to': 'REAL', 'predecessor_id': 'INTEGER',
@@ -193,6 +192,7 @@ class MemoryStore:
             'bad_hits': 'INTEGER NOT NULL DEFAULT 0',
         }
         with self.transaction():
+            columns = {row['name'] for row in self._conn.execute('PRAGMA table_info(memory_fragments)')}
             for name, declaration in additions.items():
                 if name not in columns:
                     self._conn.execute(f'ALTER TABLE memory_fragments ADD COLUMN {name} {declaration}')
@@ -247,29 +247,41 @@ class MemoryStore:
 
     @contextmanager
     def transaction(self):
-        """原子写入一批记忆，失败时回滚；支持嵌套调用。"""
-        savepoint = f"memory_batch_{self._transaction_depth}"
-        # Initial migration runs before context tracking is initialized.
+        """Acquire write intent before reads; nested batches retain savepoint rollback."""
+        owned = self._transaction_depth == 0 and not self._conn.in_transaction
+        if owned:
+            self._conn.execute('BEGIN IMMEDIATE')
+        context = None
         seen_revision = getattr(self, '_seen_context_revision', None)
-        if seen_revision is not None:
-            self._refresh_context()
-            seen_revision = self._seen_context_revision
-        context = list(self._short_term)
-        self._conn.execute(f"SAVEPOINT {savepoint}")
-        self._transaction_depth += 1
+        savepoint = f"memory_batch_{self._transaction_depth}"
         try:
-            yield
+            if seen_revision is not None:
+                self._refresh_context()
+                seen_revision = self._seen_context_revision
+            context = list(self._short_term)
+            self._conn.execute(f"SAVEPOINT {savepoint}")
+            self._transaction_depth += 1
+            try:
+                yield
+            except BaseException:
+                self._conn.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
+                self._short_term.clear()
+                self._short_term.extend(context)
+                self._seen_context_revision = seen_revision if seen_revision is not None else self.context_revision
+                raise
+            finally:
+                self._transaction_depth -= 1
+                self._conn.execute(f"RELEASE SAVEPOINT {savepoint}")
+            if owned:
+                self._conn.commit()
         except BaseException:
-            self._conn.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
-            self._short_term.clear()
-            self._short_term.extend(context)
-            # A snapshot must retain its own revision. Another connection may
-            # have deleted memories before this transaction acquired its lock.
-            self._seen_context_revision = seen_revision if seen_revision is not None else self.context_revision
+            if owned:
+                self._conn.rollback()
+                if context is not None:
+                    self._short_term.clear()
+                    self._short_term.extend(context)
+                    self._seen_context_revision = seen_revision if seen_revision is not None else self.context_revision
             raise
-        finally:
-            self._transaction_depth -= 1
-            self._conn.execute(f"RELEASE SAVEPOINT {savepoint}")
 
     def _commit(self) -> None:
         if not self._transaction_depth:
