@@ -12,6 +12,7 @@ from .web_client import assistant_session, web_session
 from .web_fetch import public_url
 from .web_search import validate_query
 from .tool_registry import ToolRegistry, ToolSpec
+from avatar.brain.reminders import parse_reminder
 
 
 _DECLARED_TOOLS = [
@@ -113,6 +114,8 @@ def _registry() -> ToolRegistry:
 
 REGISTRY = _registry()
 TOOLS = REGISTRY.schemas
+_WRITE_TOOLS = {'create_reminder', 'cancel_reminder'}
+MODEL_TOOLS = [tool for tool in TOOLS if tool['function']['name'] not in _WRITE_TOOLS]
 
 
 def _intent(text, explicit=False):
@@ -134,6 +137,19 @@ def _intent(text, explicit=False):
         return 'read_webpage', {'url': match[0].rstrip('。，！!?？）)')}
     if any(word in text for word in ('搜索', '搜一下', '上网', '联网', '查找', '帮我查', '查一下')):
         return 'web_search', {'query': text}
+    return None
+
+
+def _explicit_reminder_intent(text):
+    """Return reminder mutations only when the current user message is a command."""
+    try:
+        if parse_reminder(text) is not None:
+            return 'create_reminder', {'text': text.strip()}
+    except ValueError:
+        pass
+    cancel = re.fullmatch(r'\s*(?:请)?(?:取消|撤销|删除)提醒\s*(?:编号\s*)?(\d+)\s*[。！!]?\s*', text)
+    if cancel:
+        return 'cancel_reminder', {'reminder_id': int(cancel[1])}
     return None
 
 
@@ -173,6 +189,8 @@ class WebAgent:
             event = dict(tool=name, arguments=args, routing=routing, status='rejected')
             trace.append(event)
             try:
+                if name in _WRITE_TOOLS and routing != 'explicit':
+                    raise ValueError('提醒写操作只能由当前用户的明确指令触发。')
                 args = REGISTRY.validate(name, args)
                 key = (name, json.dumps(args, sort_keys=True, ensure_ascii=False))
                 if key in seen:
@@ -220,7 +238,7 @@ class WebAgent:
                 required = {tool['function']['name'] for tool in TOOLS if tool['function']['name'] in ('web_search', 'read_webpage')}
                 if not required <= available:
                     raise ValueError('MCP服务未提供所需的联网工具。')
-                forced = _intent(user_text, explicit=True)
+                forced = _intent(user_text, explicit=True) or _explicit_reminder_intent(user_text)
                 if forced or llm is None or not getattr(llm, 'available', False):
                     forced = forced or _intent(user_text)
                     if not forced:
@@ -235,7 +253,7 @@ class WebAgent:
                             reply = await synthesize()
                             break
                         try:
-                            turn = await asyncio.to_thread(llm.chat_tools, messages, tools=TOOLS)
+                            turn = await asyncio.to_thread(llm.chat_tools, messages, tools=MODEL_TOOLS)
                             if not isinstance(turn, dict):
                                 raise ValueError('模型没有返回工具调用结构。')
                         except Exception:
