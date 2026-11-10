@@ -18,6 +18,7 @@ from .brain.emotion import Decision, EmotionEngine
 from .brain.boundaries import BoundaryPolicy, BOUNDARY_PROMPT
 from .brain.embeddings import OllamaEmbeddingProvider
 from .brain.facts import rule_facts, supported_fact
+from .brain.profile_grounding import lookup_profile, review_profile_reply
 from .brain.llm import LLMEngine
 from .cancellation import CancellationToken, Cancelled
 from .brain.memory import MemoryStore
@@ -60,6 +61,7 @@ class Avatar:
         grounding_prompt_enabled: bool = False,
         fast_analysis: bool = False,
         subject_prompt_enabled: bool = False,
+        profile_grounding_enabled: bool = False,
     ):
         if memory is None:
             if embedder is None and config.embedding.model:
@@ -92,6 +94,7 @@ class Avatar:
         self._cancel_token = None
         self.fast_analysis = fast_analysis
         self.subject_prompt_enabled = subject_prompt_enabled
+        self.profile_grounding_enabled = profile_grounding_enabled
         self.analysis_mode = 'not_run'
 
     def _checkpoint(self):
@@ -502,6 +505,9 @@ class Avatar:
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
         # 4. LLM 回复（无 key 与调用故障分别标记）
         generation_mode = 'rules'
+        grounding_action = None
+        profile = self.memory.get_user_profile()
+        profile_reply, lookup_action = lookup_profile(user_text, profile) if self.profile_grounding_enabled else (None, None)
         if boundary.reply is not None:
             reply = boundary.reply
         elif reminder is not None:
@@ -517,6 +523,9 @@ class Avatar:
                 self.web_agent = WebAgent(memory_db_path=self.memory.db_path)
             web_result = self.web_agent.run(user_text, self.llm if self._llm_available else None)
             reply = web_result['reply']
+        elif profile_reply is not None:
+            reply, grounding_action = profile_reply, lookup_action
+            generation_mode = 'profile_lookup'
         elif self._llm_available:
             try:
                 if cancel is not None and hasattr(self.llm, 'stream_chat'):
@@ -526,7 +535,7 @@ class Avatar:
                         pending += piece
                         while (match := re.search(r'[。！？!?\n]', pending)):
                             sentence, pending = pending[:match.end()], pending[match.end():]
-                            if on_delta:
+                            if on_delta and not self.profile_grounding_enabled:
                                 safe, _ = self.boundaries.review_output(sentence)
                                 on_delta(safe)
                     reply = self.llm.stream_chat(self._messages(decision, user_text),
@@ -573,6 +582,12 @@ class Avatar:
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
             reply, output_adjustment = output_checker(reply)
+        if self.profile_grounding_enabled and generation_mode == 'llm':
+            reply, grounding_action = review_profile_reply(user_text, reply, profile)
+        # Guarded mode buffers model text until the complete response is reviewed.
+        # Lookup/rule responses retain their normal final-result delivery path.
+        if self.profile_grounding_enabled and generation_mode == 'llm' and on_delta:
+            on_delta(reply)
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         self._checkpoint()
@@ -623,6 +638,10 @@ class Avatar:
             "analysis_mode": self.analysis_mode,
             "generation_mode": generation_mode,
             "identity_grounding": self.subject_prompt_enabled,
+            "profile_grounding": {"enabled": self.profile_grounding_enabled,
+                                  "action": grounding_action, "scope": "profile_lookup_and_copied_preference",
+                                  "semantic_verifier": False,
+                                  "stream_buffered": self.profile_grounding_enabled and generation_mode == "llm"},
             "user_emotion": self.emotion.user_state.label(),
             "user_valence": round(self.emotion.user_state.valence, 2),
             "user_arousal": round(self.emotion.user_state.arousal, 2),

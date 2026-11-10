@@ -22,6 +22,8 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--policy',type=Path)
     parser.add_argument('--supplemental',type=Path)
+    parser.add_argument('--profile-grounding',action='store_true',
+        help='Compare fixed subject prompt in both arms; candidate also enables narrow profile grounding')
     args=parser.parse_args()
     if args.output.exists():raise ValueError('Use a new output file')
     original_path=Path('evals/interaction/cycle-02/real-model-cases.json')
@@ -39,7 +41,9 @@ def main():
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'created_utc':datetime.now(timezone.utc).isoformat(),'provider':provider,
         'spec_sha256':{str(p):sha(p) for p in [original_path,extra_path]},
-        'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py')]},
+        'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/main.py'),Path('src/avatar/brain/profile_grounding.py')]},
+        'comparison': 'subject_prompt_both_arms_profile_grounding_candidate' if args.profile_grounding else 'subject_prompt_candidate_only',
+        'grounding_protocol':json.loads(Path('evals/interaction/cycle-02/profile-grounding-protocol.json').read_text()) if args.profile_grounding else None,
         'protocol':extra,'measurement_policy':policy,'supplemental_protocol':supplemental,
         'additional_spec_sha256':{str(p):sha(p) for p in [args.policy,args.supplemental] if p},'rows':[]}
     engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model=args.model_key,timeout=180,max_retries=0)
@@ -57,12 +61,13 @@ def main():
                 row={'id':case['id'],'family':family,'mode':mode,'turns':[],'error':None}
                 with tempfile.TemporaryDirectory(prefix='avatar-subject-eval-') as folder:
                     avatar=Avatar(db_path=str(Path(folder)/'eval.db'),llm=engine,
-                        fast_analysis=True,subject_prompt_enabled=mode=='candidate',session_id='paired-subject-eval')
+                        fast_analysis=True,subject_prompt_enabled=args.profile_grounding or mode=='candidate',
+                        profile_grounding_enabled=args.profile_grounding and mode=='candidate',session_id='paired-subject-eval')
                     try:
                         for text in case['turns']:
                             started=time.perf_counter()
                             result=avatar.respond(text,cancel=CancellationToken())
-                            row['turns'].append({'input':text,'result':result,'seconds':time.perf_counter()-started})
+                            row['turns'].append({'input':text,'result':result,'seconds':time.perf_counter()-started,'profile_at_turn':avatar.memory.get_user_profile()})
                         row['v1_checks']=checks(row['turns'][-1]['result']['reply'],case['final_checks'])
                         row['checks']=checks(row['turns'][-1]['result']['reply'],versioned_rules(case['final_checks'],family,case['id'],policy))
                         row['all_turn_check']=not any(phrase in turn['result']['reply']
