@@ -3,10 +3,11 @@ from __future__ import annotations
 
 from typing import Optional
 
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 
 from ..config import config
 from .analysis_protocol import ANALYSIS_RESPONSE_FORMAT
+from ..cancellation import CancellationToken
 
 
 class LLMEngine:
@@ -71,3 +72,42 @@ class LLMEngine:
     def chat_web(self, messages: list[dict]) -> str:
         """Bounded synthesis after a tool chain, without exposing more tools."""
         return self.chat_tools(messages, tools=[]).get('content') or ''
+
+    def stream_chat(self, messages, *, temperature=0.8, max_tokens=512,
+                    cancel=None, on_delta=None, response_format=None):
+        """Stream over an interruptible async transport, including response headers."""
+        if not self.available:
+            raise RuntimeError("LLM 未配置")
+        token = cancel or CancellationToken()
+        async def run():
+            options = dict(model=self.model, messages=messages, temperature=temperature,
+                           max_tokens=max_tokens, stream=True)
+            if response_format is not None:
+                options["response_format"] = response_format
+            parts, characters = [], 0
+            async with AsyncOpenAI(base_url=self.base_url, api_key=self.api_key,
+                                   timeout=self.timeout, max_retries=0) as client:
+                stream = await client.chat.completions.create(**options)
+                async with stream:
+                    async for chunk in stream:
+                        token.checkpoint()
+                        text = chunk.choices[0].delta.content if chunk.choices else None
+                        if not isinstance(text, str) or not text:
+                            continue
+                        characters += len(text)
+                        if characters > 16000:
+                            raise ValueError("stream response exceeds character limit")
+                        parts.append(text)
+                        if on_delta:
+                            on_delta(text)
+            token.checkpoint()
+            return ''.join(parts)
+        return token.run_async(run)
+
+    def chat_analysis_stream(self, messages, *, temperature=0, cancel=None):
+        return self.stream_chat(messages, temperature=temperature, cancel=cancel,
+                                response_format=ANALYSIS_RESPONSE_FORMAT)
+
+    def close(self):
+        if self._client is not None:
+            self._client.close()

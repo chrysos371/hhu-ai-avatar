@@ -19,6 +19,7 @@ from .brain.boundaries import BoundaryPolicy, BOUNDARY_PROMPT
 from .brain.embeddings import OllamaEmbeddingProvider
 from .brain.facts import rule_facts, supported_fact
 from .brain.llm import LLMEngine
+from .cancellation import CancellationToken, Cancelled
 from .brain.memory import MemoryStore
 from .brain.reminders import ReminderStore, CHINA
 from .brain.summaries import SummaryStore
@@ -86,6 +87,11 @@ class Avatar:
         self.task_contract_enabled = task_contract_enabled
         self.delivery_check_enabled = delivery_check_enabled
         self.grounding_prompt_enabled = grounding_prompt_enabled
+        self._cancel_token = None
+
+    def _checkpoint(self):
+        if self._cancel_token:
+            self._cancel_token.checkpoint()
 
     # ------------------------------------------------------------------ 提示词
     def _admin_store(self):
@@ -254,12 +260,17 @@ class Avatar:
         if recent and recent[-1] == {'role': 'user', 'content': user_text}:
             recent = recent[:-1]
         analyze = getattr(self.llm, 'chat_analysis', self.llm.chat)
+        options = {"temperature": 0}
+        if self._cancel_token and hasattr(self.llm, 'chat_analysis_stream'):
+            analyze = self.llm.chat_analysis_stream
+            options['cancel'] = self._cancel_token
         raw = analyze(
             [{"role": "system", "content": self._ANALYZE_PROMPT +
               '\n历史仅用于理解情绪和指代；所有事实的 evidence 必须来自最后一条用户消息。'}]
             + recent[-6:] + [{"role": "user", "content": user_text}],
-            temperature=0,
+            **options,
         )
+        self._checkpoint()
         data = json.loads(self._extract_json(raw))
         if not isinstance(data, dict):
             raise ValueError("Analysis must be an object")
@@ -352,6 +363,8 @@ class Avatar:
                         self._store_fact(f)
                 self.emotion.observe(dv, da, text=user_text)
                 return
+            except Cancelled:
+                raise
             except Exception:
                 logger.warning("认知分析失败，回退规则分析")
         self._extract_facts(user_text)
@@ -388,8 +401,12 @@ class Avatar:
         use_tts: bool = False,
         tts_path: str = "./data/reply.mp3",
         use_web: bool = False,
+        cancel: Optional[CancellationToken] = None,
+        on_delta=None,
     ) -> dict:
         """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
+        self._cancel_token = cancel
+        self._checkpoint()
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
         self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
@@ -406,6 +423,7 @@ class Avatar:
             self.emotion.update(user_text)
         else:
             self._analyze(user_text)
+        self._checkpoint()
         reminder = None
         reminder_error = None
         if boundary.reply is None and re.match(r'^(?:请)?提醒我', user_text.strip()):
@@ -463,16 +481,32 @@ class Avatar:
             reply = web_result['reply']
         elif self._llm_available:
             try:
-                reply = self.llm.chat(
-                    self._messages(decision, user_text), temperature=decision.temperature
-                )
+                if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                    pending = ''
+                    def checked_delta(piece):
+                        nonlocal pending
+                        pending += piece
+                        while (match := re.search(r'[。！？!?\n]', pending)):
+                            sentence, pending = pending[:match.end()], pending[match.end():]
+                            if on_delta:
+                                safe, _ = self.boundaries.review_output(sentence)
+                                on_delta(safe)
+                    reply = self.llm.stream_chat(self._messages(decision, user_text),
+                        temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
+                else:
+                    reply = self.llm.chat(
+                        self._messages(decision, user_text), temperature=decision.temperature
+                    )
                 if not isinstance(reply, str) or not reply.strip():
                     raise ValueError("Empty LLM reply")
+            except Cancelled:
+                raise
             except Exception:
                 logger.warning("模型回复失败，使用规则回复")
                 reply = self._fallback_reply(user_text, decision)
         else:
             reply = self._fallback_reply(user_text, decision)
+        self._checkpoint()
         # One bounded retry only for a normal local writing response. Never
         # replay tools, reminders, or replace a deterministic safety decision.
         delivery_issues = []
@@ -500,6 +534,7 @@ class Avatar:
             reply, output_adjustment = output_checker(reply)
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
+        self._checkpoint()
         # 5. 短期记忆记下回复
         self.memory.add_short_term("assistant", reply)
         self.memory.add_message('assistant', reply, self.session_id)
