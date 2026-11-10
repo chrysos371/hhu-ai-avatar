@@ -574,15 +574,23 @@ class Avatar:
             if delivery_issues and self._llm_available:
                 repair_attempted = True
                 try:
-                    corrected = self.llm.chat(self._messages(decision, user_text) + [
+                    repair_messages = self._messages(decision, user_text) + [
                         {'role': 'assistant', 'content': reply},
                         {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：'
                          + json.dumps(delivery_issues, ensure_ascii=False)
                          + '。仍须遵守原任务和安全边界，不得补造未知信息。'}
-                    ], temperature=decision.temperature)
+                    ]
+                    if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
+                            cancel=cancel, on_delta=None)
+                    else:
+                        corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
+                    self._checkpoint()
                     if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
                         reply = corrected
                         repair_succeeded = True
+                except Cancelled:
+                    raise
                 except Exception:
                     logger.warning('任务修正失败，保留原回复与检查记录')
         output_adjustment = None

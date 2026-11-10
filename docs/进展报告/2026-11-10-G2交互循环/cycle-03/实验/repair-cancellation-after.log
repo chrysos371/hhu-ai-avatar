@@ -1,0 +1,63 @@
+..F............................                                          [100%]
+=================================== FAILURES ===================================
+___ test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas ____
+
+    def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas():
+        import threading
+        from avatar.brain.llm import LLMEngine
+        from avatar.cancellation import Cancelled
+        from avatar.lab.transport_fixture import controlled_provider
+        with controlled_provider(delay=.01) as (server,url):
+            class Engine(LLMEngine):
+                def __init__(self,**kwargs):super().__init__(**kwargs);self.repair_started=threading.Event()
+                def stream_chat(self,messages,**kwargs):
+                    if messages[-1]['content'].startswith('请修正上一稿'):
+                        server.started.clear()
+                        self.repair_started.set()
+                        messages=messages[:-1]+[{'role':'user','content':'delay-headers'}]
+                    return super().stream_chat(messages,**kwargs)
+            engine=Engine(base_url=url,api_key='local-fixture',model='fixture')
+            avatar=Avatar(db_path=':memory:',llm=engine,task_contract_enabled=True,delivery_check_enabled=True)
+            token,pieces,outcome=CancellationToken(),[],[]
+            def work():
+                try:avatar.respond('给老师写一条消息，保留【姓名】。',cancel=token,on_delta=pieces.append)
+                except Cancelled:outcome.append('cancelled')
+            thread=threading.Thread(target=work)
+            thread.start()
+            try:
+>               assert engine.repair_started.wait(3)
+E               assert False
+E                +  where False = wait(3)
+E                +    where wait = <threading.Event object at 0x7fd590e0e230>.wait
+E                +      where <threading.Event object at 0x7fd590e0e230> = <test_delivery_stream.test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas.<locals>.Engine object at 0x7fd590e0ee60>.repair_started
+
+tests/test_delivery_stream.py:72: AssertionError
+=============================== warnings summary ===============================
+tests/test_delivery_stream.py::test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas
+  /data/Users/zrh/repo/envs/hhu-ai-avatar/lib/python3.10/site-packages/_pytest/threadexception.py:54: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-2 (work)
+  
+  Traceback (most recent call last):
+    File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+      self.run()
+    File "/usr/lib/python3.10/threading.py", line 953, in run
+      self._target(*self._args, **self._kwargs)
+    File "/data/Users/zrh/repo/hhu-ai-avatar/tests/test_delivery_stream.py", line 67, in work
+      try:avatar.respond('给老师写一条消息，保留【姓名】。',cancel=token,on_delta=pieces.append)
+    File "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/main.py", line 442, in respond
+      self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
+    File "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/brain/memory.py", line 309, in get_short_term
+      self._refresh_context()
+    File "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/brain/memory.py", line 317, in _refresh_context
+      revision = self.context_revision
+    File "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/brain/memory.py", line 314, in context_revision
+      return self._conn.execute('SELECT revision FROM memory_context_revision WHERE id=1').fetchone()[0]
+  sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 140558017233344 and this is thread id 140555153569344.
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_delivery_stream.py::test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas
+1 failed, 30 passed, 1 warning in 7.16s

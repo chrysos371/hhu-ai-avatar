@@ -5,10 +5,12 @@ from avatar.main import Avatar
 
 class StreamingDraft:
     available=True
+    def __init__(self):self.stream_calls=0
     def chat_analysis(self,messages,**kwargs):return '{}'
     def chat(self,messages,**kwargs):return '老师您好，我是【姓名】，申请明天请假。'
     def stream_chat(self,messages,*,on_delta=None,**kwargs):
-        text='老师您好，我要请假。'
+        self.stream_calls+=1
+        text='老师您好，我要请假。' if self.stream_calls==1 else '老师您好，我是【姓名】，申请明天请假。'
         if on_delta:on_delta(text)
         return text
 
@@ -42,3 +44,41 @@ def test_cancelled_repair_propagates_and_never_emits_or_commits_draft():
         assert not pieces
         assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]==0
     finally:avatar.memory.close()
+
+
+def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_path):
+    import threading
+    from avatar.brain.llm import LLMEngine
+    from avatar.cancellation import Cancelled
+    from avatar.lab.transport_fixture import controlled_provider
+    with controlled_provider(delay=.01) as (server,url):
+        class Engine(LLMEngine):
+            def __init__(self,**kwargs):super().__init__(**kwargs);self.repair_started=threading.Event()
+            def stream_chat(self,messages,**kwargs):
+                if messages[-1]['content'].startswith('请修正上一稿'):
+                    server.started.clear()
+                    self.repair_started.set()
+                    messages=messages[:-1]+[{'role':'user','content':'delay-headers'}]
+                return super().stream_chat(messages,**kwargs)
+        engine=Engine(base_url=url,api_key='local-fixture',model='fixture')
+        db_path=str(tmp_path/'repair.db')
+        token,pieces,outcome=CancellationToken(),[],[]
+        def work():
+            avatar=Avatar(db_path=db_path,llm=engine,task_contract_enabled=True,delivery_check_enabled=True)
+            try:avatar.respond('给老师写一条消息，保留【姓名】。',cancel=token,on_delta=pieces.append)
+            except Cancelled:outcome.append('cancelled')
+            finally:avatar.memory.close()
+        thread=threading.Thread(target=work)
+        thread.start()
+        try:
+            assert engine.repair_started.wait(3)
+            assert server.started.wait(3)
+            token.cancel();thread.join(2)
+            assert outcome==['cancelled'] and not thread.is_alive()
+            assert server.disconnected.wait(2)
+            assert not pieces
+            import sqlite3
+            with sqlite3.connect(db_path) as db:
+                assert db.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]==0
+        finally:
+            token.cancel();thread.join(3);engine.close()
