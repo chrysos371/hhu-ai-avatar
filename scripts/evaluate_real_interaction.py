@@ -95,8 +95,16 @@ def main():
             'median_complete_seconds':statistics.median(t['complete_seconds'] for t in turns)}
     by_id={(r['id'],r['mode']):r for r in report['rows']}
     regressions=[c['id'] for c in spec['cases'] if by_id[c['id'],'baseline']['passed'] and not by_id[c['id'],'g2']['passed']]
+    fallbacks=[{'id':row['id'],'mode':row['mode'],'turn':index,
+        'generation_mode':turn['result'].get('generation_mode')}
+        for row in report['rows'] for index,turn in enumerate(row['turns'])
+        if turn['result'].get('generation_mode') in (None,'rules_service_error','rules_unconfigured')]
     report['summary']=summary;report['new_g2_failures']=regressions
-    report['passes_objective_nonregression_gate']=not regressions
+    report['generation_mode_counts']={mode:sum(turn['result'].get('generation_mode')==mode
+        for row in report['rows'] for turn in row['turns']) for mode in ['llm','rules','rules_service_error','rules_unconfigured']}
+    report['infrastructure_fallbacks']=fallbacks
+    report['valid_for_quality_comparison']=not fallbacks and len(report['rows'])==2*len(spec['cases']) and all(row['error'] is None for row in report['rows'])
+    report['passes_objective_nonregression_gate']=report['valid_for_quality_comparison'] and not regressions
     report['semantic_quality_approved']=False
     save(args.output,report)
     print(json.dumps({'summary':summary,'new_g2_failures':regressions},ensure_ascii=False,indent=2),flush=True)

@@ -92,7 +92,8 @@ def main():
             with guard:
                 counter[0]+=1
                 identifier=f'eval-{counter[0]}'
-                prompt=template.render(messages=data['messages'],tools=None,add_generation_prompt=True,
+                messages=[{'tool_calls': [], 'reasoning_content': None} | message for message in data['messages']]
+                prompt=template.render(messages=messages,tools=None,add_generation_prompt=True,
                     enable_thinking=False,bos_token='',eos_token='')
                 assert prompt.endswith('<think>\n\n</think>\n\n')
                 grammar=None
