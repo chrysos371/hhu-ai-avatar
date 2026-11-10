@@ -167,10 +167,10 @@ src/avatar/
 
 - [x] M1 项目骨架 + 记忆模块
 - [x] M2 情绪模型 + 决策树 + LLM
-- [x] M3 TTS + ASR
-- [x] M4 口型驱动
-- [ ] M5 渲染层接入（Live2D / Godot）
-- [ ] 向量检索（embedding → pgvector/Chroma）
+- [x] M3 TTS / ASR 独立组件（音频文件 API 已串接，真实服务验收待完成）
+- [x] M4 口型分析组件（可对可解码音频离线输出参数帧）
+- [ ] M5 实时播放/渲染层接入（Live2D / Godot）及目标设备端到端验收
+- [x] 可选语义检索（Ollama embedding + SQLite/NumPy；默认不开启）
 - [ ] 中文口型声调扩展
 
 ## 致谢

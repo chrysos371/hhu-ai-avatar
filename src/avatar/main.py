@@ -331,7 +331,7 @@ class Avatar:
     def _fallback_reply(self, user_text: str, decision: Decision) -> str:
         if decision.strategy == 'close':
             return '好，晚安，下次再聊。'
-        """无 LLM 时的规则回复（保证 demo 能跑通全链路）。"""
+        """无 LLM 时的规则回复（支持文本对话主流程）。"""
         label = self.emotion.state.label()
         intent = self.emotion.classify_intent(user_text)
         if user_text.startswith(('忘', '删除')):
@@ -360,7 +360,7 @@ class Avatar:
         tts_path: str = "./data/reply.mp3",
         use_web: bool = False,
     ) -> dict:
-        """处理一条用户输入，返回回复 + 情绪 + 决策 + 音频路径。"""
+        """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
         self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
