@@ -1,0 +1,45 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第五轮系统审计与推进报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p,.row{overflow-wrap:anywhere}.row{padding:12px;background:white;border-bottom:1px solid #dee7ee}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}}</style><main><h1>第五轮系统审计与推进报告</h1>
+<p>日期：2026-11-11（上海时间）。作者：spinner-bot。承接第四轮515acf2。</p>
+<h2>已推进的行为</h2>
+<p>口型默认取消每0.3秒强制的装饰闭口，持续发声不再按时钟无依据地合嘴；真实静音检测、静音后的平滑约束保留。显式close_every正数仍可使用装饰效果，None为默认；不把装饰闭口叫检测到自然停顿。</p>
+<p>组件增加窗口、跳步、平滑与阈值验证；输入须为归一化单声道有限PCM和可表示的采样元数据，预取消在分帧前传播。整数最小值溢出、极大有限窗口和超长闭口周期经反向检查再修复。没有改动LPC/元音标签或组件默认采样率。</p>
+<h2>解析基准与独立性</h2>
+<p>数学定义三个共轭极点对合成信号，五个标签仅为现有代码的a/e/i/o/u锚区，绝非真人中文元音金标。16000/24000/48000Hz、两档RMS、白噪声和三档基频谐波形成每路径120信号，组件原采样率与网页16k分析分开。原波形哈希、逐帧输出、源码、固定轮数与失败全部归档。</p>
+<p>开发种子11；首次验证种子29。种子只影响白噪声，因此每路径验证120中90谐波是已知确定性回归，30白噪声才是新随机实现。补充说明在首次验证前提交，未改变原网格/标签/门槛。最终数值边界修复后再跑种子29明确标regression_replay，新增未见样本数为0。没有真人独立验收。</p>
+<h2>配对结果</h2>
+<div class="row">数据 · 路径 · 旧突降→新突降 · 标签帧准确率（两组相同） · F2缺失（两组相同）</div>
+<div class="row">开发 · 组件原采样率 · 160→0 · 82.98% · 48/720采样点</div>
+<div class="row">开发 · 网页16k · 172→0 · 91.90% · 12/720采样点</div>
+<div class="row">首次验证 · 组件原采样率 · 160→0 · 82.92% · 50/720采样点</div>
+<div class="row">首次验证 · 网页16k · 172→0 · 92.14% · 12/720采样点</div>
+<p>每一条配对信号波形相同；所有帧的时间、元音与能量完全相同，静音/低噪声均闭口，没有任何标签场景退步。变化仅为默认装饰动作与输入边界，不宣称识别精度提高。按协议突降为中段开口低于同段中位数0.25倍、只统计中位数≥0.3的帧；移除突降会使少数样例越过资格门槛，分母变化已保留，主要比较绝对次数和逐帧不变量。</p>
+<p>首次验证组件F1/F2独立绝对误差中位数21.23/24.27Hz，网页17.66/15.66Hz，但漏峰和大错仍存在；合并中位数不代表尾部或所有帧通过。分析时间为当时CPU负载下观察值，含配对实验并非性能专项，不据微小差异宣布加速。</p>
+<h2>单项审计</h2>
+<div class="row">编号 · 结论</div>
+<div class="row"><a href="issues/G2C5-001.md">G2C5-001</a> · 新夹具谐波截止漏项；先复现后修复，旧v1原样留存，不参加正式门槛</div>
+<div class="row"><a href="issues/G2C5-002.md">G2C5-002</a> · 无声源依据的周期闭口；已关闭默认，开发/验证/最终回归通过</div>
+<div class="row"><a href="issues/G2C5-003.md">G2C5-003</a> · LPC/元音识别质量和采样率敏感仍开放；统一16k总体升分却有10/120对退步，不更改组件默认</div>
+<div class="row"><a href="issues/G2C5-004.md">G2C5-004</a> · 输入、参数、预取消及数值溢出边界；新增5项再失败再修复，66项音频关联通过</div>
+<h2>回归与范围</h2>
+<p>943 passed, 1 skipped in 36.98s。语音、端点和流式浏览器9项通过（27.0秒），对应本轮前一候选版本；最终数值修复后66项音频关联及全量重新通过，最终解析全网格回归逐帧不变量维持。前端产品源码未改，第四轮构建/lint及第三轮33前端单测为历史记录，不伪称本轮重跑。</p>
+<p>四条单项记录中003仍开放；ü与声调未实现，真实中文音素标签、音画对齐/物理麦克风/真人视觉自然度和正式形象未验收。第四轮真人事实/动作、第三轮模板充分性、第二轮一般归属/身体边界限制继续保留。没有训练/模型切换，也没有占用GPU，本轮用CPU固定样本，不设墙钟截止。</p>
+<h2>下一循环优先级</h2>
+<p>P1：冻结新的声学参数组合及有来源真人音素标注，针对漏峰/采样率敏感做候选对照；不得只优化总体均分或把重复确定性数据称作未见验证。P1：来源删除与真实操作权限继续作为全量回归门槛。P2：接通更丰富的形象嘴型及播放时钟量化，物理设备与真人体验有条件时另验收。</p>
+<h2>原始资料</h2>
+<p><a href="../实验/analytic-dev-v1-baseline.json">analytic-dev-v1-baseline.json</a></p>
+<p><a href="../实验/fixture-before.log">fixture-before.log</a></p>
+<p><a href="../实验/fixture-after.log">fixture-after.log</a></p>
+<p><a href="../实验/lipsync-before.log">lipsync-before.log</a></p>
+<p><a href="../实验/numeric-edges-before.log">numeric-edges-before.log</a></p>
+<p><a href="../实验/numeric-edges-after.log">numeric-edges-after.log</a></p>
+<p><a href="../实验/analytic-dev-v2-baseline.json">analytic-dev-v2-baseline.json</a></p>
+<p><a href="../实验/analytic-dev-v2-candidate.json">analytic-dev-v2-candidate.json</a></p>
+<p><a href="../实验/analytic-dev-paired.json">analytic-dev-paired.json</a></p>
+<p><a href="../实验/analytic-validation-baseline.json">analytic-validation-baseline.json</a></p>
+<p><a href="../实验/analytic-validation-candidate.json">analytic-validation-candidate.json</a></p>
+<p><a href="../实验/analytic-validation-paired.json">analytic-validation-paired.json</a></p>
+<p><a href="../实验/analytic-final-candidate.json">analytic-final-candidate.json</a></p>
+<p><a href="../实验/analytic-final-paired.json">analytic-final-paired.json</a></p>
+<p><a href="../实验/python-full-final.log">python-full-final.log</a></p>
+<p><a href="../实验/browser-audio.log">browser-audio.log</a></p>
+<p><a href="../进展.md">全过程记录</a>；<a href="../计划.md">计划</a>。</p></main></html>
