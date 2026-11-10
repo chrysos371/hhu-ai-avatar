@@ -589,6 +589,7 @@ class Avatar:
         # Guarded mode buffers model text until the complete response is reviewed.
         # Lookup/rule responses retain their normal final-result delivery path.
         if self.profile_grounding_enabled and generation_mode == 'llm' and on_delta:
+            self._checkpoint()
             on_delta(reply)
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
