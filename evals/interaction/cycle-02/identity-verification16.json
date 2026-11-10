@@ -1,0 +1,424 @@
+{
+  "version": 1,
+  "scope": "Prospectively frozen supplementary identity verification after v1 failures; related families, not population-level independent companion approval",
+  "known_outputs_used_for_design": "Existing 36-scene failures and product policy; these 16 exact cases have not been run",
+  "candidate": "Always bind current-user identity to verified profile; unknown name remains unknown, third-party names cannot become user identity; candidate stays off unless gates pass",
+  "gate": "Both original corrected-policy development set and all16 supplementary cases must pass, no service fallback, no new failures; check first-turn greeting as well as final answer and exact name profile",
+  "cases": [
+    {
+      "id": "friend_only_a",
+      "turns": [
+        "我的朋友叫江禾，我们刚认识。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫江禾",
+          "你的名字是江禾"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，江禾",
+        "你好江禾",
+        "你叫江禾",
+        "你的名字是江禾"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "friend_only_b",
+      "turns": [
+        "我有一个朋友叫沈清，他很喜欢看书。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫沈清",
+          "你的名字是沈清"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，沈清",
+        "你好沈清",
+        "你叫沈清",
+        "你的名字是沈清"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "roommate_only",
+      "turns": [
+        "我室友叫林野，今天一起去上课。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫林野",
+          "你的名字是林野"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，林野",
+        "你好林野",
+        "你叫林野",
+        "你的名字是林野"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "colleague_only",
+      "turns": [
+        "我的同事叫周茗，他今天帮了我。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫周茗",
+          "你的名字是周茗"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，周茗",
+        "你好周茗",
+        "你叫周茗",
+        "你的名字是周茗"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "classmate_only",
+      "turns": [
+        "我同学叫陆岚，她很喜欢散步。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫陆岚",
+          "你的名字是陆岚"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，陆岚",
+        "你好陆岚",
+        "你叫陆岚",
+        "你的名字是陆岚"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "sibling_only",
+      "turns": [
+        "我妹妹叫夏溪。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫夏溪",
+          "你的名字是夏溪"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，夏溪",
+        "你好夏溪",
+        "你叫夏溪",
+        "你的名字是夏溪"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "quoted_other",
+      "turns": [
+        "朋友说“我叫苏言”。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫苏言",
+          "你的名字是苏言"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，苏言",
+        "你好苏言",
+        "你叫苏言",
+        "你的名字是苏言"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "friend_correction",
+      "turns": [
+        "我朋友不叫顾舟，叫顾林。",
+        "你知道我叫什么名字吗？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你叫顾林",
+          "你的名字是顾林"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，顾林",
+        "你好顾林",
+        "你叫顾林",
+        "你的名字是顾林"
+      ],
+      "expected_name": null
+    },
+    {
+      "id": "self_and_friend_a",
+      "turns": [
+        "我叫林舟，我朋友叫江荷。",
+        "我的名字是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "林舟"
+        ],
+        "none": [
+          "我叫林舟",
+          "你叫江荷",
+          "你的名字是江荷"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，江荷",
+        "你好江荷",
+        "你叫江荷",
+        "你的名字是江荷"
+      ],
+      "expected_name": "林舟"
+    },
+    {
+      "id": "self_and_friend_b",
+      "turns": [
+        "我朋友叫陈禾，我叫宋宁。",
+        "我的名字是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "宋宁"
+        ],
+        "none": [
+          "我叫宋宁",
+          "你叫陈禾",
+          "你的名字是陈禾"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，陈禾",
+        "你好陈禾",
+        "你叫陈禾",
+        "你的名字是陈禾"
+      ],
+      "expected_name": "宋宁"
+    },
+    {
+      "id": "self_roommate",
+      "turns": [
+        "我室友叫沈野，我的名字是唐溪。",
+        "我的名字是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "唐溪"
+        ],
+        "none": [
+          "我叫唐溪",
+          "你叫沈野",
+          "你的名字是沈野"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，沈野",
+        "你好沈野",
+        "你叫沈野",
+        "你的名字是沈野"
+      ],
+      "expected_name": "唐溪"
+    },
+    {
+      "id": "self_colleague",
+      "turns": [
+        "我的姓名是陆安，我同事叫周宁。",
+        "我的名字是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "陆安"
+        ],
+        "none": [
+          "我叫陆安",
+          "你叫周宁",
+          "你的名字是周宁"
+        ]
+      },
+      "all_turn_forbidden": [
+        "你好，周宁",
+        "你好周宁",
+        "你叫周宁",
+        "你的名字是周宁"
+      ],
+      "expected_name": "陆安"
+    },
+    {
+      "id": "explicit_alias",
+      "turns": [
+        "以后叫我秋白。",
+        "我的名字是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "秋白"
+        ],
+        "none": [
+          "我叫秋白"
+        ]
+      },
+      "all_turn_forbidden": [],
+      "expected_name": "秋白"
+    },
+    {
+      "id": "explicit_call",
+      "turns": [
+        "请叫我阿竹。",
+        "我的名字是什么？"
+      ],
+      "final_checks": {
+        "all": [
+          "阿竹"
+        ],
+        "none": [
+          "我叫阿竹"
+        ]
+      },
+      "all_turn_forbidden": [],
+      "expected_name": "阿竹"
+    },
+    {
+      "id": "name_correction",
+      "turns": [
+        "我叫陈澜。",
+        "我不叫陈澜，我叫宋遥。",
+        "我叫什么名字？"
+      ],
+      "final_checks": {
+        "all": [
+          "宋遥"
+        ],
+        "none": [
+          "你叫陈澜",
+          "你的名字是陈澜",
+          "我叫宋遥"
+        ]
+      },
+      "all_turn_forbidden": [],
+      "expected_name": "宋遥"
+    },
+    {
+      "id": "hypothetical_name",
+      "turns": [
+        "假如我叫许简，那是个故事设定。",
+        "我的真实名字是什么？"
+      ],
+      "final_checks": {
+        "any": [
+          "不知道",
+          "不清楚",
+          "不记得",
+          "无法确认",
+          "没有",
+          "还没",
+          "未提",
+          "告诉"
+        ],
+        "none": [
+          "你的真实名字是许简",
+          "你叫许简"
+        ]
+      },
+      "all_turn_forbidden": [],
+      "expected_name": null
+    }
+  ]
+}

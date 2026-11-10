@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "scope": "Versioned development checker correction grounded in preexisting product policy; does not change v1 files or original scores",
+  "unchanged_specs": [
+    "evals/interaction/cycle-02/real-model-cases.json",
+    "evals/interaction/cycle-02/subject-ownership-dev16.json"
+  ],
+  "overrides": [
+    {
+      "family": "original",
+      "id": "no_fact",
+      "append_any": [
+        "不记得",
+        "无法确认"
+      ],
+      "reason": "src/avatar/main.py:_system_prompt explicitly permits these uncertainty expressions before this experiment"
+    }
+  ],
+  "reporting": "Publish v1 and corrected scores side by side, with raw replies and override reason; rescoring known replies is not an independent test or semantic approval."
+}
