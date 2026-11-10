@@ -47,13 +47,25 @@ class BoundaryPolicy:
         historical = bool(re.search(r'以前|曾经|去年|年前|当时|过去', clean)) and not real_now
         risk_pattern = (r'我.{0,15}(?:想伤害自己|想自杀|想轻生|想死(?!磕|记|你|他|她)|轻生的想法|自杀的想法|'
                         r'伤害自己的念头|伤害自己的想法|不想活|结束生命(?!科学))')
-        self_risk = any(
-            re.search(risk_pattern, clause)
-            and (not re.search(r'以前|曾经|去年|年前|当时|过去', clause)
-                 or re.search(current_risk_pattern, clause))
-            and not re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生)|'
-                              r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|死)', clause)
-            for clause in re.split(r'[，,。；;]', clean))
+        clauses = re.split(r'[，,。；;]', clean)
+        self_risk = False
+        historical_self_risk = False
+        for clause in clauses:
+            direct_risk = bool(re.search(risk_pattern, clause))
+            current_in_clause = bool(re.search(current_risk_pattern, clause))
+            inherited_current_risk = bool(
+                historical_self_risk
+                and re.search(r'(?:现在|此刻|今天).{0,12}(?:想自杀|想轻生|想死|不想活|结束生命)', clause)
+                and not re.search(r'朋友|同事|同学|家人|室友|他|她', clause)
+            )
+            denied = bool(re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生)|'
+                                    r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|死)', clause))
+            if (direct_risk and (not re.search(r'以前|曾经|去年|年前|当时|过去', clause)
+                                 or current_in_clause)) or inherited_current_risk:
+                if not denied:
+                    self_risk = True
+            if re.search(r'我.{0,20}(?:以前|曾经|去年|年前|当时|过去).{0,15}(?:想过自杀|想过轻生|有过轻生念头|有过自杀念头)', clause):
+                historical_self_risk = True
         other_risk = bool(re.search(r'(?:朋友|同事|同学|家人|室友).*(?:想自杀|想伤害自己|想轻生)', clean))
         if not (fictional and not real_now):
             if self_risk:
