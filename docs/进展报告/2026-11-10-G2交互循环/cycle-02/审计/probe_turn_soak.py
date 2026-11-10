@@ -75,8 +75,9 @@ def main():
                     print(completed,report['checkpoints'][-1],flush=True)
             # Dedicated final TTL check without another submission.
             body={'request_id':secrets.token_urlsafe(24),'text':'请简短解释云为什么会移动。'}
-            server.turns.ttl=.05;request('/turns',body)
+            request('/turns',body)
             while server.turns.get(body['request_id']).status not in ['completed','failed','cancelled']:time.sleep(.01)
+            server.turns.ttl=.05
             time.sleep(.06)
             expired=False
             try:server.turns.get(body['request_id'])
