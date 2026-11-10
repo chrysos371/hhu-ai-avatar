@@ -1,0 +1,28 @@
+{
+  "baseline": "data/reliability/candidate-safety-dev50-v3/results.json",
+  "arms": {
+    "grounding": [
+      "--enable-grounding"
+    ],
+    "tasks": [
+      "--enable-task-contracts"
+    ],
+    "tasks_check": [
+      "--enable-task-contracts",
+      "--enable-delivery-check"
+    ],
+    "all": [
+      "--enable-task-contracts",
+      "--enable-delivery-check",
+      "--enable-grounding"
+    ]
+  },
+  "fixed": "same source/base/schema/persona/suite, fresh state per case; no training",
+  "review": "complete dialogues, factual support, role, delivery, safety and ordinary-chat regression; no human approval implied",
+  "decision": "Keep defaults off unless target gains with no important new errors. A/B improvement is not independent acceptance.",
+  "protected_sha256": {
+    "evals/companion/reliability-dev-30.json": "34312bf20d6a6a76705e9902c8a0caa31520089408fa7f5e1eacd79e6376568e",
+    "evals/companion/lora-dev-20.json": "9c58e4aee76f8dfe7c7b9d138a07510f891aef35063ebd48571a3a0b99bf9d98",
+    "data/reliability/candidate-safety-dev50-v3/results.json": "3a770075de5196e9d1abbb7fe91d19c446dde23a5ff16ac0c8ddbfde303f66a8"
+  }
+}

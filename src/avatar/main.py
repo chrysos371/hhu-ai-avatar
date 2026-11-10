@@ -23,6 +23,7 @@ from .brain.reminders import ReminderStore, CHINA
 from .brain.summaries import SummaryStore
 from .brain.admin_store import AdminStore
 from .brain.emotion_overrides import EmotionOverrideService
+from .brain.tasks import TaskTracker
 from datetime import datetime
 from .config import config
 from .ears.asr import ASREngine, TextInputEngine
@@ -51,6 +52,9 @@ class Avatar:
         embedder=None,
         summary_enabled: bool = True,
         web_agent=None,
+        task_contract_enabled: bool = False,
+        delivery_check_enabled: bool = False,
+        grounding_prompt_enabled: bool = False,
     ):
         if memory is None:
             if embedder is None and config.embedding.model:
@@ -76,6 +80,10 @@ class Avatar:
         self._llm_available = self.llm.available
         self.web_agent = web_agent
         self.boundaries = BoundaryPolicy()
+        self.tasks = TaskTracker()
+        self.task_contract_enabled = task_contract_enabled
+        self.delivery_check_enabled = delivery_check_enabled
+        self.grounding_prompt_enabled = grounding_prompt_enabled
 
     # ------------------------------------------------------------------ 提示词
     def _admin_store(self):
@@ -100,6 +108,11 @@ class Avatar:
                                   'due_reminders': self._due_reminders}, ensure_ascii=False)
         summary = self.conversation_summary()
         summary_data = json.dumps(summary['items'], ensure_ascii=False)
+        grounding = (
+            '人物和事实归属必须跟随用户最新纠正；转述他人的话不代表用户本人。'
+            '收到回复不代表对方同意，提议不代表已确认，尚未批准不代表已通过。'
+            '计算时间或费用时核对每项和总和；不要为了满足要求擅自缩短时长或遗漏费用。'
+        ) if self.grounding_prompt_enabled else ''
         return (
             f"你是{managed.get('name',config.avatar_name)}，{managed.get('core_identity',config.avatar_persona)}。\n"
             f"{decision.persona_hint}。\n"
@@ -118,7 +131,9 @@ class Avatar:
             "若只要一个最小步骤，就给一个与任务直接相关、可立即执行的动作和完成标志；"
             "不要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。"
             "用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。"
+            f"{grounding}"
             f"{task_format}"
+            f"{self.tasks.prompt()}"
         )
 
     def _messages(self, decision: Decision, user_text: str = "") -> list[dict]:
@@ -345,6 +360,8 @@ class Avatar:
         self.memory.add_short_term("user", user_text)
         self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
         boundary = self.boundaries.assess(user_text)
+        if self.task_contract_enabled:
+            self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
         if boundary.reply is not None:
             self.emotion.update(user_text)
@@ -409,6 +426,27 @@ class Avatar:
                 reply = self._fallback_reply(user_text, decision)
         else:
             reply = self._fallback_reply(user_text, decision)
+        # One bounded retry only for a normal local writing response. Never
+        # replay tools, reminders, or replace a deterministic safety decision.
+        delivery_issues = []
+        repair_attempted = False
+        repair_succeeded = False
+        if self.delivery_check_enabled and boundary.reply is None and reminder is None and not reminder_error and not use_web:
+            delivery_issues = self.tasks.inspect(reply)
+            if delivery_issues and self._llm_available:
+                repair_attempted = True
+                try:
+                    corrected = self.llm.chat(self._messages(decision, user_text) + [
+                        {'role': 'assistant', 'content': reply},
+                        {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：'
+                         + json.dumps(delivery_issues, ensure_ascii=False)
+                         + '。仍须遵守原任务和安全边界，不得补造未知信息。'}
+                    ], temperature=decision.temperature)
+                    if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
+                        reply = corrected
+                        repair_succeeded = True
+                except Exception:
+                    logger.warning('任务修正失败，保留原回复与检查记录')
         output_adjustment = None
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
@@ -427,6 +465,10 @@ class Avatar:
         return {
             "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
             "knowledge_retrieval_degraded":self._knowledge_degraded,
+            "task": self.tasks.current.data() if self.tasks.current else None,
+            "delivery_check": {"initial_issues": delivery_issues,
+                               "remaining_issues": self.tasks.inspect(reply) if delivery_issues else [],
+                               "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded},
             "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
                          "output_adjustment": output_adjustment},
             "reply": reply,

@@ -1,0 +1,7 @@
+# Review evidence is hash-bound; preserve its original bytes across checkouts.
+evals/companion/*-review/** -text
+training/companion/** -text
+# CSV uses standard CRLF; archived Markdown hard breaks and patches are intentional.
+*.csv whitespace=cr-at-eol
+evals/companion/*-review/**/*.md whitespace=-blank-at-eol
+evals/companion/*-review/**/*.patch whitespace=-blank-at-eol

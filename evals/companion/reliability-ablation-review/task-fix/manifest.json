@@ -1,0 +1,71 @@
+{
+  "config": {
+    "suites": [
+      "evals/companion/reliability-dev-30.json",
+      "evals/companion/task-revision-dev-10.json",
+      "evals/companion/lora-dev-20.json"
+    ],
+    "arms": [
+      {
+        "name": "default",
+        "inputs": [
+          "data/reliability/candidate-safety-dev50-v3/results.json",
+          "data/reliability/task-default-new10-v1/results.json"
+        ]
+      },
+      {
+        "name": "old-task-check",
+        "inputs": [
+          "data/reliability/ablation-tasks-check-v1/results.json",
+          "data/reliability/task-old-check-new10-v1/results.json"
+        ]
+      },
+      {
+        "name": "fixed-task-only",
+        "inputs": [
+          "data/reliability/task-fixed-tasks-v3/results.json"
+        ]
+      },
+      {
+        "name": "fixed-task-check",
+        "inputs": [
+          "data/reliability/task-fixed-check-v3/results.json"
+        ]
+      }
+    ]
+  },
+  "source_sha256": {
+    "data/reliability/task-fix-v3/review-config.json": "86c373c1a14fdf592e5dd4756c2a21d3581e1fa1baeb1c4381f6cac2e2337fbf",
+    "/data/Users/zyyh/hhu-ai-avatar/scripts/build_reliability_ablation_review.py": "133dbacd7179a4caf2e442e7448b498cb691281508fd459280f90a4b0eb1c602",
+    "/data/Users/zyyh/hhu-ai-avatar/evals/companion/reliability-dev-30.json": "34312bf20d6a6a76705e9902c8a0caa31520089408fa7f5e1eacd79e6376568e",
+    "/data/Users/zyyh/hhu-ai-avatar/evals/companion/task-revision-dev-10.json": "56918fb9419aabee4b42beeda02f1fb465540d085a8d38e2fb6464e54cf8d227",
+    "/data/Users/zyyh/hhu-ai-avatar/evals/companion/lora-dev-20.json": "9c58e4aee76f8dfe7c7b9d138a07510f891aef35063ebd48571a3a0b99bf9d98",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/candidate-safety-dev50-v3/results.json": "3a770075de5196e9d1abbb7fe91d19c446dde23a5ff16ac0c8ddbfde303f66a8",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/candidate-safety-dev50-v3/manifest.json": "e47246cf4ab08fd34bbfc38eff42e1d52ed4fc2c05f436289b7eef991bcc0128",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/candidate-safety-dev50-v3/summary.json": "8921e5d20c22b9805df5def0da313d571b81095de3dac75f6f4e6a25d0da38ca",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-default-new10-v1/results.json": "7aa5d6ef82991555729c248252638e4850a34646fd092c356cc601e8539b0c02",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-default-new10-v1/manifest.json": "5aee7a86b357da2adb7c7dd3a333f5bdd411b92a94662f1f84b98a03def249d4",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-default-new10-v1/summary.json": "e4c5070e224dc163dd59270ed978b2943e6712b4072fd07cc285e4aff5178c9f",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-check-v1/results.json": "c8690e567147099ddd245767ac69a178136a485138bd7480a83ae6a0ae6c4cce",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-check-v1/manifest.json": "e91a05ed207cba8a26b9d77893922582bc167d198a285db2b8bb843b11c6c434",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/ablation-tasks-check-v1/summary.json": "ae8213feac46a5affdb7ea1e6156fc4834221d033d6c56e3356707119bbc45e4",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-old-check-new10-v1/results.json": "aaca8d0a905f8adcda27e169c5139efcfaa97612d04c85611720d07d2cf8f1fb",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-old-check-new10-v1/manifest.json": "ef26e9ef36445bc8d86ae2e84aa614ef103f69f5381e89d95a2d6bec9f9f4b2f",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-old-check-new10-v1/summary.json": "d52bbe5ece229132e8e12abab67e2f9d2d127c4c34507813d3df50511699bbbc",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-fixed-tasks-v3/results.json": "7b2a2e7a4dcc1dc121ccc3b9a496334ea58d770d2fa64eb7d0a265c0c578cb01",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-fixed-tasks-v3/manifest.json": "cb85dc64c74ecd7959effcc9db3f4b59b3c0f8b0099ae7857a361417e623d4eb",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-fixed-tasks-v3/summary.json": "2b29f6279ed9dfaeafec976d401d063f9b65071c7dd4dc7dff0bab1908371aeb",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-fixed-check-v3/results.json": "765405d57d0d60193360244d190a6ae7b0aa40d1fb4743f4f759426843ffe5b4",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-fixed-check-v3/manifest.json": "10e42286cf76d49008cf1f90331254478f0388b6e33dab5d04f2df228a8031cb",
+    "/data/Users/zyyh/hhu-ai-avatar/data/reliability/task-fixed-check-v3/summary.json": "8c54708b2108bc531df7674f7fa31e1fa02383e056d3f8ed0039c047229d3c71"
+  },
+  "cases": 60,
+  "arms": [
+    "default",
+    "old-task-check",
+    "fixed-task-only",
+    "fixed-task-check"
+  ],
+  "human_review": "pending; all ratings blank",
+  "limitation": "Developer suites; text changes are not quality scores; AI review is not human approval"
+}

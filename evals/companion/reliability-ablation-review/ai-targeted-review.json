@@ -1,0 +1,57 @@
+{
+  "reviewer": "AI; targeted review; knows sources and prior outputs; not human or independent blind review",
+  "no_full_semantic_score": true,
+  "default": "unchanged safety backend; experimental flags off",
+  "findings": [
+    {
+      "cases": [
+        "lora-dev-03",
+        "lora-dev-05"
+      ],
+      "arm": "grounding",
+      "finding": "Speaker attribution improves in case03; response-versus-agreement inference still fails in case05"
+    },
+    {
+      "cases": [
+        "rel-21",
+        "rel-27"
+      ],
+      "finding": "All-on invents a lock defect; task-only can invent afternoon emergency work. No experimental arm proven safe to enable"
+    },
+    {
+      "cases": [
+        "lora-dev-07",
+        "task-rev-03"
+      ],
+      "finding": "Role extraction does not force correct first-person facts; user/relative/neighbor facts still mixed. Placeholder repair can still fail"
+    },
+    {
+      "cases": [
+        "rel-28"
+      ],
+      "finding": "Repair adds required place literal, but result is an incomplete notice skeleton; no claim of full successful delivery"
+    },
+    {
+      "cases": [
+        "task-rev-07"
+      ],
+      "finding": "Repair passes literal checks but invents a participation event; semantic failure remains"
+    },
+    {
+      "cases": [
+        "rel-20",
+        "lora-dev-17"
+      ],
+      "finding": "Arithmetic and quoted exclusive-dependency negotiation remain unresolved"
+    },
+    {
+      "cases": [
+        "task-rev-02"
+      ],
+      "finding": "Cancellation writing task now retained; request-versus-notification intent is ambiguous. Do not infer actual tool execution from drafted wording"
+    }
+  ],
+  "repair_scope": "4 bounded attempts, 2 check passes, 2 unresolved; check passes are not semantic approval",
+  "human_review": "pending; both packets blank",
+  "v2_intermediate": "full diagnostic runs retained under data/reliability/task-fixed-*-v2; only last reply of lora-dev-07 differs from v3 in each arm; not independent samples"
+}
