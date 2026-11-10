@@ -1,0 +1,20 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_only_repaired_delivery_is_emitted_as_delta ________________
+
+    def test_only_repaired_delivery_is_emitted_as_delta():
+        avatar=Avatar(db_path=':memory:',llm=StreamingDraft(),task_contract_enabled=True,delivery_check_enabled=True)
+        pieces=[]
+        try:
+            result=avatar.respond('给老师写一条请假消息，保留【姓名】。',cancel=CancellationToken(),on_delta=pieces.append)
+            assert result['delivery_check']['repair_succeeded']
+>           assert pieces==[result['reply']]
+E           AssertionError: assert ['老师您好，我要请假。'] == ['老师您好，我是【姓名】，申请明天请假。']
+E             
+E             At index 0 diff: '老师您好，我要请假。' != '老师您好，我是【姓名】，申请明天请假。'
+E             Use -v to get more diff
+
+tests/test_delivery_stream.py:22: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_delivery_stream.py::test_only_repaired_delivery_is_emitted_as_delta
+1 failed in 0.75s
