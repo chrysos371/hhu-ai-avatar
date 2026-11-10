@@ -1,0 +1,184 @@
+..........FFFFFFF..FFFFF                                                 [100%]
+=================================== FAILURES ===================================
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n0] ____
+
+case = {'id': 'n0', 'turns': ['给老师写一条消息，保留【姓名】。', '再问个问题，什么是重力？'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：再问个问题，什么是重力？', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：再问个问题，什么是重力？', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651af6da0>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n1] ____
+
+case = {'id': 'n1', 'turns': ['给老师写一条消息，保留【姓名】。', '再聊聊今天的心情。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：再聊聊今天的心情。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：再聊聊今天的心情。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b99ae0>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n2] ____
+
+case = {'id': 'n2', 'turns': ['给老师写一条消息，保留【姓名】。', '不用谢。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：不用谢。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：不用谢。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651af7ee0>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n3] ____
+
+case = {'id': 'n3', 'turns': ['给老师写一条消息，保留【姓名】。', '只要你陪我聊天就好。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：只要你陪我聊天就好。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：只要你陪我聊天就好。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b9ab90>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n4] ____
+
+case = {'id': 'n4', 'turns': ['给老师写一条消息，保留【姓名】。', '还是说说二进制吧。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：还是说说二进制吧。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：还是说说二进制吧。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b9a560>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n5] ____
+
+case = {'id': 'n5', 'turns': ['给老师写一条消息，保留【姓名】。', '仍然不知道这个词是什么意思。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：仍然不知道这个词是什么意思。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：仍然不知道这个词是什么意思。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b98400>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n6] ____
+
+case = {'id': 'n6', 'turns': ['给老师写一条消息，保留【姓名】。', '把这个问题解释清楚。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：把这个问题解释清楚。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：把这个问题解释清楚。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb6f5dce1a0>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+____ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n9] ____
+
+case = {'id': 'n9', 'turns': ['给老师写一条消息，保留【姓名】。', '我想知道写短信的技巧。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='我想知道写短信的技巧。', perspective='', recipient='', required_literals=[], forbidden_literals=[]))
+E        +    where TaskContract(source='我想知道写短信的技巧。', perspective='', recipient='', required_literals=[], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b9b040>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+___ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n10] ____
+
+case = {'id': 'n10', 'turns': ['给老师写一条消息，保留【姓名】。', '请问写邮件有哪些礼貌用语？'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='请问写邮件有哪些礼貌用语？', perspective='', recipient='', required_literals=[], forbidden_literals=[]))
+E        +    where TaskContract(source='请问写邮件有哪些礼貌用语？', perspective='', recipient='', required_literals=[], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b986d0>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+___ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n11] ____
+
+case = {'id': 'n11', 'turns': ['给老师写一条消息，保留【姓名】。', '修改数学题是什么意思？'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：修改数学题是什么意思？', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：修改数学题是什么意思？', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b9a050>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+___ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n12] ____
+
+case = {'id': 'n12', 'turns': ['给老师写一条消息，保留【姓名】。', '再告诉我你叫什么。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：再告诉我你叫什么。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：再告诉我你叫什么。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b9ab60>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+___ test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n13] ____
+
+case = {'id': 'n13', 'turns': ['给老师写一条消息，保留【姓名】。', '不要写了，我只想聊聊。'], 'expected_active': False}
+
+    @pytest.mark.parametrize('case',SPEC['cases'],ids=lambda case:case['id'])
+    def test_edit_commands_do_not_turn_new_questions_into_old_deliverables(case):
+        tracker=TaskTracker()
+        for text in case['turns']:tracker.update(text)
+>       assert bool(tracker.current)==case['expected_active']
+E       AssertionError: assert True == False
+E        +  where True = bool(TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：不要写了，我只想聊聊。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]))
+E        +    where TaskContract(source='给老师写一条消息，保留【姓名】。\n最新修改：不要写了，我只想聊聊。', perspective='', recipient='老师', required_literals=['【姓名】'], forbidden_literals=[]) = <avatar.brain.tasks.TaskTracker object at 0x7fb651b9b4f0>.current
+
+tests/test_task_followup_scope.py:13: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n0]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n1]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n2]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n3]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n4]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n5]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n6]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n9]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n10]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n11]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n12]
+FAILED tests/test_task_followup_scope.py::test_edit_commands_do_not_turn_new_questions_into_old_deliverables[n13]
+12 failed, 12 passed in 0.64s
