@@ -38,18 +38,35 @@ def _mask_quoted(text: str) -> str:
 
 
 def _safe_sentences(text: str) -> Iterator[str]:
-    for match in re.finditer(r"[^。！？!?；;\n]+[。！？!?；;]?", _mask_quoted(text)):
+    masked = _mask_quoted(text)
+    for match in re.finditer(r"[^。！？!?；;\n]+[。！？!?；;]?", masked):
         sentence = match.group(0).strip()
-        # Masking is for locating sentence boundaries only. A sentence touching
-        # a quoted span is ambiguous; never persist the synthetic masked text.
-        source = text[match.start():match.end()].strip()
-        if (source != sentence
-                or _HYPOTHETICAL.search(sentence) or _QUOTED.search(sentence)
+        raw = text[match.start():match.end()]
+        source = raw.strip()
+        # Conditions/questions outside quotes still govern the whole sentence.
+        if (_HYPOTHETICAL.search(sentence)
                 or re.search(r"是否|是不是|有没有|能不能", sentence)
                 or re.search(r"什么|谁|哪(?:个|些|种|里|儿)|多少|怎么|如何", sentence)
                 or re.search(r"[？?]|(?:吗|么|呢)[。！!；;]?$", sentence)):
             continue
-        yield sentence
+        if source != sentence:
+            # Only the contiguous explicit self suffix after the LAST quote is
+            # eligible. Never concatenate masked spans or carry an earlier topic
+            # across an intervening speaker. An unclosed quote has no suffix.
+            differences = [i for i, (a, b) in enumerate(zip(raw, match.group(0))) if a != b]
+            if not differences:
+                continue
+            suffix = raw[differences[-1] + 1:]
+            if not re.match(r'^[，,]\s*(?:但是|不过|但|而)?我', suffix):
+                continue
+            suffix = suffix.lstrip('，,').strip()
+            first = re.split(r'[，,。！？!?；;]', suffix)[0].strip()
+            if _explicit_fact(first) is None:
+                continue
+            # Keep the entire suffix, including later polarity corrections.
+            yield suffix
+        elif not _QUOTED.search(sentence):
+            yield source
 
 
 def _clauses(text: str) -> Iterator[str]:
