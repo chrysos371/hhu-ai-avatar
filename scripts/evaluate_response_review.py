@@ -9,7 +9,7 @@ import subprocess
 import time
 
 from avatar.brain.llm import LLMEngine
-from avatar.brain.response_review import ResponseReviewer, REVIEW_PROMPT
+from avatar.brain.response_review import ResponseReviewer, REVIEW_PROMPTS
 from avatar.cancellation import CancellationToken
 from evaluate_real_interaction import sha, save
 import hashlib
@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--provider',type=Path,required=True)
     parser.add_argument('--suite',type=Path,default=Path('evals/interaction/cycle-03/review-calibration40.json'))
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--version',choices=['v1','v2'],default='v1')
     args=parser.parse_args()
     if args.output.exists():
         raise ValueError('Use a fresh evidence path')
@@ -56,10 +57,10 @@ def main():
             self.last_messages=messages;self.last_raw=None
             self.last_raw=engine.review_response(messages,**kwargs)
             return self.last_raw
-    recorder=RecordingEngine();reviewer=ResponseReviewer(recorder)
+    recorder=RecordingEngine();reviewer=ResponseReviewer(recorder,version=args.version)
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'created_utc':datetime.now(timezone.utc).isoformat(),'suite_sha256':sha(args.suite),
-        'suite':spec,'provider':provider,'prompt_sha256':hashlib.sha256(REVIEW_PROMPT.encode()).hexdigest(),
+        'suite':spec,'provider':provider,'prompt_version':args.version,'prompt_sha256':hashlib.sha256(REVIEW_PROMPTS[args.version].encode()).hexdigest(),
         'source_sha256':{str(p):sha(p) for p in [Path(__file__),Path('src/avatar/brain/response_review.py'),Path('src/avatar/brain/llm.py')]},
         'rows':[],'production_activation_approved':False,'human_reviewed':False,'semantic_approved':False}
     try:

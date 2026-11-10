@@ -83,3 +83,18 @@ def test_review_schema_is_separate_and_actual_transport_cancels_pending_headers(
         finally:
             engine.close()
     assert REVIEW_RESPONSE_FORMAT['json_schema']['name'] != 'avatar_cognitive_analysis'
+
+
+def test_evidence_first_pass_requires_real_draft_quote():
+    value=judgment(verdict='pass',category='none',quote='我不能到现场',reason='否定身体能力')
+    assert validate_review(json.dumps(value),'我不能到现场。',version='v2')['verdict']=='pass'
+    for quote in ['', '我可以到现场']:
+        with pytest.raises(ValueError):
+            validate_review(json.dumps(value|{'quote':quote}),'我不能到现场。',version='v2')
+
+
+def test_versions_are_explicit_and_cannot_mutate_original_schema():
+    from avatar.brain.response_review import REVIEW_FORMATS
+    assert list(REVIEW_FORMATS['v1']['json_schema']['schema']['properties'])[0]=='verdict'
+    assert list(REVIEW_FORMATS['v2']['json_schema']['schema']['properties'])[0]=='quote'
+    with pytest.raises(ValueError):ResponseReviewer(object(),version='missing')
