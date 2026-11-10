@@ -106,3 +106,17 @@ def test_story_creation_is_not_replaced_by_literary_analysis_template():
     policy.assess('写个角色找心理医生的故事。')
     text = '角色说：“建议你寻求专业帮助。”'
     assert policy.review_output(text) == (text, None)
+
+@pytest.mark.parametrize('text', [
+    '我以前想过自杀，但现在我想自杀。',
+    '我曾经有过轻生念头；此刻我不想活了。',
+])
+def test_current_risk_is_not_suppressed_by_separate_historical_clause(text):
+    assert BoundaryPolicy().assess(text).route == 'crisis'
+
+@pytest.mark.parametrize('text', [
+    '我以前想过自杀，现在已经没有这个念头。',
+    '去年我曾经想轻生。',
+])
+def test_historical_risk_without_current_intent_does_not_route_as_crisis(text):
+    assert BoundaryPolicy().assess(text).route == 'normal'

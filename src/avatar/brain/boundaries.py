@@ -44,17 +44,20 @@ class BoundaryPolicy:
         denial = bool(re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生).{0,5}(?:想法|念头|打算)|'
                                 r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生)', clean))
         historical = bool(re.search(r'以前|曾经|去年|年前|当时|过去', clean)) and not real_now
+        risk_pattern = (r'我.{0,15}(?:想伤害自己|想自杀|想轻生|想死(?!磕|记|你|他|她)|轻生的想法|自杀的想法|'
+                        r'伤害自己的念头|伤害自己的想法|不想活|结束生命(?!科学))')
         self_risk = any(
-            re.search(r'我.{0,15}(?:想伤害自己|想自杀|想轻生|想死(?!磕|记|你|他|她)|轻生的想法|自杀的想法|'
-                      r'伤害自己的念头|伤害自己的想法|不想活|结束生命(?!科学))', clause)
+            re.search(risk_pattern, clause)
+            and (not re.search(r'以前|曾经|去年|年前|当时|过去', clause)
+                 or re.search(r'我(?:现在|此刻|今天).*(?:伤害自己|自杀|轻生|不想活|想死|结束生命)', clause))
             and not re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生)|'
                               r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|死)', clause)
             for clause in re.split(r'[，,。；;]', clean))
         other_risk = bool(re.search(r'(?:朋友|同事|同学|家人|室友).*(?:想自杀|想伤害自己|想轻生)', clean))
-        if not (fictional and not real_now) and not historical:
+        if not (fictional and not real_now):
             if self_risk:
                 self.risk = 'crisis'
-            elif other_risk:
+            elif other_risk and not historical:
                 self.risk = 'third_party_crisis'
         connected = bool(re.search(r'已经联系.{0,8}(?:家人|朋友)|家人.{0,5}陪着', clean))
         if self.risk and ((denial and self.risk == 'crisis') or connected):
