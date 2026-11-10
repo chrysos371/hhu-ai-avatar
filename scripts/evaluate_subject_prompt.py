@@ -11,6 +11,7 @@ from avatar.brain.llm import LLMEngine
 from avatar.cancellation import CancellationToken
 from avatar.config import config
 from avatar.main import Avatar
+from avatar.lab.checks import versioned_rules
 from evaluate_real_interaction import sha, save, checks
 
 
@@ -28,12 +29,6 @@ def main():
     original=json.loads(original_path.read_text());extra=json.loads(extra_path.read_text())
     policy=json.loads(args.policy.read_text()) if args.policy else None
     supplemental=json.loads(args.supplemental.read_text()) if args.supplemental else {'cases':[]}
-    def effective_rules(case,family):
-        rules={key:list(values) for key,values in case['final_checks'].items()}
-        for override in (policy or {}).get('overrides',[]):
-            if override['family']==family and override['id']==case['id']:
-                rules.setdefault('any',[]).extend(override['append_any'])
-        return rules
     provider=json.loads(args.provider.read_text())
     registry=json.loads(Path('evals/interaction/cycle-02/model-scale-protocol.json').read_text())
     selected=next(item for item in registry['models'] if item['model_id']==args.model_key)
@@ -69,7 +64,7 @@ def main():
                             result=avatar.respond(text,cancel=CancellationToken())
                             row['turns'].append({'input':text,'result':result,'seconds':time.perf_counter()-started})
                         row['v1_checks']=checks(row['turns'][-1]['result']['reply'],case['final_checks'])
-                        row['checks']=checks(row['turns'][-1]['result']['reply'],effective_rules(case,family))
+                        row['checks']=checks(row['turns'][-1]['result']['reply'],versioned_rules(case['final_checks'],family,case['id'],policy))
                         row['all_turn_check']=not any(phrase in turn['result']['reply']
                             for phrase in case.get('all_turn_forbidden',[]) for turn in row['turns'])
                         row['profile']=avatar.memory.get_user_profile()

@@ -112,3 +112,19 @@ def compare_reports(arms):
         "automatic_checks_only": True,
         "deployment_approved": False,
     }
+
+
+def versioned_rules(rules, family, case_id, policy=None):
+    """Copy frozen rules; explicit v2 uncertainty additions never mutate v1."""
+    copied = {key: list(values) for key, values in rules.items()}
+    if policy is None:
+        return copied
+    if policy.get('version') != 2:
+        raise ValueError('Unsupported measurement policy version')
+    for override in policy.get('overrides', []):
+        if override['family'] == family and override['id'] == case_id:
+            additions = override['append_any']
+            if not additions or any(not isinstance(value, str) or not value for value in additions):
+                raise ValueError('Invalid uncertainty alternatives')
+            copied.setdefault('any', []).extend(value for value in additions if value not in copied.get('any', []))
+    return copied
