@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>11项审计问题修复与优化报告</title>
+<style>
+:root{color-scheme:light;--ink:#172431;--muted:#5a6876;--line:#d9e1e8;--bg:#f3f6f9;--card:#fff;--blue:#1e5aa8;--amber:#8c4d00;--green:#23664a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1120px;margin:auto;padding:30px 22px 56px}h1{font-size:2rem;line-height:1.2;margin:8px 0}h2{margin:30px 0 12px;font-size:1.35rem}.meta,.muted{color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:14px 0;box-shadow:0 2px 10px #1020300a}.status{display:inline-block;border-radius:999px;background:#e9f4ed;color:var(--green);font-weight:700;padding:3px 11px}.warning{border-left:5px solid #d29327}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.metric{background:#f7f9fb;border-radius:9px;padding:13px}.metric strong{display:block;font-size:1.35rem}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:white}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#edf2f7;white-space:nowrap}td:first-child{font-weight:700}code{background:#edf1f5;padding:1px 5px;border-radius:4px}a{color:var(--blue)}ul,ol{padding-left:22px}
+</style>
+</head>
+<body><main>
+<p class="meta">审计修复报告 · 2026-11-10 · 作者 spinner-bot</p>
+<h1>11 项审计问题修复与优化</h1>
+<p><span class="status">11 项均已实施代码或文档修订</span></p>
+<div class="card"><h2>工作概览</h2><div class="summary">
+<div class="metric"><strong>11 / 11</strong><span>已建立独立编号工作目录</span></div>
+<div class="metric"><strong>8 项</strong><span>代码逻辑、接口或安全边界优化</span></div>
+<div class="metric"><strong>3 项</strong><span>入口与接口文档校正</span></div>
+<div class="metric"><strong>Python 3.10</strong><span>边界、衰减与目录搜索直接检查通过</span></div>
+</div><p>每项均有现状、原审计结论、优化目标、验收记录和进展文档。修复已按小步粒度提交。完整明细见 <a href="11项修复与优化汇总.md">Markdown 汇总</a> 和 <a href="work/进展报告.md">全过程进展报告</a>。</p></div>
+<div class="card warning"><h2>验证边界</h2><p>工作站的 Python 3.10.12 环境没有 pytest、NumPy 和 OpenAI SDK。隔离安装依赖约 3.5 分钟没有包下载进展后停止。因此所有源代码及测试文件完成了语法编译；直接调用验证覆盖 6 个风险路由场景、300 秒情绪半衰期和嵌套资料搜索。新增 pytest 用例、全量测试、真实音频链路和 HTTP 并发压力尚未运行。</p><p>语音接口已经连接音频文件转写、文本对话、可选 TTS 和离线帧分析，但真实 FunASR/Edge-TTS、MP3 解码及帧与播放时钟的同步仍需目标环境验收。</p></div>
+<h2>逐项执行结果</h2>
+<div class="table-wrap"><table><thead><tr><th>编号</th><th>优化点</th><th>已实施</th><th>验收/后续</th></tr></thead><tbody>
+<tr><td>01 · P1</td><td>历史提示压制当前危险情绪</td><td>逐分句检查风险；识别当前表达和省略主语的延续表达。</td><td>6 个 Python 3.10 直接用例通过；pytest待运行。</td></tr>
+<tr><td>02 · P1</td><td>提醒写工具没有请求授权</td><td>从模型与 MCP 工具集移除提醒写操作；Avatar按当前原文确定性处理，网页/CLI保留。</td><td>新增回归用例；pytest待运行。</td></tr>
+<tr><td>03 · P1</td><td>Python 3.10/3.11资料搜索中断</td><td>兼容缺少 <code>Path.is_junction()</code> 的解释器，并检查解析路径仍在白名单根目录内。</td><td>Python 3.10 嵌套目录搜索通过。</td></tr>
+<tr><td>04 · P2</td><td>ASR/TTS/口型没有端到端调用</td><td>新增 <code>respond_audio()</code>；返回转写、音频路径和离线口型帧；失败带状态。</td><td>Mock用例已写；真实 ASR、TTS 与解码待测。</td></tr>
+<tr><td>05 · P2</td><td>全零音频输出张嘴值</td><td>静音和低于底噪阈值时输出闭嘴零能量帧。</td><td>回归用例已写；缺 NumPy/pytest 未运行。</td></tr>
+<tr><td>06 · P2</td><td>空 token 查询召回热门全库</td><td>非空无有效词查询返回空候选；空查询列表模式不变。</td><td>回归用例已写；pytest待运行。</td></tr>
+<tr><td>07 · P2</td><td>情绪默认半衰期约4秒</td><td>默认定义为可配置300秒半衰期，兼容显式旧 decay 参数。</td><td>注入时钟直测通过；后续以真实间隔校准。</td></tr>
+<tr><td>08 · P2</td><td>单线程工作台被慢模型请求占住</td><td>线程化 HTTP 请求；共享聊天状态加锁；LLM默认30秒超时并禁重试。</td><td>并发测试已写；HTTP测试/压力待运行。</td></tr>
+<tr><td>09 · P1</td><td>AGENTS开发上下文陈旧</td><td>修正向量检索、测试覆盖、语音集成和路线图状态。</td><td>静态核对通过。</td></tr>
+<tr><td>10 · P2</td><td>技术计划接口规格过时</td><td>标注初始设计，修正MP3、ASR文件输入、向量能力、衰减和里程碑。</td><td>静态核对通过。</td></tr>
+<tr><td>11 · P2</td><td>README过度声明语音闭环</td><td>增加真实 API 示例，区分音频文件接口、离线帧与实时渲染状态。</td><td>静态核对通过；示例待运行。</td></tr>
+</tbody></table></div>
+<h2>建议的最后验收</h2><div class="card"><ol><li>在已安装核心依赖、Web extras 和 pytest 的项目环境运行新增测试及全量回归。</li><li>使用真实 FunASR 文件输入和 Edge-TTS MP3 完成音频流程，测转写、音频解码、帧时间与播放同步。</li><li>对线程化工作台运行慢聊天与提醒轮询并发用例，再测长请求、多个浏览器请求与SQLite并发。</li><li>收集典型对话停顿数据，再确认或调整 300 秒情绪半衰期。</li></ol><p>单项文档位于 <a href="work/01/现状-审计结论-优化目标.md">编号 01</a> 至 <a href="work/11/现状-审计结论-优化目标.md">编号 11</a>。</p></div>
+</main></body></html>
