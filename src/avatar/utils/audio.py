@@ -62,3 +62,40 @@ def frame_signal(
     frames = samples[idx].astype(np.float32)
     window = np.hamming(frame_len).astype(np.float32)
     return frames * window
+
+
+def downsample_for_analysis(samples: np.ndarray, sr: int, target_sr: int = 16000,
+                            *, cancel=None) -> tuple[np.ndarray, int]:
+    """Zero-phase windowed-sinc low-pass before reducing sample rate.
+
+    Native rate/timeline are preserved when already below the target. Chunked
+    convolution bounds cancellation latency; this does not calibrate vowel labels.
+    """
+    samples = np.asarray(samples, dtype=np.float32)
+    if (samples.ndim != 1 or not np.isfinite(samples).all()
+            or not 0 < sr <= 384000 or not 8000 <= target_sr <= 192000):
+        raise ValueError('Invalid analysis signal or sample rate')
+    if cancel:
+        cancel.checkpoint()
+    if sr <= target_sr:
+        return samples, sr
+    if len(samples) == 0:
+        return samples, target_sr
+    ratio = sr / target_sr
+    half = int(np.ceil(32 * ratio))
+    offsets = np.arange(-half, half + 1)
+    cutoff = .45 / ratio  # 10% transition margin below target Nyquist.
+    kernel = 2 * cutoff * np.sinc(2 * cutoff * offsets) * np.hamming(len(offsets))
+    kernel /= kernel.sum()
+    padded = np.pad(samples, (half, half), mode='reflect' if len(samples) > 1 else 'edge')
+    filtered = np.empty(len(samples), dtype=np.float32)
+    for start in range(0, len(samples), 65536):
+        if cancel:
+            cancel.checkpoint()
+        end = min(len(samples), start + 65536)
+        filtered[start:end] = np.convolve(padded[start:end + 2 * half], kernel, mode='valid')
+    positions = np.arange(0, len(samples), ratio)
+    output = np.interp(positions, np.arange(len(samples)), filtered).astype(np.float32)
+    if cancel:
+        cancel.checkpoint()
+    return output, target_sr

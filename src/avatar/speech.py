@@ -11,12 +11,11 @@ import tempfile
 import threading
 import time
 
-import numpy as np
 
 from .brain.operations import OperationError
 from .face.lipsync import LipSyncEngine
 from .mouth.tts import EdgeTTSEngine
-from .utils.audio import load_audio
+from .utils.audio import load_audio, downsample_for_analysis
 from .cancellation import CancellationToken, Cancelled
 
 
@@ -112,9 +111,7 @@ class SpeechService:
                     if not 0 < duration <= self.MAX_SECONDS:
                         raise OperationError(422, "speech_too_long", "语音超过 120 秒，请缩短朗读内容。")
                     # Limit analysis cost independently of the synthesizer's sample rate.
-                    if sr > 16000:
-                        samples = np.interp(np.arange(0, len(samples), sr / 16000), np.arange(len(samples)), samples).astype(np.float32)
-                        sr = 16000
+                    samples, sr = downsample_for_analysis(samples, sr, cancel=token)
                     frames = [asdict(frame) | {"mouth_open": min(1.0, frame.mouth_open * intensity)}
                               for frame in LipSyncEngine().analyze(samples, sr, cancel=token)]
                 except Cancelled:
