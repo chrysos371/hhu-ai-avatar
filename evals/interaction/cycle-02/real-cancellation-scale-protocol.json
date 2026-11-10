@@ -1,0 +1,36 @@
+{
+  "scope": "Five real local model cancellation/recovery trials for explicitly registered model variants; not third-party billing or long-run tail latency",
+  "trials": 5,
+  "prompt": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。",
+  "max_tokens": 512,
+  "temperature": 0,
+  "seed": 42,
+  "cancel_trigger": "first nonempty SDK content delta",
+  "gate": {
+    "local_cancel_p95_seconds_max": 0.5,
+    "all_cancelled": true,
+    "provider_iterator_closed": true,
+    "next_request_recovers": true
+  },
+  "recovery_prompt": "1加1等于多少？只给数字。",
+  "recovery_max_tokens": 16,
+  "provider": "Pinned model identity/hash from model-scale-protocol.json; same sampling and non-thinking template",
+  "allowed_models": [
+    {
+      "repo_id": "Qwen/Qwen3-4B-GGUF",
+      "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+      "file": "Qwen3-4B-Q4_K_M.gguf",
+      "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+      "model_id": "qwen3-4b-q4_k_m",
+      "required_free_mib": 16384
+    },
+    {
+      "repo_id": "Qwen/Qwen3-14B-GGUF",
+      "revision": "530227a7d994db8eca5ab5ced2fb692b614357fd",
+      "file": "Qwen3-14B-Q4_K_M.gguf",
+      "sha256": "500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0",
+      "model_id": "qwen3-14b-q4_k_m",
+      "required_free_mib": 24576
+    }
+  ]
+}

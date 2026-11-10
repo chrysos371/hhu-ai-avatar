@@ -16,11 +16,18 @@ def main():
     parser.add_argument('--provider',type=Path,required=True)
     parser.add_argument('--trace',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--protocol',type=Path,default=Path('evals/interaction/cycle-02/real-cancellation-protocol.json'))
     args=parser.parse_args()
     if args.output.exists():raise ValueError('Use a new output file')
-    path=Path('evals/interaction/cycle-02/real-cancellation-protocol.json')
+    path=args.protocol
     protocol=json.loads(path.read_text());provider=json.loads(args.provider.read_text())
-    engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model='qwen3-4b-q4_k_m',timeout=180,max_retries=0)
+    model_id=provider.get('model_id','qwen3-4b-q4_k_m')
+    if protocol.get('allowed_models'):
+        selected=next(row for row in protocol['allowed_models'] if row['model_id']==model_id)
+        assert provider['model_revision']==selected['revision'] and provider['model_sha256']==selected['sha256']
+    else:
+        assert model_id=='qwen3-4b-q4_k_m'
+    engine=LLMEngine(base_url=provider['url'],api_key='local-eval-only',model=model_id,timeout=180,max_retries=0)
     rows=[]
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
