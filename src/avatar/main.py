@@ -184,11 +184,20 @@ class Avatar:
 
     def _extract_facts(self, text: str) -> None:
         """从用户输入提取简单事实写入长期记忆（规则版，LLM 不可用时的回退）。"""
+        context = self._fact_context(text)
         with self.memory.transaction():
-            for fact in rule_facts(self.speaker_scope.fact_text, context=self._fact_context(text)):
+            self._check_fact_context()
+            for fact in rule_facts(self.speaker_scope.fact_text, context=context):
                 self._store_fact(fact)
 
+    def _check_fact_context(self):
+        revision = self.memory.context_revision
+        if self.speaker_scope.revision != revision:
+            self.speaker_scope.clear(revision)
+            raise Cancelled('source changed before fact extraction or write')
+
     def _fact_context(self, current: str) -> list[str]:
+        self._check_fact_context()
         return list(self.speaker_scope.context)
 
     def list_memories(self, include_history: bool = False, limit: int = 100) -> list[dict]:
@@ -295,6 +304,7 @@ class Avatar:
         recent = self.memory.get_short_term()
         if recent and recent[-1] == {'role': 'user', 'content': user_text}:
             recent = recent[:-1]
+        self._check_fact_context()
         analyze = getattr(self.llm, 'chat_analysis', self.llm.chat)
         options = {"temperature": 0}
         if self._cancel_token and hasattr(self.llm, 'chat_analysis_stream'):
@@ -376,6 +386,7 @@ class Avatar:
 
     def _store_fact(self, fact: dict) -> None:
         """把 LLM 提取的一条事实写入长期记忆。"""
+        self._check_fact_context()
         if not self.speaker_scope.allows_facts:
             return
         ftype = str(fact.get("type", "事实"))
