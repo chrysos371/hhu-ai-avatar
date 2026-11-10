@@ -13,10 +13,10 @@ class ASREngine(Protocol):
 class FunASREngine:
     """FunASR 中文语音识别（需 `pip install funasr`，首次运行会下载模型）。"""
 
-    def __init__(self, model: str = "paraformer-zh"):
+    def __init__(self, model: str = "paraformer-zh", device: str = "cpu"):
         from funasr import AutoModel  # 延迟导入，避免强依赖
 
-        self.model = AutoModel(model=model)
+        self.model = AutoModel(model=model, device=device, disable_update=True)
 
     def transcribe(self, audio_path: str) -> str:
         result = self.model.generate(input=audio_path)

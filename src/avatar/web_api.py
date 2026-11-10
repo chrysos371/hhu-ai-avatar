@@ -33,6 +33,8 @@ class V1API:
 
         if post and path == "/speech":
             return 201, self.server.speech.synthesize(data)
+        if not post and path == "/speech/capabilities":
+            return 200, self.server.transcription.capabilities()
 
         def integer(key, default=None):
             try:

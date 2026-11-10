@@ -98,6 +98,20 @@ class Handler(BaseHTTPRequestHandler):
             if not post and parsed.path.startswith("/api/v1/speech/audio/"):
                 audio, content_type = self.server.speech.read(parsed.path.rsplit("/", 1)[-1])
                 return self._send(200, audio, content_type=content_type)
+            if post and parsed.path == "/api/v1/speech/transcribe":
+                if (self.headers.get_content_type() != "audio/wav"
+                        or self.headers.get("Transfer-Encoding")
+                        or len(self.headers.get_all("Content-Length", [])) != 1):
+                    raise OperationError(422, "invalid_audio", "仅支持带长度的 PCM WAV 上传。")
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= self.server.transcription.MAX_BYTES:
+                    raise OperationError(422, "invalid_audio", "音频为空或超过 6 MiB。")
+                self.connection.settimeout(5)
+                raw = self.rfile.read(length)
+                if len(raw) != length:
+                    raise OperationError(422, "invalid_audio", "音频上传不完整。")
+                result = self.server.transcription.transcribe(raw)
+                return self._send(200, {"data": result, "error": None, "request_id": self.request_id})
             data = {}
             if post:
                 if parsed.path == "/api/v1/knowledge/preview-file":
@@ -409,12 +423,15 @@ def create_server(
     legacy_writes: bool = True,
     knowledge_embedder=None,
     speech_engine=None,
+    asr_engine=None,
 ) -> ThreadingHTTPServer:
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     server.daemon_threads = True
     server.state_lock = threading.RLock()
     from .speech import SpeechService
     server.speech = SpeechService(speech_engine)
+    from .transcription import TranscriptionService
+    server.transcription = TranscriptionService(asr_engine)
     server.db_path = db_path
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
@@ -438,6 +455,7 @@ def main():
     parser = argparse.ArgumentParser(description="Avatar 单用户本机管理页面")
     parser.add_argument("--db", default=config.memory_db_path)
     parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--asr-model", help="已安装的本机 FunASR 模型目录；默认不启用识别")
     args = parser.parse_args()
     from .brain.embeddings import OllamaEmbeddingProvider
 
@@ -448,9 +466,15 @@ def main():
         if config.embedding.model
         else None
     )
-    server = create_server(
-        args.db, port=args.port, legacy_writes=False, knowledge_embedder=embedder
-    )
+    asr = None
+    if args.asr_model:
+        model = Path(args.asr_model).expanduser().resolve()
+        if not model.is_dir():
+            parser.error("--asr-model 必须指向已安装的本机模型目录")
+        from .ears.asr import FunASREngine
+        asr = FunASREngine(model=str(model), device="cpu")
+    server = create_server(args.db, port=args.port, legacy_writes=False,
+                           knowledge_embedder=embedder, asr_engine=asr)
     print(
         f"本机管理页面：http://127.0.0.1:{server.server_port}/#{server.token}",
         flush=True,
