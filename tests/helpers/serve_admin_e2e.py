@@ -24,7 +24,7 @@ if os.getenv('AVATAR_E2E_LLM_PROVIDER'):
     if parsed.scheme != 'http' or parsed.hostname != '127.0.0.1' or parsed.path != '/v1':
         raise ValueError('Real browser evaluation requires an explicit loopback provider')
     config.llm.api_key = 'local-eval-only'
-    config.llm.model = 'qwen3-4b-q4_k_m'
+    config.llm.model = evidence.get('model_id', 'qwen3-4b-q4_k_m')
 else:
     _, provider_url = provider_context.enter_context(controlled_provider(delay=0.02))
     config.llm.api_key = 'local-browser-fixture'
