@@ -26,6 +26,7 @@ class SpeakerScope:
         self.revision = revision
         self.scope = 'current_user'
         self.fact_text = ''
+        self.allows_actions = True
         self.context = []
         self._real_context = deque(maxlen=3)
 
@@ -57,12 +58,16 @@ class SpeakerScope:
                     self._real_context.clear()
                     start = offset + (exit_ or real).end()
         self.fact_text = text[start:].lstrip('，,。；; \n') if self.allows_facts else ''
+        # A final real segment cannot retroactively authorize an earlier
+        # character instruction. Require a separate wholly real turn.
+        self.allows_actions = self.allows_facts and start == 0
         self.context = list(self._real_context)
         if self.fact_text:
             self._real_context.append(self.fact_text)
 
     def data(self):
         return {'scope': self.scope, 'persistent_facts_allowed': self.allows_facts,
+                'turn_tools_allowed': self.allows_actions,
                 'version': 1, 'general_coreference_verified': False}
 
     def prompt(self):

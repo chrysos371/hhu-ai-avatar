@@ -498,7 +498,7 @@ class Avatar:
         cancel_match = re.fullmatch(
             r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
             user_text)
-        speaker_tool_blocked = bool(not self.speaker_scope.allows_facts
+        speaker_tool_blocked = bool(not self.speaker_scope.allows_actions
                                     and (use_web or reminder_request or cancel_match))
         if boundary.reply is None and reminder_request and not speaker_tool_blocked:
             try:
@@ -556,8 +556,8 @@ class Avatar:
         if boundary.reply is not None:
             reply = boundary.reply
         elif speaker_tool_blocked:
-            reply = ('当前仍在虚构角色范围内，这句话没有执行真实提醒或联网工具。'
-                     '如需执行真实操作，请先明确退出角色，再提出请求。')
+            reply = ('这条消息未被识别为独立的真人操作请求，没有执行真实提醒或联网工具。'
+                     '请先明确退出角色，再单独提出真实请求。')
             generation_mode = 'rules_speaker_scope'
         elif reminder is not None:
             due = datetime.fromtimestamp(reminder['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
