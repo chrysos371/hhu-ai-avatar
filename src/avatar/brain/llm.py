@@ -102,7 +102,7 @@ class LLMEngine:
                             on_delta(text)
             token.checkpoint()
             return ''.join(parts)
-        return token.run_async(run)
+        return token.run_async(run, timeout=self.timeout)
 
     def chat_analysis_stream(self, messages, *, temperature=0, cancel=None):
         return self.stream_chat(messages, temperature=temperature, cancel=cancel,

@@ -43,7 +43,7 @@ class CancellationToken:
                 self._callbacks.discard(callback)
         return remove
 
-    def run_async(self, factory):
+    def run_async(self, factory, *, timeout=None):
         async def run():
             self.checkpoint()
             loop, task = asyncio.get_running_loop(), asyncio.current_task()
@@ -54,9 +54,14 @@ class CancellationToken:
                     pass  # The operation has already closed its event loop.
             unsubscribe = self.subscribe(interrupt)
             try:
-                return await factory()
+                if timeout is None:
+                    return await factory()
+                return await asyncio.wait_for(factory(), timeout=timeout)
             except asyncio.CancelledError:
                 raise Cancelled("operation cancelled") from None
+            except asyncio.TimeoutError:
+                # Python 3.10's asyncio timeout is not the built-in alias yet.
+                raise TimeoutError('operation deadline exceeded') from None
             finally:
                 unsubscribe()
         return asyncio.run(run())

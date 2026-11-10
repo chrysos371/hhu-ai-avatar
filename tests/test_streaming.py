@@ -77,3 +77,16 @@ def test_pre_cancelled_avatar_never_writes_input():
         assert avatar.memory._conn.execute('SELECT COUNT(*) FROM memory_messages').fetchone()[0] == 0
     finally:
         avatar.memory.close()
+
+
+def test_stream_has_total_deadline_even_when_chunks_beat_read_timeout():
+    with controlled_provider(delay=0.02) as (server, url):
+        engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture', timeout=0.15)
+        start = time.perf_counter()
+        try:
+            with pytest.raises(TimeoutError):
+                engine.stream_chat([{'role':'user','content':'fixture-long'}])
+            assert time.perf_counter() - start < 0.5
+            assert server.disconnected.wait(2)
+        finally:
+            engine.close()
