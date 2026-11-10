@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageSquare, Send, Volume2, Square } from "lucide-react";
-import { apiRequest } from "../../lib/api";
+import { streamTurn, cancelTurn, type TurnInput } from "../../lib/turns";
 import type { ChatResult } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
@@ -12,31 +12,55 @@ export function ChatPage() {
   const [text, setText] = useState("");
   const [useWeb, setUseWeb] = useState(false);
   const [voiceBusy, setVoiceBusy] = useState(false);
+  const [autoSpeak, setAutoSpeak] = useState(false);
+  const activeTurn = useRef<{ id: string; controller: AbortController } | null>(null);
+  useEffect(() => () => {
+    const active = activeTurn.current;
+    active?.controller.abort();
+    if (active) void cancelTurn(active.id).catch(() => {});
+  }, []);
   const [messages, setMessages] = useState<
-    { role: "user" | "assistant"; text: string; result?: ChatResult }[]
+    { role: "user" | "assistant"; text: string; result?: ChatResult; pending?: boolean; cancelled?: boolean }[]
   >([]);
   const client = useQueryClient();
   const send = useMutation({
-    mutationFn: (input: { text: string; use_web: boolean }) =>
-      apiRequest<ChatResult>("/chat", { method: "POST", body: input }),
-    onSuccess: (result) => {
-      setMessages((m) => [
-        ...m,
-        { role: "assistant", text: result.reply, result },
-      ]);
+    mutationFn: (input: TurnInput & { index: number }) => {
+      const controller = new AbortController();
+      activeTurn.current = { id: input.request_id, controller };
+      return streamTurn({ request_id: input.request_id, text: input.text, use_web: input.use_web }, controller.signal,
+        piece => setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, text: row.text + piece } : row)));
+    },
+    onSuccess: (result, input) => {
+      setMessages(rows => rows.map((row, i) => i === input.index ? { role: "assistant", text: result.reply, result } : row));
+      if (autoSpeak) void speech.play(input.index, result, true);
+    },
+    onError: (error, input) => {
+      const cancelled = error.name === "AbortError";
+      setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, pending: false, cancelled,
+        text: row.text || (cancelled ? "本轮已停止。" : "本轮未完成。") } : row));
+    },
+    onSettled: () => {
+      activeTurn.current = null;
+      setUseWeb(false);
       void client.invalidateQueries({ queryKey: ["dashboard"] });
       void client.invalidateQueries({ queryKey: ["memories"] });
       void client.invalidateQueries({ queryKey: ["emotion"] });
     },
-    onSettled: () => setUseWeb(false),
   });
   function submit() {
     if (!text.trim() || send.isPending || voiceBusy) return;
     speech.stop();
     const value = text.trim();
-    setMessages((m) => [...m, { role: "user", text: value }]);
+    const index = messages.length + 1;
+    setMessages((m) => [...m, { role: "user", text: value }, { role: "assistant", text: "", pending: true }]);
     setText("");
-    send.mutate({ text: value, use_web: useWeb });
+    send.mutate({ request_id: crypto.randomUUID(), text: value, use_web: useWeb, index });
+  }
+  function interrupt() {
+    speech.stop();
+    const active = activeTurn.current;
+    active?.controller.abort();
+    if (active) void cancelTurn(active.id).catch(() => {});
   }
   return (
     <section>
@@ -52,7 +76,11 @@ export function ChatPage() {
         <div className="speech-controls">
           <h2>小海在这里</h2>
           <p className="muted">朗读会把这段文字交给在线语音服务。默认不自动播放。</p>
+          <label className="checkbox-row"><input type="checkbox" checked={autoSpeak}
+            onChange={e => { setAutoSpeak(e.target.checked); if (!e.target.checked) speech.stop(); }} />自动分段朗读新回复</label>
+          {send.isPending && <button type="button" className="button secondary" onClick={interrupt}><Square size={14} />停止生成</button>}
           {speech.status === "loading" && <p role="status">正在准备语音…</p>}
+          {speech.segment.total > 1 && <p className="muted" role="status">语音片段 {speech.segment.index} / {speech.segment.total}</p>}
           <audio ref={speech.audioRef} controls preload="none" aria-label="小海语音播放器"
             hidden={speech.active === null || speech.status === "loading" || speech.status === "error"}
             onPlay={speech.onPlay} onPause={speech.onPause} onEnded={speech.onEnded} onError={speech.onError} />
@@ -77,6 +105,8 @@ export function ChatPage() {
             <article key={i} className={"chat-message " + m.role}>
               <small>{m.role === "user" ? "你" : "小海"}</small>
               <div>{m.text}</div>
+              {m.pending && <small>正在生成；最终回复会完成检查后替换此草稿。</small>}
+              {m.cancelled && <small>已停止，未完成的助手内容不存入记忆。</small>}
               {m.result && <button type="button" className="button secondary speech-read"
                 disabled={voiceBusy || speech.active === i && speech.status === "loading" || m.text.length > 2000}
                 title={m.text.length > 2000 ? "这段回复超过 2000 字，请选择较短内容朗读" : undefined}
@@ -128,8 +158,8 @@ export function ChatPage() {
             </div>
           )}
         </div>
-        <ErrorMessage error={send.error} />
-        <VoiceInput disabled={send.isPending} beforeCapture={speech.stop} onBusyChange={setVoiceBusy}
+        <ErrorMessage error={send.error?.name === "AbortError" ? null : send.error} />
+        <VoiceInput disabled={false} beforeCapture={interrupt} onBusyChange={setVoiceBusy}
           onTranscript={value => setText(old => old ? old + "\n" + value : value)} />
         <form
           onSubmit={(e) => {

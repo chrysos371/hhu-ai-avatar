@@ -8,6 +8,7 @@ async function chat(page: Page) {
   await page.getByLabel("消息", { exact: true }).fill("你好");
   await page.getByRole("button", { name: "发送消息" }).click();
   await expect(page.locator(".chat-message.assistant")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "朗读回复" })).toBeVisible();
 }
 test("playback follows the audio clock, pause and stop close the mouth", async ({ page }) => {
   await chat(page);

@@ -8,10 +8,15 @@ import numpy as np
 from avatar.config import config
 from avatar.brain.memory import MemoryStore
 from avatar.web import create_server
+from avatar.lab.transport_fixture import controlled_provider
 
 root = Path(__file__).resolve().parents[3]
 folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=root / "runtime/tmp")
-config.llm.api_key = ""
+provider_context = controlled_provider(delay=0.02)
+_, provider_url = provider_context.__enter__()
+config.llm.api_key = "local-browser-fixture"
+config.llm.base_url = provider_url
+config.llm.model = "fixture"
 config.embedding.model = ""
 memory = MemoryStore(str(Path(folder.name) / "browser.db"))
 memory.remember_user("名字", "浏览器测试原名")
@@ -45,4 +50,5 @@ try:
     server.serve_forever()
 finally:
     server.server_close()
+    provider_context.__exit__(None, None, None)
     folder.cleanup()

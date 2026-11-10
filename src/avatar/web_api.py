@@ -44,6 +44,7 @@ def enrich_chat_result(server, memory, result):
                 "user_arousal",
                 "valence",
                 "arousal",
+                        "analysis_mode",
             )
         },
         "guard": result.get("boundary"),
@@ -84,6 +85,8 @@ class V1API:
 
         if post and path == "/speech":
             return 201, self.server.speech.synthesize(data)
+        if post and path == '/speech/cancel' and set(data) == {'request_id'}:
+            return 200, self.server.speech.cancel(data['request_id'])
         if not post and path == "/speech/capabilities":
             return 200, self.server.transcription.capabilities()
         if post and path == '/turns':
