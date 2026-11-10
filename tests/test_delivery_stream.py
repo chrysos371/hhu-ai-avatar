@@ -56,7 +56,8 @@ def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_
         class Engine(LLMEngine):
             def __init__(self,**kwargs):super().__init__(**kwargs);self.repair_started=threading.Event()
             def stream_chat(self,messages,**kwargs):
-                if messages[-1]['content'].startswith(('请修正上一稿','请按固定原文槽位')):
+                schema=kwargs.get('response_format',{}).get('json_schema',{}).get('name','')
+                if messages[-1]['content'].startswith('请修正上一稿') or schema.startswith('avatar_literal_'):
                     server.started.clear()
                     self.repair_started.set()
                     messages=messages[:-1]+[{'role':'user','content':'delay-headers'}]

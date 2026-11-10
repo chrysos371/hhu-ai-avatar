@@ -28,7 +28,7 @@ from .brain.summaries import SummaryStore
 from .brain.admin_store import AdminStore
 from .brain.emotion_overrides import EmotionOverrideService
 from .brain.tasks import TaskTracker
-from .brain.literal_layout import LiteralLayout
+from .brain.literal_layout import LiteralLayout, LiteralTemplate
 from datetime import datetime
 from .config import config
 from .ears.asr import ASREngine, TextInputEngine
@@ -65,7 +65,10 @@ class Avatar:
         subject_prompt_enabled: bool = False,
         profile_grounding_enabled: bool = False,
         literal_composition_enabled: bool = False,
+        literal_plan_version: str = 'v2',
     ):
+        if literal_plan_version not in {'v1', 'v2'}:
+            raise ValueError('Unknown literal composition protocol')
         if literal_composition_enabled and not (task_contract_enabled and delivery_check_enabled):
             raise ValueError('Literal composition requires task contracts and delivery checks')
         if memory is None:
@@ -102,6 +105,7 @@ class Avatar:
         self.subject_prompt_enabled = subject_prompt_enabled
         self.profile_grounding_enabled = profile_grounding_enabled
         self.literal_composition_enabled = literal_composition_enabled
+        self.literal_plan_version = literal_plan_version
         self.analysis_mode = 'not_run'
 
     def _checkpoint(self):
@@ -610,9 +614,13 @@ class Avatar:
                     ]
                     contract = self.tasks.current
                     if self.literal_composition_enabled and (contract.required_literals or contract.forbidden_literals):
-                        repair_mode = 'literal_slots'
-                        layout = LiteralLayout(contract.required_literals, contract.forbidden_literals)
-                        corrected = layout.render(self.llm.compose_literal_slots(repair_messages, layout, cancel=cancel))
+                        repair_mode = 'literal_slots' if self.literal_plan_version == 'v1' else 'literal_template'
+                        layout = (LiteralLayout(contract.required_literals, contract.forbidden_literals)
+                            if self.literal_plan_version == 'v1' else LiteralTemplate(
+                                contract.required_literals, contract.forbidden_literals, source=contract.source,
+                                perspective=contract.perspective, recipient=contract.recipient))
+                        composer = getattr(self.llm, 'compose_literal_plan', None) or getattr(self.llm, 'compose_literal_slots')
+                        corrected = layout.render(composer(repair_messages, layout, cancel=cancel))
                     elif cancel is not None and hasattr(self.llm, 'stream_chat'):
                         repair_mode = 'freeform'
                         corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
@@ -624,7 +632,7 @@ class Avatar:
                     if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
                         reply = corrected
                         repair_succeeded = True
-                        if repair_mode == 'literal_slots':
+                        if repair_mode in {'literal_slots', 'literal_template'}:
                             generation_mode = 'llm_literal_composition'
                 except Cancelled:
                     raise
@@ -681,6 +689,8 @@ class Avatar:
                                "remaining_issues": final_delivery_issues,
                                "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded,
                                "repair_mode": repair_mode, "repair_error": repair_error,
+                               "literal_composition_enabled": self.literal_composition_enabled,
+                               "literal_plan_version": self.literal_plan_version if self.literal_composition_enabled else None,
                                "draft_generation_mode": draft_generation_mode,
                                "stream_buffered": delivery_guard_active and generation_mode in {"llm", "llm_literal_composition"}},
             "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,

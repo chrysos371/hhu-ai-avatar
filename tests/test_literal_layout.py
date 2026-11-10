@@ -46,7 +46,8 @@ def test_structured_repair_is_distinct_from_raw_generation_and_only_final_text_i
             self.plan=layout.messages(messages)
             return '{"slot_0":"","slot_1":"。"}'
     model=Model();pieces=[]
-    avatar=Avatar(db_path=':memory:',llm=model,task_contract_enabled=True,delivery_check_enabled=True,literal_composition_enabled=True)
+    avatar=Avatar(db_path=':memory:',llm=model,task_contract_enabled=True,delivery_check_enabled=True,
+                  literal_composition_enabled=True,literal_plan_version='v1')
     try:
         result=avatar.respond('写一句台词，包含“我喜欢听雨”。',cancel=CancellationToken(),on_delta=pieces.append)
         assert result['reply']=='我喜欢听雨。'

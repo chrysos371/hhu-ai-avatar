@@ -118,6 +118,10 @@ class LLMEngine:
 
     def compose_literal_slots(self, messages, layout, *, cancel=None):
         """Plan surrounding text; immutable user literals are rendered locally."""
+        return self.compose_literal_plan(messages, layout, cancel=cancel)
+
+    def compose_literal_plan(self, messages, layout, *, cancel=None):
+        """Transport a versioned immutable-literal plan without exposing raw JSON."""
         return self.stream_chat(layout.messages(messages), temperature=0, max_tokens=512,
             cancel=cancel, on_delta=None, response_format=layout.response_format)
 
