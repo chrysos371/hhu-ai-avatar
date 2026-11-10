@@ -21,6 +21,11 @@ from ..utils.audio import frame_signal
 _VOWEL_MOUTH = {"a": 1.0, "o": 0.6, "e": 0.5, "i": 0.3, "u": 0.35}
 
 
+def _finite_number(value):
+    return (isinstance(value, (int, float, np.integer, np.floating))
+            and not isinstance(value, (bool, np.bool_)) and np.isfinite(value))
+
+
 @dataclass
 class LipSyncFrame:
     """单帧口型参数。"""
@@ -102,17 +107,38 @@ class LipSyncEngine:
         close_every: float | None = None,  # 显式装饰选项，不代表检测到发音停顿
         silence_rms: float = 0.001,
     ):
+        for label, value in [('frame_ms', frame_ms), ('hop_ms', hop_ms)]:
+            if not _finite_number(value) or value <= 0:
+                raise ValueError(f'{label} must be finite and positive')
+        if (not isinstance(smooth, (int, np.integer)) or isinstance(smooth, (bool, np.bool_))
+                or smooth < 1):
+            raise ValueError('smooth must be a positive integer')
+        for label, value in [('silence_ratio', silence_ratio), ('silence_rms', silence_rms)]:
+            if not _finite_number(value) or not 0 <= value <= 1:
+                raise ValueError(f'{label} must be finite and within 0..1')
+        if close_every is not None and (not _finite_number(close_every) or close_every <= 0):
+            raise ValueError('close_every must be None or finite and positive')
         self.frame_ms = frame_ms
         self.hop_ms = hop_ms
         self.silence_ratio = silence_ratio
         self.smooth = smooth
         self.close_every = close_every
-        if not np.isfinite(silence_rms) or not 0 <= silence_rms <= 1:
-            raise ValueError('silence_rms must be finite and within 0..1')
         self.silence_rms = silence_rms
 
     def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
-        """分析音频，返回逐帧口型参数序列。"""
+        """分析归一化单声道有限PCM（[-1,1]），返回逐帧口型参数。"""
+        if cancel:
+            cancel.checkpoint()
+        if (not isinstance(sr, (int, np.integer)) or isinstance(sr, (bool, np.bool_))
+                or not 0 < sr <= 384000):
+            raise ValueError('sample rate must be an integer within 1..384000')
+        if int(sr * self.frame_ms / 1000) < 2 or int(sr * self.hop_ms / 1000) < 1:
+            raise ValueError('frame and hop must span at least two and one samples')
+        samples = np.asarray(samples)
+        if (samples.ndim != 1 or samples.dtype.kind not in 'iuf'
+                or not np.isfinite(samples).all() or np.any(np.abs(samples) > 1)):
+            raise ValueError('samples must be finite normalized mono PCM within -1..1')
+        samples = samples.astype(np.float32, copy=False)
         if len(samples) == 0:
             return []
 
