@@ -109,6 +109,7 @@ def test_story_creation_is_not_replaced_by_literary_analysis_template():
 
 @pytest.mark.parametrize('text', [
     '我以前想过自杀，但现在我想自杀。',
+    '我以前想过自杀，但现在想自杀。',
     '我曾经有过轻生念头；此刻我不想活了。',
 ])
 def test_current_risk_is_not_suppressed_by_separate_historical_clause(text):

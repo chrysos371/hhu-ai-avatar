@@ -36,7 +36,8 @@ class BoundaryPolicy:
         self.literary_analysis = False
         clean = _mask_quoted(text)
         fictional = bool(re.search(r'故事|小说|剧本|台词|假设|假如|影评|电影里人物', clean))
-        real_now = bool(re.search(r'我(?:现在|此刻|今天|真的).*(?:伤害自己|自杀|轻生|不想活|想死|结束生命)', clean))
+        current_risk_pattern = r'(?:我(?:现在|此刻|今天|真的)|(?:现在|此刻|今天)(?:我)?).{0,15}(?:伤害自己|自杀|轻生|不想活|想死|结束生命)'
+        real_now = bool(re.search(current_risk_pattern, clean))
         if fictional and not real_now:
             self.fiction = True
         if re.search(r'现实|真的', clean):
@@ -49,7 +50,7 @@ class BoundaryPolicy:
         self_risk = any(
             re.search(risk_pattern, clause)
             and (not re.search(r'以前|曾经|去年|年前|当时|过去', clause)
-                 or re.search(r'我(?:现在|此刻|今天).*(?:伤害自己|自杀|轻生|不想活|想死|结束生命)', clause))
+                 or re.search(current_risk_pattern, clause))
             and not re.search(r'(?:没有|并无).{0,12}(?:伤害自己|自杀|轻生)|'
                               r'(?:不会|不想|不打算|不准备)(?:伤害自己|自杀|轻生|死)', clause)
             for clause in re.split(r'[，,。；;]', clean))
