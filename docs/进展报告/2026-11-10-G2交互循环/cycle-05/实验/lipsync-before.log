@@ -1,0 +1,541 @@
+F.FFFFFFFFFFFFFFFFFFFFFFFFFF                                             [100%]
+=================================== FAILURES ===================================
+__ test_stationary_source_does_not_get_periodic_unvoiced_closures_by_default ___
+
+    def test_stationary_source_does_not_get_periodic_unvoiced_closures_by_default():
+        signal=synthesize(SPEC,SPEC['anchors'][0],16000,'harmonic',100,.12,11)
+        frames=LipSyncEngine().analyze(signal,16000)
+        interior=np.array([frame.mouth_open for frame in frames if .1<=frame.time<=.65])
+>       assert interior.min()>.5*np.median(interior)
+E       assert np.float64(0.05) > (0.5 * np.float64(1.0))
+E        +  where np.float64(0.05) = <built-in method min of numpy.ndarray object at 0x7f24a2c9d590>()
+E        +    where <built-in method min of numpy.ndarray object at 0x7f24a2c9d590> = array([1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  ,\n       1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.... , 1.  , 1.  , 1.  , 1.  , 1.  ,\n       1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 0.05, 1.  , 1.  , 1.  , 1.  ,\n       1.  ]).min
+E        +  and   np.float64(1.0) = <function median at 0x7f2400348bf0>(array([1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.  ,\n       1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 1.... , 1.  , 1.  , 1.  , 1.  , 1.  ,\n       1.  , 1.  , 1.  , 1.  , 1.  , 1.  , 0.05, 1.  , 1.  , 1.  , 1.  ,\n       1.  ]))
+E        +    where <function median at 0x7f2400348bf0> = np.median
+
+tests/test_lipsync_boundaries.py:19: AssertionError
+_________ test_invalid_component_options_fail_before_analysis[kwargs0] _________
+
+kwargs = {'frame_ms': 0}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs1] _________
+
+kwargs = {'frame_ms': nan}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs2] _________
+
+kwargs = {'frame_ms': True}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs3] _________
+
+kwargs = {'hop_ms': 0}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs4] _________
+
+kwargs = {'hop_ms': -1}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs5] _________
+
+kwargs = {'hop_ms': inf}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs6] _________
+
+kwargs = {'smooth': 0}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs7] _________
+
+kwargs = {'smooth': 1.5}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs8] _________
+
+kwargs = {'smooth': True}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_________ test_invalid_component_options_fail_before_analysis[kwargs9] _________
+
+kwargs = {'silence_ratio': -1}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+________ test_invalid_component_options_fail_before_analysis[kwargs10] _________
+
+kwargs = {'silence_ratio': nan}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+________ test_invalid_component_options_fail_before_analysis[kwargs11] _________
+
+kwargs = {'silence_ratio': 1.1}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+________ test_invalid_component_options_fail_before_analysis[kwargs12] _________
+
+kwargs = {'close_every': 0}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+________ test_invalid_component_options_fail_before_analysis[kwargs13] _________
+
+kwargs = {'close_every': -1}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+________ test_invalid_component_options_fail_before_analysis[kwargs14] _________
+
+kwargs = {'close_every': nan}
+
+    @pytest.mark.parametrize('kwargs',[
+        {'frame_ms':0},{'frame_ms':float('nan')},{'frame_ms':True},
+        {'hop_ms':0},{'hop_ms':-1},{'hop_ms':float('inf')},
+        {'smooth':0},{'smooth':1.5},{'smooth':True},
+        {'silence_ratio':-1},{'silence_ratio':float('nan')},{'silence_ratio':1.1},
+        {'close_every':0},{'close_every':-1},{'close_every':float('nan')},
+    ])
+    def test_invalid_component_options_fail_before_analysis(kwargs):
+>       with pytest.raises(ValueError):LipSyncEngine(**kwargs)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:37: Failed
+_______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal0-16000] _______
+
+signal = array([[0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.],
+       [0., 0.]])
+sr = 16000
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:47: Failed
+_______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal1-16000] _______
+
+signal = array([nan]), sr = 16000
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:47: Failed
+_______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal2-16000] _______
+
+signal = array([inf]), sr = 16000
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:47: Failed
+_______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal3-16000] _______
+
+signal = array([1.1]), sr = 16000
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:47: Failed
+_________ test_invalid_pcm_or_sampling_metadata_is_rejected[signal4-0] _________
+
+signal = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), sr = 0
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+
+tests/test_lipsync_boundaries.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/face/lipsync.py:119: in analyze
+    frames = frame_signal(samples, self.frame_ms, self.hop_ms, sr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+samples = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), frame_ms = 25.0
+hop_ms = 10.0, sr = 0
+
+    def frame_signal(
+        samples: np.ndarray,
+        frame_ms: float = 25.0,
+        hop_ms: float = 10.0,
+        sr: int = 24000,
+    ) -> np.ndarray:
+        """分帧 + 汉明窗，返回 (num_frames, frame_len) 的 float32 数组。"""
+        frame_len = int(sr * frame_ms / 1000)
+        hop = int(sr * hop_ms / 1000)
+        if len(samples) < frame_len:
+            return np.zeros((0, frame_len), dtype=np.float32)
+>       n_frames = 1 + (len(samples) - frame_len) // hop
+E       ZeroDivisionError: integer division or modulo by zero
+
+src/avatar/utils/audio.py:91: ZeroDivisionError
+________ test_invalid_pcm_or_sampling_metadata_is_rejected[signal5--1] _________
+
+signal = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), sr = -1
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+
+tests/test_lipsync_boundaries.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/face/lipsync.py:119: in analyze
+    frames = frame_signal(samples, self.frame_ms, self.hop_ms, sr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+samples = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), frame_ms = 25.0
+hop_ms = 10.0, sr = -1
+
+    def frame_signal(
+        samples: np.ndarray,
+        frame_ms: float = 25.0,
+        hop_ms: float = 10.0,
+        sr: int = 24000,
+    ) -> np.ndarray:
+        """分帧 + 汉明窗，返回 (num_frames, frame_len) 的 float32 数组。"""
+        frame_len = int(sr * frame_ms / 1000)
+        hop = int(sr * hop_ms / 1000)
+        if len(samples) < frame_len:
+            return np.zeros((0, frame_len), dtype=np.float32)
+>       n_frames = 1 + (len(samples) - frame_len) // hop
+E       ZeroDivisionError: integer division or modulo by zero
+
+src/avatar/utils/audio.py:91: ZeroDivisionError
+_______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal6-True] ________
+
+signal = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), sr = True
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+
+tests/test_lipsync_boundaries.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/face/lipsync.py:119: in analyze
+    frames = frame_signal(samples, self.frame_ms, self.hop_ms, sr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+samples = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), frame_ms = 25.0
+hop_ms = 10.0, sr = True
+
+    def frame_signal(
+        samples: np.ndarray,
+        frame_ms: float = 25.0,
+        hop_ms: float = 10.0,
+        sr: int = 24000,
+    ) -> np.ndarray:
+        """分帧 + 汉明窗，返回 (num_frames, frame_len) 的 float32 数组。"""
+        frame_len = int(sr * frame_ms / 1000)
+        hop = int(sr * hop_ms / 1000)
+        if len(samples) < frame_len:
+            return np.zeros((0, frame_len), dtype=np.float32)
+>       n_frames = 1 + (len(samples) - frame_len) // hop
+E       ZeroDivisionError: integer division or modulo by zero
+
+src/avatar/utils/audio.py:91: ZeroDivisionError
+______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal7-16000.5] ______
+
+signal = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), sr = 16000.5
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:47: Failed
+_________ test_invalid_pcm_or_sampling_metadata_is_rejected[signal8-1] _________
+
+signal = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), sr = 1
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+
+tests/test_lipsync_boundaries.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/face/lipsync.py:119: in analyze
+    frames = frame_signal(samples, self.frame_ms, self.hop_ms, sr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+samples = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), frame_ms = 25.0
+hop_ms = 10.0, sr = 1
+
+    def frame_signal(
+        samples: np.ndarray,
+        frame_ms: float = 25.0,
+        hop_ms: float = 10.0,
+        sr: int = 24000,
+    ) -> np.ndarray:
+        """分帧 + 汉明窗，返回 (num_frames, frame_len) 的 float32 数组。"""
+        frame_len = int(sr * frame_ms / 1000)
+        hop = int(sr * hop_ms / 1000)
+        if len(samples) < frame_len:
+            return np.zeros((0, frame_len), dtype=np.float32)
+>       n_frames = 1 + (len(samples) - frame_len) // hop
+E       ZeroDivisionError: integer division or modulo by zero
+
+src/avatar/utils/audio.py:91: ZeroDivisionError
+______ test_invalid_pcm_or_sampling_metadata_is_rejected[signal9-400000] _______
+
+signal = array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]), sr = 400000
+
+    @pytest.mark.parametrize('signal,sr',[
+        (np.zeros((10,2)),16000),(np.array([float('nan')]),16000),
+        (np.array([float('inf')]),16000),(np.array([1.1]),16000),
+        (np.zeros(10),0),(np.zeros(10),-1),(np.zeros(10),True),
+        (np.zeros(10),16000.5),(np.zeros(10),1),(np.zeros(10),400000),
+    ])
+    def test_invalid_pcm_or_sampling_metadata_is_rejected(signal,sr):
+>       with pytest.raises(ValueError):LipSyncEngine().analyze(signal,sr)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_lipsync_boundaries.py:47: Failed
+____________ test_cancelled_empty_analysis_propagates_cancellation _____________
+
+    def test_cancelled_empty_analysis_propagates_cancellation():
+        token=CancellationToken();token.cancel()
+>       with pytest.raises(Cancelled):LipSyncEngine().analyze(np.zeros(0),16000,cancel=token)
+E       Failed: DID NOT RAISE Cancelled
+
+tests/test_lipsync_boundaries.py:52: Failed
+=========================== short test summary info ============================
+FAILED tests/test_lipsync_boundaries.py::test_stationary_source_does_not_get_periodic_unvoiced_closures_by_default
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs0]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs1]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs2]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs3]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs4]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs5]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs6]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs7]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs8]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs9]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs10]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs11]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs12]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs13]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_component_options_fail_before_analysis[kwargs14]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal0-16000]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal1-16000]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal2-16000]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal3-16000]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal4-0]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal5--1]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal6-True]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal7-16000.5]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal8-1]
+FAILED tests/test_lipsync_boundaries.py::test_invalid_pcm_or_sampling_metadata_is_rejected[signal9-400000]
+FAILED tests/test_lipsync_boundaries.py::test_cancelled_empty_analysis_propagates_cancellation
+27 failed, 1 passed in 0.93s
