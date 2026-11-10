@@ -55,6 +55,9 @@ def run(split,arm,output):
         'scope':spec['scope'],'protocol':spec,'spec_sha256':sha(SPEC),'split':split,'arm':arm,
         'engine_sha256':engine_sha,'script_sha256':sha(__file__),'audio_utils_sha256':sha('src/avatar/utils/audio.py'),
         'rows':[],'summary':{},'execution_complete':False,'human_or_semantic_approved':False,'failure':None}
+    addendum=Path('evals/audio/cycle-05/validation-addendum.json')
+    report['validation_novelty']=json.loads(addendum.read_text())
+    report['validation_addendum_sha256']=sha(addendum)
     save(output,report);started=time.perf_counter()
     try:
         for anchor,sr,rms,excitation in itertools.product(spec['anchors'],spec['sample_rates'],spec['target_rms'],spec['excitations']):
