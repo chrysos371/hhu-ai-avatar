@@ -82,3 +82,27 @@ def test_real_sdk_repair_cancellation_closes_pending_headers_without_deltas(tmp_
                 assert db.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]==0
         finally:
             token.cancel();thread.join(3);engine.close()
+
+
+@pytest.mark.parametrize('operation',['forget','correct'])
+def test_external_context_change_stops_later_unbuffered_sentences(tmp_path,operation):
+    from avatar.brain.memory import MemoryStore
+    from avatar.cancellation import Cancelled
+    class Model(StreamingDraft):
+        def stream_chat(self,messages,*,on_delta=None,**kwargs):
+            on_delta('第一句。')
+            if operation=='forget':writer.forget(fragment)
+            else:writer.correct(fragment,'名字: 新名')
+            on_delta('你叫旧名。')
+            return '第一句。你叫旧名。'
+    db_path=str(tmp_path/'external.db')
+    avatar=Avatar(db_path=db_path,llm=Model())
+    fragment=avatar.memory.remember_user('名字','旧名')
+    writer=MemoryStore(db_path)
+    pieces=[]
+    try:
+        with pytest.raises(Cancelled):
+            avatar.respond('你好',cancel=CancellationToken(),on_delta=pieces.append)
+        assert pieces==['第一句。']
+        assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]==0
+    finally:writer.close();avatar.memory.close()

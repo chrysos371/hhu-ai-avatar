@@ -441,6 +441,12 @@ class Avatar:
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
+        def emit_checked(piece):
+            self._checkpoint()
+            if self.memory.context_revision != turn_context_revision:
+                raise Cancelled('context changed before visible reply')
+            if on_delta:
+                on_delta(piece)
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
         self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
@@ -544,7 +550,7 @@ class Avatar:
                             sentence, pending = pending[:match.end()], pending[match.end():]
                             if on_delta and not buffer_reply:
                                 safe, _ = self.boundaries.review_output(sentence)
-                                on_delta(safe)
+                                emit_checked(safe)
                     reply = self.llm.stream_chat(self._messages(decision, user_text),
                         temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
                 else:
@@ -602,8 +608,7 @@ class Avatar:
         # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
         if buffer_reply and generation_mode == 'llm' and on_delta:
-            self._checkpoint()
-            on_delta(reply)
+            emit_checked(reply)
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         self._checkpoint()
