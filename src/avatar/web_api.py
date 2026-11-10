@@ -46,6 +46,7 @@ def enrich_chat_result(server, memory, result):
                 "arousal",
                 "analysis_mode",
                 "generation_mode",
+                "identity_grounding",
             )
         },
         "guard": result.get("boundary"),

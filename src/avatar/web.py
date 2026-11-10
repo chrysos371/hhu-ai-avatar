@@ -478,7 +478,8 @@ def run_chat(server, user_text, use_web=False, *, job=None):
     try:
         if token:
             token.checkpoint()
-        avatar = Avatar(db_path=server.db_path, session_id=server.session_id, fast_analysis=job is not None)
+        avatar = Avatar(db_path=server.db_path, session_id=server.session_id, fast_analysis=job is not None,
+                        subject_prompt_enabled=server.identity_grounding)
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         if server.context_revision != memory.context_revision:
@@ -555,6 +556,7 @@ def create_server(
     asr_engine=None,
     max_connections=32,
     header_timeout=10,
+    identity_grounding=False,
 ) -> ThreadingHTTPServer:
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,
                                max_connections=max_connections, header_timeout=header_timeout)
@@ -565,6 +567,7 @@ def create_server(
     from .transcription import TranscriptionService
     server.transcription = TranscriptionService(asr_engine)
     server.db_path = db_path
+    server.identity_grounding = identity_grounding
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []
@@ -593,6 +596,8 @@ def main():
     parser.add_argument('--asr-backend', choices=('funasr', 'faster-whisper'), default='funasr')
     parser.add_argument('--asr-device', choices=('cpu', 'cuda'), default='cpu',
                         help='CUDA 设备可见性由 CUDA_VISIBLE_DEVICES 显式控制')
+    parser.add_argument('--identity-grounding', action='store_true',
+                        help='启用已验证画像的身份约束提示；需先在目标模型完成评测')
     args = parser.parse_args()
     if not 0 <= args.port <= 65535:
         parser.error("--port 必须在 0–65535 之间，0 表示自动分配空闲端口")
@@ -618,7 +623,8 @@ def main():
             asr = FunASREngine(model=str(model), device=args.asr_device)
     try:
         server = create_server(args.db, port=args.port, legacy_writes=False,
-                               knowledge_embedder=embedder, asr_engine=asr)
+                               knowledge_embedder=embedder, asr_engine=asr,
+                               identity_grounding=args.identity_grounding)
     except OSError as exc:
         parser.exit(2, f"无法监听 127.0.0.1:{args.port}（{exc.strerror}）；请用 --port 指定空闲端口。\n")
     print(

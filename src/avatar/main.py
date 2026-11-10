@@ -622,6 +622,7 @@ class Avatar:
             "strategy": decision.strategy,
             "analysis_mode": self.analysis_mode,
             "generation_mode": generation_mode,
+            "identity_grounding": self.subject_prompt_enabled,
             "user_emotion": self.emotion.user_state.label(),
             "user_valence": round(self.emotion.user_state.valence, 2),
             "user_arousal": round(self.emotion.user_state.arousal, 2),

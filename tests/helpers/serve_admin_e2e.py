@@ -32,10 +32,12 @@ else:
 config.llm.base_url = provider_url
 config.embedding.model = ""
 memory = MemoryStore(str(Path(folder.name) / "browser.db"))
-memory.remember_user("名字", "浏览器测试原名")
+if os.getenv("AVATAR_E2E_EMPTY_PROFILE") != "1":
+    memory.remember_user("名字", "浏览器测试原名")
 memory.close()
 server = create_server(
-    str(Path(folder.name) / "browser.db"), port=18765, legacy_writes=False
+    str(Path(folder.name) / "browser.db"), port=18765, legacy_writes=False,
+    identity_grounding=os.getenv("AVATAR_E2E_IDENTITY_GROUNDING") == "1"
 )
 
 # Offline fixtures exercise real browser codecs/AudioWorklet without network or models.
