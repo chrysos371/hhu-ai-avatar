@@ -506,6 +506,10 @@ class Avatar:
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
         # 4. LLM 回复（无 key 与调用故障分别标记）
         generation_mode = 'rules'
+        delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
+            and boundary.reply is None and reminder is None and cancelled_reminder_id is None
+            and not reminder_error and not use_web)
+        buffer_reply = self.profile_grounding_enabled or delivery_guard_active
         grounding_action = None
         profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
         profile_reply, lookup_action = lookup_profile(user_text, profile) if self.profile_grounding_enabled else (None, None)
@@ -538,7 +542,7 @@ class Avatar:
                         pending += piece
                         while (match := re.search(r'[。！？!?\n]', pending)):
                             sentence, pending = pending[:match.end()], pending[match.end():]
-                            if on_delta and not self.profile_grounding_enabled:
+                            if on_delta and not buffer_reply:
                                 safe, _ = self.boundaries.review_output(sentence)
                                 on_delta(safe)
                     reply = self.llm.stream_chat(self._messages(decision, user_text),
@@ -587,9 +591,9 @@ class Avatar:
             reply, output_adjustment = output_checker(reply)
         if self.profile_grounding_enabled and generation_mode == 'llm':
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
-        # Guarded mode buffers model text until the complete response is reviewed.
+        # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
-        if self.profile_grounding_enabled and generation_mode == 'llm' and on_delta:
+        if buffer_reply and generation_mode == 'llm' and on_delta:
             self._checkpoint()
             on_delta(reply)
         if self._due_reminders:
@@ -627,7 +631,8 @@ class Avatar:
             "task": self.tasks.current.data() if self.tasks.current else None,
             "delivery_check": {"initial_issues": delivery_issues,
                                "remaining_issues": self.tasks.inspect(reply) if delivery_issues else [],
-                               "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded},
+                               "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded,
+                               "stream_buffered": delivery_guard_active and generation_mode == "llm"},
             "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
                          "output_adjustment": output_adjustment},
             "reply": reply,
