@@ -1,0 +1,219 @@
+{
+  "source_head": "83f322ccd00bfa6a56859b295ce3957497b84bed",
+  "source_sha256": "32d33618fb02124441268a1588623ea6f900f2c1c01d2b0091041e3f1b5359fe",
+  "protocol_sha256": "ee553a55ecbda84d2f658d4464e3c3e84653a38500bc6e05aa44df76695db7d8",
+  "protocol": {
+    "scope": "Five sequential local real-model SDK cancellation trials after first text, not third-party billing or long-run tail latency",
+    "trials": 5,
+    "prompt": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。",
+    "max_tokens": 512,
+    "temperature": 0,
+    "seed": 42,
+    "cancel_trigger": "first nonempty SDK content delta",
+    "gate": {
+      "local_cancel_p95_seconds_max": 0.5,
+      "all_cancelled": true,
+      "provider_iterator_closed": true,
+      "next_request_recovers": true
+    },
+    "recovery_prompt": "1加1等于多少？只给数字。",
+    "recovery_max_tokens": 16,
+    "provider": "Same pinned Qwen3-4B-Q4_K_M, llama-cpp-python 0.3.19/cu124 and non-thinking template as paired scenarios"
+  },
+  "provider": {
+    "url": "http://127.0.0.1:33767/v1",
+    "model_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "model_revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+    "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+    "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 40441, 0\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 40441, 0\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 40441, 0\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 40441, 0\n",
+    "chosen_gpu": {
+      "index": 2,
+      "uuid": "GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e",
+      "free_mib": 40441
+    },
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "n_batch_prompt_tokens": 256,
+      "concurrent_sequences": 1,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "flash_attention": true
+    },
+    "llama_cpp_python": "0.3.19",
+    "load_seconds": 1.2104846489964984,
+    "provider_source_sha256": "e0ef733a66d38f0716b94b099efef675499793921ab96c79904a38373429b246",
+    "process_gpu_mib_after_load": [
+      4096
+    ],
+    "pid": 1814519
+  },
+  "rows": [
+    {
+      "trial": 0,
+      "first_delta_seconds": 0.08801994399982505,
+      "cancel_join_seconds": 0.0025322469882667065,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-103",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 水",
+          "first_seconds": 0.03842266299761832,
+          "total_seconds": 0.08031782699981704,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.06509482502588071
+    },
+    {
+      "trial": 1,
+      "first_delta_seconds": 0.04829824800253846,
+      "cancel_join_seconds": 0.0017820590001065284,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-105",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 水",
+          "first_seconds": 0.037875178997637704,
+          "total_seconds": 0.07256404499639757,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.04106380001758225
+    },
+    {
+      "trial": 2,
+      "first_delta_seconds": 0.04043055500369519,
+      "cancel_join_seconds": 0.001745752990245819,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-107",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 水",
+          "first_seconds": 0.029939241998363286,
+          "total_seconds": 0.06183956700260751,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.0383444530016277
+    },
+    {
+      "trial": 3,
+      "first_delta_seconds": 0.03596366901183501,
+      "cancel_join_seconds": 0.001707254006760195,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-109",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 水",
+          "first_seconds": 0.02633471300941892,
+          "total_seconds": 0.05306275901966728,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.03652055800193921
+    },
+    {
+      "trial": 4,
+      "first_delta_seconds": 0.03707075599231757,
+      "cancel_join_seconds": 0.0017506760195828974,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-111",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 水",
+          "first_seconds": 0.026400962990010157,
+          "total_seconds": 0.053198184992652386,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.03615954201086424
+    }
+  ],
+  "execution_status": "complete",
+  "local_cancel_p95_seconds": 0.0025322469882667065,
+  "all_provider_iterators_closed": true,
+  "passes_gate": true
+}
