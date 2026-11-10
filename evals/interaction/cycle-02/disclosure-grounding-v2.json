@@ -1,0 +1,123 @@
+{
+  "version": 2,
+  "scope": "Conservative source-backed declaration acknowledgement in direct conversation; not a general response semantic verifier",
+  "known_outputs_used_for_design": "Existing 52 and prospective12 development outputs; subsequent reruns are development regression, not fresh validation",
+  "comparison": "Same prompt in both arms; candidate additionally source-grounded lookups and declaration routing. Report native generation and deterministic routing separately. Defaults remain false.",
+  "positive_fixtures": [
+    {
+      "input": "我喜欢喝可乐。",
+      "profile": {
+        "偏好": "喜欢喝可乐"
+      },
+      "action": "profile_disclosure"
+    },
+    {
+      "input": "我不喜欢游泳，我喜欢爬山。",
+      "profile": {
+        "偏好": "喜欢爬山；不喜欢游泳"
+      },
+      "action": "profile_disclosure"
+    },
+    {
+      "input": "我现在不喜欢可乐了，更喜欢豆浆。",
+      "profile": {
+        "偏好": "不喜欢可乐；喜欢豆浆"
+      },
+      "action": "profile_disclosure"
+    },
+    {
+      "input": "我叫洛川，我的同学叫牧云。",
+      "profile": {
+        "名字": "洛川"
+      },
+      "action": "profile_disclosure"
+    },
+    {
+      "input": "我的朋友叫顾清，我们刚认识。",
+      "profile": {},
+      "action": "third_party_introduction"
+    },
+    {
+      "input": "朋友说“我叫闻夏”，这是他的自我介绍。",
+      "profile": {},
+      "action": "third_party_introduction"
+    },
+    {
+      "input": "我的室友叫陆舟，他喜欢篮球；我喜欢羽毛球。",
+      "profile": {
+        "偏好": "喜欢羽毛球"
+      },
+      "action": "profile_disclosure"
+    }
+  ],
+  "negative_fixtures": [
+    {
+      "input": "我喜欢喝可乐。请帮我写一封信。",
+      "profile": {
+        "偏好": "喜欢喝可乐"
+      }
+    },
+    {
+      "input": "我喜欢跑步，但今天很难过。",
+      "profile": {
+        "偏好": "喜欢跑步"
+      }
+    },
+    {
+      "input": "我喜欢网球，可以给我建议吗？",
+      "profile": {
+        "偏好": "喜欢网球"
+      }
+    },
+    {
+      "input": "假如我喜欢爬山，故事会怎样？",
+      "profile": {}
+    },
+    {
+      "input": "请写一句台词：我喜欢喝花茶。",
+      "profile": {}
+    },
+    {
+      "input": "把“我喜欢网球”翻译成英文。",
+      "profile": {}
+    },
+    {
+      "input": "我喜欢网球，我室友叫什么名字？",
+      "profile": {
+        "偏好": "喜欢网球"
+      }
+    },
+    {
+      "input": "我的朋友叫顾清，他今天心情很差。",
+      "profile": {}
+    },
+    {
+      "input": "我叫洛川，帮我拟一条请假短信。",
+      "profile": {
+        "名字": "洛川"
+      }
+    },
+    {
+      "input": "我喜欢喝可乐。",
+      "profile": {}
+    },
+    {
+      "input": "我叫洛川。",
+      "profile": {
+        "名字": "牧云"
+      }
+    },
+    {
+      "input": "朋友说“我喜欢游泳”。我该怎么回答？",
+      "profile": {}
+    }
+  ],
+  "constraints": [
+    "Every input clause must be a recognized fact declaration, third-party introduction or narrow introduction tail",
+    "A self acknowledgement must match currently active profile and independently validated current source facts",
+    "Requests, emotional elaboration, quoted writing tasks, questions and conditionals remain generative or existing safety routes",
+    "No affirmative offline promise or guessing of an unconfirmed user name in deterministic acknowledgement",
+    "Unrecognized conversations are outside coverage; all native and final replies retained",
+    "No global release from a passing regression score"
+  ]
+}
