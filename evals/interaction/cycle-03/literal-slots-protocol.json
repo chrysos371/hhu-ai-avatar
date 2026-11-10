@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "scope": "Deterministic render protocol; original requested text is inserted only at declared fixed positions, never appended after a failed freeform response",
+  "maximum_required": 8,
+  "maximum_forbidden": 8,
+  "maximum_literal_characters": 120,
+  "maximum_rendered_characters": 4000,
+  "infeasible": "reject required literal containing a forbidden literal before model call",
+  "schema": "Object has exactly slot_0 through slot_N; each a string; N immutable required literals are inserted between slots in source order",
+  "controls": [
+    "Exact Unicode preservation",
+    "Empty context slots allowed",
+    "Reject unknown/missing/duplicate slot keys",
+    "Reject nonstring or oversized slots/output",
+    "Check forbidden text after joining, including across boundaries",
+    "Do not claim truth, author perspective or style from lexical compliance",
+    "One repair call only; cancel transport and context checks remain in force"
+  ]
+}

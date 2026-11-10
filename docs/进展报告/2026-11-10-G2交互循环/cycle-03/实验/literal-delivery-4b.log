@@ -1,0 +1,99 @@
+regression tea_self baseline True None
+regression tea_self candidate True None
+regression run_self candidate True None
+regression run_self baseline True None
+regression quote_preference baseline True None
+regression quote_preference candidate True None
+regression friend_identity candidate True None
+regression friend_identity baseline True None
+regression quoted_identity baseline True None
+regression quoted_identity candidate True None
+regression verified_identity candidate True None
+regression verified_identity baseline True None
+regression hypothetical_identity baseline True None
+regression hypothetical_identity candidate True None
+regression creative_firstperson candidate True None
+regression creative_firstperson baseline False None
+regression translation baseline True None
+regression translation candidate True None
+regression friend_question candidate True None
+regression friend_question baseline True None
+regression preference_change baseline True None
+regression preference_change candidate True None
+regression unknown_preference candidate True None
+regression unknown_preference baseline True None
+prospective rain_quote baseline False None
+prospective rain_quote candidate True None
+prospective tea_quote candidate False None
+prospective tea_quote baseline False None
+prospective notice_phrase baseline True None
+prospective notice_phrase candidate True None
+prospective verbatim_phrase candidate True None
+prospective verbatim_phrase baseline True None
+prospective single_quote baseline True None
+prospective single_quote candidate True None
+prospective angle_quote candidate True None
+prospective angle_quote baseline True None
+prospective two_literals baseline True None
+prospective two_literals candidate True None
+prospective no_guarantee candidate True None
+prospective no_guarantee baseline True None
+prospective placeholder baseline True None
+prospective placeholder candidate True None
+prospective comma_literal candidate False None
+prospective comma_literal baseline True None
+prospective inner_operator baseline True None
+prospective inner_operator candidate True None
+prospective remove_then_keep candidate True None
+prospective remove_then_keep baseline True None
+prospective drop_placeholder baseline True None
+prospective drop_placeholder candidate True None
+prospective fictional_body candidate True None
+prospective fictional_body baseline True None
+prospective quote_analysis baseline True None
+prospective quote_analysis candidate True None
+prospective topic_reset candidate True None
+prospective topic_reset baseline True None
+{
+  "summary": {
+    "regression": {
+      "baseline": {
+        "passed": 11,
+        "v1_passed": 11,
+        "failed_ids": [
+          "creative_firstperson"
+        ]
+      },
+      "candidate": {
+        "passed": 12,
+        "v1_passed": 12,
+        "failed_ids": []
+      }
+    },
+    "prospective": {
+      "baseline": {
+        "passed": 14,
+        "v1_passed": 14,
+        "failed_ids": [
+          "rain_quote",
+          "tea_quote"
+        ]
+      },
+      "candidate": {
+        "passed": 14,
+        "v1_passed": 14,
+        "failed_ids": [
+          "tea_quote",
+          "comma_literal"
+        ]
+      }
+    }
+  },
+  "new_failures": [
+    {
+      "id": "comma_literal",
+      "family": "prospective"
+    }
+  ],
+  "release_gate_passed": false
+}

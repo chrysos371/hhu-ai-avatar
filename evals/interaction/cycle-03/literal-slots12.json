@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "scope": "Fresh related-family development verification frozen before slot-composer implementation/inference; no independent human approval",
+  "comparison": "Same4B, identity/profile/task/delivery enabled in both arms; candidate additionally immutable-literal slot composition for the single bounded repair",
+  "cases": [
+    {
+      "id": "s01",
+      "turns": [
+        "请写一句台词，必须包含“我想慢慢走”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我想慢慢走"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s02",
+      "turns": [
+        "请写一条简短通知，原样保留“日期待定”。"
+      ],
+      "final_checks": {
+        "all": [
+          "日期待定"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s03",
+      "turns": [
+        "请给同学写一条消息，保留“周三，图书馆”。"
+      ],
+      "final_checks": {
+        "all": [
+          "周三，图书馆"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s04",
+      "turns": [
+        "请写一条提醒，包含“不要忘记带伞”。"
+      ],
+      "final_checks": {
+        "all": [
+          "不要忘记带伞"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s05",
+      "turns": [
+        "请写一条邮件正文，保留【联系人】和【会议室】。"
+      ],
+      "final_checks": {
+        "all": [
+          "【联系人】",
+          "【会议室】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s06",
+      "turns": [
+        "请写一句标语，包含“先倾听”以及“再回应”。"
+      ],
+      "final_checks": {
+        "all": [
+          "先倾听",
+          "再回应"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s07",
+      "turns": [
+        "请写一条通知，包含“结果另行通知”，不要包含“肯定录取”。"
+      ],
+      "final_checks": {
+        "all": [
+          "结果另行通知"
+        ],
+        "none": [
+          "肯定录取"
+        ]
+      }
+    },
+    {
+      "id": "s08",
+      "turns": [
+        "请以小说人物的口吻写一句台词，包含“我昨天走过那座桥”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我昨天走过那座桥"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s09",
+      "turns": [
+        "请写一条消息，原样保留「姓名：待填」。"
+      ],
+      "final_checks": {
+        "all": [
+          "姓名：待填"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s10",
+      "turns": [
+        "请写一句话，必须包含'我喜欢安静'。"
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢安静"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s11",
+      "turns": [
+        "请写一条消息，包含“不要包含【旧值】”。"
+      ],
+      "final_checks": {
+        "all": [
+          "不要包含【旧值】"
+        ],
+        "none": []
+      }
+    },
+    {
+      "id": "s12",
+      "turns": [
+        "请给老师写一条消息，保留“时间”和“地点”，不要包含“保证出席”。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间",
+          "地点"
+        ],
+        "none": [
+          "保证出席"
+        ]
+      }
+    }
+  ],
+  "gate": {
+    "no_new_literal_failures": true,
+    "all12_literal_checks": true,
+    "all16_prior_regressions": true,
+    "no_service_fallback": true,
+    "guarded_visible_text_equals_final": true,
+    "semantic_approval": false,
+    "default_activation": false
+  }
+}
