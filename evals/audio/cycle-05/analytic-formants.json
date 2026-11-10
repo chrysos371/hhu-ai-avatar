@@ -1,27 +1,112 @@
 {
-  "version":1,
-  "scope":"Analytic all-pole synthetic signals, labels are current code anchor regions; not human or Mandarin vowel ground truth",
-  "baseline_revision":"515acf2",
-  "anchors":[
-    {"id":"a","formants_hz":[750,1250,3200]},
-    {"id":"e","formants_hz":[500,1900,3200]},
-    {"id":"i","formants_hz":[300,2500,3200]},
-    {"id":"o","formants_hz":[500,900,3200]},
-    {"id":"u","formants_hz":[350,800,3200]}
+  "version": 1,
+  "scope": "Analytic all-pole synthetic signals, labels are current code anchor regions; not human or Mandarin vowel ground truth",
+  "baseline_revision": "515acf2",
+  "anchors": [
+    {
+      "id": "a",
+      "formants_hz": [
+        750,
+        1250,
+        3200
+      ]
+    },
+    {
+      "id": "e",
+      "formants_hz": [
+        500,
+        1900,
+        3200
+      ]
+    },
+    {
+      "id": "i",
+      "formants_hz": [
+        300,
+        2500,
+        3200
+      ]
+    },
+    {
+      "id": "o",
+      "formants_hz": [
+        500,
+        900,
+        3200
+      ]
+    },
+    {
+      "id": "u",
+      "formants_hz": [
+        350,
+        800,
+        3200
+      ]
+    }
   ],
-  "bandwidths_hz":[80,100,120],
-  "sample_rates":[16000,24000,48000],
-  "excitations":["white_noise","harmonic"],
-  "fundamentals_hz":[100,180,250],
-  "target_rms":[0.03,0.12],
-  "duration_seconds":0.8,
-  "development_seed":11,
-  "validation_seed":29,
-  "noise_pitch_policy":"White noise uses only first f0 entry to avoid duplicate signals",
-  "routes":["component_native_rate","web_analysis_16k"],
-  "metrics":["interior frame vowel confusion","median absolute F1/F2 errors","forced closure frequency in sustained interior","runtime and finite/range invariants","zero and low-noise closure"],
-  "interior_seconds":[0.1,0.65],
-  "sudden_closure":"mouth_open below0.25 times median of same sustained interior; count only median>=0.3",
-  "release_gates":{"no_silence_reopening":true,"median_anchor_label_accuracy_no_regression_per_route":true,"sustained_sudden_closure_rate_not_increase":true,"semantic_or_human_approved":false},
-  "protocol":"Run development baseline first; choose candidate on development, commit before one paired validation. Preserve all failures. Fixed full grid; no wall-clock cutoff. Any later reuse is regression, not unseen validation. Do not tune anchor labels to outputs."
+  "bandwidths_hz": [
+    80,
+    100,
+    120
+  ],
+  "sample_rates": [
+    16000,
+    24000,
+    48000
+  ],
+  "excitations": [
+    "white_noise",
+    "harmonic"
+  ],
+  "fundamentals_hz": [
+    100,
+    180,
+    250
+  ],
+  "target_rms": [
+    0.03,
+    0.12
+  ],
+  "duration_seconds": 0.8,
+  "development_seed": 11,
+  "validation_seed": 29,
+  "noise_pitch_policy": "White noise uses only first f0 entry to avoid duplicate signals",
+  "routes": [
+    "component_native_rate",
+    "web_analysis_16k"
+  ],
+  "metrics": [
+    "interior frame vowel confusion",
+    "median absolute F1/F2 errors",
+    "forced closure frequency in sustained interior",
+    "runtime and finite/range invariants",
+    "zero and low-noise closure"
+  ],
+  "interior_seconds": [
+    0.1,
+    0.65
+  ],
+  "sudden_closure": "mouth_open below0.25 times median of same sustained interior; count only median>=0.3",
+  "release_gates": {
+    "no_silence_reopening": true,
+    "median_anchor_label_accuracy_no_regression_per_route": true,
+    "sustained_sudden_closure_rate_not_increase": true,
+    "semantic_or_human_approved": false
+  },
+  "protocol": "Run development baseline first; choose candidate on development, commit before one paired validation. Preserve all failures. Fixed full grid; no wall-clock cutoff. Any later reuse is regression, not unseen validation. Do not tune anchor labels to outputs.",
+  "generation": {
+    "pole_radius": "exp(-pi*bandwidth/sample_rate)",
+    "denominator": "product(1-2*r*cos(2*pi*F/sample_rate)*z+r*r*z*z), z=exp(-2*pi*j*k/N)",
+    "filter": "Periodic steady-state irfft(rfft(excitation)/denominator), remove DC, normalize RMS; no clipping",
+    "harmonic": "sum cos(2*pi*k*f0*t)/k for k*f0<min(5000,Nyquist)",
+    "white_noise": "numpy default_rng(seed) Gaussian, identical seed reused across anchors/rates for paired mechanism comparison",
+    "formant_samples_seconds": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6
+    ]
+  }
 }
