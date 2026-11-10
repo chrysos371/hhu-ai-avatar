@@ -56,7 +56,7 @@
 | 情绪 | 自研 PAD + 决策树 | AIRI 空白区 |
 | 口型 | 自研共振峰 F1/F2 | 可扩展中文声调 |
 
-- Python：`requires-python >= 3.10`（当前环境实际运行 3.14）
+- Python：`requires-python >= 3.10`；按声明范围保持兼容，并在可用环境中做版本验证
 - 核心依赖：`numpy`、`edge-tts`、`openai`、`python-dotenv`
 - 可选依赖（`requirements-optional.txt`）：`funasr` 或 `faster-whisper`（ASR）、`librosa` / `soundfile`（音频扩展，通常需 ffmpeg）；MCP/Web 依赖见 `requirements-web.txt`
 - 构建：setuptools，包在 `src/` 下；`pyproject.toml` 提供 extras，仓库同时保留 requirements 文件供安装使用
