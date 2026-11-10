@@ -30,26 +30,5 @@ def list_reminders() -> dict:
     finally:
         memory.close()
 
-@mcp.tool()
-def create_reminder(text: str) -> dict:
-    """仅在用户明确要求创建时调用；原文必须以提醒我开头且含日期钟点事项。"""
-    memory, store = _store()
-    try:
-        return {'reminder': store.create(text)}
-    finally:
-        memory.close()
-
-@mcp.tool()
-def cancel_reminder(reminder_id: int) -> dict:
-    """按查询所得编号取消用户明确指定的提醒。"""
-    if type(reminder_id) is not int or reminder_id < 1:
-        raise ValueError('提醒编号无效。')
-    memory, store = _store()
-    try:
-        store.set_status(reminder_id, 'cancelled')
-        return {'id': reminder_id, 'status': 'cancelled'}
-    finally:
-        memory.close()
-
 if __name__ == '__main__':
     mcp.run(transport='stdio')

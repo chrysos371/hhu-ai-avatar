@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 import json
 from types import SimpleNamespace
 
-from avatar.tools.web_agent import MODEL_TOOLS, WebAgent, _explicit_reminder_intent
+from avatar.tools.web_agent import MODEL_TOOLS, REGISTRY, WebAgent
 
 
 def call(name, arguments):
@@ -130,10 +130,4 @@ def test_model_never_receives_reminder_write_tools():
     assert not {'create_reminder', 'cancel_reminder'} & {
         tool['function']['name'] for tool in MODEL_TOOLS
     }
-
-def test_reminder_mutation_requires_exact_explicit_command():
-    assert _explicit_reminder_intent('提醒我2099年12月1日下午3点答辩') == (
-        'create_reminder', {'text': '提醒我2099年12月1日下午3点答辩'})
-    assert _explicit_reminder_intent('请取消提醒编号12。') == (
-        'cancel_reminder', {'reminder_id': 12})
-    assert _explicit_reminder_intent('搜索网页，并顺便帮我处理提醒') is None
+    assert not {'create_reminder', 'cancel_reminder'} & REGISTRY.names

@@ -58,6 +58,9 @@ def test_reminder_commands_and_close_in_real_pipeline(make_avatar):
     assert '？' not in ava.respond('晚安')['reply']
     assert ava.respond('提醒我明天答辩')['reminder_error']
     assert len(ava.reminders.list()) == 1
+    cancelled = ava.respond('请取消提醒编号1。')
+    assert '已取消提醒 #1' in cancelled['reply']
+    assert ava.reminders.list()[0]['status'] == 'cancelled'
 
 
 def test_feedback_command_and_recalled_ids(make_avatar):

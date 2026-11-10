@@ -1,7 +1,8 @@
-"""全链路编排：听 → 思 → 演 → 记。
+"""文本对话编排与音频文件 API。
 
-Avatar 类把 ASR / LLM / 记忆 / 情绪 / TTS / 口型串成一条闭环，
-`python -m avatar.main` 启动交互式对话（demo 模式，无 API key 也能跑通情绪+记忆+决策）。
+Avatar 类集成 LLM / 记忆 / 情绪与文本回应；`respond_audio()` 可接入音频文件转写，
+可选 TTS 会尝试生成离线口型帧。实时播放、同步渲染和设备体验尚未实现。
+`python -m avatar.main` 启动文本交互（无 API key 时使用规则回复）。
 """
 from __future__ import annotations
 
@@ -381,6 +382,17 @@ class Avatar:
                 reminder = self.reminders.create(user_text)
             except ValueError as exc:
                 reminder_error = str(exc)
+        cancelled_reminder_id = None
+        cancel_match = re.fullmatch(
+            r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
+            user_text)
+        if boundary.reply is None and cancel_match:
+            cancelled_reminder_id = int(cancel_match[1])
+            try:
+                self.reminders.set_status(cancelled_reminder_id, 'cancelled')
+            except ValueError as exc:
+                reminder_error = str(exc)
+                cancelled_reminder_id = None
         self._turn_facts = self.memory.recall(query=user_text, limit=5)
         if self.summary_enabled:
             self.summaries.refresh(self.session_id)
@@ -394,6 +406,8 @@ class Avatar:
         elif reminder is not None:
             due = datetime.fromtimestamp(reminder['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
             reply = f'已设置提醒：{due}（北京时间）{reminder["title"]}。程序运行并轮询时会在本机显示。'
+        elif cancelled_reminder_id is not None:
+            reply = f'已取消提醒 #{cancelled_reminder_id}。'
         elif reminder_error:
             reply = reminder_error
         elif use_web:

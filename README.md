@@ -4,7 +4,7 @@
 >
 > 河海大学大学生创新训练项目 · 参考 [moeru-ai/airi](https://github.com/moeru-ai/airi) 的算法思路，用 Python 重新实现
 
-受顶流 AI 虚拟主播 **Neuro-sama** 启发，本项目不局限于「能说话的模型」，而是打造一套让虚拟形象拥有**「过去」（长期记忆）**与**「心情」（情绪状态）**的底层认知框架，打通 **听 → 思 → 演 → 记** 全链路闭环，解决现有虚拟主播「金鱼脑」（对话失忆）与情感生硬两大痛点。
+受 AI 虚拟主播 **Neuro-sama** 启发，本项目探索带有**长期记忆**和**情绪状态**的虚拟形象认知底座，长期目标是打通 **听 → 思 → 演 → 记** 全链路。目前文本后端已集成，音频文件 API 已接入，实时播放与渲染尚未完成。
 
 ## 核心特性
 
@@ -20,19 +20,18 @@
 
 新增本机记忆工作台：在仓库根目录运行 `python start_web.py`，打开终端提供的完整链接，即可对话、查看记忆来源与历史、纠错、删除、反馈召回不相关，以及管理明确创建的提醒。长对话增加带来源编号的摘要，可单独删除原话。时间衰减只影响排名，身份/偏好不自动遗忘。详见 [记忆工作台与提醒](docs/记忆工作台与提醒.md)；当前为单用户模式。
 
-可选 [MCP 助手工具](docs/MCP联网工具.md)：安装 `requirements-web.txt` 后，可在统一工具管线中搜索网页、读取正文、查询天气、检索授权资料目录，以及查询/创建/取消本机 SQLite 提醒。每轮最多调用三次并返回状态轨迹。
+可选 [MCP 助手工具](docs/MCP联网工具.md)：安装 `requirements-web.txt` 后，可在统一工具管线中搜索网页、读取正文、查询天气、检索授权资料目录和查询本机提醒。MCP 工具只读；提醒写入由明确的当前用户请求、网页或 CLI 操作触发。每轮最多调用三次并返回状态轨迹。
 
 - 🧠 **两级记忆**：短期会话窗口 + 长期持久化记忆（翻译自 AIRI 的 memory schema）
 - 💗 **情绪引擎**：PAD 二维情绪模型 + 行为决策树（AIRI 空白区，本项目创新点）
 - 👄 **自研口型同步**：共振峰 F1/F2 定位元音 → 张嘴幅度，可解释、可扩展中文口型
-- 🎙️ **全链路闭环**：ASR → LLM → TTS → 口型参数，一站式编排
+- 🎙️ **文本后端已集成，音频链路可选接入**：`Avatar.respond_audio()` 支持音频文件转写并复用文本流程；可选 TTS 返回 MP3，音频可解码时同时返回逐帧口型参数。尚未接入实时播放/渲染端。
 - 🔌 **可插拔**：LLM/TTS/ASR 均抽象为接口，OpenAI 兼容、FunASR、Edge-TTS 开箱即用
 
 ## 架构
 
 ```
-用户 ──语音──▶ 听 ears/ASR ──▶ 思 brain/LLM ──▶ 演 mouth/TTS ──▶ 语音输出
-                     │                ▲               face/口型 ──▶ 口型参数
+音频文件 ─▶ respond_audio()/ASR ─▶ 文本主流程 ─▶ 可选 TTS(MP3) ─▶ 离线口型帧（解码成功时）
                      │                │
                      └── 记 memory/ ──┘   （SQLite 两级记忆）
                          情 emotion/      （情绪状态贯穿全程）
@@ -112,6 +111,18 @@ ava = Avatar()
 print(ava.respond("我叫小明，我喜欢打篮球"))  # 写入用户画像
 print(ava.respond("你还记得我叫什么吗？"))      # 从长期记忆召回
 print(ava.respond("我今天好难过……"))            # 触发安抚决策 + 情绪转负面
+```
+
+音频文件入口需要安装 ASR 可选依赖并注入引擎。回复 MP3 的离线口型分析需要可选 `audio` 依赖；解码失败时响应会提供 `lipsync_error`。帧时间单位为秒：
+
+```python
+from avatar.ears.asr import FunASREngine
+from avatar.main import Avatar
+
+ava = Avatar(asr=FunASREngine())
+result = ava.respond_audio("input.wav", use_tts=True)
+print(result["transcript"], result["audio_path"])
+print(result["lip_sync_frames"])
 ```
 
 ## 目录结构
