@@ -412,6 +412,11 @@ class MemoryStore:
         - 无 query：按重要度 + 最近访问排序
         """
         tokens = _tokenize(query) if query else []
+        # An explicitly supplied query with no searchable terms is not a request
+        # to browse the memory library; reserve importance-ranked listing for
+        # None or an empty query only.
+        if query and query.strip() and not tokens:
+            return []
         if tokens:
             like = " OR ".join(["content LIKE ?"] * len(tokens))
             sql = "SELECT * FROM memory_fragments WHERE (" + like + ")"

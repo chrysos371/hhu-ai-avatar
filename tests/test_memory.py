@@ -84,6 +84,13 @@ def test_recall_no_query_returns_by_importance():
     assert results[0]["id"] == fid_imp
     store.close()
 
+def test_nonempty_query_without_searchable_terms_does_not_return_global_memories():
+    store = _tmp_store()
+    store.remember("高重要度的用户画像", importance=1.0)
+    assert store.recall(query="你还记得我叫什么吗") == []
+    assert store.recall()  # no query remains an explicit importance-ranked listing
+    store.close()
+
 def test_profile_latest_value_not_access_time():
     store = MemoryStore(':memory:')
     try:
