@@ -1,0 +1,123 @@
+{
+  "scope": "source verifier fixtures, not model semantic accuracy",
+  "rows": [
+    {
+      "id": "contrast_and",
+      "input": "我朋友喜欢唱歌，而我喜欢摄影。",
+      "expected": [
+        "喜欢摄影"
+      ],
+      "actual": [],
+      "facts": [],
+      "passed": false
+    },
+    {
+      "id": "contrast_but",
+      "input": "室友说他喜欢足球，但我喜欢网球。",
+      "expected": [
+        "喜欢网球"
+      ],
+      "actual": [],
+      "facts": [],
+      "passed": false
+    },
+    {
+      "id": "new_preference",
+      "input": "我现在不喜欢可乐了，更喜欢豆浆。",
+      "expected": [
+        "不喜欢可乐",
+        "喜欢豆浆"
+      ],
+      "actual": [
+        "不喜欢可乐"
+      ],
+      "facts": [
+        {
+          "type": "偏好",
+          "content": "不喜欢可乐",
+          "evidence": "我现在不喜欢可乐了",
+          "subject": "self",
+          "modality": "asserted",
+          "temporal": "current"
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "quote_then_self",
+      "input": "朋友说“我喜欢游泳”，而我喜欢跑步。",
+      "expected": [
+        "喜欢跑步"
+      ],
+      "actual": [],
+      "facts": [],
+      "passed": false
+    },
+    {
+      "id": "quote_then_change",
+      "input": "朋友说“我喜欢游泳”，我喜欢咖啡，但现在不喜欢了。",
+      "expected": [
+        "不喜欢咖啡"
+      ],
+      "actual": [],
+      "facts": [],
+      "passed": false
+    },
+    {
+      "id": "all_quoted",
+      "input": "朋友说“我喜欢游泳，而我喜欢跑步。”",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    },
+    {
+      "id": "outer_if",
+      "input": "如果朋友说“我喜欢游泳”，我喜欢跑步。",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    },
+    {
+      "id": "outer_question",
+      "input": "朋友说“我喜欢游泳”，我喜欢跑步吗？",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    },
+    {
+      "id": "reported_other",
+      "input": "朋友说“我喜欢游泳”，他以为我喜欢跑步。",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    },
+    {
+      "id": "unclosed",
+      "input": "朋友说“我喜欢游泳，而我喜欢跑步。",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    },
+    {
+      "id": "nested",
+      "input": "朋友说“她说‘我喜欢爬山’，我喜欢网球。”",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    },
+    {
+      "id": "interrupted_reference",
+      "input": "我喜欢咖啡，朋友说“我喜欢游泳”，但现在不喜欢了。",
+      "expected": [],
+      "actual": [],
+      "facts": [],
+      "passed": true
+    }
+  ]
+}
