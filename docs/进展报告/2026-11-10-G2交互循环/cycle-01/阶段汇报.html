@@ -1,0 +1,122 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>G2 第一轮 · 交互与审计报告</title><style>body{font:17px/1.7 system-ui;max-width:1180px;margin:auto;padding:36px;background:#f4f7fb;color:#17243a}table{border-collapse:collapse;background:white;width:100%}td,th{border:1px solid #ccd6e0;padding:10px;text-align:left}h1,h2,a{color:#12558a}code{background:#e6edf5}pre{overflow:auto}</style><body><h1>Cycle 01：G2 交互评估与系统审计结论</h1>
+<p>作者：spinner-bot。基线 c89b93e；最终实验来源版本与哈希见原始结果。状态：<strong>预设的交互工程门槛通过；9 项已复现审计问题完成修复与复测，进入 Cycle 02。</strong></p>
+<h2>能力变化</h2>
+<p>网页已从同步返回、手动整段朗读，推进到有请求去重与生命周期的流式回合：逐句检查草稿、最终确认替换、生成中断、自动分段语音与最多一段预取、麦克风打断，以及真实本机 CPU/GPU ASR。模型输出半成品不会存入助手历史或先行朗读。识别文本仍先进入草稿，发送是明确操作。</p>
+<h2>预设门槛与实测</h2>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>审计后数据</th>
+<th>结论范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首个已检查输出</td>
+<td>同服务/同输入/10 次交替对照：738.6ms → 93.6ms，比 0.1267</td>
+<td>限定知识问题的可控传输实验，通过 50% 门槛；个人/情绪场景保留原分析，不外推真实模型质量</td>
+</tr>
+<tr>
+<td>中断</td>
+<td>20 次受控连接实验，等待响应头/接收流式，本机取消 p95 2.48ms</td>
+<td>证明本机任务/连接退出，不能证明第三方计算或计费停止</td>
+</tr>
+<tr>
+<td>首段可播</td>
+<td>真实 TTS 三对，整段中位 7.842s，首段 3.075s，比 0.3922</td>
+<td>通过 70% 中位门槛，网络波动显著；初轮曾出现首段更慢，不保证逐次收益</td>
+</tr>
+<tr>
+<td>真实 ASR</td>
+<td>12 干净+12 噪声+3 静音。CPU CER 0；GPU 干净 CER 0.00556、噪声 CER 0；静音均为空</td>
+<td>合成开发语料通过 20% 门槛，不代表真实人声/物理麦克风准确率</td>
+</tr>
+<tr>
+<td>ASR 速度与资源</td>
+<td>CPU int8 中位 1.468s，GPU int8_float16 中位 0.187s；配置整体比 7.86，采样最大显存 852MiB</td>
+<td>两配置量化类型不同，不能把差异全部归于 GPU；运行前后快照与采样数均留存</td>
+</tr>
+<tr>
+<td>浏览器整合</td>
+<td>真实 GPU ASR → 草稿确认 → 可控模型流式回复 → 真实 TTS → Chromium/SVG：1 passed</td>
+<td>草稿可见约 916ms，发送至实际播放约 5039ms；真实 LLM 质量与物理麦克风未验证</td>
+</tr>
+<tr>
+<td>工程回归</td>
+<td>Python 638 passed/1 skipped；前端 28 passed；类型/lint/构建通过；浏览器 12 passed/1 可选真实服务用例跳过</td>
+<td>可选真实服务用例已另行显式实跑通过；测试数不作为陪伴质量得分</td>
+</tr>
+</tbody>
+</table>
+<p>GPU 的唯一干净字符差异是“三点”写成“3点”，仍按预先固定的字符规则计差异，没有事后改为零误差。GPU 6 运行前有约 39.5GiB 余量；仅用一张卡，运行后显存已释放。GPU 按实际余量选择，没有固定卡号限制。</p>
+<h2>系统审计与修复结果</h2>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>同条件复测</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="审计/issues/G2-001.md">G2-001</a> P1</td>
+<td>迁移读后升级写锁导致并发 API 500</td>
+<td>8 并发/160 请求非 200：116 → 0</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-002.md">G2-002</a> P1</td>
+<td>删除后任务/事件/音频缓存保留副本</td>
+<td>任务与 SSE：200/含名字 → 404/不含；音频同步清理</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-003.md">G2-003</a> P2</td>
+<td>TTL 只在新提交时执行</td>
+<td>无新提交的过期读取：仍有结果 → 已清理</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-004.md">G2-004</a> P2</td>
+<td>安静噪声归一化成张嘴</td>
+<td>RMS 0.0003 噪声：96.9% 帧张嘴 → 0</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-005.md">G2-005</a> P2</td>
+<td>空连接无上限占线程</td>
+<td>40 空连接启动线程：40 → 32，并验证回压/超时恢复</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-006.md">G2-006</a> P2</td>
+<td>持续分块可绕过读超时</td>
+<td>配置 0.15s，实际 1.494s → 约 0.153s，连接关闭</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-007.md">G2-007</a> P1</td>
+<td>SQLite 助手派生文本未随来源删除</td>
+<td>实际助手名字残留 true → false；追踪原话/事实/前文回复，跨回复递归清理</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-008.md">G2-008</a> P2</td>
+<td>单个订阅断连误取消其他订阅</td>
+<td>存活订阅 cancelled → result/completed</td>
+</tr>
+<tr>
+<td><a href="审计/issues/G2-009.md">G2-009</a> P2</td>
+<td>超前游标返回空成功</td>
+<td>after=9999：200/空流 → 422/错误 JSON</td>
+</tr>
+</tbody>
+</table>
+<p>回复提交增加上下文版本门禁并与来源记录原子写入；生成中发生删除时旧内容不会重写回库。旧助手记录缺少来源时采用明确的保守脱敏，管理删除预览说明范围；已有可追踪的无关联回复保留。此处验证逻辑数据与运行副本清理，没有把它描述成对浏览器已下载副本或物理介质的取证擦除。</p>
+<h2>证据与复现</h2>
+<ul>
+<li><a href="计划.md">计划与预设门槛</a>、<a href="进展.md">全过程记录</a>、<a href="审计/范围与结论.md">审计范围</a></li>
+<li><a href="审计/evidence/audit-before.json">初始失败</a>、<a href="审计/evidence/audit-release.json">最终审计原始结果</a></li>
+<li><a href="实验/transport-audited.json">受控延迟原始逐次结果</a>、<a href="实验/tts-paired-audited.json">真实 TTS 原始三对</a></li>
+<li><a href="实验/asr-cpu.json">CPU ASR</a>、<a href="实验/asr-gpu.json">GPU ASR</a>、<a href="实验/voice-corpus-manifest.json">固定音频清单</a>、<a href="实验/asr-model-hashes.json">模型哈希</a></li>
+<li><a href="实验/real-voice-browser.json">真实浏览器时间</a>、<a href="实验/real-voice-browser.png">浏览器截图</a>、<a href="实验/gpu-post-exit.csv">GPU 退出快照</a></li>
+<li><a href="实验/python-release.log">Python 日志</a>、<a href="实验/browser-release.log">浏览器日志</a>、<a href="实验/real-voice-browser.log">真实语音浏览器日志</a></li>
+</ul>
+<p>可重复执行 <code>scripts/evaluate_interaction_transport.py</code>、<code>scripts/evaluate_voice_interaction.py</code> 与本目录 <code>审计/probes.py</code>，各脚本要求使用新结果文件，避免覆盖失败样本。模型、音频、依赖运行目录不进入 Git；输入、输出、哈希与原始时间留档。运行命令见 <a href="../../../网页语音与最小形象.md">当前交互说明</a>。</p>
+<h2>下一循环</h2>
+<p>Cycle 02 已启动：固定真实 Qwen3-4B GGUF 与推理环境，冻结客观开发场景，补真实模型对照、公开人声识别与自动录音端点。数据来源、许可、样本选择和结论范围先记录；不能用本轮受控模型成绩替代真实模型质量结论。联网工具与真实 ASR 的取消仍可能只能在阶段边界生效，后续需继续量化并完善。多日稳定性和物理设备实测仍未完成。</p></body></html>

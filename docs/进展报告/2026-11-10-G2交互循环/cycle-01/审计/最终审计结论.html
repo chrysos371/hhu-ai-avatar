@@ -1,0 +1,51 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>G2 第一轮 · 交互与审计报告</title><style>body{font:17px/1.7 system-ui;max-width:1180px;margin:auto;padding:36px;background:#f4f7fb;color:#17243a}table{border-collapse:collapse;background:white;width:100%}td,th{border:1px solid #ccd6e0;padding:10px;text-align:left}h1,h2,a{color:#12558a}code{background:#e6edf5}pre{overflow:auto}</style><body><h1>Cycle 01 系统审计</h1>
+<p>基线：88666bc；诊断探针在隔离数据库与本机可控服务运行。仪器化仅记录异常类型和代码栈，不输出请求体、令牌或上游错误正文。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>核对与实验</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据与隐私</td>
+<td>删除后任务结果/事件重放、请求账本、版本/来源边界</td>
+<td>发现 G2-002 / G2-007（均已修复）</td>
+</tr>
+<tr>
+<td>并发与持久化</td>
+<td>8 并发 160 次 API 请求、保存点、迁移、取消后写入</td>
+<td>发现 G2-001（已修复）</td>
+</tr>
+<tr>
+<td>资源与生命周期</td>
+<td>活跃/完成任务、过期、空连接、请求上限、关闭</td>
+<td>发现 G2-003 / G2-005（均已修复）</td>
+</tr>
+<tr>
+<td>延迟与取消</td>
+<td>实际 SDK、响应头等待、持续分块、前端迟到响应</td>
+<td>发现 G2-006（已修复）；取消对照数据单列</td>
+</tr>
+<tr>
+<td>音频与识别</td>
+<td>27 条固定语料、静音/低幅噪声、整段/分段真实 TTS</td>
+<td>发现 G2-004（已修复）；真实人声仍未验证</td>
+</tr>
+<tr>
+<td>安全与权限</td>
+<td>令牌、Host/Origin、明确提醒、管理确认、输出审查</td>
+<td>复用全量回归并追加故障场景，不以“没有报错”推断安全完备</td>
+</tr>
+<tr>
+<td>交付与文档</td>
+<td>浏览器原管理流程、最新状态、实验哈希与边界说明</td>
+<td>初轮 3 项浏览器失败已修复；最终离线 12 passed/1 skipped、真实语音另跑 1 passed</td>
+</tr>
+</tbody>
+</table>
+<p>原始探针结果：<a href="evidence/audit-before.json">evidence/audit-before.json</a>。本轮共复现 9 项问题，均已修复并完成原探针与回归。最终结果见 <a href="evidence/audit-release.json">audit-release.json</a>；已知问题中的 P1 均已关闭。真实模型质量、真实人声与物理设备、长时稳定性继续在下一轮验证。</p>
+<p>事件协议另复现并修复 <a href="issues/G2-008.md">G2-008</a> 多订阅断连竞争和 <a href="issues/G2-009.md">G2-009</a> 非法重放游标；分别验证存活订阅 completed 和非法游标 422。</p>
+<p>最终工程回归：Python 638 passed/1 skipped；前端 28 passed；类型、lint、构建通过。全量测试和故障探针不构成形式化安全证明，外部服务、真实人声、物理设备和长期运行仍需后续实验。</p></body></html>
