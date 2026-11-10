@@ -93,6 +93,7 @@ class Avatar:
         self.web_agent = web_agent
         self.boundaries = BoundaryPolicy()
         self.tasks = TaskTracker()
+        self._task_context_revision = self.memory.context_revision
         self.task_contract_enabled = task_contract_enabled
         self.delivery_check_enabled = delivery_check_enabled
         self.grounding_prompt_enabled = grounding_prompt_enabled
@@ -202,12 +203,16 @@ class Avatar:
 
     def correct_memory(self, fragment_id: int, content: str) -> int:
         result = self.memory.correct(fragment_id, content)
+        self.tasks.current = None
+        self._task_context_revision = self.memory.context_revision
         self._current_message_id = None
         self._turn_facts = None
         return result
 
     def forget_memory(self, fragment_id: int) -> None:
         self.memory.forget(fragment_id)
+        self.tasks.current = None
+        self._task_context_revision = self.memory.context_revision
         self._current_message_id = None
         self._turn_facts = None
 
@@ -446,10 +451,18 @@ class Avatar:
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
-        def emit_checked(piece):
+        if self._task_context_revision != turn_context_revision:
+            self.tasks.current = None
+            self._task_context_revision = turn_context_revision
+        def checkpoint_context():
             self._checkpoint()
-            if self.memory.context_revision != turn_context_revision:
-                raise Cancelled('context changed before visible reply')
+            revision = self.memory.context_revision
+            if revision != turn_context_revision:
+                self.tasks.current = None
+                self._task_context_revision = revision
+                raise Cancelled('context changed before response continuation')
+        def emit_checked(piece):
+            checkpoint_context()
             if on_delta:
                 on_delta(piece)
         # 1. 短期记忆记下用户输入
@@ -468,7 +481,7 @@ class Avatar:
             self.emotion.update(user_text)
         else:
             self._analyze(user_text)
-        self._checkpoint()
+        checkpoint_context()
         reminder = None
         reminder_error = None
         if boundary.reply is None and re.match(r'^(?:请)?提醒我', user_text.strip()):
@@ -575,7 +588,7 @@ class Avatar:
             generation_mode = 'rules_unconfigured'
             reply = self._fallback_reply(user_text, decision)
         draft_generation_mode = generation_mode
-        self._checkpoint()
+        checkpoint_context()
         # One bounded retry only for a normal local writing response. Never
         # replay tools, reminders, or replace a deterministic safety decision.
         delivery_issues = []
@@ -588,6 +601,7 @@ class Avatar:
             if delivery_issues and self._llm_available:
                 repair_attempted = True
                 try:
+                    checkpoint_context()
                     repair_messages = self._messages(decision, user_text) + [
                         {'role': 'assistant', 'content': reply},
                         {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：'
@@ -606,7 +620,7 @@ class Avatar:
                     else:
                         repair_mode = 'freeform'
                         corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
-                    self._checkpoint()
+                    checkpoint_context()
                     if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
                         reply = corrected
                         repair_succeeded = True
