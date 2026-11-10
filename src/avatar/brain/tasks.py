@@ -43,19 +43,29 @@ class TaskTracker:
 
     def update(self, text):
         clean = _instructions(text)
-        meta = bool(re.match(r'^(?:请)?(?:再|先)?(?:解释|分析|评价|点评|讨论|判断|翻译)', clean.strip()))
+        meta = bool(re.match(r'^(?:请)?(?:再|先|另外|顺便)?(?:解释|分析|评价|点评|讨论|判断|翻译|问|聊)|^我想(?:再)?(?:问|知道|聊)', clean.strip())
+                    or re.search(r'什么意思|是指什么|如何理解|怎么理解', clean))
         explicit_rewrite = bool(re.search(r'(?:帮我|请|替我|给我).{0,12}(?:写|拟|改写|润色|起草|修改)|(?:并|再|然后)(?:请|帮我)?(?:改写|润色|重写|起草|修改)', clean[1:] if clean.startswith('请') else clean))
         if meta and not explicit_rewrite:
             self.current = None
             return
         writing = bool(re.search(r'(?:写|拟|改写|润色|起草|修改).{0,24}(?:消息|短信|邮件|申请|正文|通知|回复|段话|文字|台词|句子|句话|标语|提醒)|'
                                  r'(?:消息|短信|邮件|申请|正文|通知|台词|句子|句话|标语|提醒).{0,12}(?:写|拟|改写|润色)', clean))
-        continuation = bool(re.search(r'^(?:再|改成|改为|删掉|保留|加上|补上|缩短|不要|不用|只要|仍然|还是|把这|把它)', clean))
-        if re.search(r'^(?:我们)?(?:先)?(?:换个话题|不写了|先不写|取消(?:这个任务|写作|上一条)?)[。！!\s]*$', clean.strip()) or re.search(
-                r'只想(?:倾诉|说说|吐槽)|(?:不要|不用|不需要)给(?:我)?建议|听我说(?:就好|就行)', clean):
+        continuation = bool(re.match(
+            r'^(?:再(?:写|改|短|长|精简|润色|正式|口语|自然|删|加|补|换|保留)|'
+            r'再(?:来|给我)一版(?=[，,。！!\s]|$)|改成|改为|删掉|保留|加上|补上|缩短|'
+            r'(?:不要|不用)(?:改|写|保留|包含|加|删|用|太长|太短|这么长|那么长)|'
+            r'(?:不必|无需)(?:包含|保留)|只要(?:正文|结论|保留|写|改|短|[一二两三四五六七八九十0-9]+[行句段字])|'
+            r'(?:仍然|还是)(?:要|想)?(?:保留|写|用|改|删|短|长|正式|口语)|'
+            r'(?:把这|把它).{0,24}(?:改|写|删|加|换|精简|保留|压缩|润色))', clean.strip())
+            or re.fullmatch(r'再说(?:一遍|一次)[。！!\s]*', clean.strip()))
+        reset = bool(re.match(r'^(?:我们)?(?:先|再)?(?:换个话题|不写了|先不写|不要写了|不用写了|取消(?:这个任务|写作|上一条)?)(?=[，,。！!\s]|$)', clean.strip()))
+        listening = bool(re.search(r'只想(?:倾诉|说说|吐槽)|(?:不要|不用|不需要)给(?:我)?建议|听我说(?:就好|就行)', clean))
+        if reset or listening:
             self.current = None
-            return
-        revising = self.current is not None and (continuation or bool(re.search(r'改写|润色|修改', clean)))
+            if listening or not writing:
+                return
+        revising = self.current is not None and (continuation or (writing and bool(re.search(r'改写|润色|修改', clean))))
         if writing and not revising:
             self.current = TaskContract(source=text)
         elif not writing and not revising and not continuation:
