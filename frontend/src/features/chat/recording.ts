@@ -1,3 +1,4 @@
+import { EnergyEndpoint, type EndpointReason } from "./endpointing";
 import workletUrl from "./pcm-recorder.worklet.js?url";
 
 export function encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
@@ -21,7 +22,7 @@ export function encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
   return new Blob([buffer], { type: "audio/wav" });
 }
 
-export async function startRecording(signal: AbortSignal, onComplete: (audio: Blob) => void) {
+export async function startRecording(signal: AbortSignal, onComplete: (audio: Blob, reason: EndpointReason | "manual") => void, autoEndpoint = true) {
   let stream: MediaStream | null = null;
   let context: AudioContext | null = null;
   let node: AudioWorkletNode | null = null;
@@ -29,22 +30,25 @@ export async function startRecording(signal: AbortSignal, onComplete: (audio: Bl
   let timer: ReturnType<typeof setTimeout> | undefined;
   const chunks: Float32Array[] = [];
   let count = 0;
+  let endpoint: EnergyEndpoint | null = null;
+  let manual = false;
   const cancel = () => {
     stopped = true;
     clearTimeout(timer);
     signal.removeEventListener("abort", cancel);
     stream?.getTracks().forEach(track => track.stop());
     node?.disconnect();
+    if (node) { node.port.onmessage = null; node.port.close(); }
     if (context && context.state !== "closed") void context.close().catch(() => {});
   };
   const checkCancelled = () => {
     if (signal.aborted) throw new DOMException("录音已取消", "AbortError");
   };
-  const finish = () => {
+  const finish = (reason: EndpointReason | "manual" = "manual") => {
     if (stopped || !context) return;
     const rate = context.sampleRate;
     cancel();
-    onComplete(encodeWav(chunks, rate));
+    onComplete(encodeWav(chunks, rate), reason);
   };
   try {
     checkCancelled();
@@ -52,6 +56,7 @@ export async function startRecording(signal: AbortSignal, onComplete: (audio: Bl
     checkCancelled();
     signal.addEventListener("abort", cancel, { once: true });
     context = new AudioContext({ sampleRate: 48000 });
+    if (autoEndpoint) endpoint = new EnergyEndpoint(context.sampleRate);
     await context.audioWorklet.addModule(workletUrl);
     checkCancelled();
     const source = context.createMediaStreamSource(stream);
@@ -61,16 +66,23 @@ export async function startRecording(signal: AbortSignal, onComplete: (audio: Bl
     source.connect(node).connect(mute).connect(context.destination);
     node.port.onmessage = (event: MessageEvent<Float32Array | string>) => {
       if (stopped) return;
-      if (event.data === "done") { finish(); return; }
+      if (event.data === "done") { finish("manual"); return; }
       if (!(event.data instanceof Float32Array)) return;
       const chunk = event.data.subarray(0, Math.max(0, 60 * context!.sampleRate - count));
-      chunks.push(chunk);
-      count += chunk.length;
-      if (count >= 60 * context!.sampleRate) finish();
+      const detected = !manual ? endpoint?.push(chunk) : null;
+      const kept = chunk.subarray(0, detected?.consumed ?? chunk.length);
+      chunks.push(kept);
+      count += kept.length;
+      if (detected?.reason) finish(detected.reason);
+      else if (count >= 60 * context!.sampleRate) finish("limit");
     };
     await context.resume();
     checkCancelled();
-    timer = setTimeout(finish, 60000);
-    return { stop: () => { node?.port.postMessage("stop"); clearTimeout(timer); timer = setTimeout(finish, 500); }, cancel };
+    timer = setTimeout(() => finish("limit"), 60000);
+    return { get finished() { return stopped; }, stop: () => {
+      if (stopped) return;
+      manual = true;
+      node?.port.postMessage("stop"); clearTimeout(timer); timer = setTimeout(() => finish("manual"), 500);
+    }, cancel };
   } catch (err) { cancel(); throw err; }
 }

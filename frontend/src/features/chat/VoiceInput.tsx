@@ -11,6 +11,8 @@ export function VoiceInput({ disabled, beforeCapture, onTranscript, onBusyChange
   const capabilities = useQuery({ queryKey: ["speech-capabilities"],
     queryFn: () => apiRequest<{ asr_enabled: boolean; reason: string | null }>("/speech/capabilities"), retry: false });
   const [status, setStatus] = useState("idle");
+  const [autoEndpoint, setAutoEndpoint] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
   const recording = useRef<Awaited<ReturnType<typeof startRecording>> | null>(null);
@@ -39,16 +41,25 @@ export function VoiceInput({ disabled, beforeCapture, onTranscript, onBusyChange
   async function record() {
     beforeCapture();
     setError(null);
+    setMessage(null);
     setStatus("requesting");
     const current = ++serial.current;
     const request = new AbortController();
     controller.current = request;
     try {
-      const handle = await startRecording(request.signal, audio => {
+      const handle = await startRecording(request.signal, (audio, reason) => {
+        if (current !== serial.current) return;
         recording.current = null;
+        if (reason === "no_speech") {
+          setStatus("idle");
+          setMessage("未检测到足够音量的语音，录音已结束；可关闭自动结束后重试。");
+          return;
+        }
+        if (reason === "pause") setMessage("检测到停顿，已结束录音；请检查识别草稿。");
         void upload(audio, current, request.signal);
-      });
+      }, autoEndpoint);
       if (current !== serial.current) { handle.cancel(); return; }
+      if (handle.finished) return;
       recording.current = handle;
       setStatus("recording");
     } catch {
@@ -76,6 +87,10 @@ export function VoiceInput({ disabled, beforeCapture, onTranscript, onBusyChange
       </label>
       {busy && <button type="button" className="button secondary" onClick={cancel}><X size={14} />取消语音输入</button>}
     </div>
+    <label className="muted"><input type="checkbox" checked={autoEndpoint} disabled={busy}
+      onChange={event => setAutoEndpoint(event.target.checked)} /> 停顿后自动结束录音</label>
+    <p className="muted">自动结束在停顿约 1.2 秒后识别；8 秒未检测到语音会释放麦克风。轻声或噪声环境可关闭，识别后仍需检查并发送。</p>
+    {message && <p className="notice" role="status">{message}</p>}
     <p className="muted" role="status">{status === "requesting" ? "正在等待麦克风权限…" : status === "recording" ? "正在录音，最长 60 秒…" : status === "transcribing" || status === "finishing" ? "正在识别录音…" : enabled ? "语音在本机识别；结果填入消息框，检查后发送。支持 60 秒内的 PCM WAV。" : capabilities.isError ? "无法查询语音识别状态，文字输入仍可使用。" : capabilities.data?.reason ?? "正在查询语音识别状态…"}</p>
     {error && <p className="notice" role="alert">{error}</p>}
   </div>;
