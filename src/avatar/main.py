@@ -1,7 +1,8 @@
 """文本对话编排与音频文件 API。
 
 Avatar 类集成 LLM / 记忆 / 情绪与文本回应；`respond_audio()` 可接入音频文件转写，
-可选 TTS 会尝试生成离线口型帧。实时播放、同步渲染和设备体验尚未实现。
+可选 TTS 会尝试生成离线口型帧。网页层已接流式播放与时钟驱动SVG；
+正式渲染与目标设备体验仍待验收。
 `python -m avatar.main` 启动文本交互（无 API key 时使用规则回复）。
 """
 from __future__ import annotations
