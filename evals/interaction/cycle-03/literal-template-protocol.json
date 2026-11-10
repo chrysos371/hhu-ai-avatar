@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "scope": "Source-only full-text template with immutable markers; not freeform append or a semantic verifier",
+  "source": "Only user-derived TaskContract source/perspective/recipient and literal constraints; omit failed assistant draft, profile guesses and unrelated conversation",
+  "format": {
+    "text": "surrounding text with {{L0}}..{{LN}} exactly once each"
+  },
+  "validation": [
+    "Every declared marker exactly once",
+    "No undeclared reserved marker",
+    "No protected literal repeated in free spans",
+    "Single-pass substitution never interprets markers inside user literal",
+    "Final forbidden-content and output-size checks"
+  ],
+  "limits": {
+    "required": 8,
+    "forbidden": 8,
+    "literal_characters": 120,
+    "source_characters": 1200,
+    "rendered_characters": 4000
+  },
+  "repair_calls": 1
+}

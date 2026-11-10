@@ -1,0 +1,202 @@
+{
+  "version": 2,
+  "scope": "Fresh related-family development verification before source-only template implementation; no generic semantic/human approval",
+  "comparison": "Both arms fixed identity/profile/task/delivery/composition; baselinev1slots versus candidatev2source-only marked full-text template. Bundle changes, no isolation of prompt/context effects.",
+  "cases": [
+    {
+      "id": "t01",
+      "turns": [
+        "请写一句台词，包含“我想先歇一下”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我想先歇一下"
+        ],
+        "none": [
+          "我想先歇一下我想先歇一下"
+        ]
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t02",
+      "turns": [
+        "请写一条消息，原样保留“时间、地点待定”，不要编造具体时间和地点。"
+      ],
+      "final_checks": {
+        "all": [
+          "时间、地点待定"
+        ],
+        "none": [
+          "今晚七点",
+          "市中心咖啡馆"
+        ]
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t03",
+      "turns": [
+        "请给老师写一条消息，保留【姓名】和【课程】。"
+      ],
+      "final_checks": {
+        "all": [
+          "【姓名】",
+          "【课程】"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t04",
+      "turns": [
+        "请起草一条提醒，包含“出门前检查钥匙”。"
+      ],
+      "final_checks": {
+        "all": [
+          "出门前检查钥匙"
+        ],
+        "none": [
+          "出门前检查钥匙出门前检查钥匙"
+        ]
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t05",
+      "turns": [
+        "请写一条通知，包含“请先报名”和“结果待通知”，不要包含“保证录取”。"
+      ],
+      "final_checks": {
+        "all": [
+          "请先报名",
+          "结果待通知"
+        ],
+        "none": [
+          "保证录取"
+        ]
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t06",
+      "turns": [
+        "请以小说人物口吻写一句台词，包含“我在路口等你”。"
+      ],
+      "final_checks": {
+        "all": [
+          "我在路口等你"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t07",
+      "turns": [
+        "请写一条消息，保留“周三”“图书馆”和“待定”。"
+      ],
+      "final_checks": {
+        "all": [
+          "周三",
+          "图书馆",
+          "待定"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t08",
+      "turns": [
+        "请写一句标语，原样保留“先核实，再表达”。"
+      ],
+      "final_checks": {
+        "all": [
+          "先核实，再表达"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t09",
+      "turns": [
+        "请写一条消息，原样保留\"v2.0 / draft\"。"
+      ],
+      "final_checks": {
+        "all": [
+          "v2.0 / draft"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t10",
+      "turns": [
+        "请写一句话，必须包含“{\"mode\":\"draft\"}”。"
+      ],
+      "final_checks": {
+        "all": [
+          "{\"mode\":\"draft\"}"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t11",
+      "turns": [
+        "请写一条简短消息，原样保留“{{L1}}”。"
+      ],
+      "final_checks": {
+        "all": [
+          "{{L1}}"
+        ],
+        "none": []
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    },
+    {
+      "id": "t12",
+      "turns": [
+        "请写一条消息，包含“别改【编号】”。"
+      ],
+      "final_checks": {
+        "all": [
+          "别改【编号】"
+        ],
+        "none": [
+          "别改【编号】别改【编号】"
+        ]
+      },
+      "expected_reminder_count": 0,
+      "expected_contract_active": true
+    }
+  ],
+  "manual_review": [
+    "Readable direct deliverable",
+    "No unsupported concrete dates/places",
+    "No repeated literal/meaning or broken sentence",
+    "Correct user/fiction writing perspective"
+  ],
+  "gate": {
+    "all48_literal_and_side_effect_checks": true,
+    "manual_counterexample_review_required": true,
+    "no_default_activation": true,
+    "semantic_approval": false
+  }
+}
