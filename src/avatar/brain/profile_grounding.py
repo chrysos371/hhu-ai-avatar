@@ -26,8 +26,8 @@ def _preferences(profile: dict) -> list[str]:
         for item in profile.get(key, '').split('；') if item))
 
 
-def _preference_reply(profile: dict) -> str:
-    values = _preferences(profile)
+def _preference_reply(profile: dict, *, ordinary_only=False) -> str:
+    values = [value for value in _preferences(profile) if not ordinary_only or _ordinary_preference(value)]
     if not values:
         return '目前没有足够记录确认你的偏好，你可以告诉我你喜欢什么。'
     return '目前关于你的偏好记录是：' + '；'.join(values) + '。'
@@ -49,6 +49,8 @@ def review_profile_reply(user_text: str, reply: str, profile: dict) -> tuple[str
         return reply, None
     unquoted = _mask_quoted(reply)
     for preference in _preferences(profile):
+        if not _ordinary_preference(preference):
+            continue
         positive = re.fullmatch(r'(?:喜欢|爱)(.+)', preference)
         if not positive:
             continue
@@ -57,7 +59,7 @@ def review_profile_reply(user_text: str, reply: str, profile: dict) -> tuple[str
         pattern = (r'(?:^|[。！!？?，,；;\n])\s*我(?:也|更|很|最|同样)?'
                    r'(?:喜欢|偏好|爱)' + item + r'(?=$|[呢啊哦呀了。！!？?，,；;\n])')
         if re.search(pattern, unquoted):
-            return _preference_reply(profile), 'copied_preference'
+            return _preference_reply(profile, ordinary_only=True), 'copied_preference'
     return reply, None
 
 
@@ -67,6 +69,14 @@ _OTHER_DECLARATION = re.compile(
     r'(?:(?:我的?|我有一个)?' + _RELATION + r'|他|她)'
     r'(?:叫[^\s，,。！？!?；;：“”]{1,10}|(?:很)?喜欢[^\s，,。！？!?；;：“”]{1,20}|'
     r'说[“「\"][^。！？!?\n]{1,40}[”」\"])')
+_PERSONAL_OBJECT = re.compile(r'^(?:我|自己|你|您|他|她|生命|人生|活着|生活|一切|所有人|任何人|(?:我的?|你的?|他的?|她的?)?' + _RELATION + r')')
+
+
+def _ordinary_preference(value: str) -> bool:
+    preference = re.fullmatch(r'(?:不喜欢|不爱|讨厌|喜欢|爱)(.+)', value)
+    return preference is not None and not _PERSONAL_OBJECT.search(preference[1])
+
+
 _INTRO_TAILS = {'我们刚认识', '我们第一次聊天', '我们刚开始聊天',
                 '这是他的自我介绍', '这是她的自我介绍'}
 _NON_DECLARATION = re.compile(
@@ -100,6 +110,8 @@ def acknowledge_disclosure(user_text: str, profile: dict) -> tuple[str | None, s
         if clause not in _INTRO_TAILS:
             return None, None
     facts = rule_facts(user_text)
+    if any(f['type'] == '偏好' and not _ordinary_preference(f['content']) for f in facts):
+        return None, None
     values = _preferences(profile)
     confirmed_name = any(f['type'] == '名字' and f['content'] == profile.get('名字') for f in facts)
     confirmed_preference = any(f['type'] == '偏好' and f['content'] in values for f in facts)
@@ -107,7 +119,7 @@ def acknowledge_disclosure(user_text: str, profile: dict) -> tuple[str | None, s
         reply = f'你好，{profile["名字"]}。' if confirmed_name else ''
         reply += '谢谢你告诉我。'
         if confirmed_preference:
-            reply += _preference_reply(profile)
+            reply += _preference_reply(profile, ordinary_only=True)
         return reply, 'profile_disclosure'
     # A failed self-profile match must not silently become a third-party route.
     if facts:
