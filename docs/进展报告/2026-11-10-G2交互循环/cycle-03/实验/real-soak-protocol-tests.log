@@ -1,0 +1,23 @@
+...F...                                                                  [100%]
+=================================== FAILURES ===================================
+_ test_endurance_rejects_fallback_scope_loss_stale_data_and_protocol_mismatch[change2] _
+
+change = {'reply': '缺少原文'}
+
+    @pytest.mark.parametrize('change',[
+        {'generation_mode':'rules_service_error'},
+        {'task':None},
+        {'reply':'缺少原文'},
+        {'reply':'原文，测试用户00'},
+        {'delivery_check':{'remaining_issues':['missing_literal:x'],'literal_plan_version':'v2'}},
+        {'delivery_check':{'remaining_issues':[],'literal_plan_version':'v1'}}])
+    def test_endurance_rejects_fallback_scope_loss_stale_data_and_protocol_mismatch(change):
+        result={'generation_mode':'llm','task':{'required_literals':['原文']},'reply':'原文',
+            'delivery_check':{'remaining_issues':[],'literal_plan_version':'v2'},'trace':{'verifier':{'available':False}}}
+>       with pytest.raises(AssertionError):module.assert_result({'task':True,'all':['原文']},result|change,['测试用户00'])
+E       Failed: DID NOT RAISE AssertionError
+
+tests/test_real_soak_protocol.py:31: Failed
+=========================== short test summary info ============================
+FAILED tests/test_real_soak_protocol.py::test_endurance_rejects_fallback_scope_loss_stale_data_and_protocol_mismatch[change2]
+1 failed, 6 passed in 0.71s

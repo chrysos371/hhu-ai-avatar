@@ -1,0 +1,139 @@
+{
+  "version": 2,
+  "scope": "100 sequential real local-model HTTP/SSE turns; engineering invariants only, not multi-day stability or semantic/human approval",
+  "rounds": 100,
+  "block_length": 10,
+  "privacy_after_rounds": [
+    45,
+    95
+  ],
+  "duplicate_positions": [
+    1
+  ],
+  "cancel_positions": [
+    9
+  ],
+  "inference": "Same pinned4B provider and existing512token cap; observe real primary-stream first chunk before cancellation; no arbitrary experiment wall-clock cutoff",
+  "early_stop": "Stop on first protocol, privacy, duplicate-side-effect, source/contract or transport invariant failure; save partial evidence and rerun only under a new path after repair",
+  "settings": {
+    "identity_grounding": true,
+    "profile_grounding": true,
+    "task_delivery_check": true,
+    "literal_composition": true,
+    "literal_plan_version": "v2",
+    "max_jobs": 32
+  },
+  "cases": [
+    {
+      "id": "write",
+      "turns": [
+        "请写一句角色台词，包含“我喜欢喝花茶”。"
+      ],
+      "all": [
+        "我喜欢喝花茶"
+      ],
+      "task": true
+    },
+    {
+      "id": "revision",
+      "turns": [
+        "再短一点。"
+      ],
+      "all": [
+        "我喜欢喝花茶"
+      ],
+      "task": true
+    },
+    {
+      "id": "new_question",
+      "turns": [
+        "再问个问题，什么是二进制？"
+      ],
+      "all": [
+        "0",
+        "1"
+      ],
+      "task": false
+    },
+    {
+      "id": "name",
+      "turns": [
+        "我叫测试用户{block:02d}。"
+      ],
+      "all": [],
+      "task": false
+    },
+    {
+      "id": "recall",
+      "turns": [
+        "我叫什么名字？"
+      ],
+      "all": [],
+      "task": false
+    },
+    {
+      "id": "recall_after_optional_erasure",
+      "turns": [
+        "你知道我叫什么名字吗？"
+      ],
+      "all": [],
+      "task": false
+    },
+    {
+      "id": "write_reminder",
+      "turns": [
+        "请写一条提醒，包含“不要忘记带伞”。"
+      ],
+      "all": [
+        "不要忘记带伞"
+      ],
+      "task": true
+    },
+    {
+      "id": "create_reminder",
+      "turns": [
+        "提醒我明天9点带伞。"
+      ],
+      "all": [
+        "已设置提醒",
+        "带伞"
+      ],
+      "task": false
+    },
+    {
+      "id": "science",
+      "turns": [
+        "再问个问题，什么是光合作用？"
+      ],
+      "all": [
+        "光"
+      ],
+      "task": false
+    },
+    {
+      "id": "cancel",
+      "turns": [
+        "请用不少于300字介绍水循环的蒸发、凝结和降水过程。"
+      ],
+      "all": [],
+      "task": false
+    }
+  ],
+  "invariants": [
+    "No rules_service_error or rules_unconfigured accepted as model quality",
+    "Task state and required originals appropriate to current intent",
+    "Duplicate IDs do not add messages/reminders or model actions",
+    "Actual reminder action only on explicit create turn, total10",
+    "Two erasures remove active profile, redact dependent assistant text and expire old jobs; old IDs cannot replay",
+    "Cancelled turn observed actual raw model token, emits no guarded draft and commits no assistant",
+    "SQLite integrity ok; job cache<=32; track RSS/fds/threads without extrapolating to multiple days"
+  ],
+  "measurement": "Record every turn plus10-turn checkpoints, all service errors/partial state, local HTTP cancel latency and provider iterator outcomes; audit collector intentionally retains only public synthetic test data",
+  "original_protocol_sha256": "ebab9a2d00673936d4043f8f8a5e400a966c91ccdc764704c22cbb42c6a5f2b3",
+  "clarifications": [
+    "Bootstrap report is created before the listener; incomplete runs never pass",
+    "Deleted jobs return404 on lookup and old IDs410 on resubmission",
+    "Observe and pass through every real SDK dispatch; any previously erased synthetic nickname in new model messages is an invariant failure, not filtered by the collector",
+    "RSS includes the audit collector; no attribution of growth to an application leak without further isolation"
+  ]
+}
