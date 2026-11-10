@@ -1,0 +1,1001 @@
+{
+  "created_utc": "2026-11-10T16:20:05.203557+00:00",
+  "source_head": "d3fe38f2193d71e994010f0075102a326376a996",
+  "source_sha256": {
+    "/data/Users/zrh/repo/hhu-ai-avatar/scripts/evaluate_grounding_buffer.py": "877fbf607be2b96e439afd40bf42fa307552564dafee5fa3b67962a69cf1b4e9",
+    "src/avatar/main.py": "f8bb82aa1cf75c3c0fc3e9a37928e0e72f703ac3bbc946c77100f281ec3abbe2",
+    "src/avatar/brain/profile_grounding.py": "ccf18d6fbfd9657936588c45113995f204cad64b94fb011b50d690ebbc877229"
+  },
+  "protocol": {
+    "version": 1,
+    "scope": "Native-provider delivery buffering tradeoff, six paired fresh conversations; no population latency claim",
+    "arms": {
+      "baseline": {
+        "subject_prompt_enabled": true,
+        "profile_grounding_enabled": false
+      },
+      "candidate": {
+        "subject_prompt_enabled": true,
+        "profile_grounding_enabled": true
+      }
+    },
+    "prompts": [
+      "什么是光合作用？请用三个短句说明。",
+      "什么是勾股定理？请用三个短句说明。",
+      "为什么天空看起来是蓝色的？请用三个短句说明。"
+    ],
+    "repetitions": 2,
+    "order": "Alternate baseline/candidate order by pair index",
+    "metrics": [
+      "first_visible_seconds",
+      "complete_seconds",
+      "delta_count",
+      "guard_action",
+      "generation_mode"
+    ],
+    "limits": "One sequence at a time; same pinned model/server; report all values and median; buffering adds visible latency even when no repair; no fixed wall-clock experiment cutoff"
+  },
+  "protocol_sha256": "920d03351c406db9bdf5654c1eecad2f713c9ce11d53063dae40bb6df2c85023",
+  "provider": {
+    "url": "http://127.0.0.1:36249/v1",
+    "model_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "model_revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+    "model_id": "qwen3-4b-q4_k_m",
+    "registry_sha256": "9ab8575f5019ff2bb27fff51786af1c06f51353e9d2721fb2e9972dd9bd0ea87",
+    "gguf_general_name": "Qwen3 4B Instruct Awq",
+    "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+    "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 40441, 0\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 40441, 0\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 40441, 0\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 40441, 0\n",
+    "chosen_gpu": {
+      "index": 6,
+      "uuid": "GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249",
+      "free_mib": 40441,
+      "utilization_percent": 0
+    },
+    "requested_visible_devices": "6",
+    "resource_selector_sha256": "e3d241073b19a42b67af9cd73ebb452ead8b78560c45be7849ea6be92cdeeb9d",
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "n_batch_prompt_tokens": 256,
+      "concurrent_sequences": 1,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "flash_attention": true
+    },
+    "llama_cpp_python": "0.3.19",
+    "load_seconds": 3.569057671003975,
+    "provider_source_sha256": "2c6670a1549c5f4ab60c06e2b236d0e2e40ee5d23a56ec6700a80bd9349297b4",
+    "process_gpu_mib_after_load": [
+      4096
+    ],
+    "pid": 1891151
+  },
+  "rows": [
+    {
+      "pair": 0,
+      "mode": "baseline",
+      "input": "什么是光合作用？请用三个短句说明。",
+      "first_visible_seconds": 0.3504233210114762,
+      "complete_seconds": 0.4917377720121294,
+      "delta_count": 5,
+      "deltas": [
+        {
+          "seconds": 0.3504233210114762,
+          "text": "光合作用是植物通过叶绿素将阳光转化为能量的过程。"
+        },
+        {
+          "seconds": 0.35638099699281156,
+          "text": "  \n"
+        },
+        {
+          "seconds": 0.4277066219947301,
+          "text": "植物利用二氧化碳和水产生葡萄糖，并释放氧气。"
+        },
+        {
+          "seconds": 0.4336595680215396,
+          "text": "  \n"
+        },
+        {
+          "seconds": 0.4813972990377806,
+          "text": "这是生命存续的关键基础过程。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "光合作用是植物通过叶绿素将阳光转化为能量的过程。  \n植物利用二氧化碳和水产生葡萄糖，并释放氧气。  \n这是生命存续的关键基础过程。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "impersonal_knowledge_rules",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "15238058001b4fed8cf628d8b90b5c29",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 0,
+      "mode": "candidate",
+      "input": "什么是光合作用？请用三个短句说明。",
+      "first_visible_seconds": 0.25061456102412194,
+      "complete_seconds": 0.25100177101558074,
+      "delta_count": 1,
+      "deltas": [
+        {
+          "seconds": 0.25061456102412194,
+          "text": "光合作用是植物通过叶绿素将阳光转化为能量的过程。  \n植物利用二氧化碳和水产生葡萄糖，并释放氧气。  \n这是生命存续的关键基础过程。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "光合作用是植物通过叶绿素将阳光转化为能量的过程。  \n植物利用二氧化碳和水产生葡萄糖，并释放氧气。  \n这是生命存续的关键基础过程。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "impersonal_knowledge_rules",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": true,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": true
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "977bbaa86b604d56b1133268c5b050b8",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 1,
+      "mode": "candidate",
+      "input": "什么是勾股定理？请用三个短句说明。",
+      "first_visible_seconds": 1.1611793069751002,
+      "complete_seconds": 1.1616349479882047,
+      "delta_count": 1,
+      "deltas": [
+        {
+          "seconds": 1.1611793069751002,
+          "text": "勾股定理是数学中的基本定理，用于直角三角形。它指出，斜边的平方等于两个直角边的平方和。公式为 $a^2 + b^2 = c^2$。简单来说，直角三角形三边关系可以这样计算。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "勾股定理是数学中的基本定理，用于直角三角形。它指出，斜边的平方等于两个直角边的平方和。公式为 $a^2 + b^2 = c^2$。简单来说，直角三角形三边关系可以这样计算。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": true,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": true
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "d56585a837f442628e84ec3029d21870",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 1,
+      "mode": "baseline",
+      "input": "什么是勾股定理？请用三个短句说明。",
+      "first_visible_seconds": 0.8621862779837102,
+      "complete_seconds": 1.1494457920198329,
+      "delta_count": 4,
+      "deltas": [
+        {
+          "seconds": 0.8621862779837102,
+          "text": "勾股定理是数学中的基本定理，用于直角三角形。"
+        },
+        {
+          "seconds": 0.9575773940305226,
+          "text": "它指出，斜边的平方等于两个直角边的平方和。"
+        },
+        {
+          "seconds": 1.0530359959811904,
+          "text": "公式为 $a^2 + b^2 = c^2$。"
+        },
+        {
+          "seconds": 1.1369285940309055,
+          "text": "简单来说，直角三角形三边关系可以这样计算。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "勾股定理是数学中的基本定理，用于直角三角形。它指出，斜边的平方等于两个直角边的平方和。公式为 $a^2 + b^2 = c^2$。简单来说，直角三角形三边关系可以这样计算。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "14f1c86ba98b43a2a6754916eb9a9fae",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 2,
+      "mode": "baseline",
+      "input": "为什么天空看起来是蓝色的？请用三个短句说明。",
+      "first_visible_seconds": 0.9152859420282766,
+      "complete_seconds": 1.1041509209899232,
+      "delta_count": 3,
+      "deltas": [
+        {
+          "seconds": 0.9152859420282766,
+          "text": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。"
+        },
+        {
+          "seconds": 1.03475025302032,
+          "text": "不同波长的光在大气中散射程度不同，蓝光更容易被散射。"
+        },
+        {
+          "seconds": 1.094684222014621,
+          "text": "所以我们在白天看到的天空是蓝色的。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。不同波长的光在大气中散射程度不同，蓝光更容易被散射。所以我们在白天看到的天空是蓝色的。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "dfdef6c952984f858ba2019996b2ad08",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 2,
+      "mode": "candidate",
+      "input": "为什么天空看起来是蓝色的？请用三个短句说明。",
+      "first_visible_seconds": 1.090271526016295,
+      "complete_seconds": 1.0907347159809433,
+      "delta_count": 1,
+      "deltas": [
+        {
+          "seconds": 1.090271526016295,
+          "text": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。不同波长的光在大气中散射程度不同，蓝光更容易被散射。所以我们在白天看到的天空是蓝色的。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。不同波长的光在大气中散射程度不同，蓝光更容易被散射。所以我们在白天看到的天空是蓝色的。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": true,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": true
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "9f0577b67289470db83080e69ab729b1",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 3,
+      "mode": "candidate",
+      "input": "什么是光合作用？请用三个短句说明。",
+      "first_visible_seconds": 0.27184929099166766,
+      "complete_seconds": 0.272310011961963,
+      "delta_count": 1,
+      "deltas": [
+        {
+          "seconds": 0.27184929099166766,
+          "text": "光合作用是植物通过叶绿素将阳光转化为能量的过程。  \n植物利用二氧化碳和水产生葡萄糖，并释放氧气。  \n这是生命存续的关键基础过程。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "光合作用是植物通过叶绿素将阳光转化为能量的过程。  \n植物利用二氧化碳和水产生葡萄糖，并释放氧气。  \n这是生命存续的关键基础过程。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "impersonal_knowledge_rules",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": true,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": true
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "58a5bee3873343ba9809d81de7fb1197",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 3,
+      "mode": "baseline",
+      "input": "什么是光合作用？请用三个短句说明。",
+      "first_visible_seconds": 0.11684552096994594,
+      "complete_seconds": 0.25908723095199093,
+      "delta_count": 5,
+      "deltas": [
+        {
+          "seconds": 0.11684552096994594,
+          "text": "光合作用是植物通过叶绿素将阳光转化为能量的过程。"
+        },
+        {
+          "seconds": 0.12286910397233441,
+          "text": "  \n"
+        },
+        {
+          "seconds": 0.1944106859737076,
+          "text": "植物利用二氧化碳和水产生葡萄糖，并释放氧气。"
+        },
+        {
+          "seconds": 0.2005258989520371,
+          "text": "  \n"
+        },
+        {
+          "seconds": 0.24917217897018418,
+          "text": "这是生命存续的关键基础过程。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "光合作用是植物通过叶绿素将阳光转化为能量的过程。  \n植物利用二氧化碳和水产生葡萄糖，并释放氧气。  \n这是生命存续的关键基础过程。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "impersonal_knowledge_rules",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "c62e94f1013a41d991a8341a91106239",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 4,
+      "mode": "baseline",
+      "input": "什么是勾股定理？请用三个短句说明。",
+      "first_visible_seconds": 1.017617571982555,
+      "complete_seconds": 1.302230214991141,
+      "delta_count": 4,
+      "deltas": [
+        {
+          "seconds": 1.017617571982555,
+          "text": "勾股定理是数学中的基本定理，用于直角三角形。"
+        },
+        {
+          "seconds": 1.1130631580017507,
+          "text": "它指出，斜边的平方等于两个直角边的平方和。"
+        },
+        {
+          "seconds": 1.208720608963631,
+          "text": "公式为 $a^2 + b^2 = c^2$。"
+        },
+        {
+          "seconds": 1.2927270070067607,
+          "text": "简单来说，直角三角形三边关系可以这样计算。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "勾股定理是数学中的基本定理，用于直角三角形。它指出，斜边的平方等于两个直角边的平方和。公式为 $a^2 + b^2 = c^2$。简单来说，直角三角形三边关系可以这样计算。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "2ad6789dde414411b425db46cd422232",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 4,
+      "mode": "candidate",
+      "input": "什么是勾股定理？请用三个短句说明。",
+      "first_visible_seconds": 1.1940619660308585,
+      "complete_seconds": 1.194506169995293,
+      "delta_count": 1,
+      "deltas": [
+        {
+          "seconds": 1.1940619660308585,
+          "text": "勾股定理是数学中的基本定理，用于直角三角形。它指出，斜边的平方等于两个直角边的平方和。公式为 $a^2 + b^2 = c^2$。简单来说，直角三角形三边关系可以这样计算。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "勾股定理是数学中的基本定理，用于直角三角形。它指出，斜边的平方等于两个直角边的平方和。公式为 $a^2 + b^2 = c^2$。简单来说，直角三角形三边关系可以这样计算。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": true,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": true
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "546c1b5330ab45ba8a5cc160069b1ae4",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 5,
+      "mode": "candidate",
+      "input": "为什么天空看起来是蓝色的？请用三个短句说明。",
+      "first_visible_seconds": 1.1392762660398148,
+      "complete_seconds": 1.1397130640107207,
+      "delta_count": 1,
+      "deltas": [
+        {
+          "seconds": 1.1392762660398148,
+          "text": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。不同波长的光在大气中散射程度不同，蓝光更容易被散射。所以我们在白天看到的天空是蓝色的。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。不同波长的光在大气中散射程度不同，蓝光更容易被散射。所以我们在白天看到的天空是蓝色的。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": true,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": true
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "42e50025c48a4e129201df257c971d6b",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    },
+    {
+      "pair": 5,
+      "mode": "baseline",
+      "input": "为什么天空看起来是蓝色的？请用三个短句说明。",
+      "first_visible_seconds": 0.9523880269844085,
+      "complete_seconds": 1.1410138260107487,
+      "delta_count": 3,
+      "deltas": [
+        {
+          "seconds": 0.9523880269844085,
+          "text": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。"
+        },
+        {
+          "seconds": 1.0717498160083778,
+          "text": "不同波长的光在大气中散射程度不同，蓝光更容易被散射。"
+        },
+        {
+          "seconds": 1.1316205759649165,
+          "text": "所以我们在白天看到的天空是蓝色的。"
+        }
+      ],
+      "result": {
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "reply": "天空看起来是蓝色的，是因为阳光穿过大气层时，蓝光被散射到我们的眼睛里。不同波长的光在大气中散射程度不同，蓝光更容易被散射。所以我们在白天看到的天空是蓝色的。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "冷静执行",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.7,
+        "strategy": "answer",
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": true,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_and_copied_preference",
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "af48eb59deab4dc69486a48266c1de8c",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      }
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "first_visible_seconds": 0.8887361100059934,
+      "complete_seconds": 1.122582373500336
+    },
+    "candidate": {
+      "first_visible_seconds": 1.1147738960280549,
+      "complete_seconds": 1.115223889995832
+    }
+  },
+  "valid": true,
+  "semantic_approved": false
+}
