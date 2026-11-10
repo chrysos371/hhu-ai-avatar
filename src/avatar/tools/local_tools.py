@@ -16,7 +16,21 @@ def search_documents(query: str, limit: int = 5) -> dict:
         if not root.is_dir():
             continue
         for directory, dirs, files in os.walk(root, followlinks=False):
-            dirs[:] = [d for d in dirs if not d.startswith('.') and not (Path(directory)/d).is_symlink() and not (Path(directory)/d).is_junction()]
+            safe_dirs = []
+            for name in dirs:
+                path = Path(directory) / name
+                if name.startswith('.') or path.is_symlink():
+                    continue
+                is_junction = getattr(path, 'is_junction', None)
+                try:
+                    if is_junction is not None and is_junction():
+                        continue
+                    if not path.resolve().is_relative_to(root):
+                        continue
+                except (OSError, RuntimeError):
+                    continue
+                safe_dirs.append(name)
+            dirs[:] = safe_dirs
             for name in files:
                 scanned += 1
                 if scanned > 2000:
