@@ -461,7 +461,7 @@ def run_chat(server, user_text, use_web=False, *, job=None):
     try:
         if token:
             token.checkpoint()
-        avatar = Avatar(db_path=server.db_path, session_id=server.session_id)
+        avatar = Avatar(db_path=server.db_path, session_id=server.session_id, fast_analysis=job is not None)
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         if server.context_revision != memory.context_revision:
@@ -490,6 +490,8 @@ class AvatarHTTPServer(ThreadingHTTPServer):
     def server_close(self):
         if hasattr(self, 'turns'):
             self.turns.close()
+        if hasattr(self, 'speech'):
+            self.speech.close()
         super().server_close()
 
 
@@ -535,6 +537,9 @@ def main():
     parser.add_argument("--db", default=config.memory_db_path)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--asr-model", help="已安装的本机 FunASR 模型目录；默认不启用识别")
+    parser.add_argument('--asr-backend', choices=('funasr', 'faster-whisper'), default='funasr')
+    parser.add_argument('--asr-device', choices=('cpu', 'cuda'), default='cpu',
+                        help='CUDA 设备可见性由 CUDA_VISIBLE_DEVICES 显式控制')
     args = parser.parse_args()
     if not 0 <= args.port <= 65535:
         parser.error("--port 必须在 0–65535 之间，0 表示自动分配空闲端口")
@@ -552,8 +557,12 @@ def main():
         model = Path(args.asr_model).expanduser().resolve()
         if not model.is_dir():
             parser.error("--asr-model 必须指向已安装的本机模型目录")
-        from .ears.asr import FunASREngine
-        asr = FunASREngine(model=str(model), device="cpu")
+        if args.asr_backend == 'faster-whisper':
+            from .ears.asr import FasterWhisperEngine
+            asr = FasterWhisperEngine(str(model), device=args.asr_device)
+        else:
+            from .ears.asr import FunASREngine
+            asr = FunASREngine(model=str(model), device=args.asr_device)
     try:
         server = create_server(args.db, port=args.port, legacy_writes=False,
                                knowledge_embedder=embedder, asr_engine=asr)

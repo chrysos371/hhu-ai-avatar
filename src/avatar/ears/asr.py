@@ -28,3 +28,25 @@ class TextInputEngine:
 
     def transcribe(self, text_or_path: str) -> str:
         return text_or_path
+
+
+class FasterWhisperEngine:
+    """Local CTranslate2 model; optional dependency, no implicit model download."""
+
+    def __init__(self, model_path: str, *, device: str = 'cpu', cpu_threads: int = 4):
+        from pathlib import Path
+        from faster_whisper import WhisperModel
+        path = Path(model_path).expanduser().resolve()
+        if not path.is_dir():
+            raise ValueError('ASR 模型目录不存在')
+        if device not in ('cpu', 'cuda'):
+            raise ValueError('ASR device must be cpu or cuda; select visible GPUs explicitly')
+        self.model = WhisperModel(str(path), device=device,
+            compute_type='int8_float16' if device == 'cuda' else 'int8',
+            cpu_threads=cpu_threads, num_workers=1, local_files_only=True)
+
+    def transcribe(self, audio_path: str) -> str:
+        segments, _ = self.model.transcribe(audio_path, language='zh', beam_size=5,
+            vad_filter=True, condition_on_previous_text=False, temperature=0,
+            initial_prompt='以下是普通话，请使用简体中文。')
+        return ''.join(segment.text for segment in segments).strip()
