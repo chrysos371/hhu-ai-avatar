@@ -1,0 +1,159 @@
+{
+  "scope": "Actual pinned local model and application HTTP/SSE/browser; synthetic source ownership and action authority only",
+  "sourceHead": "f28d3670a918db0e0b37366bc334a7cb3984a3ba",
+  "createdUtc": "2026-11-10T19:50:30.070Z",
+  "provider": {
+    "url": "http://127.0.0.1:33657/v1",
+    "model_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "model_revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+    "model_id": "qwen3-4b-q4_k_m",
+    "registry_sha256": "9ab8575f5019ff2bb27fff51786af1c06f51353e9d2721fb2e9972dd9bd0ea87",
+    "gguf_general_name": "Qwen3 4B Instruct Awq",
+    "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+    "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 40441, 0\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 40441, 0\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 40441, 0\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 40441, 0\n",
+    "chosen_gpu": {
+      "index": 0,
+      "uuid": "GPU-81550800-367d-1855-0f35-c61c274edfdf",
+      "free_mib": 40441,
+      "utilization_percent": 0
+    },
+    "requested_visible_devices": "0",
+    "resource_selector_sha256": "e3d241073b19a42b67af9cd73ebb452ead8b78560c45be7849ea6be92cdeeb9d",
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "n_batch_prompt_tokens": 256,
+      "concurrent_sequences": 1,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "flash_attention": true
+    },
+    "llama_cpp_python": "0.3.19",
+    "load_seconds": 1.2889157750178128,
+    "provider_source_sha256": "2c6670a1549c5f4ab60c06e2b236d0e2e40ee5d23a56ec6700a80bd9349297b4",
+    "process_gpu_mib_after_load": [
+      4096
+    ],
+    "pid": 1965026
+  },
+  "sourceSha256": {
+    "../src/avatar/main.py": "392ee1e067af9b443bd88cd863201dcb15b80ad9b759b2e1b7147d0a55e45ee0",
+    "../src/avatar/brain/speaker_scope.py": "d6a8cf00672060be113c3d1c9cdd5012402a7a10b4e44405a543e3d6b23826bc",
+    "../src/avatar/web.py": "3f6e74306e29a18544f993ec5a466bb98817b3694f784e78cb7cf5fe359c3e16",
+    "e2e/real-speaker.spec.ts": "1ab0ae39159064baf2e3b008979f570e9097c42dbd1fbb79f8badd6cb879ceef"
+  },
+  "rows": [
+    {
+      "input": "我叫陈宁。",
+      "reply": "你好，陈宁。谢谢你告诉我。",
+      "scope": "current_user",
+      "blocked": false,
+      "generationMode": "profile_grounded",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 2.115
+    },
+    {
+      "input": "我来扮演小说角色。",
+      "reply": "好的，陈宁。你想扮演哪个角色呢？我可以陪你一起进入故事的世界。",
+      "scope": "fictional_character",
+      "blocked": false,
+      "generationMode": "llm",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 1.011
+    },
+    {
+      "input": "我叫林悦。",
+      "reply": "哦，林悦，很高兴认识你！你愿意和我一起进入这个小说世界吗？我在这里陪你。",
+      "scope": "fictional_character",
+      "blocked": false,
+      "generationMode": "llm",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 3.029
+    },
+    {
+      "input": "我喜欢游泳。",
+      "reply": "哦，游泳听起来很有趣！你最喜欢在水里做什么呢？",
+      "scope": "fictional_character",
+      "blocked": false,
+      "generationMode": "llm",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 2.041
+    },
+    {
+      "input": "提醒我明天9点带伞。",
+      "reply": "这条消息未被识别为独立的真人操作请求，没有执行真实提醒或联网工具。请先明确退出角色，再单独提出真实请求。",
+      "scope": "fictional_character",
+      "blocked": true,
+      "generationMode": "rules_speaker_scope",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 2.038
+    },
+    {
+      "input": "故事里我叫什么名字？",
+      "reply": "在故事里，你叫林悦。需要我帮你设定一些背景或者一起发展情节吗？",
+      "scope": "fictional_character",
+      "blocked": false,
+      "generationMode": "llm",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 3.038
+    },
+    {
+      "input": "回到现实。",
+      "reply": "好的，我们回到现实。你今天过得怎么样，陈宁？",
+      "scope": "current_user",
+      "blocked": false,
+      "generationMode": "llm",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 0,
+      "seconds": 2.017
+    },
+    {
+      "input": "提醒我明天9点带伞。",
+      "reply": "已设置提醒：2026-11-12 09:00（北京时间）带伞。程序运行并轮询时会在本机显示。",
+      "scope": "current_user",
+      "blocked": false,
+      "generationMode": "rules",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 1,
+      "seconds": 1.043
+    },
+    {
+      "input": "我叫什么名字？",
+      "reply": "目前记录你使用的名字是陈宁。",
+      "scope": "current_user",
+      "blocked": false,
+      "generationMode": "profile_lookup",
+      "memories": [
+        "名字: 陈宁"
+      ],
+      "reminders": 1,
+      "seconds": 2.043
+    }
+  ],
+  "executionComplete": true,
+  "semanticApproved": false
+}

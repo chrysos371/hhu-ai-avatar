@@ -1,0 +1,43 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第四轮系统审计与推进报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p,.row{overflow-wrap:anywhere}.row{padding:12px;background:white;border-bottom:1px solid #dee7ee}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}}</style><main><h1>第四轮系统审计与推进报告</h1>
+<p>日期：2026-11-11（上海时间）。作者：spinner-bot。独立循环，承接第三轮已归档快照。</p>
+<h2>本轮结果</h2>
+<p>新增独立说话者归属，保护真人长期记忆及实际动作。用户明确扮演虚构角色后，姓名、偏好与事件不再作为真人事实写入；明确退出后只使用最后真人片段。上下文最多保留三条真人来源，网页跨临时Avatar共享范围，来源版本改变清理派生状态。现有风险路由保持原样。</p>
+<p>真实提醒创建/取消与工具代理要求整条消息为真人来源；角色台词和切换范围的同回合请求给出说明，退出后可重新单独提出真实请求。先前已设置提醒的到期通知和管理台本人操作不受角色模式吞掉。默认记忆写入保护已生效，第三轮实验模型/模板开关仍默认关闭。</p>
+<h2>先失败再修复的单项记录</h2>
+<div class="row">编号 · 问题 · 实证与状态</div>
+<div class="row"><a href="issues/G2C4-001.md">G2C4-001</a> · 跨轮角色姓名/偏好/事件误记真人 · 原18项10败/8过；首版167关联通过；反查再修3个入口误判，236项通过</div>
+<div class="row"><a href="issues/G2C4-002.md">G2C4-002</a> · 角色台词创建/取消真人提醒并调用工具 · 原4项3败/1过；修复后含原有工具/安全105项通过</div>
+<div class="row"><a href="issues/G2C4-003.md">G2C4-003</a> · 末句退出角色为前半角色操作补授权 · 新增2项先失败；整条真人来源约束后107项关联通过</div>
+<div class="row"><a href="issues/G2C4-004.md">G2C4-004</a> · 新上下文在分析期间删除后复活事实 · 本轮新增回归；2项先失败，写入/读取版本屏障后150+10项专项通过</div>
+<h2>实际模型与网页实验</h2>
+<p>已固定本机4B：20场景×原生流式/网页临时实例两路径，40/40工程检查通过，156.20秒；共106条回复，其中原生llm=86、有来源框架确认=20。不把框架回复计作原生能力。</p>
+<p>角色姓名查询两路径均回答林悦而非真人陈宁；仅为冻结样例的字面核对，不是一般指代、自然度或陪伴质量批准。原16为已知回归，附加4项推理前冻结；标签均为代理编写，没有独立人工验收。</p>
+<p>第一遍浏览器9轮通过，原始记录未采源码哈希，未事后伪造；补齐测试时采集HEAD/哈希后，最终源码另用新路径运行9轮，通过可见文字、HTTP/SSE结果、资料和提醒计数检查。</p>
+<p>最终100真实HTTP/SSE回合通过，用时152.949秒；10次原生首增量后取消、10次同ID重放及两次来源删除，缓存≤32、SQLite完整性ok。最终用户100/助手90/提醒10/账本100；未观察到后续模型提示含已删合成姓名。</p>
+<p>来源竞争检查用两个独立SQLite连接和受控分析回调，在实际编排内删除来源；修复阻止失效回合先写入再取消。真实100回合是独立回归，不冒称覆盖所有竞争交错或多日稳定。</p>
+<h2>全量回归与版本</h2>
+<p>905 passed, 1 skipped in 36.79s。离线浏览器15通过/4显式真实服务跳过；真实角色浏览器另1通过。前端构建与lint通过；前端产品代码未变，33单元测试沿用第三轮已归档快照，未伪称本轮重跑。</p>
+<p>原生归属实验源码HEAD：27500dff44d2dd0cb189ffafc3a87d5b5acb80bc；最终耐久HEAD：8fbca1b3103d0df2432c1e693a634349fa9e6fa7；最终浏览器HEAD：f28d3670a918db0e0b37366bc334a7cb3984a3ba。不同版本均保留原始JSON/日志，报告不合并冒称单一HEAD实验。最终事实屏障之后无产品源码变化。</p>
+<h2>限制与下一循环</h2>
+<p>本轮是有限、显式语法：不覆盖隐喻、含蓄身份、任意混合叙事、所有扮演入口或一般语言授权。角色范围仅在当前运行会话维持，新会话需重新声明。既有数据库的历史污染不自动猜测删除，应按来源检查与纠正。原始角色消息仍作为对话记录保存，阻止事实写入不等于删除全部原文。</p>
+<p>第三轮最小模板充分性、第二轮009/016一般归属与身体边界、真实物理麦克风、自由对话人声、正式形象和多日运行仍未验收；通用语义Verifier仍False。没有新训练、默认模型切换或自动部署。GPU只用原先按余量选择的0号4B进程，未影响他人任务。</p>
+<p>下一循环优先推进可自主验证的音画/中文口型量化：先冻结有明确解析声学参数的合成基准，测现状和失败，再决定优化。合成数据只验证算法机制，不能代替真人口型和物理设备验收；真实来源/动作边界继续作为回归门槛。</p>
+<h2>证据入口</h2>
+<p><a href="../实验/speaker-before.log">speaker-before.log</a></p>
+<p><a href="../实验/speaker-audit-first.log">speaker-audit-first.log</a></p>
+<p><a href="../实验/speaker-audit-fixed.log">speaker-audit-fixed.log</a></p>
+<p><a href="../实验/speaker-actions-before.log">speaker-actions-before.log</a></p>
+<p><a href="../实验/mixed-actions-before.log">mixed-actions-before.log</a></p>
+<p><a href="../实验/mixed-actions-after.log">mixed-actions-after.log</a></p>
+<p><a href="../实验/fact-race-before.log">fact-race-before.log</a></p>
+<p><a href="../实验/fact-race-verified.log">fact-race-verified.log</a></p>
+<p><a href="../实验/fact-race-context.log">fact-race-context.log</a></p>
+<p><a href="../实验/speaker-real-4b.json">speaker-real-4b.json</a></p>
+<p><a href="../实验/real-turn-soak100-final.json">real-turn-soak100-final.json</a></p>
+<p><a href="../实验/real-speaker-final.json">real-speaker-final.json</a></p>
+<p><a href="../实验/real-speaker-final.png">real-speaker-final.png</a></p>
+<p><a href="../实验/python-full-source-barrier.log">python-full-source-barrier.log</a></p>
+<p><a href="../实验/browser-offline.log">browser-offline.log</a></p>
+<p><a href="../实验/frontend-build-final.log">frontend-build-final.log</a></p>
+<p><a href="../实验/frontend-lint-final.log">frontend-lint-final.log</a></p>
+<p><a href="../进展.md">全过程记录</a>；<a href="../计划.md">本轮计划</a>。</p></main></html>
