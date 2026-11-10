@@ -103,6 +103,41 @@ def test_valid_analysis_and_reply(make_avatar):
     assert result['user_valence'] == 0.4
     assert ava.memory.get_user_profile()['名字'] == '小明'
 
+def test_audio_entrypoint_transcribes_and_returns_lipsync_frames(make_avatar, monkeypatch):
+    from types import SimpleNamespace
+    import avatar.main as main_module
+    ava = make_avatar()
+    class ASR:
+        def transcribe(self, path):
+            assert path == 'input.wav'
+            return '你好'
+    class TTS:
+        def synthesize(self, text, path, rate, pitch):
+            assert text and path == 'reply.mp3'
+            return path
+    class LipSync:
+        def analyze(self, samples, sr):
+            assert samples == 'decoded' and sr == 24000
+            return [SimpleNamespace(time=0.0, mouth_open=.4, vowel='a', energy=.8)]
+    ava.asr, ava.tts, ava.lipsync = ASR(), TTS(), LipSync()
+    monkeypatch.setattr(main_module, 'load_audio', lambda path: ('decoded', 24000))
+    result = ava.respond_audio('input.wav', tts_path='reply.mp3')
+    assert result['transcript'] == '你好'
+    assert result['audio_path'] == 'reply.mp3'
+    assert result['lip_sync_frames'] == [
+        {'time': 0.0, 'mouth_open': .4, 'vowel': 'a', 'energy': .8}]
+    assert result['lipsync_error'] is None
+
+def test_audio_entrypoint_requires_asr_and_nonempty_transcript(make_avatar):
+    ava = make_avatar()
+    with pytest.raises(RuntimeError, match='ASR'):
+        ava.respond_audio('input.wav')
+    class ASR:
+        def transcribe(self, path): return ' '
+    ava.asr = ASR()
+    with pytest.raises(ValueError, match='未识别'):
+        ava.respond_audio('input.wav')
+
 @pytest.mark.parametrize('bad', [None, [], {'emotion': {'valence': True}, 'facts': []}, {'emotion': {'valence': float('nan')}, 'facts': []}, {'emotion': {}, 'facts': [{'type': '名字', 'content': '坏名字'}, 'invalid']}, {'emotion': {}, 'facts': [{'type': '名字', 'content': 123}]}])
 def test_invalid_analysis_has_no_partial_effects(make_avatar, bad):
     ava = make_avatar([json.dumps(bad), '回复'])

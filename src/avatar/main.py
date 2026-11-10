@@ -26,6 +26,7 @@ from .config import config
 from .ears.asr import ASREngine, TextInputEngine
 from .face.lipsync import LipSyncEngine
 from .mouth.tts import EdgeTTSEngine, TTSEngine
+from .utils.audio import load_audio
 
 
 logger = logging.getLogger(__name__)
@@ -424,10 +425,22 @@ class Avatar:
         self.memory.add_message('assistant', reply, self.session_id)
         # 6. TTS（可选）
         audio_path = None
+        lip_sync_frames = None
+        lipsync_error = None
         if use_tts:
             audio_path = self.tts.synthesize(
                 reply, tts_path, decision.speech_rate, decision.speech_pitch
             )
+            try:
+                samples, sample_rate = load_audio(audio_path)
+                lip_sync_frames = [
+                    {'time': frame.time, 'mouth_open': frame.mouth_open,
+                     'vowel': frame.vowel, 'energy': frame.energy}
+                    for frame in self.lipsync.analyze(samples, sample_rate)
+                ]
+            except Exception as exc:
+                logger.warning('口型分析失败：%s', type(exc).__name__)
+                lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
         return {
             "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
                          "output_adjustment": output_adjustment},
@@ -441,6 +454,8 @@ class Avatar:
             "user_valence": round(self.emotion.user_state.valence, 2),
             "user_arousal": round(self.emotion.user_state.arousal, 2),
             "audio_path": audio_path,
+            "lip_sync_frames": lip_sync_frames,
+            "lipsync_error": lipsync_error,
             "energy": round(self.emotion.energy, 3),
             "recalled_ids": [r['id'] for r in self._turn_facts],
             "reminder": reminder,
@@ -451,6 +466,23 @@ class Avatar:
             "tool_calls": web_result['tool_calls'],
             "web_error": web_result.get('web_error'),
         }
+
+    def respond_audio(
+        self,
+        audio_path: str,
+        tts_path: str = "./data/reply.mp3",
+        use_tts: bool = True,
+        use_web: bool = False,
+    ) -> dict:
+        """转写音频后复用文本对话流程；返回转写、回复音频及可用的口型帧。"""
+        if isinstance(self.asr, TextInputEngine):
+            raise RuntimeError('当前使用文本降级引擎；请注入已配置的 ASR 引擎。')
+        transcript = self.asr.transcribe(audio_path)
+        if not isinstance(transcript, str) or not transcript.strip():
+            raise ValueError('ASR 未识别出可处理的文本。')
+        result = self.respond(transcript, use_tts=use_tts, tts_path=tts_path, use_web=use_web)
+        result['transcript'] = transcript
+        return result
 
 
 def _repl(avatar: Avatar, use_tts: bool = False) -> None:
