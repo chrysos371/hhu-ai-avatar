@@ -1,0 +1,240 @@
+{
+  "source_head": "31bfe502a0722e4ffadfa3c6a15bc07adc9f79e3",
+  "source_sha256": "2bc5d5d5f4d563849316d588262e3dd59ddfad518da1d4f7b511fc607ef382db",
+  "protocol_sha256": "e7c257e137ff7bc1c321caa02aeb4a55ccefafb7006abed61ec63d881c9c8b19",
+  "protocol": {
+    "scope": "Five real local model cancellation/recovery trials for explicitly registered model variants; not third-party billing or long-run tail latency",
+    "trials": 5,
+    "prompt": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。",
+    "max_tokens": 512,
+    "temperature": 0,
+    "seed": 42,
+    "cancel_trigger": "first nonempty SDK content delta",
+    "gate": {
+      "local_cancel_p95_seconds_max": 0.5,
+      "all_cancelled": true,
+      "provider_iterator_closed": true,
+      "next_request_recovers": true
+    },
+    "recovery_prompt": "1加1等于多少？只给数字。",
+    "recovery_max_tokens": 16,
+    "provider": "Pinned model identity/hash from model-scale-protocol.json; same sampling and non-thinking template",
+    "allowed_models": [
+      {
+        "repo_id": "Qwen/Qwen3-4B-GGUF",
+        "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+        "file": "Qwen3-4B-Q4_K_M.gguf",
+        "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+        "model_id": "qwen3-4b-q4_k_m",
+        "required_free_mib": 16384
+      },
+      {
+        "repo_id": "Qwen/Qwen3-14B-GGUF",
+        "revision": "530227a7d994db8eca5ab5ced2fb692b614357fd",
+        "file": "Qwen3-14B-Q4_K_M.gguf",
+        "sha256": "500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0",
+        "model_id": "qwen3-14b-q4_k_m",
+        "required_free_mib": 24576
+      }
+    ]
+  },
+  "provider": {
+    "url": "http://127.0.0.1:38047/v1",
+    "model_sha256": "500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0",
+    "model_revision": "530227a7d994db8eca5ab5ced2fb692b614357fd",
+    "model_id": "qwen3-14b-q4_k_m",
+    "registry_sha256": "9ab8575f5019ff2bb27fff51786af1c06f51353e9d2721fb2e9972dd9bd0ea87",
+    "gguf_general_name": "Qwen3 14B Awq Compatible Instruct",
+    "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+    "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 40441, 0\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 40441, 0\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 40441, 0\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 40441, 0\n",
+    "chosen_gpu": {
+      "index": 2,
+      "uuid": "GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e",
+      "free_mib": 40441
+    },
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "n_batch_prompt_tokens": 256,
+      "concurrent_sequences": 1,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "flash_attention": true
+    },
+    "llama_cpp_python": "0.3.19",
+    "load_seconds": 8.46997395803919,
+    "provider_source_sha256": "21e4662661c4f10d378333718a7590b132d11ef5967f916d35efcb8c606d85c6",
+    "process_gpu_mib_after_load": [
+      10012
+    ],
+    "pid": 1868748
+  },
+  "rows": [
+    {
+      "trial": 0,
+      "first_delta_seconds": 0.10737961594713852,
+      "cancel_join_seconds": 0.0019821159658022225,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-599",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 铅",
+          "first_seconds": 0.04357859899755567,
+          "total_seconds": 0.09654795104870573,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.0704854279756546
+    },
+    {
+      "trial": 1,
+      "first_delta_seconds": 0.055161505995783955,
+      "cancel_join_seconds": 0.0026007610140368342,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-601",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 铅",
+          "first_seconds": 0.04340431001037359,
+          "total_seconds": 0.09623800299596041,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.055653963005170226
+    },
+    {
+      "trial": 2,
+      "first_delta_seconds": 0.055727022991050035,
+      "cancel_join_seconds": 0.00205458200071007,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-603",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 铅",
+          "first_seconds": 0.043178594030905515,
+          "total_seconds": 0.09553374000824988,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.056095649022608995
+    },
+    {
+      "trial": 3,
+      "first_delta_seconds": 0.05436387500958517,
+      "cancel_join_seconds": 0.0021452369983308017,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-605",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 铅",
+          "first_seconds": 0.04308502498315647,
+          "total_seconds": 0.09526277799159288,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.05578401201637462
+    },
+    {
+      "trial": 4,
+      "first_delta_seconds": 0.05763953004498035,
+      "cancel_join_seconds": 0.0021337869693525136,
+      "outcome": [
+        "cancelled"
+      ],
+      "worker_alive": false,
+      "received_text": "1",
+      "provider_trace": [
+        {
+          "id": "eval-607",
+          "stream": true,
+          "analysis": false,
+          "prompt_sha256": "75e4850813b70c0263ded41979a06d5b17d854b4e3f62c3b36825c55fb51b894",
+          "messages": [
+            {
+              "role": "user",
+              "content": "请从1开始依次列出100个不同的日常物品，每项一句说明，持续列出，不要省略。"
+            }
+          ],
+          "response": "1. 铅",
+          "first_seconds": 0.042782244039699435,
+          "total_seconds": 0.09483980503864586,
+          "usage": null,
+          "outcome": "client_disconnected"
+        }
+      ],
+      "provider_iterator_closed": true,
+      "recovery_reply": "2",
+      "recovery_seconds": 0.05579029396176338
+    }
+  ],
+  "execution_status": "complete",
+  "local_cancel_p95_seconds": 0.0026007610140368342,
+  "all_provider_iterators_closed": true,
+  "passes_gate": true
+}
