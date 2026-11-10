@@ -315,12 +315,14 @@ class Handler(BaseHTTPRequestHandler):
             while True:
                 with job.changed:
                     pending = job.events[cursor+1:]
-                    terminal = job.status in ('completed', 'cancelled', 'failed')
+                    terminal = job.status in ('completed', 'cancelled', 'failed', 'expired', 'redacted')
                     if not pending and not terminal:
                         job.changed.wait(10)
                         pending = job.events[cursor+1:]
-                        terminal = job.status in ('completed', 'cancelled', 'failed')
+                        terminal = job.status in ('completed', 'cancelled', 'failed', 'expired', 'redacted')
                 for event in pending:
+                    if job.redacted:
+                        break
                     self.wfile.write(('id: '+str(event['id'])+'\nevent: '+event['event']+'\ndata: '
                         +json.dumps(event['data'], ensure_ascii=False, allow_nan=False)+'\n\n').encode())
                     self.wfile.flush()

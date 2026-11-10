@@ -59,6 +59,22 @@ def test_cancellation_releases_capacity_before_terminal_event(tmp_path):
     coordinator.close()
 
 
+def test_expired_job_is_scrubbed_on_read_without_another_submission(tmp_path):
+    coordinator = TurnCoordinator(str(tmp_path / 'expiry.db'), lambda job: {'reply': 'private'}, ttl=1)
+    data = {'request_id': 'expiry_request_123456789', 'text': 'private input'}
+    job = coordinator.submit(data)
+    with job.changed:
+        job.changed.wait_for(lambda: job.status == 'completed', timeout=3)
+    job.created_at -= 2
+    with pytest.raises(OperationError):
+        coordinator.get(job.id)
+    assert job.text == '' and job.result is None and job.events == []
+    with pytest.raises(OperationError) as exc:
+        coordinator.submit(data)
+    assert exc.value.status == 410
+    coordinator.close()
+
+
 def test_turn_http_stream_and_dedup_do_not_duplicate_memory(tmp_path, monkeypatch):
     from avatar.config import config
     from avatar.brain.memory import MemoryStore

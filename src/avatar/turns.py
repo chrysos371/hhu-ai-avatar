@@ -26,9 +26,12 @@ class Turn:
     token: CancellationToken = field(default_factory=CancellationToken)
     changed: threading.Condition = field(default_factory=threading.Condition)
     subscribers: int = 0
+    redacted: bool = False
 
     def emit(self, kind, data):
         with self.changed:
+            if self.redacted:
+                return
             if kind == 'text' and len(self.events) >= 500:
                 return
             self.events.append({'id': len(self.events), 'event': kind, 'data': data})
@@ -81,6 +84,7 @@ class TurnCoordinator:
         with self._lock:
             if self._closed:
                 raise OperationError(503, 'runtime_closed', '对话服务正在关闭。')
+            self._prune_locked()
             if request_id in self._jobs:
                 job = self._jobs[request_id]
                 if (job.text, job.use_web) != (text, use_web):
@@ -88,9 +92,9 @@ class TurnCoordinator:
                 return job
             if self._active is not None:
                 raise OperationError(409, 'turn_busy', '正在处理上一条消息，请先停止或等待完成。')
-            for key in list(self._jobs):
-                if self._jobs[key].created_at + self.ttl < time.time() or len(self._jobs) >= self.max_jobs:
-                    del self._jobs[key]
+            while len(self._jobs) >= self.max_jobs:
+                _, old = self._jobs.popitem(last=False)
+                self._redact(old, 'expired')
             self._ledger(request_id, fingerprint)
             job = Turn(request_id, text, use_web)
             job.emit('status', {'status': 'queued'})
@@ -123,15 +127,34 @@ class TurnCoordinator:
                 if self._active is job:
                     self._active = None
             with job.changed:
+                if job.redacted:
+                    return
                 job.result, job.status = result, status
                 job.emit(kind, data)
 
     def get(self, job_id):
         with self._lock:
+            self._prune_locked()
             job = self._jobs.get(job_id)
             if job is None:
                 raise OperationError(404, 'turn_not_found', '本轮记录不存在或已过期。')
             return job
+
+    @staticmethod
+    def _redact(job, status):
+        with job.changed:
+            job.redacted = True
+            job.text, job.result = '', None
+            job.events.clear()
+            job.status = status
+            job.changed.notify_all()
+
+    def _prune_locked(self):
+        for key in list(self._jobs):
+            job = self._jobs[key]
+            if job.status in ('completed', 'cancelled', 'failed') and job.created_at + self.ttl <= time.time():
+                self._redact(job, 'expired')
+                del self._jobs[key]
 
     def cancel(self, job_id):
         job = self.get(job_id)
