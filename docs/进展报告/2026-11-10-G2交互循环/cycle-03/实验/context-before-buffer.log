@@ -1,0 +1,30 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_deleted_context_during_review_never_emits_obsolete_buffer ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd017aff0d0>
+grounded_avatar = (<avatar.main.Avatar object at 0x7fd017bbd960>, <test_profile_grounding.CopyingLLM object at 0x7fd017bbd900>)
+
+    def test_deleted_context_during_review_never_emits_obsolete_buffer(monkeypatch,grounded_avatar):
+        import avatar.main as main_module
+        avatar,model=grounded_avatar
+        original=main_module.review_profile_reply
+        def forget_during_review(*args):
+            checked=original(*args)
+            fragment=next(row for row in avatar.list_memories() if '网球' in row['content'])
+            avatar.forget_memory(fragment['id'])
+            return checked
+        monkeypatch.setattr(main_module,'review_profile_reply',forget_during_review)
+        pieces=[]
+        with pytest.raises(Cancelled):
+            avatar.respond('我喜欢网球，请随便聊聊。',cancel=CancellationToken(),on_delta=pieces.append)
+>       assert pieces==[]
+E       AssertionError: assert ['目前关于你的偏好记录是：喜欢网球。'] == []
+E         
+E         Left contains one more item: '目前关于你的偏好记录是：喜欢网球。'
+E         Use -v to get more diff
+
+tests/test_profile_grounding.py:142: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_profile_grounding.py::test_deleted_context_during_review_never_emits_obsolete_buffer
+1 failed in 0.72s

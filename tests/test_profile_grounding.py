@@ -124,3 +124,20 @@ def test_cancel_during_complete_review_never_emits_buffered_text(monkeypatch, gr
         avatar.respond('我喜欢网球，请随便聊聊。', cancel=token, on_delta=pieces.append)
     assert pieces == []
     assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0] == 0
+
+
+def test_deleted_context_during_review_never_emits_obsolete_buffer(monkeypatch,grounded_avatar):
+    import avatar.main as main_module
+    avatar,model=grounded_avatar
+    original=main_module.review_profile_reply
+    def forget_during_review(*args):
+        checked=original(*args)
+        fragment=next(row for row in avatar.list_memories() if '网球' in row['content'])
+        avatar.forget_memory(fragment['id'])
+        return checked
+    monkeypatch.setattr(main_module,'review_profile_reply',forget_during_review)
+    pieces=[]
+    with pytest.raises(Cancelled):
+        avatar.respond('我喜欢网球，请随便聊聊。',cancel=CancellationToken(),on_delta=pieces.append)
+    assert pieces==[]
+    assert avatar.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]==0
