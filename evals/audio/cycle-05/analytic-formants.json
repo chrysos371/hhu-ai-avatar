@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "scope": "Analytic all-pole synthetic signals, labels are current code anchor regions; not human or Mandarin vowel ground truth",
   "baseline_revision": "515acf2",
   "anchors": [
@@ -80,7 +80,9 @@
     "median absolute F1/F2 errors",
     "forced closure frequency in sustained interior",
     "runtime and finite/range invariants",
-    "zero and low-noise closure"
+    "zero and low-noise closure",
+    "separate F1 and F2 median absolute error",
+    "missing F1/F2 sampled estimates"
   ],
   "interior_seconds": [
     0.1,
@@ -108,5 +110,6 @@
       0.5,
       0.6
     ]
-  }
+  },
+  "supersedes": "v1 fixture omitted last sub-cutoff harmonic when cutoff/f0 was not integral; v1 retained, not comparable gate evidence"
 }

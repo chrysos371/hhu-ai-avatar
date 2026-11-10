@@ -1,7 +1,6 @@
 """Deterministic analytic signal mechanics, not labelled human speech."""
 import argparse
 from collections import Counter
-from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import itertools
@@ -25,7 +24,7 @@ def synthesize(spec, anchor, sr, excitation, f0, rms, seed):
     if excitation=='white_noise':source=np.random.default_rng(seed).normal(size=n)
     else:
         source=np.zeros(n)
-        for k in range(1,int(min(5000,sr/2)/f0)):
+        for k in range(1,int(np.ceil(min(5000,sr/2)/f0))):
             source+=np.cos(2*np.pi*k*f0*t)/k
     source-=source.mean()
     z=np.exp(-2j*np.pi*np.fft.rfftfreq(n))
@@ -78,12 +77,18 @@ def run(split,arm,output):
                         formants=engine_module._formants(engine_module._lpc(analysis_frames[index],min(2+rate//1000,24)),rate)
                         estimated.append([seconds_,*[float(x) for x in formants[:2]]])
                     errors=[abs(estimate[i+1]-anchor['formants_hz'][i]) for estimate in estimated if len(estimate)==3 for i in range(2)]
+                    separate_errors = [[abs(estimate[i+1]-anchor['formants_hz'][i])
+                        for estimate in estimated if len(estimate)>i+1] for i in range(2)]
                     row={'anchor':anchor['id'],'sample_rate':sr,'analysis_rate':rate,'rms':rms,
                         'excitation':excitation,'f0':pitch,'route':route,'waveform_sha256':waveform_sha,
                         'frame_count':len(frames),'interior_count':len(interior),'correct_vowel_frames':sum(f.vowel==anchor['id'] for f in interior),
                         'confusion':dict(Counter(f.vowel or 'unknown' for f in interior)),
                         'sudden_closures':closures,'closure_eligible':median>=.3,'median_mouth_open':median,
                         'formant_samples':estimated,'median_abs_formant_error_hz':float(np.median(errors)) if errors else None,
+                        'median_abs_f1_error_hz':float(np.median(separate_errors[0])) if separate_errors[0] else None,
+                        'median_abs_f2_error_hz':float(np.median(separate_errors[1])) if separate_errors[1] else None,
+                        'missing_f1':sum(len(estimate)<2 for estimate in estimated),
+                        'missing_f2':sum(len(estimate)<3 for estimate in estimated),
                         'seconds':seconds,'frames':[[f.time,f.mouth_open,f.vowel,f.energy] for f in frames]}
                     report['rows'].append(row)
                 print(split,arm,anchor['id'],sr,rms,excitation,pitch,flush=True)
@@ -103,6 +108,9 @@ def run(split,arm,output):
                 'sudden_closures':sum(r['sudden_closures'] for r in rows),'closure_eligible_frames':eligible,
                 'sudden_closure_rate':sum(r['sudden_closures'] for r in rows)/eligible if eligible else 0,
                 'median_abs_formant_error_hz':float(np.median([r['median_abs_formant_error_hz'] for r in rows if r['median_abs_formant_error_hz'] is not None])),
+                'median_abs_f1_error_hz':float(np.median([r['median_abs_f1_error_hz'] for r in rows if r['median_abs_f1_error_hz'] is not None])),
+                'median_abs_f2_error_hz':float(np.median([r['median_abs_f2_error_hz'] for r in rows if r['median_abs_f2_error_hz'] is not None])),
+                'missing_f1':sum(r['missing_f1'] for r in rows),'missing_f2':sum(r['missing_f2'] for r in rows),
                 'analysis_seconds':sum(r['seconds'] for r in rows)}
         report['execution_complete']=True
     except Exception as exc:
