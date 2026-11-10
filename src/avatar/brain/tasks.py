@@ -7,6 +7,23 @@ from dataclasses import asdict, dataclass, field
 import json
 import re
 
+from .facts import _mask_quoted
+
+
+_LITERAL = re.compile(r'【[^【】\n]{1,40}】|“[^“”\n]{1,120}”|「[^「」\n]{1,120}」|『[^『』\n]{1,120}』|"[^"\n]{1,120}"|\'[^\'\n]{1,120}\'')
+_OPERATION = re.compile(
+    r'不必包含|无需包含|不用包含|不必保留|无需保留|不用保留|不要保留|不要包含|不得包含|禁止包含|'
+    r'原样保留|原样输出|必须包含|删除|删掉|保留|留作|留为|不要改|不得改|别改|包含')
+_FORBID = {'不用保留', '不要保留', '不要包含', '不得包含', '禁止包含', '删除', '删掉'}
+_RELEASE = {'不必包含', '无需包含', '不用包含', '不必保留', '无需保留'}
+
+
+def _instructions(text):
+    cleaned = list(_mask_quoted(text))
+    for match in re.finditer(r'【[^【】\n]{1,40}】', text):
+        cleaned[match.start():match.end()] = ' ' * len(match.group())
+    return ''.join(cleaned)
+
 
 @dataclass
 class TaskContract:
@@ -25,14 +42,20 @@ class TaskTracker:
         self.current = None
 
     def update(self, text):
-        writing = bool(re.search(r'(?:写|拟|改写|润色|起草|修改).{0,24}(?:消息|短信|邮件|申请|正文|通知|回复|段话|文字)|'
-                                 r'(?:消息|短信|邮件|申请|正文|通知).{0,12}(?:写|拟|改写|润色)', text))
-        continuation = bool(re.search(r'^(?:再|改成|改为|删掉|保留|加上|补上|缩短|不要|不用|只要|仍然|还是|把这|把它)', text))
-        if re.search(r'^(?:我们)?(?:先)?(?:换个话题|不写了|先不写|取消(?:这个任务|写作|上一条)?)[。！!\s]*$', text.strip()) or re.search(
-                r'只想(?:倾诉|说说|吐槽)|(?:不要|不用|不需要)给(?:我)?建议|听我说(?:就好|就行)', text):
+        clean = _instructions(text)
+        meta = bool(re.match(r'^(?:请)?(?:再|先)?(?:解释|分析|评价|点评|讨论|判断|翻译)', clean.strip()))
+        explicit_rewrite = bool(re.search(r'(?:帮我|请|替我|给我).{0,12}(?:写|拟|改写|润色|起草|修改)|(?:并|再|然后)(?:请|帮我)?(?:改写|润色|重写|起草|修改)', clean[1:] if clean.startswith('请') else clean))
+        if meta and not explicit_rewrite:
             self.current = None
             return
-        revising = self.current is not None and (continuation or bool(re.search(r'改写|润色|修改', text)))
+        writing = bool(re.search(r'(?:写|拟|改写|润色|起草|修改).{0,24}(?:消息|短信|邮件|申请|正文|通知|回复|段话|文字|台词|句子|句话|标语)|'
+                                 r'(?:消息|短信|邮件|申请|正文|通知|台词|句子|句话|标语).{0,12}(?:写|拟|改写|润色)', clean))
+        continuation = bool(re.search(r'^(?:再|改成|改为|删掉|保留|加上|补上|缩短|不要|不用|只要|仍然|还是|把这|把它)', clean))
+        if re.search(r'^(?:我们)?(?:先)?(?:换个话题|不写了|先不写|取消(?:这个任务|写作|上一条)?)[。！!\s]*$', clean.strip()) or re.search(
+                r'只想(?:倾诉|说说|吐槽)|(?:不要|不用|不需要)给(?:我)?建议|听我说(?:就好|就行)', clean):
+            self.current = None
+            return
+        revising = self.current is not None and (continuation or bool(re.search(r'改写|润色|修改', clean)))
         if writing and not revising:
             self.current = TaskContract(source=text)
         elif not writing and not revising and not continuation:
@@ -41,32 +64,40 @@ class TaskTracker:
             return
         contract = self.current
         # Explicit role only, never infer family/recipient from old memories.
-        role = re.search(r'(?:替|代|帮)(?:我)?(姐姐|妹妹|哥哥|弟弟|妈妈|爸爸|朋友|同学|同事|室友)', text)
+        role = re.search(r'(?:替|代|帮)(?:我)?(姐姐|妹妹|哥哥|弟弟|妈妈|爸爸|朋友|同学|同事|室友)', clean)
         if role is None:
-            role = re.search(r'(姐姐|妹妹|哥哥|弟弟|妈妈|爸爸|朋友|同学|同事|室友)(?:让|请|托)我(?:替|代|帮)', text)
+            role = re.search(r'(姐姐|妹妹|哥哥|弟弟|妈妈|爸爸|朋友|同学|同事|室友)(?:让|请|托)我(?:替|代|帮)', clean)
         if role is None:
-            role = re.search(r'(?:起草|代拟|写|拟)(姐姐|妹妹|哥哥|弟弟|妈妈|爸爸|朋友|同学|同事|室友)的(?:回复|消息|短信|邮件)', text)
+            role = re.search(r'(?:起草|代拟|写|拟)(姐姐|妹妹|哥哥|弟弟|妈妈|爸爸|朋友|同学|同事|室友)的(?:回复|消息|短信|邮件)', clean)
         if role:
             contract.perspective = role.group(1)
-        if re.search(r'(?:用|以|按).{0,8}(?:她|他|姐姐|妹妹|哥哥|弟弟|朋友|同学|同事|室友).{0,4}第一人称', text):
+        if re.search(r'(?:用|以|按).{0,8}(?:她|他|姐姐|妹妹|哥哥|弟弟|朋友|同学|同事|室友).{0,4}第一人称', clean):
             contract.perspective = role.group(1) if role else (contract.perspective or '委托人指定的他人（第一人称）')
-        if re.search(r'改(?:为|成|用)我(?:自己)?的?(?:口吻|第一人称)', text):
+        if re.search(r'改(?:为|成|用)我(?:自己)?的?(?:口吻|第一人称)', clean):
             contract.perspective = '用户本人'
-        recipient = re.search(r'(?:给|发给|写给)(房东|物业|老师|导师|辅导员|审核方|负责人|经理|同事|朋友)', text)
+        recipient = re.search(r'(?:给|发给|写给)(房东|物业|老师|导师|辅导员|审核方|负责人|经理|同事|朋友)', clean)
         if recipient:
             contract.recipient = recipient.group(1)
-        # Bind each operation to its own clause; a delete in one clause must
-        # never erase another clause's keep instruction. Later operations win.
-        for clause in re.split(r'[，,。；;\n]', text):
-            operations = list(re.finditer(r'不用保留|不要保留|删除|删掉|保留|留作|留为|不要改|不得改|别改', clause))
-            for token in re.finditer(r'【[^【】\n]{1,40}】', clause):
+        # Split only at punctuation OUTSIDE quotes/placeholders. Preserve raw
+        # offsets so an operation inside quoted content never becomes a command.
+        for scope in re.finditer(r'[^，,。；;\n]+', clean):
+            clause = text[scope.start():scope.end()]
+            instructions = clean[scope.start():scope.end()]
+            operations = list(_OPERATION.finditer(instructions))
+            for token in _LITERAL.finditer(clause):
                 prior = [op for op in operations if op.end() <= token.start()]
                 following = [op for op in operations if op.start() >= token.end()]
                 operation = prior[-1] if prior else (following[0] if following else None)
                 if operation is None:
                     continue
-                literal = token.group(0)
-                deleting = operation.group(0) in ('不用保留', '不要保留', '删除', '删掉')
+                literal = token.group(0) if token.group(0).startswith('【') else token.group(0)[1:-1]
+                if not literal.strip():
+                    continue
+                if operation.group(0) in _RELEASE:
+                    if literal in contract.required_literals:
+                        contract.required_literals.remove(literal)
+                    continue
+                deleting = operation.group(0) in _FORBID
                 remove = contract.required_literals if deleting else contract.forbidden_literals
                 keep = contract.forbidden_literals if deleting else contract.required_literals
                 if literal in remove:
