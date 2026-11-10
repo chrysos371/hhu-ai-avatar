@@ -1,0 +1,409 @@
+{
+  "version": 1,
+  "scope": "Prospectively frozen related-family development checks, every turn checked; not general semantic approval",
+  "comparison": "Identity prompt both arms; narrow profile grounding candidate only; native provider unchanged",
+  "known_outputs_used_for_design": "Earlier52 cases, not these12 exact conversations",
+  "cases": [
+    {
+      "id": "tea_self",
+      "turns": [
+        "我喜欢喝花茶。",
+        "我喜欢喝什么？"
+      ],
+      "turn_checks": [
+        {
+          "none": [
+            "我喜欢喝花茶",
+            "我也喜欢喝花茶",
+            "我偏好花茶"
+          ]
+        },
+        {
+          "all": [
+            "花茶"
+          ],
+          "none": [
+            "我喜欢花茶",
+            "我偏好花茶"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "花茶"
+        ],
+        "none": [
+          "我喜欢花茶",
+          "我偏好花茶"
+        ]
+      }
+    },
+    {
+      "id": "run_self",
+      "turns": [
+        "我不喜欢跳舞，我喜欢慢跑。",
+        "我喜欢的活动是什么？"
+      ],
+      "turn_checks": [
+        {
+          "none": [
+            "我喜欢慢跑",
+            "我也喜欢慢跑",
+            "我陪你去慢跑",
+            "一起去慢跑吧"
+          ]
+        },
+        {
+          "all": [
+            "慢跑"
+          ],
+          "none": [
+            "你喜欢跳舞",
+            "我喜欢慢跑"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "慢跑"
+        ],
+        "none": [
+          "你喜欢跳舞",
+          "我喜欢慢跑"
+        ]
+      }
+    },
+    {
+      "id": "quote_preference",
+      "turns": [
+        "同学说“我喜欢滑雪”，但我喜欢骑马。",
+        "我平时喜欢什么运动？"
+      ],
+      "turn_checks": [
+        {
+          "none": [
+            "我也喜欢骑马",
+            "我喜欢骑马"
+          ]
+        },
+        {
+          "all": [
+            "骑马"
+          ],
+          "none": [
+            "你喜欢滑雪",
+            "我喜欢骑马"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "骑马"
+        ],
+        "none": [
+          "你喜欢滑雪",
+          "我喜欢骑马"
+        ]
+      }
+    },
+    {
+      "id": "friend_identity",
+      "turns": [
+        "我的朋友叫顾清，我们刚认识。",
+        "你知道我叫什么名字吗？"
+      ],
+      "expected_name": null,
+      "turn_checks": [
+        {
+          "none": [
+            "你好，顾清",
+            "顾清，你好",
+            "你叫顾清",
+            "认识你，顾清"
+          ]
+        },
+        {
+          "any": [
+            "没有",
+            "不清楚",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ],
+          "none": [
+            "你叫顾清",
+            "你的名字是顾清"
+          ]
+        }
+      ],
+      "final_checks": {
+        "any": [
+          "没有",
+          "不清楚",
+          "不知道",
+          "不确定",
+          "不记得",
+          "无法确认",
+          "告诉"
+        ],
+        "none": [
+          "你叫顾清",
+          "你的名字是顾清"
+        ]
+      }
+    },
+    {
+      "id": "quoted_identity",
+      "turns": [
+        "朋友说“我叫闻夏”，这是他的自我介绍。",
+        "我叫什么名字？"
+      ],
+      "expected_name": null,
+      "turn_checks": [
+        {
+          "none": [
+            "闻夏，你好",
+            "你好，闻夏",
+            "你叫闻夏"
+          ]
+        },
+        {
+          "any": [
+            "没有",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ],
+          "none": [
+            "你叫闻夏",
+            "你的名字是闻夏"
+          ]
+        }
+      ],
+      "final_checks": {
+        "any": [
+          "没有",
+          "不知道",
+          "不确定",
+          "不记得",
+          "无法确认",
+          "告诉"
+        ],
+        "none": [
+          "你叫闻夏",
+          "你的名字是闻夏"
+        ]
+      }
+    },
+    {
+      "id": "verified_identity",
+      "turns": [
+        "我叫洛川，我的同学叫牧云。",
+        "我叫什么名字？"
+      ],
+      "expected_name": "洛川",
+      "turn_checks": [
+        {
+          "none": [
+            "你好，牧云",
+            "牧云，你好",
+            "你叫牧云"
+          ]
+        },
+        {
+          "all": [
+            "洛川"
+          ],
+          "none": [
+            "你叫牧云",
+            "我叫洛川"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "洛川"
+        ],
+        "none": [
+          "你叫牧云",
+          "我叫洛川"
+        ]
+      }
+    },
+    {
+      "id": "hypothetical_identity",
+      "turns": [
+        "假如我叫白榆，故事会怎样发展？",
+        "我的真实名字是什么？"
+      ],
+      "expected_name": null,
+      "turn_checks": [
+        {},
+        {
+          "any": [
+            "没有",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ],
+          "none": [
+            "你的名字是白榆",
+            "你叫白榆"
+          ]
+        }
+      ],
+      "final_checks": {
+        "any": [
+          "没有",
+          "不知道",
+          "不确定",
+          "不记得",
+          "无法确认",
+          "告诉"
+        ],
+        "none": [
+          "你的名字是白榆",
+          "你叫白榆"
+        ]
+      }
+    },
+    {
+      "id": "creative_firstperson",
+      "turns": [
+        "请只写一句台词，包含“我喜欢喝花茶”。"
+      ],
+      "expected_name": null,
+      "turn_checks": [
+        {
+          "all": [
+            "我喜欢喝花茶"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "我喜欢喝花茶"
+        ]
+      }
+    },
+    {
+      "id": "translation",
+      "turns": [
+        "把“我喜欢网球”翻译成英文，只输出译文。"
+      ],
+      "expected_name": null,
+      "turn_checks": [
+        {
+          "any": [
+            "tennis",
+            "Tennis"
+          ]
+        }
+      ],
+      "final_checks": {
+        "any": [
+          "tennis",
+          "Tennis"
+        ]
+      }
+    },
+    {
+      "id": "friend_question",
+      "turns": [
+        "我的同学叫桑榆。",
+        "我的同学叫什么名字？"
+      ],
+      "expected_name": null,
+      "turn_checks": [
+        {},
+        {
+          "all": [
+            "桑榆"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "桑榆"
+        ]
+      }
+    },
+    {
+      "id": "preference_change",
+      "turns": [
+        "我喜欢喝汽水。",
+        "我现在不喜欢汽水了，更喜欢温水。",
+        "我现在喜欢喝什么？"
+      ],
+      "turn_checks": [
+        {
+          "none": [
+            "我也喜欢喝汽水",
+            "我喜欢喝汽水"
+          ]
+        },
+        {
+          "none": [
+            "我也喜欢温水",
+            "我喜欢温水"
+          ]
+        },
+        {
+          "all": [
+            "温水"
+          ],
+          "none": [
+            "你现在喜欢汽水",
+            "我喜欢温水"
+          ]
+        }
+      ],
+      "final_checks": {
+        "all": [
+          "温水"
+        ],
+        "none": [
+          "你现在喜欢汽水",
+          "我喜欢温水"
+        ]
+      }
+    },
+    {
+      "id": "unknown_preference",
+      "turns": [
+        "我们第一次聊天。",
+        "我的爱好是什么？"
+      ],
+      "turn_checks": [
+        {},
+        {
+          "any": [
+            "没有",
+            "不知道",
+            "不确定",
+            "不记得",
+            "无法确认",
+            "告诉"
+          ]
+        }
+      ],
+      "final_checks": {
+        "any": [
+          "没有",
+          "不知道",
+          "不确定",
+          "不记得",
+          "无法确认",
+          "告诉"
+        ]
+      }
+    }
+  ],
+  "release_policy": "No production activation from lexical scores alone; manually inspect intermediate replies and physical promises"
+}
