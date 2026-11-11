@@ -32,8 +32,13 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         if candidate_freeze is None or protocol is None or pair_protocol is None:
             raise ValueError('Capability pairs require source freeze and both explicit protocols')
         from evaluate_capability_pair import verify_freeze
-        frozen = verify_freeze(candidate_freeze, partition)
-        candidate = 'capability_prompt_v1'
+        if candidate not in ('v1', 'source_capability_v2'):
+            raise ValueError('Select v1 or source_capability_v2 for capability pairs')
+        candidate_id = 'lab_source_capability_v2' if candidate == 'source_capability_v2' else 'lab_capability_prompt_v1'
+        frozen = verify_freeze(candidate_freeze, partition, candidate_id)
+    elif candidate == 'source_capability_v2':
+        raise ValueError('source_capability_v2 requires capability_pair stage')
+    if stage == 'capability_pair':
         for path in (protocol, pair_protocol):
             if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
                 raise ValueError('Selected capability protocol is not frozen')
@@ -124,7 +129,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                             sampler_command += ['--protocol', str(protocol)]
                         if stage == 'capability_pair':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze),
-                                '--protocol', str(protocol), '--pair-protocol', str(pair_protocol), '--partition', partition]
+                                '--protocol', str(protocol), '--pair-protocol', str(pair_protocol), '--partition', partition,
+                                '--candidate', candidate_id]
                         if stage == 'prospective':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze), '--candidate', candidate]
                             if protocol is not None: sampler_command += ['--protocol', str(protocol)]
@@ -166,7 +172,7 @@ if __name__ == '__main__':
     parser.add_argument('--candidate-freeze', type=Path)
     parser.add_argument('--protocol', type=Path)
     parser.add_argument('--pair-protocol', type=Path)
-    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2'], default='v1')
+    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2'], default='v1')
     options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.
     # Make it absolute while preserving the requested venv entry point.

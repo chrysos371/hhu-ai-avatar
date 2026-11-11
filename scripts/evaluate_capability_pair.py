@@ -19,6 +19,7 @@ from avatar.brain.llm import LLMEngine
 from avatar.brain.memory import MemoryStore
 from avatar.config import config
 from avatar.lab.capability_prompt import CapabilityPromptAvatar
+from avatar.lab.source_capability_prompt import SourceCapabilityPromptAvatar
 from avatar.web import create_server
 from evaluate_native_output_audit import events
 from evaluate_body_review_pair import native_calls
@@ -27,26 +28,35 @@ ROOT = Path(__file__).resolve().parents[1]
 CANDIDATE = 'lab_capability_prompt_v1'
 BASELINE = 'baseline_current_defaults'
 CANDIDATE_ARM = 'candidate_lab_capability_prompt'
+CANDIDATES = {CANDIDATE: CapabilityPromptAvatar,
+              'lab_source_capability_v2': SourceCapabilityPromptAvatar}
 
 
-def required_sources():
-    return {str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')} | {
+def required_sources(candidate=CANDIDATE):
+    if candidate not in CANDIDATES:
+        raise ValueError('Unknown capability candidate')
+    sources = {str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')} | {
         'scripts/evaluate_capability_pair.py', 'scripts/evaluate_body_review_pair.py',
         'scripts/evaluate_native_output_audit.py', 'scripts/serve_local_model_eval.py',
         'scripts/run_native_output_models.py', 'evals/interaction/cycle-02/model-scale-protocol.json',
         'evals/interaction/cycle-19/capability-output-protocol.json',
         'evals/interaction/cycle-19/paired-capability-protocol.json',
         'evals/interaction/cycle-19/capability-prompt-candidate-v1.json'}
+    if candidate == 'lab_source_capability_v2':
+        sources |= {'evals/interaction/cycle-21/source-capability-candidate-v2.json',
+                    'evals/interaction/cycle-21/paired-capability-protocol.json'}
+    return sources
 
 
-def verify_freeze(path, partition):
+def verify_freeze(path, partition, candidate=CANDIDATE):
     frozen = json.loads(path.read_text())
     if (partition not in ('development', 'prospective')
-            or frozen.get('candidate') != CANDIDATE or frozen.get('execution_authorized') is not True
+            or candidate not in CANDIDATES or frozen.get('candidate') != candidate
+            or frozen.get('execution_authorized') is not True
             or frozen.get('allowed_partition') != partition
             or partition == 'prospective' and frozen.get('prospective_execution_authorized') is not True):
         raise ValueError('This candidate/partition has not been source-frozen and authorized')
-    if not required_sources() <= set(frozen.get('sha256', {})):
+    if not required_sources(candidate) <= set(frozen.get('sha256', {})):
         raise ValueError('Incomplete runtime/protocol source freeze')
     for name, expected in frozen['sha256'].items():
         target = (ROOT/name).resolve()
@@ -55,14 +65,14 @@ def verify_freeze(path, partition):
     return frozen
 
 
-def collect_arm(case, arm, opener, trace):
+def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE):
     candidate = arm == CANDIDATE_ARM
     row = {'id': case['id'], 'frame': case['frame'], 'arm': arm, 'turns': [], 'completed': False, 'error': None}
     original = main_module.Avatar
     with tempfile.TemporaryDirectory(prefix='capability-pair-', dir=ROOT.parent/'runtime/tmp') as folder:
         path = str(Path(folder)/'owned.db'); server = None; thread = None
         try:
-            if candidate: main_module.Avatar = CapabilityPromptAvatar
+            if candidate: main_module.Avatar = CANDIDATES[candidate_id]
             server = create_server(path, port=0, legacy_writes=False, identity_grounding=False,
                 profile_grounding=False, task_delivery_check=False, literal_composition=False)
             thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
@@ -114,9 +124,10 @@ def collect_arm(case, arm, opener, trace):
     return row
 
 
-def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partition, output):
+def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partition, output,
+             candidate=CANDIDATE):
     output.mkdir(parents=True, exist_ok=False)
-    frozen = verify_freeze(freeze_path, partition)
+    frozen = verify_freeze(freeze_path, partition, candidate)
     for path in (protocol_path, pair_path, Path(__file__).resolve()):
         if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']: raise ValueError('Input not frozen: '+str(path))
     protocol = json.loads(protocol_path.read_text()); pair = json.loads(pair_path.read_text())
@@ -129,11 +140,11 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
     assert all(provider['configuration'][key] == value for key, value in protocol['inference'].items())
     cases = [case for case in protocol['cases'] if case['partition'] == partition]
     assert [case['id'] for case in cases] == pair['case_order'][partition]
-    assert pair['candidate'] == CANDIDATE and set(pair['arm_orders']['even']) == set(pair['arm_orders']['odd']) == {BASELINE, CANDIDATE_ARM}
+    assert pair['candidate'] == candidate and set(pair['arm_orders']['even']) == set(pair['arm_orders']['odd']) == {BASELINE, CANDIDATE_ARM}
     assert len(pair['arm_orders']['even']) == len(pair['arm_orders']['odd']) == 2
     config.llm.base_url = provider['url']; config.llm.api_key = 'local-eval-only'; config.llm.model = provider['model_id']
     config.embedding.model = ''
-    report = {'candidate': CANDIDATE, 'partition': partition, 'provider': provider, 'warmups': [], 'cases': [],
+    report = {'candidate': candidate, 'partition': partition, 'provider': provider, 'warmups': [], 'cases': [],
         'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': frozen['sha256'],
         'candidateFreezeSha256': sha256(freeze_path.read_bytes()).hexdigest(),
         'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -155,11 +166,11 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
         finally: engine.close()
         for index, case in enumerate(cases):
             for arm in pair['arm_orders']['even' if index % 2 == 0 else 'odd']:
-                verify_freeze(freeze_path, partition)
-                row = collect_arm(case, arm, opener, trace); report['cases'].append(row); save()
+                verify_freeze(freeze_path, partition, candidate)
+                row = collect_arm(case, arm, opener, trace, candidate); report['cases'].append(row); save()
                 if not row['completed']: raise ValueError(row['error'])
                 print(case['id'], arm, len(row['turns']), flush=True)
-        verify_freeze(freeze_path, partition)
+        verify_freeze(freeze_path, partition, candidate)
         assert len(report['cases']) == len(cases)*2
         report['generation_modes'] = dict(Counter(turn['result']['generation_mode'] for row in report['cases'] for turn in row['turns']))
         report['execution_complete'] = report['engineering_passed'] = True
@@ -173,6 +184,7 @@ if __name__ == '__main__':
     for name in ('provider', 'trace', 'candidate-freeze', 'protocol', 'pair-protocol', 'output'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--partition', choices=['development', 'prospective'], required=True)
+    parser.add_argument('--candidate', choices=sorted(CANDIDATES), default=CANDIDATE)
     args = parser.parse_args()
     if not evaluate(args.provider, args.trace, args.candidate_freeze, args.protocol, args.pair_protocol,
-                    args.partition, args.output.resolve())['engineering_passed']: raise SystemExit(1)
+                    args.partition, args.output.resolve(), args.candidate)['engineering_passed']: raise SystemExit(1)

@@ -57,3 +57,19 @@ def test_separately_authorized_prospective_is_still_partition_specific(tmp_path)
     path, data = freeze(tmp_path, allowed_partition='prospective', prospective_execution_authorized=True)
     assert audit.verify_freeze(path, 'prospective') == data
     with pytest.raises(ValueError): audit.verify_freeze(path, 'development')
+
+
+def test_v2_freeze_requires_explicit_candidate_and_its_own_protocols(tmp_path):
+    candidate = 'lab_source_capability_v2'
+    path, data = freeze(tmp_path, candidate=candidate,
+        sha256={name: sha256((ROOT/name).read_bytes()).hexdigest() for name in audit.required_sources(candidate)})
+    with pytest.raises(ValueError): audit.verify_freeze(path, 'development')
+    assert audit.verify_freeze(path, 'development', candidate) == data
+    with pytest.raises(ValueError): audit.verify_freeze(path, 'prospective', candidate)
+    del data['sha256']['evals/interaction/cycle-21/source-capability-candidate-v2.json']
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError): audit.verify_freeze(path, 'development', candidate)
+
+
+def test_unknown_candidate_cannot_generate_a_complete_source_list():
+    with pytest.raises(ValueError): audit.required_sources('unknown')

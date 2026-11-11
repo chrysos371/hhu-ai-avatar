@@ -1,5 +1,6 @@
 from contextlib import closing
 import json
+import urllib.request
 
 import pytest
 
@@ -8,6 +9,7 @@ from avatar.cancellation import CancellationToken, Cancelled
 from avatar.lab.source_capability_prompt import SourceCapabilityPromptAvatar
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
+from test_web_api_v1 import api_v1
 
 
 def evidence(engine):
@@ -124,3 +126,45 @@ def test_default_factory_prompt_has_no_candidate_metadata():
         assert bot.final_reply_reviewer is None
     finally:
         bot.memory.close()
+
+
+def test_actual_http_sse_web_source_and_physical_provider_count(api_v1, monkeypatch):
+    from avatar.config import config
+    from avatar.lab.transport_fixture import controlled_provider
+    import avatar.main as module
+
+    request, server = api_v1; captured = []; calls = []
+    original = SourceCapabilityPromptAvatar._source_capability_evidence
+    def capture(bot, text):
+        data = original(bot, text); captured.append(data); return data
+    with controlled_provider(delay=.0001,
+            reply_overrides={'fixture-source-v2': '“短信已经发送成功。”'}) as (provider, url):
+        handler = provider.RequestHandlerClass; post = handler.do_POST
+        def count(self):
+            calls.append(self.path); return post(self)
+        monkeypatch.setattr(handler, 'do_POST', count)
+        monkeypatch.setattr(config.llm, 'api_key', 'controlled-only')
+        monkeypatch.setattr(config.llm, 'base_url', url)
+        monkeypatch.setattr(module, 'Avatar', SourceCapabilityPromptAvatar)
+        monkeypatch.setattr(SourceCapabilityPromptAvatar, '_source_capability_evidence', capture)
+        status, control = request('/api/v1/chat', {'text': '我来扮演一个虚构角色。'})
+        assert status == 200 and control['data']['generation_mode'] == 'rules_speaker_control'
+        assert not calls and not captured
+        ident = 'source_capability_http_123456'
+        text = 'fixture-source-v2 写一句小说台词：“短信已经发送成功。”'
+        assert request('/api/v1/turns', {'request_id': ident, 'text': text})[0] == 202
+        req = urllib.request.Request(f'http://127.0.0.1:{server.server_port}/api/v1/turns/'+ident+'/events',
+                                     headers={'X-Avatar-Token': server.token})
+        with urllib.request.urlopen(req, timeout=5) as response: raw = response.read().decode()
+        results = [json.loads(line[6:]) for block in raw.split('\n\n') if 'event: result\n' in block
+                   for line in block.splitlines() if line.startswith('data: ')]
+        assert len(results) == 1 and results[0]['reply'] == '“短信已经发送成功。”'
+        assert results[0]['generation_mode'] == 'llm' and not results[0]['tool_calls']
+        assert results[0]['trace']['verifier']['available'] is False
+        assert len(calls) == 2 and len(captured) == 2  # One analysis and one streamed reply HTTP request.
+        assert captured[0] == captured[1]
+        data = captured[0]
+        assert data['runtime_attribution']['origin'] == 'web_source_store'
+        assert data['runtime_attribution']['scope'] == 'fictional_character'
+        assert not data['runtime_attribution']['turn_tools_allowed']
+        assert data['current_user_source']['message_id'] == results[0]['conversation']['user_message_id']

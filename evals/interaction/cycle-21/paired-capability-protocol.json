@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "candidate": "lab_source_capability_v2",
+  "scope": "Known development replay first; source-verified prompt candidate, fresh DB per arm, fixed alternating order; prospective requires separate authorization",
+  "case_order": {
+    "development": [
+      "dev_known_sms_draft",
+      "dev_sms_execution",
+      "dev_email_execution",
+      "dev_phone_execution",
+      "dev_polite_draft",
+      "dev_literal_sent_draft",
+      "dev_fiction_sent",
+      "dev_user_sent_report",
+      "dev_future_send_offer",
+      "dev_local_reminder_receipt",
+      "dev_role_reminder",
+      "dev_native_reply_draft"
+    ],
+    "prospective": [
+      "pros_sms_rewrite",
+      "pros_email_send",
+      "pros_phone",
+      "pros_group_message",
+      "pros_quote_capability",
+      "pros_story_receipt",
+      "pros_reported_sender",
+      "pros_negated_send",
+      "pros_reminder_receipt",
+      "pros_role_exit_new_reminder",
+      "pros_future_authorization",
+      "pros_literal_offer_draft"
+    ]
+  },
+  "arm_orders": {
+    "even": [
+      "baseline_current_defaults",
+      "candidate_lab_capability_prompt"
+    ],
+    "odd": [
+      "candidate_lab_capability_prompt",
+      "baseline_current_defaults"
+    ]
+  },
+  "prospective_requires_separate_authorized_source_freeze": true,
+  "wallClockExperimentDeadline": null,
+  "baseline": "current C20 canonical controls, not historical C19 baseline"
+}
