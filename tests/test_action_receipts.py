@@ -143,3 +143,15 @@ def test_bad_read_parameters(tmp_path,option):
     with closing(MemoryStore(str(tmp_path/'db'))) as memory:
         with pytest.raises(OperationError) as error:ActionReceiptStore(memory).read('server',**option)
         assert error.value.status==422
+
+
+def test_receipt_snapshot_invalidation_preserves_sdk_cancel_contract(tmp_path,monkeypatch):
+    path=str(tmp_path/'db');bot=Avatar(db_path=path,llm=NoModel())
+    fragment=bot.memory.remember_user('名字','回执读取前待删名');original=ActionReceiptStore.read
+    def changed(self,*args,**kwargs):
+        with closing(MemoryStore(path)) as writer:writer.forget(fragment)
+        return original(self,*args,**kwargs)
+    monkeypatch.setattr(ActionReceiptStore,'read',changed)
+    try:
+        with pytest.raises(Cancelled):bot.respond('你好')
+    finally:bot.memory.close()

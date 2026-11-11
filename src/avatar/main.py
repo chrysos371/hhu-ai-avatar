@@ -886,8 +886,15 @@ class Avatar:
         if control is not None:
             result['speaker_control'] = control.data()
         from .brain.action_receipts import ActionReceiptStore
-        result['action_receipts'] = ActionReceiptStore(self.memory).read(self.session_id,
-            revision=turn_context_revision, source_message_id=self._current_message_id)
+        from .brain.operations import OperationError
+        checkpoint_context()
+        try:
+            result['action_receipts'] = ActionReceiptStore(self.memory).read(self.session_id,
+                revision=turn_context_revision, source_message_id=self._current_message_id)
+        except OperationError as error:
+            if error.code == 'action_receipts_changed':
+                raise Cancelled('context changed before action receipt snapshot') from error
+            raise
         checkpoint_context()
         return result
 
