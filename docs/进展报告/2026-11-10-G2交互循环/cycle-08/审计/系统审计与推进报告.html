@@ -1,0 +1,63 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第八轮系统审计与推进报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border:1px solid #dee7ee;text-align:left;vertical-align:top}th{background:#e4edf7}.table-wrap{overflow:auto}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}table{font-size:14px}}</style><main><h1>第八轮系统审计与推进报告</h1>
+<p>日期：2026-11-11（上海时间）。作者：spinner-bot。起点74eac2b。远期目标保持active。</p>
+<h2>远期目标与本轮进展</h2>
+<p>已将持续目标登记为active，并在<a href="../../远期目标与验收路线.md">远期路线</a>写入分层验收。目标是有实验支撑的稳定听→思→演→记闭环；每轮设指标、实现、实验、审计、修复、复测、留痕后进入下一轮。未以阶段测试数量宣布远期目标或整体代际提升完成。</p>
+<p>本轮修复播放器事件处理：只有所拥有src与当前选中资源一致，且真实paused/ended/error状态符合事件含义时才改变状态。释放后的play、仍播放时的pause、未结束时的ended、旧资源error都不能复活/暂停/提前推进/释放当前播放。正常暂停、继续、结束和当前错误对照保持。</p>
+<h2>从失败到修复</h2>
+<div class="table-wrap"><table>
+<tr><th>检查</th><th>原始结果</th><th>处理与复测</th></tr>
+<tr><td>媒体事件夹具初版</td><td>JSDOM没有MediaError getter，7项未进入播放器</td><td>修正可恢复属性模型，原日志保留，不计为7个功能缺陷</td></tr>
+<tr><td>未改生产代码的事件对照</td><td>先4败/3过；加入旧currentSrc错误后5败/3过</td><td>校验资源身份与实际媒体状态，连既有播放器12项通过</td></tr>
+<tr><td>首次浏览器</td><td>时钟、注入迟到play后停止状态失败；完整三段顺序通过</td><td>原始采样与失败部分JSON保留</td></tr>
+<tr><td>修复后首次浏览器</td><td>3项通过</td><td>额外冻结3轮同协议观察，分别3项通过，不选最好一次</td></tr>
+<tr><td>全量</td><td>Python1006通过/1跳过；前端41通过</td><td>lint/build通过；默认浏览器15通过/7显式跳过，新增3项已单独实跑</td></tr>
+</table></div>
+<h2>实际媒体时钟测量</h2>
+<p>Chromium实际解码播放本机生成PCM，测试接口提供已冻结的时间轴。800个10ms帧用唯一三位开口码对应DOM值，同时检查SVG椭圆属性，独立于LPC识别。每场景固定48次RAF，预先排除2次预热，暂停/结束/seek状态全部保留；每场景须至少30个有效样本。</p>
+<p>滞后定义为(audio.currentTime−所显示帧时间)×1000，使用绝对值p95≤50ms、最大≤100ms门槛；单位为媒体时间，不是物理扬声器/显示器延迟。源代码与实际服务JS包哈希一起归档，已核对四次修复后记录均对应最终源文件和服务包。</p>
+<div class="table-wrap"><table>
+<tr><th>同机观察</th><th>正常速率p95</th><th>半速p95</th><th>双速p95</th><th>向前seek p95</th><th>向后seek p95</th></tr>
+<tr><td>初始未修复</td><td>26.598ms</td><td>17.682ms</td><td>50.112ms</td><td>23.874ms</td><td>24.483ms</td></tr>
+<tr><td>events</td><td>24.694ms</td><td>18.362ms</td><td>44.319ms</td><td>26.667ms</td><td>25.812ms</td></tr>
+<tr><td>repeat-1</td><td>23.807ms</td><td>17.427ms</td><td>48.867ms</td><td>24.271ms</td><td>24.855ms</td></tr>
+<tr><td>repeat-2</td><td>25.114ms</td><td>17.812ms</td><td>45.137ms</td><td>25.660ms</td><td>26.298ms</td></tr>
+<tr><td>repeat-3</td><td>25.635ms</td><td>17.971ms</td><td>46.631ms</td><td>26.134ms</td><td>25.485ms</td></tr>
+</table></div>
+<p>初始双速p95=50.112ms，超预设门槛，保留为失败。修复后四次观察全部通过，各场景最差p95=48.867ms；SVG几何均与控制值吻合。此结果不能证明初次延迟的根因已被事件校验消除，002继续开放；同一宿主机重复观测不称独立设备验证。</p>
+<p>暂停在首个采样RAF即闭口，正常结束/停止检查通过。三段最终回复完整按顺序播放，预取停止后即使注入迟到play并完成旧请求，也不启动下一段。注入明确标记为受控事件，不声称测得浏览器自然发生竞争的频率。</p>
+<h2>单项审计</h2>
+<div class="table-wrap"><table>
+<tr><th>编号</th><th>当前结论</th></tr>
+<tr><td><a href="issues/G2C8-001.md">G2C8-001</a></td><td>资源/媒体状态不一致事件已修复；单元控制、真实浏览器受控注入与正常事件回归通过</td></tr>
+<tr><td><a href="issues/G2C8-002.md">G2C8-002</a></td><td>初次双速p95超标；后续固定观察通过，根因与复杂历史场景仍待研究，继续开放</td></tr>
+</table></div>
+<h2>全量与证据边界</h2>
+<p>1006 passed, 1 skipped in 38.26s；前端41通过，构建5.91秒与lint通过；默认离线浏览器15通过/7跳过（37.2秒）。事件修后首次3通过（23.7秒），固定额外三轮各3通过（23.9/23.6/23.6秒）。</p>
+<p>新媒体实验拦截语音响应以隔离前端，实际PCM/媒体播放和SVG属性是真实执行；真实SpeechService既有浏览器测试另跑，不能将受控语音API当Edge-TTS/真实LLM/音素质量验收。控制模型提供方仅为lab夹具，新增覆盖文本只在显式实验开关中生效，默认生产模型/配置没有更换。</p>
+<p>测试夹具还修复了workspace/project路径混淆和卸载先于mock恢复的顺序，首启失败与清理告警均保留。没有删除旧失败、放宽50ms门槛、重复到成功再隐藏其余结果。</p>
+<h2>下一循环</h2>
+<p>P1：测量逐帧更新对聊天父组件与长历史渲染的影响，先固定事件轮数和对照，再考虑局部订阅或其他渲染改造。P1：扩大实际播放/段间故障/取消与设备差异，继续记忆来源/实际操作回归。P2：真人音素标注、正式形象协议和目标设备体验。</p>
+<p>真人口型、ü/声调、物理音画闭环、一般生成边界、模板充分性与多日稳定仍未验收。第六轮提峰候选继续lab隔离，本轮没有GPU模型任务。目标保持进行中，未标记complete。</p>
+<h2>方法参考</h2>
+<p>事件状态核对参考<a href="https://html.spec.whatwg.org/multipage/media.html#mediaevents">HTML媒体标准</a>的资源/状态模型；当前修复证据来自本地测试。下一步渲染订阅研究查阅<a href="https://react.dev/reference/react/useSyncExternalStore">React官方useSyncExternalStore文档</a>，尚未将该机制视为已证实的延迟修复。</p>
+<h2>原始资料</h2>
+<p><a href="../实验/media-events-before.log">media-events-before.log</a></p>
+<p><a href="../实验/media-events-fixture-fixed.log">media-events-fixture-fixed.log</a></p>
+<p><a href="../实验/media-source-before.log">media-source-before.log</a></p>
+<p><a href="../实验/media-events-after-clean.log">media-events-after-clean.log</a></p>
+<p><a href="../实验/before-clock.json">before-clock.json</a></p>
+<p><a href="../实验/before-prefetch-stop.json">before-prefetch-stop.json</a></p>
+<p><a href="../实验/before-segments.json">before-segments.json</a></p>
+<p><a href="../实验/events-clock.json">events-clock.json</a></p>
+<p><a href="../实验/events-prefetch-stop.json">events-prefetch-stop.json</a></p>
+<p><a href="../实验/events-segments.json">events-segments.json</a></p>
+<p><a href="../实验/playback-repeat-summary.json">playback-repeat-summary.json</a></p>
+<p><a href="../实验/repeat-1-clock.json">repeat-1-clock.json</a></p>
+<p><a href="../实验/repeat-2-clock.json">repeat-2-clock.json</a></p>
+<p><a href="../实验/repeat-3-clock.json">repeat-3-clock.json</a></p>
+<p><a href="../实验/frontend-full.log">frontend-full.log</a></p>
+<p><a href="../实验/python-full.log">python-full.log</a></p>
+<p><a href="../实验/browser-default-final.log">browser-default-final.log</a></p>
+<p><a href="../实验/frontend-build-final.log">frontend-build-final.log</a></p>
+<p><a href="../实验/frontend-lint-final.log">frontend-lint-final.log</a></p>
+<p><a href="../进展.md">全过程记录</a>；<a href="../计划.md">本轮计划</a>。</p></main></html>
