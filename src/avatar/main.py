@@ -222,7 +222,12 @@ class Avatar:
                 self._store_fact(fact)
 
     def _check_fact_context(self):
+        self._checkpoint()
         revision = self.memory.context_revision
+        # Public forget/correct can update the mutable scope and clear the
+        # current source. They cannot re-authorize already analysed old facts.
+        if self._turn_context_revision is not None and self._turn_context_revision != revision:
+            raise Cancelled('context changed before fact extraction or write')
         if self.speaker_scope.revision != revision:
             self.speaker_scope.invalidate(revision)
             raise Cancelled('source changed before fact extraction or write')
@@ -448,6 +453,7 @@ class Avatar:
             try:
                 dv, da, facts = self._analyze_with_llm(user_text)
                 with self.memory.transaction():
+                    self._check_fact_context()
                     for f in facts:
                         self._store_fact(f)
                 self.emotion.observe(dv, da, text=user_text)
