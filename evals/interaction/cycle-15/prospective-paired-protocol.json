@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "candidate": "lab_explicit_body_v1",
+  "inputs": "Use only partition=prospective of native-output-protocol.json, unchanged12 scenes; no development inputs substituted.",
+  "arms": [
+    "baseline_current_defaults",
+    "candidate_lab_buffered_review"
+  ],
+  "order": "Even scene indices baseline then candidate; odd indices candidate then baseline. Fresh owned DB and application server each arm. Models run separately and sequentially; archive/commit one model before starting the next.",
+  "implementation": "Actual application HTTP/SSE. Only candidate replaces the process-local Avatar factory with lab subclass; production CLI/default remains native. No model prompt/weights/sampling change.",
+  "source_freeze": "After implementation and CPU checks, create hash manifest binding core/lab/evaluator/runner/protocol and test evidence before any prospective model call.",
+  "evidence": [
+    "Every event and visible/final text, all turn profiles/messages/reminders, request IDs, native provider call IDs/raw text/finish reason/offsets",
+    "Reviewer rule/codepoint spans and creative flags; distinguish native llm, bounded reviewed_response, deterministic routes and failures",
+    "Per-model actual GPU/PID/startup/clean shutdown; only owned processes",
+    "First visible and complete latency, reply length and generation modes by model/arm; observational, not pure hardware causality"
+  ],
+  "gates": {
+    "engineering": "All24 scene-arms per model terminate without service fallback, native/reviewed visible text exactly final including empty-stream rejection; source unchanged; no unexpected reminders or tool calls.",
+    "intercepted_stream": "When bounded review changes reply, never publish original intercepted text or commit it as assistant; generic verifier staysFalse.",
+    "preservation": "Unchanged candidate replies preserve native bytes; preserve writing/fiction/role/negative/online controls. Check literal requests and profile-source differences separately from body correction.",
+    "semantic": "Agent span review is not independent human gold or model self-score; report explicit misses/ambiguity. Lexical/rule hits do not prove general semantics.",
+    "activation": "No automatic production activation. Audit long writing-window/frame loss and unsupported message-send offers before any release decision; retain all failures and open scope."
+  },
+  "analytic_contract": "body-review-candidate-v1.json 12positive+20negative",
+  "validation_reuse": "Do not tune v1 using prospective outputs and then claim them independent; subsequent revisions require a new frozen validation plan.",
+  "wallClockExperimentDeadline": null,
+  "semantic_approved": false,
+  "production_activation_approved": false
+}
