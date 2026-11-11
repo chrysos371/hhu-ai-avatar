@@ -1,0 +1,11 @@
+{
+  "version":1,
+  "scope":"Post-development refinement after fallback50 introduced two wrong formerly-unknown frames; no prospective waveform opened",
+  "id":"fallback_consistent",
+  "base":"fallback50",
+  "additional_gate":"When filling a missingF2, legacy F1 and root F1 must yield identical current classifier decisions for probeF2 values500,1500,2500Hz. Reject a refinement that crosses an existing F1 decision region.",
+  "development":"Reanalyse archived per-frame fallback50 estimates, preserving original raw file. Then verify actual optional component on the known grid before prospective evaluation.",
+  "selection":"All original per-case/unknown/new-error/median-error/missingF2 gates still apply. Do not alter oracle labels or prospective inputs.",
+  "deployment":"Component opt-in only until human phonetic calibration; production default remains legacy plus exact-output cache. No new default samplerate.",
+  "prospective":"Use original sealed80signals per route exactly once after committed selection. Later reuse is regression."
+}

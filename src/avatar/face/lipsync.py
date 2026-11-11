@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 
 import numpy as np
 
@@ -66,14 +67,27 @@ def _lpc(signal: np.ndarray, order: int) -> np.ndarray:
     return a
 
 
+@lru_cache(maxsize=8)
+def _formant_basis(n_fft: int, coefficient_count: int):
+    """Bounded immutable geometry; retain the legacy accumulation order."""
+    w = np.linspace(0.0, np.pi, n_fft)
+    w.setflags(write=False)
+    basis = []
+    for k in range(coefficient_count):
+        values = np.exp(-1j * k * w)
+        values.setflags(write=False)
+        basis.append(values)
+    return w, tuple(basis)
+
+
 def _formants(
     a: np.ndarray, sr: int, n_fft: int = 512, min_f: float = 200.0, max_f: float = 4000.0
 ) -> np.ndarray:
     """从 LPC 系数求共振峰频率（Hz）。共振峰 = |A(e^jw)| 的局部极小。"""
-    w = np.linspace(0.0, np.pi, n_fft)
+    w, basis = _formant_basis(n_fft, len(a))
     A = np.zeros(n_fft, dtype=np.complex128)
-    for k, ak in enumerate(a):
-        A += ak * np.exp(-1j * k * w)
+    for ak, values in zip(a, basis):
+        A += ak * values
     amp = np.abs(A)
     local_min = (amp[1:-1] < amp[:-2]) & (amp[1:-1] <= amp[2:])
     idx = np.where(local_min)[0] + 1
