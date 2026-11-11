@@ -4,7 +4,8 @@ from pathlib import Path
 import sys
 import numpy as np
 import pytest
-from avatar.face.lipsync import LipSyncEngine,_lpc,_formants,_conservative_formants
+from avatar.face.lipsync import LipSyncEngine,_lpc,_formants
+from avatar.lab.conservative_lipsync import ConservativeLipSyncExperiment,_conservative_formants
 from avatar.utils.audio import frame_signal
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
@@ -13,12 +14,12 @@ SPEC=json.loads((ROOT/'evals/audio/cycle-05/analytic-formants.json').read_text()
 
 
 def test_default_remains_legacy():
-    assert LipSyncEngine().formant_mode=='legacy'
+    assert not isinstance(LipSyncEngine(),ConservativeLipSyncExperiment)
 
 
 @pytest.mark.parametrize('mode',[None,False,[],{},'automatic','roots400'])
 def test_invalid_mode_does_not_silently_choose_an_extractor(mode):
-    with pytest.raises(ValueError):LipSyncEngine(formant_mode=mode)
+    with pytest.raises(TypeError):LipSyncEngine(formant_mode=mode)
 
 
 def test_f1_region_crossing_is_rejected_on_observed_wrong_unknown_assignment():
@@ -41,5 +42,5 @@ def test_complete_legacy_spectrum_is_preserved_exactly():
 
 
 def test_experimental_silence_stays_closed():
-    frames=LipSyncEngine(formant_mode='conservative').analyze(np.zeros(16000,dtype=np.float32),16000)
+    frames=ConservativeLipSyncExperiment().analyze(np.zeros(16000,dtype=np.float32),16000)
     assert frames and all(frame.mouth_open==0 and frame.vowel=='' for frame in frames)

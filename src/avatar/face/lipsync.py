@@ -109,31 +109,6 @@ def _classify_vowel(f1: float | None, f2: float | None) -> str | None:
     return "e"
 
 
-def _conservative_formants(a: np.ndarray, sr: int) -> np.ndarray:
-    """Experimental missing-peak fallback; never replace a complete legacy pair."""
-    legacy = _formants(a, sr)
-    if len(legacy) != 1:
-        return legacy
-    try:
-        poles = np.roots(a)
-    except np.linalg.LinAlgError:
-        return legacy
-    radii = np.abs(poles)
-    poles = poles[(poles.imag > 1e-6) & (radii > 0) & (radii < 1)]
-    frequencies = np.angle(poles) * sr / (2 * np.pi)
-    bandwidths = -sr * np.log(np.abs(poles)) / np.pi
-    roots = np.sort(frequencies[(frequencies > 200) & (frequencies < 4000)
-                                & (bandwidths > 0) & (bandwidths <= 400)])
-    if len(roots) < 2 or abs(legacy[0] - roots[0]) > 50:
-        return legacy
-    # Refinement must not cross existing F1 decision regions. Probe each F2
-    # region through the classifier itself rather than duplicating thresholds.
-    if any(_classify_vowel(legacy[0], probe) != _classify_vowel(roots[0], probe)
-           for probe in (500., 1500., 2500.)):
-        return legacy
-    return roots
-
-
 class LipSyncEngine:
     """自研元音驱动口型同步引擎。"""
 
@@ -145,10 +120,7 @@ class LipSyncEngine:
         smooth: int = 3,
         close_every: float | None = None,  # 显式装饰选项，不代表检测到发音停顿
         silence_rms: float = 0.001,
-        formant_mode: str = 'legacy',
     ):
-        if not isinstance(formant_mode, str) or formant_mode not in {'legacy', 'conservative'}:
-            raise ValueError('formant_mode must be legacy or experimental conservative')
         for label, value in [('frame_ms', frame_ms), ('hop_ms', hop_ms)]:
             if not _finite_number(value) or value <= 0:
                 raise ValueError(f'{label} must be finite and positive')
@@ -166,7 +138,10 @@ class LipSyncEngine:
         self.smooth = smooth
         self.close_every = close_every
         self.silence_rms = silence_rms
-        self.formant_mode = formant_mode
+
+    def _extract_formants(self, coefficients, sample_rate):
+        """Spectral extension point; production uses the unchanged legacy rule."""
+        return _formants(coefficients, sample_rate)
 
     def analyze(self, samples: np.ndarray, sr: int, *, cancel=None) -> list[LipSyncFrame]:
         """分析归一化单声道有限PCM（[-1,1]），返回逐帧口型参数。"""
@@ -215,7 +190,7 @@ class LipSyncEngine:
                 mouth[i] = 0.0
                 continue
             a = _lpc(frames[i], order)
-            fs = _conservative_formants(a, sr) if self.formant_mode == 'conservative' else _formants(a, sr)
+            fs = self._extract_formants(a, sr)
             f1 = float(fs[0]) if len(fs) > 0 else None
             f2 = float(fs[1]) if len(fs) > 1 else None
             v = _classify_vowel(f1, f2)

@@ -10,6 +10,7 @@ import subprocess
 import time
 import numpy as np
 import avatar.face.lipsync as current
+from avatar.lab.conservative_lipsync import ConservativeLipSyncExperiment,_conservative_formants
 from avatar.utils.audio import frame_signal,downsample_for_analysis
 from evaluate_analytic_lipsync import synthesize,legacy
 from evaluate_real_interaction import save,sha
@@ -37,7 +38,7 @@ def run(split,output,development_evidence):
     report={'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'created_utc':datetime.now(timezone.utc).isoformat(),'protocol_sha256':sha(PROTOCOL),
         'refinement_sha256':sha('evals/audio/cycle-06/conservative-refinement.json'),
-        'candidate_engine_sha256':sha('src/avatar/face/lipsync.py'),'baseline_engine_sha256':baseline_sha,
+        'candidate_engine_sha256':sha('src/avatar/face/lipsync.py'),'lab_candidate_sha256':sha('src/avatar/lab/conservative_lipsync.py'),'baseline_engine_sha256':baseline_sha,
         'script_sha256':sha(__file__),'development_evidence_sha256':sha(development_evidence),
         'split':split,'seed':seed,'scope':'Actual component opt-in on synthetic mechanism fixtures; not human phonetic approval',
         'rows':[],'summary':{},'execution_complete':False,'engineering_gate_passed':False,
@@ -53,7 +54,7 @@ def run(split,output,development_evidence):
                 for route in spec['routes']:
                     samples,rate=downsample_for_analysis(waveform,sr) if route=='web_analysis_16k' else (waveform,sr)
                     outputs={};seconds={}
-                    for arm,engine in [('legacy',baseline.LipSyncEngine()),('conservative',current.LipSyncEngine(formant_mode='conservative'))]:
+                    for arm,engine in [('legacy',baseline.LipSyncEngine()),('conservative',ConservativeLipSyncExperiment())]:
                         start=time.perf_counter();outputs[arm]=engine.analyze(samples,rate);seconds[arm]=time.perf_counter()-start
                     a,b=outputs.values()
                     if len(a)!=len(b) or any(x.time!=y.time or x.energy!=y.energy for x,y in zip(a,b)):
@@ -62,7 +63,7 @@ def run(split,output,development_evidence):
                     for index,frame in enumerate(analysis_frames):
                         if not .1<=index*.01<=.65:continue
                         coefficients=current._lpc(frame,min(2+rate//1000,24))
-                        for arm,extract in [('legacy',baseline._formants),('conservative',current._conservative_formants)]:
+                        for arm,extract in [('legacy',baseline._formants),('conservative',_conservative_formants)]:
                             frequencies=extract(coefficients,rate)
                             first=float(frequencies[0]) if len(frequencies) else None
                             second=float(frequencies[1]) if len(frequencies)>1 else None
