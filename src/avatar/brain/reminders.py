@@ -66,7 +66,7 @@ class ReminderStore:
         )''')
         self.memory._commit()
 
-    def create(self, text: str, *, now: float | None = None, checkpoint=None) -> dict:
+    def create(self, text: str, *, now: float | None = None, checkpoint=None, receipt_context=None) -> dict:
         data = parse_reminder(text, now=now)
         if data is None:
             raise ValueError('请用“提醒我……”明确创建提醒。')
@@ -76,26 +76,33 @@ class ReminderStore:
             cur = self.conn.execute(
                 'INSERT INTO memory_reminders(title,due_at,created_at) VALUES (?,?,?)',
                 (data['title'], data['due_at'], time.time() if now is None else now))
+            if receipt_context is not None:
+                from .action_receipts import ActionReceiptStore
+                ActionReceiptStore(self.memory).record_reminder(receipt_context, 'reminder.created', cur.lastrowid)
             return dict(self.conn.execute('SELECT * FROM memory_reminders WHERE id=?', (cur.lastrowid,)).fetchone())
 
     def list(self) -> list[dict]:
         return [dict(row) for row in self.conn.execute('SELECT * FROM memory_reminders ORDER BY id')]
 
-    def set_status(self, reminder_id: int, status: str, *, checkpoint=None) -> None:
+    def set_status(self, reminder_id: int, status: str, *, checkpoint=None, receipt_context=None) -> None:
         if status not in ('completed', 'cancelled'):
             raise ValueError('status must be completed or cancelled')
         with self.memory.transaction():
             if checkpoint is not None:
                 checkpoint()
+            previous = self.conn.execute('SELECT status FROM memory_reminders WHERE id=?', (reminder_id,)).fetchone()
             cur = self.conn.execute('UPDATE memory_reminders SET status=? WHERE id=?', (status, reminder_id))
             if not cur.rowcount:
                 raise ValueError('reminder does not exist')
+            if receipt_context is not None and previous['status'] != status:
+                from .action_receipts import ActionReceiptStore
+                ActionReceiptStore(self.memory).record_reminder(receipt_context, 'reminder.'+status, reminder_id)
 
     def delete(self, reminder_id: int) -> None:
         with self.memory.transaction():
             self.conn.execute('DELETE FROM memory_reminders WHERE id=?', (reminder_id,))
 
-    def claim_due(self, *, now: float | None = None, checkpoint=None) -> list[dict]:
+    def claim_due(self, *, now: float | None = None, checkpoint=None, receipt_context=None) -> list[dict]:
         """Atomically claim once across connections; no external notification side effects.
 
         Delivery is at-most-once, not acknowledged delivery. Older than 24h stays
@@ -112,4 +119,7 @@ class ReminderStore:
                 'AND due_at BETWEEN ? AND ? ORDER BY due_at,id', (now - 86400, now)).fetchall()
             for row in rows:
                 self.conn.execute('UPDATE memory_reminders SET notified_at=? WHERE id=?', (now, row['id']))
+                if receipt_context is not None:
+                    from .action_receipts import ActionReceiptStore
+                    ActionReceiptStore(self.memory).record_reminder(receipt_context, 'reminder.claimed_due', row['id'])
             return [dict(row, notified_at=now) for row in rows]

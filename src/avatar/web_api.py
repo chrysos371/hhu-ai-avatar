@@ -88,6 +88,17 @@ class V1API:
     def handle(self, post, path, query, data):
         get = lambda key, default=None: query.get(key, [default])[0]
 
+        if not post and path == '/conversation/actions':
+            if (set(query) - {'limit', 'after_id', 'revision', 'source_message_id'}
+                    or any(len(value) != 1 for value in query.values())):
+                raise OperationError(422, 'invalid_action_receipts_query')
+            try:
+                options = {key: int(value[0]) for key, value in query.items()}
+            except (ValueError, TypeError):
+                raise OperationError(422, 'invalid_action_receipts_query') from None
+            from .brain.action_receipts import ActionReceiptStore
+            return 200, ActionReceiptStore(self.memory).read(self.server.session_id, **options)
+
         if not post and path == '/conversation/speaker':
             if query: raise OperationError(422, 'invalid_context_query')
             from .brain.speaker_context import SpeakerContextStore
