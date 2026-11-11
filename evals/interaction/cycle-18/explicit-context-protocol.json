@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "fe0eda3",
+  "scope": "Authoritative source-based context snapshot and explicit canonical chat controls; synthetic controlled tests and actual browser, not model or human semantic approval",
+  "api": {
+    "snapshot": "Authenticated GET /api/v1/conversation/speaker; same read transaction revision+latest user cursor+bounded source restoration; metadata only, no mutation/model/tool",
+    "watch": "Opt-in context_cursor query on existing conversation/changes. Legacy query still exactly instance_id/revision and response2fields. Extended response only adds nonnegative integer context_cursor, no actor text. Same shared watch limit/one lazy monitor.",
+    "control": "UI submits separate fixed canonical user turn via existing /turns: role=我来扮演一个虚构角色。; real=回到现实。; no new public mutation or implicit action grant"
+  },
+  "backend_cases": [
+    "fresh_empty_known_real",
+    "canonical_role_metadata",
+    "unknown_intent_metadata",
+    "privacy_invalidated_sources",
+    "untracked_foreign_user",
+    "atomic_read_and_no_writes",
+    "ordinary_source_watch_without_privacy_change",
+    "legacy_watch_unchanged",
+    "shared_capacity_disconnect_cleanup",
+    "no_raw_text_in_metadata",
+    "late_old_check_cannot_clear_newer_error",
+    "auth_bad_cursors_and_namespace_restart"
+  ],
+  "frontend_cases": [
+    "initial_snapshot_not_last_trace",
+    "role_and_real_canonical_source_only",
+    "preserve_unsent_draft",
+    "controls_never_web_or_autospeech",
+    "pending_generation_and_voice_disable",
+    "double_click_single_submission",
+    "late_snapshot_ignored",
+    "ordinary_context_event_not_privacy_clear_or_cancel",
+    "external_context_recheck",
+    "privacy_or_watch_loss_clears_context",
+    "cancel_after_source_commit_reconcile",
+    "refresh_restart_and_legacy_history",
+    "real_name_reminder_side_effects_match_confirmed_context"
+  ],
+  "evidence": "Raw HTTP/SSE and metadata/DB state, per-source SHA, browser steps/screenshots, timings observational; fixture mode not GPU quality",
+  "wallClockExperimentDeadline": null,
+  "semantic_approved": false,
+  "production_activation_approved": false
+}
