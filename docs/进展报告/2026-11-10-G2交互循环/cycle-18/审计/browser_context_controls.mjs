@@ -25,7 +25,8 @@ const save=()=>writeFileSync(join(ev,'browser-context-controls.json'),JSON.strin
 const record=(name,data={})=>{report.steps.push({name,...data});save();};
 save();
 try{await fetch(base);throw Error('Fixture port occupied');}catch(error){if(!String(error).includes('fetch failed'))throw error;}
-const prior=new Set(readdirSync(join(root,'runtime/tmp')).filter(name=>name.startsWith('admin-e2e-')));
+const tempRoot=resolve(root,'../runtime/tmp');
+const prior=new Set(readdirSync(tempRoot).filter(name=>name.startsWith('admin-e2e-')));
 const log=openSync(join(ev,'browser-context-controls-fixture.log'),'wx');
 const fixture=spawn(join(root,'../envs/hhu-ai-avatar/bin/python'),['tests/helpers/serve_admin_e2e.py'],
   {cwd:root,env:{...process.env,AVATAR_E2E_EMPTY_PROFILE:'1'},stdio:['ignore',log,log]});
@@ -43,8 +44,8 @@ const controls=async(page,button,scope)=>{await page.getByRole('button',{name:bu
 const send=async(page,text)=>{await page.getByLabel('消息',{exact:true}).fill(text);await page.getByRole('button',{name:'发送消息',exact:true}).click();await settled(page);};
 try{
   while(true){if(fixture.exitCode!==null)throw Error('Fixture exited early');try{if((await fetch(base)).ok)break;}catch{}await sleep(50);}
-  const folders=readdirSync(join(root,'runtime/tmp')).filter(name=>name.startsWith('admin-e2e-')&&!prior.has(name));
-  assert.equal(folders.length,1);const dbPath=join(root,'runtime/tmp',folders[0],'browser.db');
+  const folders=readdirSync(tempRoot).filter(name=>name.startsWith('admin-e2e-')&&!prior.has(name));
+  assert.equal(folders.length,1);const dbPath=join(tempRoot,folders[0],'browser.db');
   const database=()=>JSON.parse(execFileSync(join(root,'../envs/hhu-ai-avatar/bin/python'),['-c',
     'import sqlite3,json,sys; c=sqlite3.connect("file:"+sys.argv[1]+"?mode=ro",uri=True); c.row_factory=sqlite3.Row; print(json.dumps({t:[dict(r) for r in c.execute("SELECT * FROM "+t)] for t in ["memory_messages","memory_fragments","memory_reminders","memory_web_speaker_state"]},ensure_ascii=False))',dbPath],{encoding:'utf8'}));
   browser=await chromium.launch({headless:true});report.browserVersion=browser.version();
