@@ -35,7 +35,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             raise ValueError('Capability pairs require source freeze and both explicit protocols')
         if json.loads(protocol.read_text()).get('provider_backend', 'cuda') != backend:
             raise ValueError('Selected backend differs from explicit frozen protocol')
-        from evaluate_capability_pair import verify_freeze
+        from evaluate_capability_pair import verify_freeze, validate_execution_contract
         if candidate not in ('v1', 'source_capability_v2'):
             raise ValueError('Select v1 or source_capability_v2 for capability pairs')
         candidate_id = 'lab_source_capability_v2' if candidate == 'source_capability_v2' else 'lab_capability_prompt_v1'
@@ -46,6 +46,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         for path in (protocol, pair_protocol):
             if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
                 raise ValueError('Selected capability protocol is not frozen')
+        validate_execution_contract(frozen, json.loads(protocol.read_text()), backend)
     if stage == 'prospective':
         if candidate_freeze is None: raise ValueError('Prospective runs require --candidate-freeze')
         from evaluate_body_review_pair import verify_freeze

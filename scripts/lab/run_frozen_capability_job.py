@@ -53,14 +53,8 @@ def matches(identity):
 
 
 def validate_backend(frozen, protocol, backend):
-    if (backend not in ('cuda', 'cpu_explicit') or frozen.get('provider_backend') != backend
-            or protocol.get('provider_backend', 'cuda') != backend):
-        raise ValueError('Selected backend must match both freeze declaration and selected protocol')
-    if backend == 'cpu_explicit' and (frozen.get('cpu_threads') != 4
-            or protocol['inference'].get('n_threads') != 4
-            or protocol['inference'].get('n_threads_batch') != 4
-            or frozen.get('request_timeout_seconds') != protocol.get('request_timeout_seconds')):
-        raise ValueError('CPU compute/transport settings differ from declared freeze')
+    from evaluate_capability_pair import validate_execution_contract
+    validate_execution_contract(frozen, protocol, backend)
 
 
 def prepare(spec):

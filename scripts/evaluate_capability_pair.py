@@ -147,6 +147,25 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE, request_timeou
     return row
 
 
+def validate_execution_contract(frozen, protocol, backend):
+    """Bind runtime selection to authorization, beyond a list of hashed files.
+
+    Historical capability freezes were CUDA-only. CPU is opt-in and must
+    separately pin compute, offload and transport in the selected protocol.
+    """
+    if (backend not in ('cuda', 'cpu_explicit')
+            or frozen.get('provider_backend', 'cuda') != backend
+            or protocol.get('provider_backend', 'cuda') != backend):
+        raise ValueError('Selected backend must match both freeze declaration and selected protocol')
+    if backend == 'cpu_explicit':
+        inference = protocol.get('inference', {})
+        if (frozen.get('cpu_threads') != 4 or frozen.get('request_timeout_seconds') != 900
+                or protocol.get('request_timeout_seconds') != 900
+                or inference.get('n_threads') != 4 or inference.get('n_threads_batch') != 4
+                or inference.get('n_gpu_layers') != 0 or inference.get('offload_kqv') is not False):
+            raise ValueError('CPU compute/offload/transport settings differ from declared freeze')
+
+
 def execution_settings(protocol, provider):
     backend = protocol.get('provider_backend', 'cuda')
     if backend not in ('cuda', 'cpu_explicit') or provider.get('backend', 'cuda') != backend:
@@ -166,11 +185,11 @@ def execution_settings(protocol, provider):
 
 def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partition, output,
              candidate=CANDIDATE):
-    output.mkdir(parents=True, exist_ok=False)
     frozen = verify_freeze(freeze_path, partition, candidate)
     for path in (protocol_path, pair_path, Path(__file__).resolve()):
         if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']: raise ValueError('Input not frozen: '+str(path))
     protocol = json.loads(protocol_path.read_text()); pair = json.loads(pair_path.read_text())
+    validate_execution_contract(frozen, protocol, protocol.get('provider_backend', 'cuda'))
     provider = json.loads(provider_path.read_text()); address = urlsplit(provider['url'])
     model = next(item for item in json.loads((ROOT/protocol['models_registry']).read_text())['models']
                  if item['model_id'] == provider['model_id'])
@@ -183,6 +202,7 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
     assert [case['id'] for case in cases] == pair['case_order'][partition]
     assert pair['candidate'] == candidate and set(pair['arm_orders']['even']) == set(pair['arm_orders']['odd']) == {BASELINE, CANDIDATE_ARM}
     assert len(pair['arm_orders']['even']) == len(pair['arm_orders']['odd']) == 2
+    output.mkdir(parents=True, exist_ok=False)
     config.llm.base_url = provider['url']; config.llm.api_key = 'local-eval-only'; config.llm.model = provider['model_id']
     config.embedding.model = ''
     report = {'candidate': candidate, 'partition': partition, 'provider': provider, 'warmups': [], 'cases': [],

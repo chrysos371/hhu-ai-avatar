@@ -30,7 +30,8 @@ def cpu():
     return ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4,
              'request_timeout_seconds': 900},
             {'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900,
-             'inference': {'n_threads': 4, 'n_threads_batch': 4}})
+             'inference': {'n_threads': 4, 'n_threads_batch': 4,
+                           'n_gpu_layers': 0, 'offload_kqv': False}})
 
 
 def test_backend_binding():
