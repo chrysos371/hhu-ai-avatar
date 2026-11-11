@@ -29,12 +29,20 @@ class SpeakerScope:
         self.allows_actions = True
         self.context = []
         self._real_context = deque(maxlen=3)
+        self._real_sources = deque(maxlen=3)
+        self._scope_source = None
+        self.context_source_ids = []
 
     @property
     def allows_facts(self):
         return self.scope == 'current_user'
 
-    def observe(self, text: str, revision: int):
+    @property
+    def source_ids(self):
+        return sorted({ident for ident in [self._scope_source, *self._real_sources]
+                       if type(ident) is int and ident > 0})
+
+    def observe(self, text: str, revision: int, source_id=None):
         if self.revision != revision:
             self.clear(revision)
         clean = _mask_quoted(text)
@@ -52,18 +60,24 @@ class SpeakerScope:
                 if entry:
                     self.scope = 'fictional_character'
                     self._real_context.clear()
+                    self._real_sources.clear()
+                    self._scope_source = source_id
                     start = len(text)
                 elif exit_ or real:
                     self.scope = 'current_user'
                     self._real_context.clear()
+                    self._real_sources.clear()
+                    self._scope_source = source_id
                     start = offset + (exit_ or real).end()
         self.fact_text = text[start:].lstrip('，,。；; \n') if self.allows_facts else ''
         # A final real segment cannot retroactively authorize an earlier
         # character instruction. Require a separate wholly real turn.
         self.allows_actions = self.allows_facts and start == 0
         self.context = list(self._real_context)
+        self.context_source_ids = [ident for ident in self._real_sources if type(ident) is int and ident > 0]
         if self.fact_text:
             self._real_context.append(self.fact_text)
+            self._real_sources.append(source_id)
 
     def data(self):
         return {'scope': self.scope, 'persistent_facts_allowed': self.allows_facts,
@@ -73,6 +87,9 @@ class SpeakerScope:
     def prompt(self):
         if self.allows_facts:
             return ''
+        if self.scope == 'unverified':
+            return ('此前说话者语境无法核验；不要推断当前第一人称是真实用户，'
+                    '不更新真人资料、不执行真实操作。请用户单独发送“回到现实”确认后再提出真实请求。\n')
         return ('说话者来源：用户明确在扮演虚构角色；当前第一人称是故事角色，'
                 '不是真实用户画像，不要更新真人资料或用真人姓名替换角色姓名。'
                 '没有明确退出前保持这一归属；现实安全判断仍按既有安全规则执行。\n')

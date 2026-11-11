@@ -81,6 +81,14 @@ CREATE TABLE IF NOT EXISTS memory_context_revision (
     id INTEGER PRIMARY KEY CHECK (id=1), revision INTEGER NOT NULL
 );
 INSERT OR IGNORE INTO memory_context_revision(id,revision) VALUES (1,0);
+CREATE TABLE IF NOT EXISTS memory_web_speaker_state (
+    id INTEGER PRIMARY KEY CHECK(id=1),
+    format_version INTEGER NOT NULL,
+    context_revision INTEGER NOT NULL,
+    cursor INTEGER NOT NULL,
+    scope TEXT NOT NULL,
+    source_ids_json TEXT NOT NULL
+);
 -- Summary stores references only: never another copy of private source text.
 CREATE TABLE IF NOT EXISTS memory_summary_items (
     session_id TEXT NOT NULL,
@@ -326,6 +334,10 @@ class MemoryStore:
 
     def _invalidate_context(self) -> None:
         self._conn.execute('UPDATE memory_context_revision SET revision=revision+1 WHERE id=1')
+        self._conn.execute("UPDATE memory_web_speaker_state SET context_revision="
+                           "(SELECT revision FROM memory_context_revision WHERE id=1), "
+                           "cursor=(SELECT COALESCE(MAX(id),0) FROM memory_messages), "
+                           "scope='current_user', source_ids_json='[]' WHERE id=1")
         self._conn.execute('DELETE FROM memory_chat_results')
         self._conn.execute('DELETE FROM memory_summary_items')
         if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='operation_drafts' AND type='table'").fetchone():
