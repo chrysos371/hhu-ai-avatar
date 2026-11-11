@@ -10,11 +10,41 @@ import subprocess
 import signal
 import threading
 import wave
+import sys
+from hashlib import sha256
+
+# npm starts this helper with cwd=frontend. Shared editable environments may
+# point to another worktree, so bind this fixture's own source before imports.
+project_root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(project_root / 'src'))
 import numpy as np
+import avatar.main
+import avatar.web
+import avatar.brain.memory
+import avatar.brain.reminders
 from avatar.config import config
 from avatar.brain.memory import MemoryStore
 from avatar.web import create_server
 from avatar.lab.transport_fixture import controlled_provider
+
+modules = (avatar.main, avatar.web, avatar.brain.memory, avatar.brain.reminders)
+module_paths = {module.__name__: Path(module.__file__).resolve() for module in modules}
+if not all(path.is_relative_to(project_root / 'src') for path in module_paths.values()):
+    raise RuntimeError('Browser fixture imported another project source tree')
+runtime_binding = {'project_root': str(project_root), 'python_prefix': sys.prefix,
+    'module_paths': {name: str(path) for name, path in module_paths.items()},
+    'module_sha256': {name: sha256(path.read_bytes()).hexdigest() for name, path in module_paths.items()},
+    'frontend_dir': str(project_root / 'frontend/dist'),
+    'frontend_sha256': {str(path.relative_to(project_root)): sha256(path.read_bytes()).hexdigest()
+        for path in sorted((project_root / 'frontend/dist').rglob('*')) if path.is_file()}}
+if os.getenv('AVATAR_E2E_RUNTIME_EVIDENCE'):
+    with Path(os.environ['AVATAR_E2E_RUNTIME_EVIDENCE']).open('x') as stream:
+        json.dump(runtime_binding, stream, ensure_ascii=False, indent=2)
+        stream.write('\n')
+if '--check-project-runtime' in sys.argv:
+    print(json.dumps(runtime_binding, ensure_ascii=False))
+    raise SystemExit(0)
+print('Browser fixture runtime: '+json.dumps(runtime_binding, ensure_ascii=False), flush=True)
 
 root = Path(__file__).resolve().parents[3]
 folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=root / "runtime/tmp")
