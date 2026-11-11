@@ -97,6 +97,10 @@ def test_external_source_erasure_clears_derived_speaker_context(tmp_path):
         bot.respond('现在不喜欢了。')
         assert bot.memory.get_user_profile()=={}
         result=bot.respond('我叫陈宁。')
+        assert result['speaker_attribution']['scope']=='unverified'
+        assert bot.memory.get_user_profile()=={}
+        bot.respond('回到现实。')
+        result=bot.respond('我叫陈宁。')
         assert result['speaker_attribution']['scope']=='current_user'
         assert bot.memory.get_user_profile()=={'名字':'陈宁'}
     finally:writer.close();bot.memory.close()

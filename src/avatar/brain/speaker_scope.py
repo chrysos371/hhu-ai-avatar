@@ -37,6 +37,14 @@ class SpeakerScope:
     def allows_facts(self):
         return self.scope == 'current_user'
 
+    def invalidate(self, revision):
+        restricted = not self.allows_facts
+        self.clear(revision)
+        if restricted:
+            # Losing private provenance cannot create new real-world authority.
+            self.scope = 'unverified'
+            self.allows_actions = False
+
     @property
     def source_ids(self):
         return sorted({ident for ident in [self._scope_source, *self._real_sources]
@@ -44,7 +52,7 @@ class SpeakerScope:
 
     def observe(self, text: str, revision: int, source_id=None):
         if self.revision != revision:
-            self.clear(revision)
+            self.invalidate(revision)
         clean = _mask_quoted(text)
         start = 0 if self.allows_facts else len(text)
         # Conditions/questions govern the whole sentence, including comma tails.

@@ -38,8 +38,9 @@ def test_privacy_invalidation_removes_all_old_control_and_real_context_sources(t
         other.forget(fact)
     with closing(MemoryStore(path)) as memory:
         scope = observe(memory, '现在不喜欢了。')
-        assert scope.allows_facts and scope.context == []
+        assert scope.scope == 'unverified' and not scope.allows_facts and scope.context == []
         assert scope.revision == 1
+        assert observe(memory, '回到现实。').allows_facts
 
 
 @pytest.mark.parametrize('source', ['我来扮演小说角色。', '之前只是普通聊天。'])

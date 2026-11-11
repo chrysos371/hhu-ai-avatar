@@ -1,0 +1,128 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[profile-avatar] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-180/test_unrelated_erasure_cannot_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7eff54b3cd90>
+web = False, text = '我叫角色林悦。'
+
+    @pytest.mark.parametrize('web', [False, True], ids=['avatar', 'web'])
+    @pytest.mark.parametrize('text', ['我叫角色林悦。', '提醒我明天9点带伞。'], ids=['profile', 'action'])
+    def test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role(tmp_path, monkeypatch, web, text):
+        import avatar.main as module
+        monkeypatch.setattr(module, 'LLMEngine', Offline)
+        path = str(tmp_path/'privacy.db')
+        actor = create_server(path, port=0) if web else Avatar(db_path=path, llm=Offline())
+        respond = (lambda value: run_chat(actor, value)) if web else actor.respond
+        try:
+            respond('我叫原真人名。')
+            respond('我来扮演小说角色。')
+            with closing(MemoryStore(path)) as writer:
+                fact = writer.list_memories()[0]['id']; writer.forget(fact)
+            result = respond(text)
+            with closing(MemoryStore(path)) as memory:
+                profile = memory.get_user_profile()
+                reminders = [dict(row) for row in memory._conn.execute('SELECT * FROM memory_reminders')]
+>               assert (profile, reminders) == ({}, [])
+E               AssertionError: assert ({'名字': '角色林悦'}, []) == ({}, [])
+E                 
+E                 At index 0 diff: {'名字': '角色林悦'} != {}
+E                 Use -v to get more diff
+
+tests/test_speaker_privacy_authority.py:32: AssertionError
+_ test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[profile-web] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-180/test_unrelated_erasure_cannot_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7eff54b3f940>
+web = True, text = '我叫角色林悦。'
+
+    @pytest.mark.parametrize('web', [False, True], ids=['avatar', 'web'])
+    @pytest.mark.parametrize('text', ['我叫角色林悦。', '提醒我明天9点带伞。'], ids=['profile', 'action'])
+    def test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role(tmp_path, monkeypatch, web, text):
+        import avatar.main as module
+        monkeypatch.setattr(module, 'LLMEngine', Offline)
+        path = str(tmp_path/'privacy.db')
+        actor = create_server(path, port=0) if web else Avatar(db_path=path, llm=Offline())
+        respond = (lambda value: run_chat(actor, value)) if web else actor.respond
+        try:
+            respond('我叫原真人名。')
+            respond('我来扮演小说角色。')
+            with closing(MemoryStore(path)) as writer:
+                fact = writer.list_memories()[0]['id']; writer.forget(fact)
+            result = respond(text)
+            with closing(MemoryStore(path)) as memory:
+                profile = memory.get_user_profile()
+                reminders = [dict(row) for row in memory._conn.execute('SELECT * FROM memory_reminders')]
+>               assert (profile, reminders) == ({}, [])
+E               AssertionError: assert ({'名字': '角色林悦'}, []) == ({}, [])
+E                 
+E                 At index 0 diff: {'名字': '角色林悦'} != {}
+E                 Use -v to get more diff
+
+tests/test_speaker_privacy_authority.py:32: AssertionError
+_ test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[action-avatar] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-180/test_unrelated_erasure_cannot_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7eff549e0e50>
+web = False, text = '提醒我明天9点带伞。'
+
+    @pytest.mark.parametrize('web', [False, True], ids=['avatar', 'web'])
+    @pytest.mark.parametrize('text', ['我叫角色林悦。', '提醒我明天9点带伞。'], ids=['profile', 'action'])
+    def test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role(tmp_path, monkeypatch, web, text):
+        import avatar.main as module
+        monkeypatch.setattr(module, 'LLMEngine', Offline)
+        path = str(tmp_path/'privacy.db')
+        actor = create_server(path, port=0) if web else Avatar(db_path=path, llm=Offline())
+        respond = (lambda value: run_chat(actor, value)) if web else actor.respond
+        try:
+            respond('我叫原真人名。')
+            respond('我来扮演小说角色。')
+            with closing(MemoryStore(path)) as writer:
+                fact = writer.list_memories()[0]['id']; writer.forget(fact)
+            result = respond(text)
+            with closing(MemoryStore(path)) as memory:
+                profile = memory.get_user_profile()
+                reminders = [dict(row) for row in memory._conn.execute('SELECT * FROM memory_reminders')]
+>               assert (profile, reminders) == ({}, [])
+E               AssertionError: assert ({}, [{'id': ...619447, ...}]) == ({}, [])
+E                 
+E                 At index 1 diff: [{'id': 1, 'title': '带伞', 'due_at': 1794445200.0, 'created_at': 1794395414.5619447, 'status': 'active', 'notified_at': None}] != []
+E                 Use -v to get more diff
+
+tests/test_speaker_privacy_authority.py:32: AssertionError
+_ test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[action-web] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-180/test_unrelated_erasure_cannot_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7eff549e1600>
+web = True, text = '提醒我明天9点带伞。'
+
+    @pytest.mark.parametrize('web', [False, True], ids=['avatar', 'web'])
+    @pytest.mark.parametrize('text', ['我叫角色林悦。', '提醒我明天9点带伞。'], ids=['profile', 'action'])
+    def test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role(tmp_path, monkeypatch, web, text):
+        import avatar.main as module
+        monkeypatch.setattr(module, 'LLMEngine', Offline)
+        path = str(tmp_path/'privacy.db')
+        actor = create_server(path, port=0) if web else Avatar(db_path=path, llm=Offline())
+        respond = (lambda value: run_chat(actor, value)) if web else actor.respond
+        try:
+            respond('我叫原真人名。')
+            respond('我来扮演小说角色。')
+            with closing(MemoryStore(path)) as writer:
+                fact = writer.list_memories()[0]['id']; writer.forget(fact)
+            result = respond(text)
+            with closing(MemoryStore(path)) as memory:
+                profile = memory.get_user_profile()
+                reminders = [dict(row) for row in memory._conn.execute('SELECT * FROM memory_reminders')]
+>               assert (profile, reminders) == ({}, [])
+E               AssertionError: assert ({}, [{'id': ...919771, ...}]) == ({}, [])
+E                 
+E                 At index 1 diff: [{'id': 1, 'title': '带伞', 'due_at': 1794445200.0, 'created_at': 1794395414.5919771, 'status': 'active', 'notified_at': None}] != []
+E                 Use -v to get more diff
+
+tests/test_speaker_privacy_authority.py:32: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_privacy_authority.py::test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[profile-avatar]
+FAILED tests/test_speaker_privacy_authority.py::test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[profile-web]
+FAILED tests/test_speaker_privacy_authority.py::test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[action-avatar]
+FAILED tests/test_speaker_privacy_authority.py::test_unrelated_erasure_cannot_silently_grant_real_authority_to_an_active_role[action-web]
+4 failed in 0.84s

@@ -337,7 +337,8 @@ class MemoryStore:
         self._conn.execute("UPDATE memory_web_speaker_state SET context_revision="
                            "(SELECT revision FROM memory_context_revision WHERE id=1), "
                            "cursor=(SELECT COALESCE(MAX(id),0) FROM memory_messages), "
-                           "scope='current_user', source_ids_json='[]' WHERE id=1")
+                           "scope=CASE WHEN scope='current_user' THEN 'current_user' ELSE 'unverified' END, "
+                           "source_ids_json='[]' WHERE id=1")
         self._conn.execute('DELETE FROM memory_chat_results')
         self._conn.execute('DELETE FROM memory_summary_items')
         if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='operation_drafts' AND type='table'").fetchone():

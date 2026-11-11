@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "date": "2026-11-11",
   "baseline": "0c51eef",
   "scope": "Separate real OS processes on owned temporary SQLite database; offline deterministic analysis/rule replies. Not model semantic approval or multi-day test.",
@@ -115,6 +115,7 @@
       ],
       "between": "forget all profile facts through MemoryStore before restarting; privacy revision advances and prior source-dependent state must not revive",
       "after": [
+        "回到现实。",
         "我叫陈宁。"
       ],
       "expected_profile": {
@@ -130,6 +131,34 @@
       ],
       "special": "submit same authenticated turn request_id after real process restart; require410 and no new user/assistant/reminder",
       "expected_status": 410
+    },
+    {
+      "id": "privacy_role_name",
+      "before": [
+        "我叫旧测试名。",
+        "我来扮演小说角色。"
+      ],
+      "between": "forget all profile facts, invalidate provenance without granting authority",
+      "after": [
+        "我叫角色林悦。"
+      ],
+      "expected_profile": {},
+      "expected_reminders": 0,
+      "expected_scope": "unverified"
+    },
+    {
+      "id": "privacy_role_reminder",
+      "before": [
+        "我叫旧测试名。",
+        "我来扮演小说角色。"
+      ],
+      "between": "forget all profile facts, invalidate provenance without granting authority",
+      "after": [
+        "提醒我明天9点带伞。"
+      ],
+      "expected_profile": {},
+      "expected_reminders": 0,
+      "expected_scope": "unverified"
     }
   ],
   "gates": "Exact profile/speaker scope/reminder count and status; role tool authority cannot reset to real user on restart without explicit exit. Durable request_id cannot replay. Compare stable message IDs/revision across same DB. Preserve all failures and create per-issue document.",
@@ -140,5 +169,6 @@
     "Canceled/failed turns and concurrent external erasure require explicit follow-up tests before broad claims"
   ],
   "fixed_after_rounds": 3,
-  "wallClockExperimentDeadline": null
+  "wallClockExperimentDeadline": null,
+  "revisionReason": "Additional four failing Avatar/Web cases prove privacy invalidation cannot grant real authority to an active role. V1 original gates/data retained; reset now requires explicit real confirmation and two stronger counterfactual cases added."
 }

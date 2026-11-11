@@ -194,7 +194,7 @@ class Avatar:
     def _check_fact_context(self):
         revision = self.memory.context_revision
         if self.speaker_scope.revision != revision:
-            self.speaker_scope.clear(revision)
+            self.speaker_scope.invalidate(revision)
             raise Cancelled('source changed before fact extraction or write')
 
     def _fact_context(self, current: str) -> list[str]:
@@ -221,7 +221,7 @@ class Avatar:
         self._task_context_revision = self.memory.context_revision
         self._current_message_id = None
         self._turn_facts = None
-        self.speaker_scope.clear(self.memory.context_revision)
+        self.speaker_scope.invalidate(self.memory.context_revision)
         return result
 
     def forget_memory(self, fragment_id: int) -> None:
@@ -230,7 +230,7 @@ class Avatar:
         self._task_context_revision = self.memory.context_revision
         self._current_message_id = None
         self._turn_facts = None
-        self.speaker_scope.clear(self.memory.context_revision)
+        self.speaker_scope.invalidate(self.memory.context_revision)
 
     def handle_memory_command(self, text: str):
         """Explicit local controls; no model inference or guessed deletion targets."""
