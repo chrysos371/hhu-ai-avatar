@@ -111,4 +111,6 @@ def main(output, provider_python):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--provider-python', type=Path, required=True); options = parser.parse_args()
-    main(options.output.resolve(), options.provider_python.resolve())
+    # Resolving a venv's executable symlink changes Python's environment prefix.
+    # Make it absolute while preserving the requested venv entry point.
+    main(options.output.resolve(), options.provider_python.expanduser().absolute())
