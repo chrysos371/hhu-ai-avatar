@@ -1,0 +1,43 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/lib/actionReceipts.test.tsx src/features/chat/LocalActionReceipts.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar-action-receipts/frontend
+
+ ✓ src/lib/actionReceipts.test.tsx (14 tests) 16ms
+ ❯ src/features/chat/LocalActionReceipts.test.tsx (7 tests | 2 failed) 20234ms
+   ✓ actual local action records > reads only on explicit request and distinguishes claim from delivery 109ms
+   ✓ actual local action records > empty visible evidence never claims no historical action 14ms
+   ✓ actual local action records > pages actual records without duplicate requests while loading 23ms
+   ✓ actual local action records > clears records on query failure 21ms
+   × actual local action records > aborts and discards delayed old response when version becomes {"instance_id":"new-server","revision":0} 10021ms
+     → Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+   × actual local action records > aborts and discards delayed old response when version becomes {"instance_id":"server","revision":1} 10014ms
+     → Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+   ✓ actual local action records > clears already loaded evidence on privacy revision and disables writes while busy 31ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/LocalActionReceipts.test.tsx > actual local action records > aborts and discards delayed old response when version becomes {"instance_id":"new-server","revision":0}
+ FAIL  src/features/chat/LocalActionReceipts.test.tsx > actual local action records > aborts and discards delayed old response when version becomes {"instance_id":"server","revision":1}
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ src/features/chat/LocalActionReceipts.test.tsx:14:3
+     12| 
+     13| describe('actual local action records', () => {
+     14|   beforeEach(() => read.mockReset());
+       |   ^
+     15|   it('reads only on explicit request and distinguishes claim from deli…
+     16|     read.mockResolvedValue({ ...page, items: [{ ...item, action: 'remi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 19 passed (21)
+   Start at  05:09:19
+   Duration  21.36s (transform 169ms, setup 259ms, collect 175ms, tests 20.25s, environment 757ms, prepare 135ms)
+

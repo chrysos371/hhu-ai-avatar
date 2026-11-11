@@ -9,6 +9,7 @@ import { useSpeechPlayer } from "./useSpeechPlayer";
 import { SpeechAvatarStage } from "./SpeechAvatarStage";
 import { VoiceInput } from "./VoiceInput";
 import { ChatTrace } from "./ChatTrace";
+import { LocalActionReceipts } from './LocalActionReceipts';
 import { useChatHistory } from "./useChatHistory";
 import { SpeakerContextControls } from './SpeakerContextControls';
 import { speakerControls, type SpeakerChoice } from '../../lib/speakerContext';
@@ -157,6 +158,8 @@ export function ChatPage() {
         disabled={send.isPending || voiceBusy || !history.ready || history.loading}
         switching={send.isPending ? send.variables?.controlChoice ?? null : null}
         onChoice={choice => { enqueue(speakerControls[choice], false, choice); }} />
+      {history.ready && !history.loading && history.version && <LocalActionReceipts
+        key={history.version.instance_id + ':' + history.version.revision} version={history.version} busy={send.isPending} />}
       <div className="panel">
         <div className="section-top">
           <button type="button" className="button secondary" disabled={history.loading || send.isPending}
