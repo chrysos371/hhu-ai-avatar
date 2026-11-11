@@ -1,0 +1,28 @@
+...........F...............                                              [100%]
+=================================== FAILURES ===================================
+___ test_external_forget_during_full_message_assembly_prevents_reply_request ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-220/test_external_forget_during_fu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5012fcc940>
+
+    def test_external_forget_during_full_message_assembly_prevents_reply_request(tmp_path, monkeypatch):
+        engine = Recorder('must not dispatch'); path = str(tmp_path/'race.db')
+        bot = SourceCapabilityPromptAvatar(db_path=path, llm=engine)
+        fragment = bot.memory.remember_user('名字', '待删来源实验名')
+        original = bot._system_prompt
+        def changed(decision, text):
+            prompt = original(decision, text)
+            assert '待删来源实验名' in prompt
+            with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            return prompt
+        monkeypatch.setattr(bot, '_system_prompt', changed)
+        try:
+>           with pytest.raises(Cancelled): bot.respond('普通话题。', cancel=CancellationToken())
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_source_capability_prompt_lab.py:111: Failed
+------------------------------ Captured log call -------------------------------
+WARNING  avatar.main:main.py:656 模型回复失败，使用规则回复
+=========================== short test summary info ============================
+FAILED tests/test_source_capability_prompt_lab.py::test_external_forget_during_full_message_assembly_prevents_reply_request
+1 failed, 26 passed in 1.93s
