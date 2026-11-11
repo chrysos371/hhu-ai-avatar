@@ -1,0 +1,20 @@
+..F.................                                                     [100%]
+=================================== FAILURES ===================================
+___________ test_external_connection_change_wakes_one_shared_monitor ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-170/test_external_connection_chang0')
+
+    def test_external_connection_change_wakes_one_shared_monitor(tmp_path):
+        path, watch = initialized(tmp_path, poll_interval=.01)
+        threads, results = [], []
+        try:
+            for _ in range(3):
+                thread, result = waiter(watch); threads.append(thread); results.append(result)
+            active(watch, 3)
+>           with MemoryStore(path) as memory:
+E           AttributeError: __enter__
+
+tests/test_conversation_changes.py:70: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_conversation_changes.py::test_external_connection_change_wakes_one_shared_monitor
+1 failed, 19 passed in 8.10s

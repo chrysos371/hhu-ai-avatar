@@ -37,6 +37,11 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def _send(self, status, data, *, html=False, content_type=None):
+        # Successful writes have committed by this point. Wake revision waiters
+        # before returning API acknowledgement; other DB connections are watched
+        # by the single shared monitor, independent of request volume.
+        if 200 <= status < 300 and hasattr(self.server, 'conversation_changes'):
+            self.server.conversation_changes.check()
         if (
             self.path.startswith("/api/v1/")
             and isinstance(data, dict)
@@ -107,6 +112,8 @@ class Handler(BaseHTTPRequestHandler):
         memory = None
         try:
             self.server.turns.refresh_privacy()
+            if not post and parsed.path == '/api/v1/conversation/changes':
+                return self._conversation_changes(parsed)
             if not post and re.fullmatch(r'/api/v1/turns/[A-Za-z0-9_-]{20,100}/events', parsed.path):
                 return self._turn_events(parsed)
             if not post and parsed.path.startswith("/api/v1/speech/audio/"):
@@ -294,6 +301,37 @@ class Handler(BaseHTTPRequestHandler):
 
     def _chat(self, user_text, use_web=False):
         return run_chat(self.server, user_text, use_web)
+
+    def _conversation_changes(self, parsed):
+        from .conversation_changes import WatchDisconnected
+        import select
+        import socket
+
+        query = parse_qs(parsed.query, keep_blank_values=True)
+        try:
+            if set(query) != {'instance_id', 'revision'} or any(len(values) != 1 for values in query.values()):
+                raise ValueError()
+            instance = query['instance_id'][0]
+            raw = query['revision'][0]
+            if not re.fullmatch(r'[A-Za-z0-9_-]{1,100}', instance) or not re.fullmatch(r'[0-9]{1,19}', raw):
+                raise ValueError()
+            revision = int(raw)
+            if revision > 2**63-1:
+                raise ValueError()
+        except ValueError:
+            raise OperationError(422, 'invalid_watch_cursor', '版本等待参数无效。') from None
+
+        def disconnected():
+            try:
+                readable, _, _ = select.select([self.connection], [], [], 0)
+                return bool(readable) and not self.connection.recv(1, socket.MSG_PEEK)
+            except OSError:
+                return True
+        try:
+            result = self.server.conversation_changes.wait(instance, revision, disconnected=disconnected)
+            return self._send(200, result)
+        except WatchDisconnected:
+            return
 
     def _turn_events(self, parsed):
         job = self.server.turns.get(parsed.path.split('/')[-2])
@@ -547,6 +585,8 @@ class AvatarHTTPServer(ThreadingHTTPServer):
             self._connection_gate.release()
 
     def server_close(self):
+        if hasattr(self, 'conversation_changes'):
+            self.conversation_changes.close()
         if hasattr(self, 'turns'):
             self.turns.close()
         if hasattr(self, 'speech'):
@@ -602,6 +642,8 @@ def create_server(
     server.speaker_scope = SpeakerScope()
     server.turns = TurnCoordinator(db_path, lambda job: run_chat(server, job.text, job.use_web, job=job),
                                    on_invalidate=server.speech.clear)
+    from .conversation_changes import ConversationChanges
+    server.conversation_changes = ConversationChanges(db_path, server.session_id, limit=min(4, max(0, max_connections-1)))
     return server
 
 
