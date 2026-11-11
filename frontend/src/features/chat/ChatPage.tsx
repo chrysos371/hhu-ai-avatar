@@ -7,7 +7,7 @@ import type { PersonaVersion } from "../../lib/types";
 import type { ChatResult } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
-import { AvatarStage } from "./AvatarStage";
+import { SpeechAvatarStage } from "./SpeechAvatarStage";
 import { VoiceInput } from "./VoiceInput";
 export function ChatPage() {
   const speech = useSpeechPlayer();
@@ -73,7 +73,7 @@ export function ChatPage() {
         description={`与${name}聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。`}
       />
       <div className="speech-panel panel">
-        <AvatarStage name={name} mouth={speech.mouth} busy={send.isPending}
+        <SpeechAvatarStage name={name} frameSource={speech.mouthFrames} busy={send.isPending}
           speaking={speech.status === "playing"}
           valence={messages.find((_, i) => i === speech.active)?.result?.valence ?? messages.at(-1)?.result?.valence}
           arousal={messages.find((_, i) => i === speech.active)?.result?.arousal ?? messages.at(-1)?.result?.arousal} />

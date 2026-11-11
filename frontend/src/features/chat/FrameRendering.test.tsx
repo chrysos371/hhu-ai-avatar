@@ -4,7 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import type { ChatResult, LipFrame } from '../../lib/types';
-import { AvatarStage } from './AvatarStage';
+import { SpeechAvatarStage } from './SpeechAvatarStage';
 import { useSpeechPlayer } from './useSpeechPlayer';
 
 const frames: LipFrame[] = Array.from({ length: 61 }, (_, i) => ({
@@ -25,7 +25,7 @@ function Harness({ count }: { count: number }) {
   const speech = useSpeechPlayer();
   return <><button onClick={() => void speech.play(0, { reply: '受控帧测试' } as ChatResult)}>开始</button>
     <button onClick={speech.stop}>停止</button><output>{speech.status}</output>
-    <AvatarStage mouth={speech.mouth} /><History count={count} />
+    <SpeechAvatarStage frameSource={speech.mouthFrames} /><History count={count} />
     <audio data-testid="audio" ref={speech.audioRef} onPlay={speech.onPlay} onPause={speech.onPause} />
   </>;
 }

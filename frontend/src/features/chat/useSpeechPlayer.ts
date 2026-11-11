@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, apiRequest, fetchSpeechAudio } from "../../lib/api";
 import type { ChatResult, LipFrame, SpeechResult } from "../../lib/types";
 import { splitSpeechText } from "./segmentation";
+import { createSpeechFrameChannel, type SpeechFrameSource } from "./speechFrames";
 
 export function frameAt(frames: LipFrame[], time: number): LipFrame | null {
   let lo = 0, hi = frames.length - 1, found = -1;
@@ -34,7 +35,7 @@ export function useSpeechPlayer() {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
-  const [mouth, setMouth] = useState<LipFrame | null>(null);
+  const [mouthFrames] = useState(createSpeechFrameChannel);
   const [segment, setSegment] = useState({ index: 0, total: 0 });
 
   const release = useCallback(() => {
@@ -54,10 +55,11 @@ export function useSpeechPlayer() {
     if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
     objectUrl.current = null;
     frames.current = [];
-  }, []);
+    mouthFrames.publish(null);
+  }, [mouthFrames]);
   const stop = useCallback(() => {
     release();
-    setStatus("idle"); setActive(null); setMouth(null);
+    setStatus("idle"); setActive(null); mouthFrames.publish(null);
     setWarning(null); setError(null); setSegment({ index: 0, total: 0 });
   }, [release]);
   useEffect(() => {
@@ -72,12 +74,12 @@ export function useSpeechPlayer() {
     let raf = 0;
     const tick = () => {
       const audio = audioRef.current;
-      setMouth(audio && !audio.paused && !audio.ended ? frameAt(frames.current, audio.currentTime) : null);
+      mouthFrames.publish(audio && !audio.paused && !audio.ended ? frameAt(frames.current, audio.currentTime) : null);
       raf = requestAnimationFrame(tick);
     };
     tick();
     return () => cancelAnimationFrame(raf);
-  }, [status]);
+  }, [status, mouthFrames]);
 
   async function play(index: number, result: ChatResult, segmented = false) {
     stop();
@@ -112,7 +114,7 @@ export function useSpeechPlayer() {
     }
     function failed(err: unknown) {
       if (current !== generation.current) return;
-      release(); setMouth(null); setStatus("error");
+      release(); mouthFrames.publish(null); setStatus("error");
       setError(err instanceof Error ? err.message : "语音暂不可用，请重试。");
     }
     async function startPart(position: number, prepared?: Promise<Outcome>) {
@@ -140,12 +142,12 @@ export function useSpeechPlayer() {
     }
     await startPart(0);
   }
-  return { audioRef, active, status, error, warning, mouth, segment, play, stop,
+  return { audioRef, active, status, error, warning, mouthFrames: mouthFrames as SpeechFrameSource, segment, play, stop,
     onPlay: () => { const audio = sourceAudio(); if (audio && !audio.paused && !audio.ended) setStatus("playing"); },
-    onPause: () => { const audio = sourceAudio(); if (audio?.paused && !audio.ended) { setMouth(null); setStatus("paused"); } },
+    onPause: () => { const audio = sourceAudio(); if (audio?.paused && !audio.ended) { mouthFrames.publish(null); setStatus("paused"); } },
     onEnded: () => {
       if (!sourceAudio()?.ended) return;
-      setMouth(null); const next = nextPart.current; nextPart.current = null; if (next) next(); else setStatus("ended");
+      mouthFrames.publish(null); const next = nextPart.current; nextPart.current = null; if (next) next(); else setStatus("ended");
     },
     onError: () => { if (sourceAudio()?.error) failedPlayback(); },
   };
@@ -156,6 +158,6 @@ export function useSpeechPlayer() {
     return audio;
   }
   function failedPlayback() {
-    release(); setMouth(null); setStatus("error"); setError("音频无法播放，请重新生成。");
+    release(); mouthFrames.publish(null); setStatus("error"); setError("音频无法播放，请重新生成。");
   }
 }

@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { frameAt, useSpeechPlayer } from "./useSpeechPlayer";
-import { AvatarStage } from "./AvatarStage";
+import { SpeechAvatarStage } from "./SpeechAvatarStage";
 import type { ChatResult, LipFrame } from "../../lib/types";
 import { splitSpeechText } from "./segmentation";
 
@@ -13,7 +13,7 @@ function Harness() {
   return <><button onClick={() => void player.play(0, result)}>朗读</button>
     <button onClick={() => void player.play(0, { ...result, reply: "这是完整且通过检查的回复，需要按顺序朗读，避免整段等待太久。".repeat(5) }, true)}>分段朗读</button>
     <button onClick={player.stop}>停止</button><p>{player.status}</p><p>{player.error}</p>
-    <AvatarStage mouth={player.mouth} />
+    <SpeechAvatarStage frameSource={player.mouthFrames} />
     <audio ref={player.audioRef} data-testid="audio" onPlay={player.onPlay} onPause={player.onPause} onEnded={player.onEnded} />
   </>;
 }
