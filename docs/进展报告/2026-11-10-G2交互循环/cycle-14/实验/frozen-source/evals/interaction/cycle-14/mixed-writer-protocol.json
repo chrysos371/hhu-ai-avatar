@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "725a5da",
+  "scope": "Actual Avatar and run_chat paths using separate SQLite connections in one OS process; not an interactive CLI subprocess, HTTP browser, real model or multi-day claim. Synthetic owned databases only.",
+  "setup": "Start one Web server object, record real name 原真人名 via run_chat; optional CLI-equivalent Avatar/direct-user/direct-assistant/other tracked Web input; external MemoryStore forget before/after foreign input; then probe on original Web server.",
+  "cases": [
+    {
+      "id": "tracked_real_erase",
+      "writer": "none",
+      "erase": "after",
+      "probe": "我叫陈宁。",
+      "profile": {
+        "名字": "陈宁"
+      },
+      "scope": "current_user",
+      "reminders": 0
+    },
+    {
+      "id": "cli_role_no_erase",
+      "writer": "avatar",
+      "foreign": "我来扮演小说角色。",
+      "erase": "none",
+      "probe": "我叫陈宁。",
+      "profile": {
+        "名字": "原真人名"
+      },
+      "scope": "unverified",
+      "reminders": 0
+    },
+    {
+      "id": "cli_role_erase_name",
+      "writer": "avatar",
+      "foreign": "我来扮演小说角色。",
+      "erase": "after",
+      "probe": "我叫陈宁。",
+      "profile": {},
+      "scope": "unverified",
+      "reminders": 0
+    },
+    {
+      "id": "cli_role_erase_reminder",
+      "writer": "avatar",
+      "foreign": "我来扮演小说角色。",
+      "erase": "after",
+      "probe": "提醒我明天9点带伞。",
+      "profile": {},
+      "scope": "unverified",
+      "reminders": 0
+    },
+    {
+      "id": "direct_user_erase_name",
+      "writer": "user",
+      "foreign": "我来扮演小说角色。",
+      "erase": "after",
+      "probe": "我叫陈宁。",
+      "profile": {},
+      "scope": "unverified",
+      "reminders": 0
+    },
+    {
+      "id": "cli_role_after_erase",
+      "writer": "avatar",
+      "foreign": "我来扮演小说角色。",
+      "erase": "before",
+      "probe": "提醒我明天9点带伞。",
+      "profile": {},
+      "scope": "unverified",
+      "reminders": 0
+    },
+    {
+      "id": "assistant_only_erase",
+      "writer": "assistant",
+      "foreign": "我来扮演小说角色。",
+      "erase": "after",
+      "probe": "我叫陈宁。",
+      "profile": {
+        "名字": "陈宁"
+      },
+      "scope": "current_user",
+      "reminders": 0
+    },
+    {
+      "id": "cli_real_erase",
+      "writer": "avatar",
+      "foreign": "继续现实聊天。",
+      "erase": "after",
+      "probe": "我叫陈宁。",
+      "profile": {},
+      "scope": "unverified",
+      "reminders": 0
+    },
+    {
+      "id": "tracked_role_erase",
+      "writer": "web",
+      "foreign": "我来扮演小说角色。",
+      "erase": "after",
+      "probe": "提醒我明天9点带伞。",
+      "profile": {},
+      "scope": "unverified",
+      "reminders": 0
+    }
+  ],
+  "invariant": "A privacy revision cannot skip untracked user speech and turn uncertain provenance into real authority. Tracked real state stays usable; assistant-only rows do not authorize or block user source controls. Unverified state must require explicit real confirmation; no raw history replay.",
+  "fixed_after_rounds": 3,
+  "wallClockExperimentDeadline": null,
+  "failure_policy": "Retain every original vector/output/state and create per-issue document. Do not add unexpected outcomes to accepted sets."
+}
