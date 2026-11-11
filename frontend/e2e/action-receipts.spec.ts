@@ -36,9 +36,11 @@ test('real local receipts survive reply reload and clear on independent privacy 
     await expect(page.getByRole('button', { name: '核验本地操作记录', exact: true })).toBeEnabled();
   };
   const send = async (text: string) => {
+    const before = await page.locator('.chat-message.assistant details').count();
     await page.getByLabel('消息', { exact: true }).fill(text);
     await page.getByRole('button', { name: '发送消息', exact: true }).click();
     await expect(page.getByLabel('消息', { exact: true })).toHaveValue('');
+    await expect(page.locator('.chat-message.assistant details')).toHaveCount(before + 1);
     await ready();
   };
   const panel = page.getByRole('region', { name: '实际本地操作', exact: true });
