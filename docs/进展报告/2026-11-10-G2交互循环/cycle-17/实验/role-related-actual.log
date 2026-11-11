@@ -1,0 +1,32 @@
+.......................................F................................ [ 80%]
+..................                                                       [100%]
+=================================== FAILURES ===================================
+_ test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6211\u626e\u6f14\u5c0f\u8bf4\u89d2\u8272\u65f6\u4f1a\u5f88\u7d27\u5f20\u3002] _
+
+declaration = '我扮演小说角色时会很紧张。'
+
+    @pytest.mark.parametrize('declaration',[
+        '我扮演过小说角色。',
+        '我扮演小说角色时会很紧张。',
+        '比如，我来扮演小说角色。',
+        '也许我来扮演小说角色。',
+        '我想知道，我来扮演小说角色是否合适。',
+        '如果讨论剧情。假如我来扮演小说角色。',
+    ])
+    def test_past_general_or_hypothetical_role_discussion_is_not_a_declaration(declaration):
+        bot=Avatar(db_path=':memory:',llm=Offline())
+        try:
+            bot.respond(declaration)
+            bot.respond('我叫陈宁。')
+>           assert bot.memory.get_user_profile().get('名字')=='陈宁'
+E           AssertionError: assert None == '陈宁'
+E            +  where None = <built-in method get of dict object at 0x7f1193d79280>('名字')
+E            +    where <built-in method get of dict object at 0x7f1193d79280> = {}.get
+E            +      where {} = get_user_profile()
+E            +        where get_user_profile = <avatar.brain.memory.MemoryStore object at 0x7f1193d55b10>.get_user_profile
+E            +          where <avatar.brain.memory.MemoryStore object at 0x7f1193d55b10> = <avatar.main.Avatar object at 0x7f1193cde680>.memory
+
+tests/test_speaker_attribution.py:64: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_attribution.py::test_past_general_or_hypothetical_role_discussion_is_not_a_declaration[\u6211\u626e\u6f14\u5c0f\u8bf4\u89d2\u8272\u65f6\u4f1a\u5f88\u7d27\u5f20\u3002]
+1 failed, 89 passed in 2.75s

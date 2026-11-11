@@ -11,9 +11,18 @@ from collections import deque
 from .facts import _mask_quoted
 
 
-_ENTRY = re.compile(
+_ROLE_PREFIX = (
     r'^(?:(?:接下来|现在|从现在起)[，,\s]*)?'
-    r'我(?:来|要|将|会)?(?:扮演|饰演)(?!过)(?:[^。！？!?；;，,\n]{0,40})(?:角色|人物)\s*$')
+    r'我(?:(?:现在|接下来|从现在起)[，,\s]*)?')
+_ENTRY = re.compile(_ROLE_PREFIX + r'(?:来|要|将|会)?(?:扮演|饰演)(?!过|了)'
+    r'(?:(?:[^。！？!?；;，,\n]{0,40})(?:角色|人物)|'
+    r'(?:剧|剧本|小说|故事|童话|电影|游戏)(?:中|里)(?:的)?[^。！？!?；;，,\n]{1,40})\s*$')
+# Explicit but otherwise unsupported role intent cannot silently authorize real
+# profile writes/actions. Prefix-only recognition keeps long descriptions safe;
+# it does not invent a fictional identity or parse an arbitrary character name.
+_ROLE_INTENT = re.compile(_ROLE_PREFIX + r'(?:来|要|将|会|想|打算|准备|试着)?(?:扮演|饰演)(?!过|了)')
+_ROLE_QUERY = re.compile(r'(?:扮演|饰演)(?:谁|什么|哪个|哪位)')
+_ROLE_DISCUSSION = re.compile(r'(?:扮演|饰演)[^。！？!?；;，,\n]*(?:时|的时候)(?:会|总是|常常|通常|往往|很|容易)')
 _EXIT = re.compile(r'^(?:回到现实|停止扮演|退出角色|不演了|结束角色扮演)(?:吧)?\s*$')
 _REAL = re.compile(r'^现实中的(?=我)')
 
@@ -64,12 +73,23 @@ class SpeakerScope:
                 raw = clause.group()
                 trimmed = raw.lstrip()
                 offset = sentence.start() + clause.start() + len(raw) - len(trimmed)
-                entry, exit_, real = _ENTRY.match(trimmed), _EXIT.match(trimmed), _REAL.match(trimmed)
+                query = _ROLE_QUERY.search(trimmed)
+                entry = None if query else _ENTRY.match(trimmed)
+                intent = None if query or _ROLE_DISCUSSION.search(trimmed) else _ROLE_INTENT.match(trimmed)
+                exit_, real = _EXIT.match(trimmed), _REAL.match(trimmed)
                 if entry:
                     self.scope = 'fictional_character'
                     self._real_context.clear()
                     self._real_sources.clear()
                     self._scope_source = source_id
+                    start = len(text)
+                elif intent:
+                    self.scope = 'unverified'
+                    self._real_context.clear()
+                    self._real_sources.clear()
+                    # Unverified durable state deliberately has no asserted
+                    # source basis; restoration must not create real authority.
+                    self._scope_source = None
                     start = len(text)
                 elif exit_ or real:
                     self.scope = 'current_user'
