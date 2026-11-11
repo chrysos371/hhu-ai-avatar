@@ -1,0 +1,75 @@
+.....FF                                                                  [100%]
+=================================== FAILURES ===================================
+_____ test_cancel_after_source_commit_keeps_actual_scope_without_assistant _____
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f76923ecc10>, <avatar.web.AvatarHTTPServer object at 0x7f7692427490>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7692427400>
+
+    def test_cancel_after_source_commit_keeps_actual_scope_without_assistant(api_v1, monkeypatch):
+        request, server = api_v1
+        entered, release = threading.Event(), threading.Event()
+        original = Avatar._analyze
+        def paused(self, text):
+            entered.set(); release.wait(); return original(self, text)
+        monkeypatch.setattr(Avatar, '_analyze', paused)
+        ident = 'context_committed_cancel_12345'
+        try:
+            request('/api/v1/turns', {'request_id': ident, 'text': '我来扮演一个虚构角色。'})
+            assert entered.wait(2)
+            # The server copies in-memory scope only in run_chat's finally block.
+            assert server.speaker_scope.scope == 'current_user'
+            assert request('/api/v1/conversation/speaker')[1]['data']['scope'] == 'fictional_character'
+            assert request('/api/v1/turns/'+ident+'/cancel', {})[0] == 200
+        finally: release.set()
+        job = server.turns.get(ident)
+>       assert job.done.wait(2)
+E       AttributeError: 'Turn' object has no attribute 'done'
+
+tests/test_speaker_snapshot.py:83: AttributeError
+______ test_read_snapshot_cannot_mix_new_privacy_state_with_old_revision _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-204/test_read_snapshot_cannot_mix_0')
+
+    def test_read_snapshot_cannot_mix_new_privacy_state_with_old_revision(tmp_path):
+        path = str(tmp_path/'atomic.db')
+        with closing(MemoryStore(path)) as memory:
+            store = SpeakerContextStore(memory)
+            text = '我来扮演一个虚构角色。'
+            with memory.transaction():
+                root = memory.add_message('user', text, 's')
+                store.observe(text, 0, root)
+            original = store._restore; written = threading.Event(); failures = []
+            def writer():
+                try:
+                    with closing(MemoryStore(path)) as other:
+                        with other.transaction():
+                            fact = other.remember('受控根', source_message_id=root); other.forget(fact)
+                            written.set()
+                except Exception as error: failures.append(repr(error)); written.set()
+            thread = threading.Thread(target=writer)
+            def interleaved(revision, current):
+                thread.start(); assert written.wait(2)
+                return original(revision, current)
+            store._restore = interleaved
+            changes = memory._conn.total_changes
+>           data = store.read('instance'); thread.join(2)
+
+tests/test_speaker_snapshot.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/brain/speaker_context.py:24: in read
+    scope = self._restore(revision, latest+1)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+revision = 0, current = 2
+
+    def interleaved(revision, current):
+>       thread.start(); assert written.wait(2)
+E       assert False
+E        +  where False = wait(2)
+E        +    where wait = <threading.Event object at 0x7f769247f970>.wait
+
+tests/test_speaker_snapshot.py:107: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_snapshot.py::test_cancel_after_source_commit_keeps_actual_scope_without_assistant
+FAILED tests/test_speaker_snapshot.py::test_read_snapshot_cannot_mix_new_privacy_state_with_old_revision
+2 failed, 5 passed in 5.56s

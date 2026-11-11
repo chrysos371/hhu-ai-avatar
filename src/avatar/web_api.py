@@ -88,6 +88,11 @@ class V1API:
     def handle(self, post, path, query, data):
         get = lambda key, default=None: query.get(key, [default])[0]
 
+        if not post and path == '/conversation/speaker':
+            if query: raise OperationError(422, 'invalid_context_query')
+            from .brain.speaker_context import SpeakerContextStore
+            return 200, SpeakerContextStore(self.memory).read(self.server.session_id)
+
         if not post and path == '/conversation':
             if set(query) - {'limit', 'before_id', 'revision'} or any(len(v) != 1 for v in query.values()):
                 raise OperationError(422, 'invalid_pagination')

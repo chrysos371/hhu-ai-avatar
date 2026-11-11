@@ -8,6 +8,34 @@ class SpeakerContextStore:
     def __init__(self, memory):
         self.memory, self.conn = memory, memory._conn
 
+    def read(self, instance_id):
+        """Current source-verified control metadata, never a historical trace.
+
+        This read neither observes a new user message nor writes/restores model
+        context. Scope and both cursors belong to one SQLite read snapshot.
+        Permissions describe a new independent turn, not an old pending action.
+        """
+        owned = not self.conn.in_transaction
+        if owned: self.conn.execute('BEGIN')
+        try:
+            state = self.conn.execute(
+                "SELECT revision,(SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'),"
+                "(SELECT COALESCE(MAX(id),0) FROM memory_messages) FROM memory_context_revision WHERE id=1").fetchone()
+            if state is None or any(type(value) is not int or value < 0 for value in state):
+                from .operations import OperationError
+                raise OperationError(503, 'context_unavailable', '暂时无法核验当前说话者语境。')
+            revision, cursor, latest = state
+            scope = self._restore(revision, latest+1)
+            result = {'instance_id': instance_id, 'revision': revision, 'context_cursor': cursor,
+                'scope': scope.scope, 'profile_writes_for_new_turn': scope.allows_facts,
+                'real_actions_for_new_turn': scope.scope == 'current_user',
+                'general_coreference_verified': False, 'version': 1}
+            if owned: self.conn.commit()
+            return result
+        except BaseException:
+            if owned: self.conn.rollback()
+            raise
+
     @staticmethod
     def _unknown(revision):
         scope = SpeakerScope(); scope.clear(revision); scope.scope = 'unverified'
