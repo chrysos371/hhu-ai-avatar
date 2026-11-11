@@ -22,6 +22,7 @@ class ConversationChanges:
         self._active = 0
         self._revision = 0
         self._error = False
+        self._failure_epoch = 0
         self._seen_database = False
         self.monitor_checks = 0
 
@@ -43,11 +44,15 @@ class ConversationChanges:
             self._seen_database = True
             return row[0]
 
-    def publish(self, revision):
+    def publish(self, revision, *, _read_epoch=None):
         if type(revision) is not int or revision < 0:
             raise ValueError('nonnegative integer revision required')
         with self._condition:
             if self._stop.is_set():
+                return
+            # A successful read already in flight when an error was observed
+            # cannot certify recovery. Require a read started after that error.
+            if _read_epoch is not None and _read_epoch != self._failure_epoch:
                 return
             # Concurrent checks may finish in the opposite order to their DB
             # reads. A late old value must never lower the advertised version.
@@ -58,12 +63,17 @@ class ConversationChanges:
                 self._condition.notify_all()
 
     def check(self):
-        if self._stop.is_set():
-            return
+        with self._condition:
+            if self._stop.is_set():
+                return
+            epoch = self._failure_epoch
         try:
-            self.publish(self._read_revision())
+            self.publish(self._read_revision(), _read_epoch=epoch)
         except sqlite3.Error:
             with self._condition:
+                if self._stop.is_set():
+                    return
+                self._failure_epoch += 1
                 self._error = True
                 self._condition.notify_all()
 
