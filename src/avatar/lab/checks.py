@@ -1,6 +1,6 @@
 """Mechanical regressions, deliberately separate from subjective style quality."""
 
-from statistics import mean
+from statistics import mean, median, quantiles
 
 
 def assess(case, turns):
@@ -79,11 +79,10 @@ def compare_reports(arms):
             peak_gpu_allocated_bytes=max(
                 [r.get("peak_gpu_bytes", 0) for r in rows] or [0]
             ),
-            turn_seconds_p50=latencies[len(latencies) // 2] if latencies else None,
+            turn_seconds_p50=median(latencies) if latencies else None,
             turn_seconds_p95=(
-                latencies[min(len(latencies) - 1, int(len(latencies) * 0.95))]
-                if latencies
-                else None
+                quantiles(latencies, n=100, method='inclusive')[94]
+                if len(latencies) > 1 else (latencies[0] if latencies else None)
             ),
         )
         summaries[arm]["generated_tokens_per_model_second"] = (
