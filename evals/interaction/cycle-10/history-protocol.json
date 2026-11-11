@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "43806c4",
+  "scope": "Full production ChatPage in Chromium; actual local HTTP/SSE turns with controlled provider and disposable database; intercepted speech supplies real PCM with analytic timeline. No real model, TTS quality, physical IME/device or multi-day claim.",
+  "roundsBefore": 1,
+  "roundsAfterIfChanged": 3,
+  "cumulativeFinalReplies": [1, 25, 100],
+  "input": "draft-0123456789-abcdefgh",
+  "inputMethod": "Playwright keyboard.insertText one character then wait next RAF; capture input event and next-RAF textarea value. Instrument JSON.stringify only for decision objects with speech_rate and mouth_intensity, retain wrapper overhead in all runs.",
+  "states": ["all traces closed", "last trace opened then closed"],
+  "clock": {
+    "pcmDurationSeconds": 8,
+    "sampleRate": 16000,
+    "waveHz": 220,
+    "timeline": "800 unique rounded3 mouth codes (index+1)/801, 10ms hop",
+    "cases": [{"rate": 1, "seek": 0.5, "typing": true}, {"rate": 2, "seek": 2, "typing": false}],
+    "rafSamplesPerCase": 48,
+    "excludeWarmupRaf": 2,
+    "minActive": 30,
+    "p95AbsoluteMediaLagMs": 50,
+    "maxAbsoluteMediaLagMs": 100
+  },
+  "gates": {
+    "exactReplyAndUserCounts": true,
+    "typingDoesNotSubmit": true,
+    "inputValuesMatchAllCharacters": true,
+    "p95InputToNextRafMs": 100,
+    "closedTraceDecisionSerializationsDuringInput": 0,
+    "closedTracePreNodes": 0,
+    "lastTraceOpensWithFivePreBlocks": true,
+    "stopReleasesAudio": true
+  },
+  "resources": {
+    "method": "CDP Performance.getMetrics, Memory.getDOMCounters; HeapProfiler.collectGarbage three times before each resource snapshot",
+    "snapshots": "empty chat, each closed-history load, after SPA navigation to tools then back to empty chat",
+    "heapAndNodes": "Descriptive only; retained history grows legitimately. No memory-leak conclusion from growth alone. Record actual observation duration."
+  },
+  "decision": "Retain all failures. If hidden trace work reproduces, make diagnostics lazy and/or memoize unchanged message rows, preserving every message and trace inspection. Freeze implementation before 3 fixed after rounds. Do not increase gates to pass.",
+  "noWallClockExperimentDeadline": true
+}
