@@ -1,0 +1,46 @@
+........................................................................ [  6%]
+........................................................................ [ 13%]
+..................F..................................................... [ 20%]
+........................................................................ [ 27%]
+........................................................................ [ 34%]
+........................................................................ [ 40%]
+........................................................................ [ 47%]
+........................................................................ [ 54%]
+........................................................................ [ 61%]
+........................................................................ [ 68%]
+........................................................................ [ 75%]
+........................................s............................... [ 81%]
+........................................................................ [ 88%]
+........................................................................ [ 95%]
+..............................................                           [100%]
+=================================== FAILURES ===================================
+________ test_http_watch_capacity_reserves_an_ordinary_connection[2-1] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-179/test_http_watch_capacity_reser1')
+connections = 2, limit = 1
+
+    @pytest.mark.parametrize('connections,limit', [(1, 0), (2, 1), (32, 4)])
+    def test_http_watch_capacity_reserves_an_ordinary_connection(tmp_path, connections, limit):
+        server = create_server(str(tmp_path/'capacity.db'), port=0, max_connections=connections)
+        thread = threading.Thread(target=server.serve_forever); thread.start()
+        sockets = []
+        try:
+            assert server.conversation_changes.limit == limit
+            path = '/api/v1/conversation/changes?instance_id=' + server.session_id + '&revision=0'
+            for _ in range(limit):
+                conn = http.client.HTTPConnection('127.0.0.1', server.server_port)
+                conn.request('GET', path, headers={'X-Avatar-Token': server.token}); sockets.append(conn)
+            active(server.conversation_changes, limit)
+            with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as regular:
+                regular.request('GET', '/api/v1/system', headers={'X-Avatar-Token': server.token})
+                response = regular.getresponse(); assert response.status == 200; response.read()
+            with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as excess:
+                excess.request('GET', path, headers={'X-Avatar-Token': server.token})
+>               response = excess.getresponse(); assert response.status == 429; response.read()
+E               assert 503 == 429
+E                +  where 503 = <http.client.HTTPResponse object at 0x7f4611343130>.status
+
+tests/test_conversation_changes.py:199: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_conversation_changes.py::test_http_watch_capacity_reserves_an_ordinary_connection[2-1]
+1 failed, 1052 passed, 1 skipped in 44.64s
