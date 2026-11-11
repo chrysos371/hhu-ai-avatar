@@ -100,6 +100,18 @@ def test_conversation_snapshot_is_authenticated_and_rejects_invalid_cursors(api_
         assert request('/api/v1/conversation?' + query)[0] == 422
 
 
+def test_conversation_restores_original_completed_result_without_chat_replay(api_v1):
+    request, server = api_v1
+    result = request('/api/v1/chat', {'text': '你好，记录这个测试回合'})[1]['data']
+    before = list(server.short_term)
+    page = request('/api/v1/conversation')[1]['data']
+    assert len(page['items']) == 2
+    assert page['items'][-1]['result'] == result
+    assert page['items'][-1]['id'] == result['conversation']['assistant_message_id']
+    assert page['items'][0]['id'] == result['conversation']['user_message_id']
+    assert server.short_term == before
+
+
 def test_knowledge_import_requires_confirmation(api_v1):
     r, _ = api_v1
     code, body = r(

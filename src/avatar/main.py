@@ -686,7 +686,7 @@ class Avatar:
                 raise Cancelled('context changed before reply commit')
             self._checkpoint()
             self.memory.add_short_term("assistant", reply)
-            self.memory.add_message('assistant', reply, self.session_id,
+            assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)
         # 6. TTS（可选）
         audio_path = None
@@ -707,6 +707,8 @@ class Avatar:
                 logger.warning('口型分析失败：%s', type(exc).__name__)
                 lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
         return {
+            "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
+                             "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
             "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
             "knowledge_retrieval_degraded":self._knowledge_degraded,
             "task": self.tasks.current.data() if self.tasks.current else None,

@@ -61,6 +61,8 @@ def enrich_chat_result(server, memory, result):
             for c in result.get("tool_calls", [])
         ],
     }
+    from .brain.conversations import ConversationStore
+    ConversationStore(memory).record_result(result)
     server.chat_events.append(
         {
             "timestamp": time.time(),
@@ -85,6 +87,20 @@ class V1API:
 
     def handle(self, post, path, query, data):
         get = lambda key, default=None: query.get(key, [default])[0]
+
+        if not post and path == '/conversation':
+            if set(query) - {'limit', 'before_id', 'revision'} or any(len(v) != 1 for v in query.values()):
+                raise OperationError(422, 'invalid_pagination')
+            try:
+                limit = int(get('limit', '100'))
+                before_id = int(get('before_id')) if 'before_id' in query else None
+                revision = int(get('revision')) if 'revision' in query else None
+                if not 1 <= limit <= 200 or (before_id is not None and not 0 < before_id <= 2**63-1) or (revision is not None and revision < 0):
+                    raise ValueError()
+            except (ValueError, TypeError):
+                raise OperationError(422, 'invalid_pagination') from None
+            from .brain.conversations import ConversationStore
+            return 200, ConversationStore(self.memory).read(self.server.session_id, limit=limit, before_id=before_id, revision=revision)
 
         if post and path == "/speech":
             return 201, self.server.speech.synthesize(data)

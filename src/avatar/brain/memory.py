@@ -112,6 +112,11 @@ CREATE TABLE IF NOT EXISTS memory_response_context (
     PRIMARY KEY(message_id,source_type,source_id)
 );
 CREATE INDEX IF NOT EXISTS idx_response_context_source ON memory_response_context(source_type,source_id);
+CREATE TABLE IF NOT EXISTS memory_chat_results (
+    message_id INTEGER PRIMARY KEY,
+    context_revision INTEGER NOT NULL,
+    result_json TEXT NOT NULL
+);
 -- Corrections can merge two previously independent version chains. Keep the
 -- extra link instead of rewriting either chain's historical predecessor.
 CREATE TABLE IF NOT EXISTS memory_version_links (
@@ -321,6 +326,7 @@ class MemoryStore:
 
     def _invalidate_context(self) -> None:
         self._conn.execute('UPDATE memory_context_revision SET revision=revision+1 WHERE id=1')
+        self._conn.execute('DELETE FROM memory_chat_results')
         self._conn.execute('DELETE FROM memory_summary_items')
         if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='operation_drafts' AND type='table'").fetchone():
             self._conn.execute("UPDATE operation_drafts SET parameters_json='{}',baseline_json='{}',diff_json='[]',warnings_json='[]',token_hash='' WHERE operation_type='memory.batch'")
