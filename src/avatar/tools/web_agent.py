@@ -8,6 +8,7 @@ import time
 import os
 from functools import partial
 
+from ..cancellation import Cancelled
 from .web_client import assistant_session, web_session
 from .web_fetch import public_url
 from .web_search import validate_query
@@ -148,15 +149,23 @@ class WebAgent:
                 assistant_session, memory_db_path, document_roots if document_roots is not None else os.getenv('AVATAR_DOCUMENT_ROOTS', ''))
         self.connect, self.max_calls = connect, max_calls
 
-    def run(self, user_text: str, llm=None) -> dict:
-        return asyncio.run(self._run(user_text, llm))
+    def run(self, user_text: str, llm=None, *, checkpoint=None) -> dict:
+        result = asyncio.run(self._run(user_text, llm, checkpoint))
+        if checkpoint is not None:
+            checkpoint()
+        return result
 
-    async def _run(self, user_text, llm):
+    async def _run(self, user_text, llm, checkpoint=None):
+        def guard():
+            if checkpoint is not None:
+                checkpoint()
+        guard()
         trace, sources, seen, returned = [], {}, set(), []
         messages = [{'role': 'system', 'content': _SYSTEM}, {'role': 'user', 'content': user_text}]
         reply = ''
 
         async def invoke(session, name, args, routing):
+            guard()
             started = time.monotonic()
             event = dict(tool=name, arguments=args, routing=routing, status='rejected')
             trace.append(event)
@@ -168,7 +177,9 @@ class WebAgent:
                 if key in seen:
                     raise ValueError('重复调用已阻止，请使用已有结果回答。')
                 seen.add(key)
+                guard()
                 result = await session.call_tool(name, arguments=args)
+                guard()
                 data = _data(result)
                 for row in data.get('results', []) if name == 'web_search' else ([data] if name == 'read_webpage' else []):
                     url = public_url(row.get('url'))
@@ -177,6 +188,9 @@ class WebAgent:
                 event['status'] = 'ok'
                 returned.append(data)
                 return data
+            except Cancelled:
+                event['status'] = 'cancelled'
+                raise
             except Exception as error:
                 event['error'] = str(error)[:400]
                 return {'error': event['error']}
@@ -184,10 +198,15 @@ class WebAgent:
                 event['seconds'] = round(time.monotonic() - started, 3)
 
         async def synthesize():
+            guard()
             if llm is not None and getattr(llm, 'available', False):
                 try:
                     finish = getattr(llm, 'chat_web', llm.chat)
-                    return await asyncio.to_thread(finish, messages + [{'role': 'system', 'content': '工具调用已结束。只根据已有资料回答；不要再请求工具。'}])
+                    reply = await asyncio.to_thread(finish, messages + [{'role': 'system', 'content': '工具调用已结束。只根据已有资料回答；不要再请求工具。'}])
+                    guard()
+                    return reply
+                except Cancelled:
+                    raise
                 except Exception:
                     pass
             parts = []
@@ -202,11 +221,14 @@ class WebAgent:
                         {'current': data['current'], 'forecast': data.get('forecast', [])}, ensure_ascii=False))
                 if 'reminders' in data or 'reminder' in data or 'status' in data:
                     parts.append(json.dumps(data, ensure_ascii=False))
+            guard()
             return '工具直接返回的资料：\n' + '\n'.join(parts)[:1600]
 
         try:
             async with self.connect() as session:
+                guard()
                 available = {t.name for t in (await session.list_tools()).tools}
+                guard()
                 required = {tool['function']['name'] for tool in TOOLS if tool['function']['name'] in ('web_search', 'read_webpage')}
                 if not required <= available:
                     raise ValueError('MCP服务未提供所需的联网工具。')
@@ -214,6 +236,7 @@ class WebAgent:
                 if forced or llm is None or not getattr(llm, 'available', False):
                     forced = forced or _intent(user_text)
                     if not forced:
+                        guard()
                         return {'reply': '请明确需要搜索什么，或用 /read 提供网页链接。', 'sources': [], 'tool_calls': []}
                     name, args = forced
                     data = await invoke(session, name, args, 'explicit')
@@ -225,9 +248,13 @@ class WebAgent:
                             reply = await synthesize()
                             break
                         try:
+                            guard()
                             turn = await asyncio.to_thread(llm.chat_tools, messages, tools=MODEL_TOOLS)
+                            guard()
                             if not isinstance(turn, dict):
                                 raise ValueError('模型没有返回工具调用结构。')
+                        except Cancelled:
+                            raise
                         except Exception:
                             forced = _intent(user_text) if not trace else None
                             if forced:
@@ -258,9 +285,12 @@ class WebAgent:
                             data = await invoke(session, function.get('name', ''), args, 'model')
                             messages.append({'role': 'tool', 'tool_call_id': tool_call.get('id', ''),
                                              'content': json.dumps(data, ensure_ascii=False)})
+        except Cancelled:
+            raise
         except Exception as error:
             return {'reply': '联网工具服务暂时不可用，请检查 requirements-web.txt 和网络连接。',
                     'sources': [], 'tool_calls': trace, 'web_error': type(error).__name__}
+        guard()
         if trace and not any(event.get('status') == 'ok' for event in trace):
             reply = '这次没有成功获得联网资料，请稍后重试或更换搜索词。'
         if not isinstance(reply, str) or not reply.strip():

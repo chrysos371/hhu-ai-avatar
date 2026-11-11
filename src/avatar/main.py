@@ -639,10 +639,19 @@ class Avatar:
         elif reminder_error:
             reply = reminder_error
         elif use_web:
+            from .tools.web_agent import WebAgent
             if self.web_agent is None:
-                from .tools.web_agent import WebAgent
                 self.web_agent = WebAgent(memory_db_path=self.memory.db_path)
-            web_result = self.web_agent.run(user_text, self.llm if self._llm_available else None)
+            checkpoint_context()
+            run = self.web_agent.run
+            engine = self.llm if self._llm_available else None
+            if getattr(run, '__func__', None) is WebAgent.run:
+                web_result = run(user_text, engine, checkpoint=checkpoint_context)
+            else:
+                # Preserve the two-argument API of injected custom agents. Their
+                # internal continuation policy is outside the built-in loop.
+                web_result = run(user_text, engine)
+            checkpoint_context()
             reply = web_result['reply']
         elif profile_reply is not None:
             reply, grounding_action = profile_reply, lookup_action
