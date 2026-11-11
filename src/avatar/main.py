@@ -804,9 +804,13 @@ class Avatar:
             synthesize = self.tts.synthesize
             options = {}
             cancellable = getattr(self.tts, 'synthesize_cancellable', None)
-            if cancel is not None and callable(cancellable) and _accepts_keyword(cancellable, 'cancel'):
-                synthesize = cancellable
-                options['cancel'] = cancel
+            if callable(cancellable):
+                if cancel is not None and _accepts_keyword(cancellable, 'cancel'):
+                    options['cancel'] = cancel
+                if _accepts_keyword(cancellable, 'checkpoint'):
+                    options['checkpoint'] = checkpoint_context
+                if options:
+                    synthesize = cancellable
             checkpoint_context()
             audio_path = synthesize(reply, tts_path, decision.speech_rate, decision.speech_pitch, **options)
             checkpoint_context()
