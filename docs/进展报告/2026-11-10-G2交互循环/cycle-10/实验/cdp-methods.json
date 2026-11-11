@@ -1,0 +1,68 @@
+{
+  "source": "https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/json/browser_protocol.json",
+  "schemaSha256": "540be04f300c2db056074bf3b04061f270e957b7a8a3263fdc7c216b9214c71a",
+  "scope": "Official schema method definitions only; current installed Chromium support is verified by executed calls, no leak diagnosis implied",
+  "selected": {
+    "Memory": [
+      {
+        "name": "getDOMCounters",
+        "description": "Retruns current DOM object counters.",
+        "returns": [
+          {
+            "name": "documents",
+            "type": "integer"
+          },
+          {
+            "name": "nodes",
+            "type": "integer"
+          },
+          {
+            "name": "jsEventListeners",
+            "type": "integer"
+          }
+        ]
+      }
+    ],
+    "Performance": [
+      {
+        "name": "enable",
+        "description": "Enable collecting and reporting metrics.",
+        "parameters": [
+          {
+            "name": "timeDomain",
+            "description": "Time domain to use for collecting and reporting duration metrics.",
+            "optional": true,
+            "type": "string",
+            "enum": [
+              "timeTicks",
+              "threadTicks"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "getMetrics",
+        "description": "Retrieve current values of run-time metrics.",
+        "returns": [
+          {
+            "name": "metrics",
+            "description": "Current values for run-time metrics.",
+            "type": "array",
+            "items": {
+              "$ref": "Metric"
+            }
+          }
+        ]
+      }
+    ],
+    "HeapProfiler": [
+      {
+        "name": "collectGarbage"
+      }
+    ]
+  },
+  "v8Schema": {
+    "source": "https://raw.githubusercontent.com/ChromeDevTools/devtools-protocol/master/json/js_protocol.json",
+    "schemaSha256": "3716f86e2228f9414ffff43551249bc6a5783388c3fbdba5226f14e6941774f1"
+  }
+}
