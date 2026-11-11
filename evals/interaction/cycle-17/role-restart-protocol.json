@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "scope": "Actual owned OS-process restart and authenticated synchronous V1 HTTP; default rules/LLM disabled, not SSE or model quality",
+  "fixedImplementation": "b139269",
+  "cases": [
+    {
+      "id": "specific_restart",
+      "before": [
+        "接下来我扮演剧中的旅行者。"
+      ],
+      "scope": "fictional_character",
+      "privacy": false,
+      "foreign_exit": false
+    },
+    {
+      "id": "unknown_intent_restart",
+      "before": [
+        "我扮演勇者。"
+      ],
+      "scope": "unverified",
+      "privacy": false,
+      "foreign_exit": false
+    },
+    {
+      "id": "role_source_erased_restart",
+      "before": [
+        "接下来我扮演剧中的旅行者。"
+      ],
+      "scope": "unverified",
+      "privacy": true,
+      "foreign_exit": false
+    },
+    {
+      "id": "foreign_exit_then_erase",
+      "before": [
+        "我现在扮演医生。"
+      ],
+      "scope": "unverified",
+      "privacy": true,
+      "foreign_exit": true
+    },
+    {
+      "id": "quoted_exit_stays_role",
+      "before": [
+        "接下来我扮演剧中的旅行者。",
+        "请把“回到现实”写进角色台词。"
+      ],
+      "scope": "fictional_character",
+      "privacy": false,
+      "foreign_exit": false
+    },
+    {
+      "id": "mixed_exit_no_same_turn_action",
+      "before": [
+        "接下来我扮演剧中的旅行者。",
+        "提醒我明天下午3点去码头。回到现实。"
+      ],
+      "scope": "current_user",
+      "privacy": false,
+      "foreign_exit": false
+    },
+    {
+      "id": "past_actor_real_control",
+      "before": [
+        "我扮演过医生。"
+      ],
+      "scope": "current_user",
+      "privacy": false,
+      "foreign_exit": false
+    }
+  ],
+  "restricted_followups": [
+    "我叫许照。",
+    "提醒我明天下午3点去码头"
+  ],
+  "real_followups": [
+    "我叫许照。",
+    "提醒我明天下午4点去图书馆"
+  ],
+  "recovery": [
+    "回到现实。",
+    "我叫景舟。",
+    "提醒我明天下午4点去图书馆"
+  ],
+  "gates": [
+    "New actual PID/instance and empty generated short-term window",
+    "Specific/unknown/erased/foreign source controls survive restart; restricted profiles/reminders remain empty",
+    "Separate explicit reality confirmation and fresh requests recover real name and exactly1 new reminder; no blocked码头 reminder",
+    "Mixed turn exit blocks old same-turn reminder but allows later independent real request",
+    "Past actor remains real and actually writes name/creates reminder",
+    "Every owned process exits0, parent/worker source SHA stable, no other process touched"
+  ],
+  "wallClockExperimentDeadline": null,
+  "semantic_approved": false
+}
