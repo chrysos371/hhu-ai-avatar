@@ -1,0 +1,51 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test history-audit.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:2406252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2406252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/history-audit.spec.ts:70:1 › audits full chat history input diagnostics playback and navigation resources (5.9s)
+
+
+  1) e2e/history-audit.spec.ts:70:1 › audits full chat history input diagnostics playback and navigation resources 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  getByLabel(/语音播放器$/)
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByLabel(/语音播放器$/)[22m
+    [2m    9 × locator resolved to <audio hidden="" controls="" preload="none" aria-label="小海语音播放器"></audio>[22m
+    [2m      - unexpected value "hidden"[22m
+
+
+      134 |     await page.goto('/chat#' + token);
+      135 |     await expect(page.getByRole('heading', { name: '对话观测', exact: true })).toBeVisible();
+    > 136 |     await expect(page.getByLabel(/语音播放器$/)).toBeVisible();
+          |                                             ^
+      137 |     report.initial = await resources(page, cdp); save();
+      138 |     for (let turn = 1; turn <= 100; turn++) {
+      139 |       await page.getByLabel('消息', { exact: true }).fill(`这是第${turn}次界面负载回合，请继续。`);
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/history-audit.spec.ts:136:45
+
+    Error Context: test-results/history-audit-audits-full--1d587-ck-and-navigation-resources/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/history-audit-audits-full--1d587-ck-and-navigation-resources/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/history-audit-audits-full--1d587-ck-and-navigation-resources/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/history-audit.spec.ts:70:1 › audits full chat history input diagnostics playback and navigation resources 

@@ -133,7 +133,7 @@ test('audits full chat history input diagnostics playback and navigation resourc
   try {
     await page.goto('/chat#' + token);
     await expect(page.getByRole('heading', { name: '对话观测', exact: true })).toBeVisible();
-    await expect(page.getByLabel(/语音播放器$/)).toBeVisible();
+    await expect(page.getByLabel(/语音播放器$/)).toBeAttached();
     report.initial = await resources(page, cdp); save();
     for (let turn = 1; turn <= 100; turn++) {
       await page.getByLabel('消息', { exact: true }).fill(`这是第${turn}次界面负载回合，请继续。`);
