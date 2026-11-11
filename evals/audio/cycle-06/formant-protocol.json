@@ -1,0 +1,20 @@
+{
+  "version":1,
+  "baseline_revision":"45840bd",
+  "scope":"Analytic spectral extraction and exact-output performance; not human/Mandarin phoneme approval",
+  "development_suite":"evals/audio/cycle-05/analytic-formants.json",
+  "development_seed":11,
+  "development_use":"All cycle05 inputs are known regression; do not call them unseen",
+  "arms":[
+    {"id":"legacy","description":"Current LPC and512point spectral minima"},
+    {"id":"roots400","description":"Same LPC; stable positive-imaginary roots, frequency200..4000Hz, bandwidth0..400Hz"},
+    {"id":"dense10","description":"Same LPC; spectral grid with step<=10Hz, at least512points"},
+    {"id":"fallback50","description":"Preserve legacy when>=2 peaks; otherwise stable roots400 only if legacy first peak matches root first within50Hz"}
+  ],
+  "selection":"Prefer fallback50 then roots400 then dense10, only when no per-case vowel regression, no newly wrong assignment of previous unknown frames, fewer missingF2 and no per-route median F1/F2 error regression on known grid. If no arm passes, keep default extractor.",
+  "prospective":{"anchors":[{"id":"a","formants_hz":[780,1330,3050]},{"id":"e","formants_hz":[480,1850,3150]},{"id":"i","formants_hz":[320,2450,3100]},{"id":"o","formants_hz":[520,880,3000]},{"id":"u","formants_hz":[330,760,3150]}],"sample_rates":[22050,44100],"target_rms":[0.04,0.1],"fundamentals_hz":[120,210,280],"bandwidths_hz":[70,110,140],"seed":73,"duration_seconds":0.8,"excitations":["white_noise","harmonic"],"count_per_route":80,"note":"All new configured waveforms, still same synthetic family. Run only after candidate choice is committed; otherwise remain sealed for next candidate."},
+  "performance_candidate":"Bounded immutable cache of frequency grid/exponentials; preserve original summation order and all outputs exactly. No classification/default rate change. Fixed9alternating repeated full-component timing rounds, no global wall-clock cutoff.",
+  "performance_gates":{"exact_outputs":true,"median_speedup_at_least":1.15,"bounded_cache_entries":8,"silence_and_cancellation_unchanged":true},
+  "no_gpu_needed":true,
+  "primary_references":["https://fon.hum.uva.nl/praat/manual/Sound__To_Formant__burg____.html","https://numpy.org/doc/stable/reference/generated/numpy.roots.html","https://numpy.org/doc/stable/reference/generated/numpy.polynomial.polynomial.polyroots.html"]
+}
