@@ -3,6 +3,12 @@
 > 本文件为在此仓库工作的 AI 编码助手（Codex / Claude Code 等）提供项目上下文。
 > 开始任何改动前，请先读完本文件，并阅读 `docs/技术选型与模块重写计划.md`。
 
+## 2026-11-12 第十九轮进行中（优先）
+
+6e7eb8e封第十八轮报告；19计划/进展与evals/interaction/cycle-19/capability-output-protocol.json冻结12开发20回合、12前瞻21回合。先实际4B/14B原生HTTP/SSE、默认候选关，完整原始/可见/最终/入库/实际提醒回执；关注C15-003短信提议，不把提议误报实际发送。普通生成尚无当前能力清单，真实模型工具注册五个读工具，短信/邮件/电话没有当前应用接口，静态调查不当模型失败证明。
+
+采证器evaluate_native_output_audit新增--protocol及固定每轮expected_reminders正反控，默认旧C15仍0；runner开发传该路径；source指纹扩全部avatar py/注册表并记录真实REGISTRY及未知三工具拒绝。py_compile/帮助/24场景输入计数检查通过，接着先4B开发、归档小步提交并清自建GPU，再14B；不跑前瞻直到独立候选冻结。启动按实际余量/UUID选卡、同组最多4且当前只1自建provider，不设实验墙钟截止，保留token/固定回合/必要网络等待。Goal active，作者spinner-bot及指定SSH及时提交推送。
+
 ## 2026-11-12 第十八轮归档（优先）
 
 当前cycle-18/计划.md、进展.md，协议explicit-context-protocol.json。fe0eda3已封17报告（104证据/85源），当前1184/1与默认15/11是17最终快照。18先实测HTTP speaker404、1440/390角色/本人按钮及面板均0，fixture2687895退出0，基线已提交。已实现只读SpeakerContextStore.read与GET /conversation/speaker，同SQLite快照验证scope/revision/user cursor，metadata无原文、不写控制或重放；相关28及快照10项通过。初两测试器错误日志保留，不作产品缺陷。

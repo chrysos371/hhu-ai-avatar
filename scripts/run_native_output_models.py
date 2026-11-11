@@ -45,6 +45,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
              'scripts/serve_local_model_eval.py', 'scripts/evaluate_native_output_audit.py',
              str(Path(__file__).resolve().relative_to(ROOT)),
              'evals/interaction/cycle-15/native-output-protocol.json']
+    if stage == 'development' and protocol is not None:
+        paths.append(str(protocol.resolve().relative_to(ROOT)))
     if stage == 'prospective':
         paths += ['src/avatar/lab/body_review.py', 'src/avatar/lab/body_review_avatar.py',
                   'src/avatar/brain/tasks.py', 'scripts/evaluate_body_review_pair.py',
@@ -104,6 +106,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                         sampler = 'evaluate_body_review_pair.py' if stage == 'prospective' else 'evaluate_native_output_audit.py'
                         sampler_command = [sys.executable, str(ROOT/'scripts'/sampler),
                             '--provider', str(ready), '--output', str(folder/'sample')]
+                        if stage == 'development' and protocol is not None:
+                            sampler_command += ['--protocol', str(protocol)]
                         if stage == 'prospective':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze), '--candidate', candidate]
                             if protocol is not None: sampler_command += ['--protocol', str(protocol)]

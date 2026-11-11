@@ -23,12 +23,13 @@ ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT/'evals/interaction/cycle-15/native-output-protocol.json'
 
 
-def fingerprint():
+def fingerprint(protocol_path=PROTOCOL):
     paths = ['src/avatar/main.py', 'src/avatar/web.py', 'src/avatar/web_api.py',
              'src/avatar/brain/llm.py', 'src/avatar/brain/memory.py', 'src/avatar/brain/boundaries.py',
              'src/avatar/brain/speaker_scope.py', 'src/avatar/brain/speaker_context.py',
              'scripts/serve_local_model_eval.py', str(Path(__file__).resolve().relative_to(ROOT)),
-             str(PROTOCOL.relative_to(ROOT))]
+             str(protocol_path.relative_to(ROOT)), 'evals/interaction/cycle-02/model-scale-protocol.json']
+    paths += [str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')]
     return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
 
 
@@ -50,9 +51,19 @@ def events(response, started):
     raise ValueError('SSE ended without terminal result')
 
 
-def evaluate(provider_path, output):
+def evaluate(provider_path, output, protocol_path=PROTOCOL):
     output.mkdir(parents=True, exist_ok=False)
-    protocol = json.loads(PROTOCOL.read_text()); provider = json.loads(provider_path.read_text())
+    protocol = json.loads(protocol_path.read_text()); provider = json.loads(provider_path.read_text())
+    cases = [c for c in protocol['cases'] if c['partition'] == 'development']
+    if not cases or len({c['id'] for c in cases}) != len(cases):
+        raise ValueError('Development scenarios must be nonempty and uniquely identified')
+    for case in cases:
+        turns = case['turns']
+        counts = case.get('expected_reminders', [protocol.get('default_expected_reminders', 0)]*len(turns))
+        if (not turns or any(not isinstance(text, str) or not 1 <= len(text) <= 4000 for text in turns)
+                or not isinstance(counts, list) or len(counts) != len(turns)
+                or any(type(count) is not int or count < 0 for count in counts)):
+            raise ValueError('Invalid fixed turns or reminder controls: '+case['id'])
     registry = json.loads((ROOT/protocol['models_registry']).read_text())
     model = next(m for m in registry['models'] if m['model_id'] == provider['model_id'])
     address = urlsplit(provider['url'])
@@ -66,7 +77,8 @@ def evaluate(provider_path, output):
     report = {'scope': protocol['scope'], 'partition': 'development', 'stage': 'A_current_defaults',
               'createdUtc': datetime.now(timezone.utc).isoformat(),
               'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-              'sourceSha256': fingerprint(), 'provider': provider, 'warmups': [], 'cases': [],
+              'sourceSha256': fingerprint(protocol_path), 'provider': provider, 'warmups': [], 'cases': [],
+              'protocol': str(protocol_path.relative_to(ROOT)),
               'execution_complete': False, 'engineering_passed': False, 'failure': None,
               'semantic_approved': False, 'production_activation_approved': False}
     started = time.perf_counter()
@@ -78,6 +90,15 @@ def evaluate(provider_path, output):
     save()
     opener = build_opener(ProxyHandler({}))
     try:
+        from avatar.tools.web_agent import REGISTRY
+        rejected_tools = {}
+        for name in ('send_sms', 'send_email', 'place_call'):
+            try: REGISTRY.validate(name, {})
+            except ValueError as error: rejected_tools[name] = str(error)
+            else: raise RuntimeError('Capability inventory changed; re-freeze this protocol: '+name)
+        report['capability_inventory'] = {'model_tools': REGISTRY.schemas, 'rejected_unknown_tools': rejected_tools,
+            'scope': 'Actual current model registry validation only; deterministic local reminder paths assessed separately by DB controls'}
+        save()
         engine = LLMEngine(base_url=provider['url'], api_key='local-eval-only', model=provider['model_id'], timeout=180)
         try:
             for streaming in [False, True]:
@@ -85,9 +106,8 @@ def evaluate(provider_path, output):
                 reply = engine.stream_chat(messages, temperature=0, max_tokens=16) if streaming else engine.chat(messages, temperature=0, max_tokens=16)
                 report['warmups'].append({'streaming': streaming, 'reply': reply, 'seconds': time.perf_counter()-tick}); save()
         finally: engine.close()
-        cases = [c for c in protocol['cases'] if c['partition'] == 'development']
         for case in cases:
-            if fingerprint() != report['sourceSha256']: raise RuntimeError('Source changed during native experiment')
+            if fingerprint(protocol_path) != report['sourceSha256']: raise RuntimeError('Source changed during native experiment')
             row = {'id': case['id'], 'frame': case['frame'], 'turns': [], 'completed': False, 'error': None}
             report['cases'].append(row); save()
             with tempfile.TemporaryDirectory(prefix='native-output-audit-', dir=ROOT.parent/'runtime/tmp') as folder:
@@ -101,7 +121,7 @@ def evaluate(provider_path, output):
                                       headers={'X-Avatar-Token': server.token, 'Content-Type': 'application/json'})
                     with opener.open(request, timeout=180) as response: return json.load(response)['data']
                 try:
-                    for text in case['turns']:
+                    for index, text in enumerate(case['turns']):
                         tick = time.perf_counter(); identifier = 'native_output_'+uuid.uuid4().hex
                         accepted = query('/turns', {'request_id': identifier, 'text': text, 'use_web': False})
                         request = Request(base+'/turns/'+accepted['job_id']+'/events', headers={'X-Avatar-Token': server.token})
@@ -121,18 +141,24 @@ def evaluate(provider_path, output):
                         with closing(MemoryStore(path)) as memory:
                             turn['current_profile'] = memory.get_user_profile()
                             turn['reminders'] = [dict(r) for r in memory._conn.execute('SELECT * FROM memory_reminders')]
-                        if turn['reminders']: raise RuntimeError('Unexpected real reminder')
+                        expected = case.get('expected_reminders',
+                            [protocol.get('default_expected_reminders', 0)]*len(case['turns']))[index]
+                        turn['expected_reminder_count'] = expected
+                        if len(turn['reminders']) != expected:
+                            raise RuntimeError('Actual reminder count differs from fixed control')
+                        if result.get('tool_calls'):
+                            raise RuntimeError('Unexpected tool call in use_web=false native protocol')
                         save()
                     row['completed'] = True
                 except Exception as error:
                     row['error'] = repr(error); raise
                 finally:
                     server.shutdown(); thread.join(); server.server_close(); save()
-            if fingerprint() != report['sourceSha256']: raise RuntimeError('Source changed after scenario')
+            if fingerprint(protocol_path) != report['sourceSha256']: raise RuntimeError('Source changed after scenario')
             print(case['id'], 'completed', len(row['turns']), flush=True)
         report['generation_modes'] = dict(Counter(t['result'].get('generation_mode') for r in report['cases'] for t in r['turns']))
         report['analysis_modes'] = dict(Counter(t['result'].get('analysis_mode') for r in report['cases'] for t in r['turns']))
-        report['execution_complete'] = len(report['cases']) == 12 and all(c['completed'] for c in report['cases'])
+        report['execution_complete'] = len(report['cases']) == len(cases) and all(c['completed'] for c in report['cases'])
         report['engineering_passed'] = report['execution_complete']
     except Exception as error:
         report['failure'] = repr(error)
@@ -143,6 +169,7 @@ def evaluate(provider_path, output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--provider', type=Path, required=True)
+    parser.add_argument('--protocol', type=Path, help='Explicit frozen protocol; default preserves cycle-15 development scenarios')
     parser.add_argument('--output', type=Path, required=True); options = parser.parse_args()
-    result = evaluate(options.provider, options.output.resolve())
+    result = evaluate(options.provider, options.output.resolve(), options.protocol.resolve() if options.protocol else PROTOCOL)
     if not result['engineering_passed']: raise SystemExit(1)
