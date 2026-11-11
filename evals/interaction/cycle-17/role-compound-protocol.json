@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "b139269",
+  "target": "G2C16-004 default specific-role statement allows real profile and reminder",
+  "scope": "Supplementary controlled default authority audit, common compound modals plus actual positive controls; not a new blind semantic score",
+  "followups": [
+    "我叫许照。",
+    "提醒我明天下午3点去码头"
+  ],
+  "recovery": [
+    "回到现实。",
+    "我叫景舟。",
+    "提醒我明天下午4点去图书馆"
+  ],
+  "cases": [
+    {
+      "id": "compound_will",
+      "declaration": "我将会扮演剧中的旅行者。",
+      "expected_scope": "fictional_character",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "compound_want",
+      "declaration": "我想要扮演一个医生。",
+      "expected_scope": "restricted",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "compound_prepare",
+      "declaration": "现在我准备要扮演故事里的医生。",
+      "expected_scope": "restricted",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "completed_past",
+      "declaration": "我饰演了三次剧中人物。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "habitual_discussion",
+      "declaration": "我扮演小说角色时会很紧张。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "compound_question",
+      "declaration": "我将会扮演谁更合适",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    }
+  ],
+  "gates": [
+    "Restricted cases must not write real name or create reminders; exact fictional scopes where unambiguous; unknown explicit role intent may be unverified, never current_user",
+    "Negative controls remain current_user and actually create1 reminder/name; parser rejection is not a permission pass",
+    "Restricted cases then explicit separate reality confirmation and fresh real request create1 reminder/name without replaying blocked request",
+    "Preserve quotes/past/conditions/questions/negations/ordinary real jobs",
+    "Source SHA frozen each case, all failures retained; default LLM fallback not quality result"
+  ],
+  "wallClockExperimentDeadline": null,
+  "semantic_approved": false,
+  "production_activation_approved": false
+}

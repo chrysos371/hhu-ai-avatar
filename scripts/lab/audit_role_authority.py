@@ -69,14 +69,15 @@ def audit(output):
         (output/'role-authority.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
     save()
     try:
-        for case in json.loads(PROTOCOL.read_text())['cases']:
+        cases = json.loads(PROTOCOL.read_text())['cases']
+        for case in cases:
             assert fingerprint() == report['sourceSha256']
             with tempfile.TemporaryDirectory(prefix='role-authority-', dir=ROOT.parent/'runtime/tmp') as folder:
                 row = evaluate_case(Path(folder)/'owned.db', case)
             report['cases'].append(row); save()
             assert fingerprint() == report['sourceSha256']
             print(row['id'], row['passed'], row['failure'], flush=True)
-        report['completed'] = len(report['cases']) == 20 and all(c['failure'] is None for c in report['cases'])
+        report['completed'] = len(report['cases']) == len(cases) and all(c['failure'] is None for c in report['cases'])
         report['allPassed'] = report['completed'] and all(c['passed'] for c in report['cases'])
     finally:
         config.llm.api_key = original_key; config.embedding.model = original_embedding; save()
@@ -85,5 +86,7 @@ def audit(output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--output', type=Path, required=True)
-    result = audit(parser.parse_args().output.resolve())
+    parser.add_argument('--protocol', type=Path, default=PROTOCOL)
+    options = parser.parse_args(); PROTOCOL = options.protocol.resolve()
+    result = audit(options.output.resolve())
     if not result['completed']: raise SystemExit(1)
