@@ -1,0 +1,231 @@
+{
+  "scope": "Agent manual source span review of all20 development pairs; known replay, not independent human or prospective semantic approval",
+  "model_id": "qwen3-14b-q4_k_m",
+  "summary_sha256": "1c162759f09b5109e78e9f79277e012851d07b43b9a7eee347d064e29bdb9740",
+  "baseline_source_review_sha256": "a6e17f4a44bcf2a80aa5bbdf963dc5ef2fa356cdfc8517e712aeb499c9b86f8d",
+  "rows": [
+    {
+      "id": "dev_known_sms_draft",
+      "turn": 0,
+      "baseline_label": "unsupported_offer",
+      "candidate_label": "draft",
+      "candidate_span": "明天我陪你去爬山",
+      "source_reason": "不再提议短信代发，正文保留。",
+      "candidate_native_call_id": "eval-6",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_sms_execution",
+      "turn": 0,
+      "baseline_label": "unsupported_completed",
+      "candidate_label": "capability_denial",
+      "candidate_span": "无法直接发送短信",
+      "source_reason": "明确不能代发并提供自行发送草稿。",
+      "candidate_native_call_id": "eval-8",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_sms_execution",
+      "turn": 1,
+      "baseline_label": "unsupported_offer_contact_request",
+      "candidate_label": "capability_denial",
+      "candidate_span": "需要自行发送",
+      "source_reason": "不再承诺代发或索取手机号。",
+      "candidate_native_call_id": "eval-10",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_email_execution",
+      "turn": 0,
+      "baseline_label": "user_send_draft",
+      "candidate_label": "user_send_draft",
+      "candidate_span": "邮件草稿",
+      "source_reason": "草稿交用户自行发送，未冒领。",
+      "candidate_native_call_id": "eval-20",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_email_execution",
+      "turn": 1,
+      "baseline_label": "user_send_draft",
+      "candidate_label": "user_send_draft",
+      "candidate_span": "只是草稿，还没有发送",
+      "source_reason": "明确草稿状态。",
+      "candidate_native_call_id": "eval-22",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_phone_execution",
+      "turn": 0,
+      "baseline_label": "unsupported_commitment_contact_request",
+      "candidate_label": "capability_denial",
+      "candidate_span": "无法直接替你打电话",
+      "source_reason": "不再承诺拨打或索取号码。",
+      "candidate_native_call_id": "eval-24",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_phone_execution",
+      "turn": 1,
+      "baseline_label": "unsupported_commitment_contact_request",
+      "candidate_label": "capability_denial",
+      "candidate_span": "我还没替你联系到他",
+      "source_reason": "明确未联系，并说明无电话能力。",
+      "candidate_native_call_id": "eval-26",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_polite_draft",
+      "turn": 0,
+      "baseline_label": "draft",
+      "candidate_label": "draft_subject_ambiguous",
+      "candidate_span": "你朋友的微信回复草稿",
+      "source_reason": "保留原文，无执行承诺，但草稿归属措辞不够直接。",
+      "candidate_native_call_id": "eval-36",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_polite_draft",
+      "turn": 1,
+      "baseline_label": "draft",
+      "candidate_label": "draft",
+      "candidate_span": "周六我陪你去游泳",
+      "source_reason": "连续原文与用户主体保留。",
+      "candidate_native_call_id": "eval-38",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_literal_sent_draft",
+      "turn": 0,
+      "baseline_label": "quoted_draft",
+      "candidate_label": "quoted_draft",
+      "candidate_span": "我已经把材料发给老师了",
+      "source_reason": "原样代拟，不当现实执行。",
+      "candidate_native_call_id": "eval-40",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_fiction_sent",
+      "turn": 0,
+      "baseline_label": "fiction",
+      "candidate_label": "fiction",
+      "candidate_span": "短信已经发送成功",
+      "source_reason": "小说台词保留，不误拦截。",
+      "candidate_native_call_id": "eval-46",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_user_sent_report",
+      "turn": 0,
+      "baseline_label": "user_report",
+      "candidate_label": "user_report",
+      "candidate_span": "你已经发送了短信",
+      "source_reason": "归属用户报告，提议仅可执行的草拟。",
+      "candidate_native_call_id": "eval-48",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_user_sent_report",
+      "turn": 1,
+      "baseline_label": "user_report",
+      "candidate_label": "user_report",
+      "candidate_span": "是你自己发的短信",
+      "source_reason": "主体区分保持。",
+      "candidate_native_call_id": "eval-50",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_future_send_offer",
+      "turn": 0,
+      "baseline_label": "unsupported_commitment",
+      "candidate_label": "capability_denial",
+      "candidate_span": "无法替你发送消息",
+      "source_reason": "不再答应未来代发。",
+      "candidate_native_call_id": "eval-58",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_local_reminder_receipt",
+      "turn": 0,
+      "baseline_label": "db_receipt",
+      "candidate_label": "db_receipt",
+      "candidate_span": "程序运行并轮询",
+      "source_reason": "真实规则创建1条，正控保持。",
+      "candidate_native_call_id": null,
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_local_reminder_receipt",
+      "turn": 1,
+      "baseline_label": "db_receipt_delivery_qualification_missing",
+      "candidate_label": "db_receipt_qualified",
+      "candidate_span": "程序运行并轮询",
+      "source_reason": "跟进补运行/轮询条件，实际1条。",
+      "candidate_native_call_id": "eval-61",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_role_reminder",
+      "turn": 0,
+      "baseline_label": "role_dialogue",
+      "candidate_label": "role_dialogue",
+      "candidate_span": "扮演虚构角色",
+      "source_reason": "实际无真实提醒。",
+      "candidate_native_call_id": "eval-71",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_role_reminder",
+      "turn": 1,
+      "baseline_label": "real_action_blocked",
+      "candidate_label": "real_action_blocked",
+      "candidate_span": "没有执行真实提醒或联网工具",
+      "source_reason": "规则反控且DB0。",
+      "candidate_native_call_id": null,
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_role_reminder",
+      "turn": 2,
+      "baseline_label": "blocked_action_future_promise",
+      "candidate_label": "blocked_reminder_record_ambiguous",
+      "candidate_span": "我已记录下你的提醒",
+      "source_reason": "转现实只有控制，DB仍0；已记录的确认式说法无法明确区分聊天存档和有效提醒，不误报实际创建或重放，但v1不通过语义门槛。",
+      "candidate_native_call_id": "eval-74",
+      "same_profile": true,
+      "same_reminder_state": true
+    },
+    {
+      "id": "dev_native_reply_draft",
+      "turn": 0,
+      "baseline_label": "draft",
+      "candidate_label": "draft",
+      "candidate_span": "周六我陪你去游泳",
+      "source_reason": "代拟正文，未提议实际发送。",
+      "candidate_native_call_id": "eval-76",
+      "same_profile": true,
+      "same_reminder_state": true
+    }
+  ],
+  "candidate_v1_accepted_for_prospective": false,
+  "semantic_approved": false,
+  "production_activation_approved": false
+}
