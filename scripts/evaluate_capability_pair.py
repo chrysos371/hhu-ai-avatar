@@ -4,6 +4,7 @@ from collections import Counter
 from contextlib import closing
 from datetime import datetime, timezone
 from hashlib import sha256
+from functools import partial
 import json
 from pathlib import Path
 import subprocess
@@ -79,14 +80,19 @@ def validate_source_metadata(native, result):
     return data
 
 
-def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE):
+def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE, request_timeout=180,
+                engine_timeout=None):
     candidate = arm == CANDIDATE_ARM
     row = {'id': case['id'], 'frame': case['frame'], 'arm': arm, 'turns': [], 'completed': False, 'error': None}
     original = main_module.Avatar
+    original_engine = main_module.LLMEngine
     with tempfile.TemporaryDirectory(prefix='capability-pair-', dir=ROOT.parent/'runtime/tmp') as folder:
         path = str(Path(folder)/'owned.db'); server = None; thread = None
         try:
             if candidate: main_module.Avatar = CANDIDATES[candidate_id]
+            if engine_timeout is not None:
+                # Real SDK and transport, explicit research waiting budget only.
+                main_module.LLMEngine = partial(LLMEngine, timeout=engine_timeout)
             server = create_server(path, port=0, legacy_writes=False, identity_grounding=False,
                 profile_grounding=False, task_delivery_check=False, literal_composition=False)
             thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
@@ -94,12 +100,12 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE):
             def query(route, payload=None):
                 req = Request(base+route, data=None if payload is None else json.dumps(payload, ensure_ascii=False).encode(),
                     headers={'X-Avatar-Token': server.token, 'Content-Type': 'application/json'})
-                with opener.open(req, timeout=180) as response: return json.load(response)['data']
+                with opener.open(req, timeout=request_timeout) as response: return json.load(response)['data']
             for index, text in enumerate(case['turns']):
                 offset = trace.stat().st_size; started = time.perf_counter()
                 job = query('/turns', {'request_id': 'capability_pair_'+uuid.uuid4().hex, 'text': text, 'use_web': False})
                 req = Request(base+'/turns/'+job['job_id']+'/events', headers={'X-Avatar-Token': server.token})
-                with opener.open(req, timeout=180) as response: kind, result, received, raw = events(response, started)
+                with opener.open(req, timeout=request_timeout) as response: kind, result, received, raw = events(response, started)
                 turn = {'input': text, 'terminal': kind, 'result': result, 'events': received, 'raw_sse': raw,
                     'visible': ''.join(event['data']['text'] for event in received if event['event'] == 'text'),
                     'seconds': time.perf_counter()-started, 'native_provider': None}
@@ -137,7 +143,25 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE):
             if thread: thread.join()
             if server: server.server_close()
             main_module.Avatar = original
+            main_module.LLMEngine = original_engine
     return row
+
+
+def execution_settings(protocol, provider):
+    backend = protocol.get('provider_backend', 'cuda')
+    if backend not in ('cuda', 'cpu_explicit') or provider.get('backend', 'cuda') != backend:
+        raise ValueError('Provider backend differs from the frozen explicit protocol')
+    if backend == 'cpu_explicit':
+        configuration = provider.get('configuration', {})
+        if (provider.get('chosen_gpu') is not None or provider.get('process_gpu_mib_after_load') != []
+                or provider.get('effective_visible_devices') != '-1'
+                or provider.get('cpu_resources', {}).get('n_threads') != 4
+                or configuration.get('n_gpu_layers') != 0 or configuration.get('n_threads') != 4
+                or configuration.get('n_threads_batch') != 4 or configuration.get('offload_kqv') is not False
+                or protocol.get('request_timeout_seconds') != 900):
+            raise ValueError('Explicit CPU resource/transport proof missing')
+        return backend, 900, 900
+    return backend, 180, None
 
 
 def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partition, output,
@@ -154,6 +178,7 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
             or provider['model_sha256'] != model['sha256'] or provider['model_revision'] != model['revision']):
         raise ValueError('Only pinned loopback models permitted')
     assert all(provider['configuration'][key] == value for key, value in protocol['inference'].items())
+    backend, request_timeout, engine_timeout = execution_settings(protocol, provider)
     cases = [case for case in protocol['cases'] if case['partition'] == partition]
     assert [case['id'] for case in cases] == pair['case_order'][partition]
     assert pair['candidate'] == candidate and set(pair['arm_orders']['even']) == set(pair['arm_orders']['odd']) == {BASELINE, CANDIDATE_ARM}
@@ -161,6 +186,8 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
     config.llm.base_url = provider['url']; config.llm.api_key = 'local-eval-only'; config.llm.model = provider['model_id']
     config.embedding.model = ''
     report = {'candidate': candidate, 'partition': partition, 'provider': provider, 'warmups': [], 'cases': [],
+        'provider_backend': backend, 'http_timeout_seconds': request_timeout,
+        'application_transport_timeout_seconds': engine_timeout if engine_timeout is not None else 30,
         'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': frozen['sha256'],
         'candidateFreezeSha256': sha256(freeze_path.read_bytes()).hexdigest(),
         'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -173,7 +200,7 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
         (output/'paired-output.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
     save(); opener = build_opener(ProxyHandler({}))
     try:
-        engine = LLMEngine(base_url=provider['url'], api_key='local-eval-only', model=provider['model_id'], timeout=180)
+        engine = LLMEngine(base_url=provider['url'], api_key='local-eval-only', model=provider['model_id'], timeout=request_timeout)
         try:
             for streaming in (False, True):
                 messages = [{'role': 'user', 'content': '请回答：你好。'}]
@@ -183,7 +210,8 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
         for index, case in enumerate(cases):
             for arm in pair['arm_orders']['even' if index % 2 == 0 else 'odd']:
                 verify_freeze(freeze_path, partition, candidate)
-                row = collect_arm(case, arm, opener, trace, candidate); report['cases'].append(row); save()
+                row = collect_arm(case, arm, opener, trace, candidate, request_timeout, engine_timeout)
+                report['cases'].append(row); save()
                 if not row['completed']: raise ValueError(row['error'])
                 print(case['id'], arm, len(row['turns']), flush=True)
         verify_freeze(freeze_path, partition, candidate)

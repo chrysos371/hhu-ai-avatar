@@ -27,10 +27,14 @@ def has_pid(raw, pid):
 
 
 def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None,
-         protocol=None, pair_protocol=None, candidate='v1', partition='development'):
+         protocol=None, pair_protocol=None, candidate='v1', partition='development', backend='cuda'):
+    if backend not in ('cuda', 'cpu_explicit') or backend != 'cuda' and stage != 'capability_pair':
+        raise ValueError('Explicit CPU requires separately registered capability pairs')
     if stage == 'capability_pair':
         if candidate_freeze is None or protocol is None or pair_protocol is None:
             raise ValueError('Capability pairs require source freeze and both explicit protocols')
+        if json.loads(protocol.read_text()).get('provider_backend', 'cuda') != backend:
+            raise ValueError('Selected backend differs from explicit frozen protocol')
         from evaluate_capability_pair import verify_freeze
         if candidate not in ('v1', 'source_capability_v2'):
             raise ValueError('Select v1 or source_capability_v2 for capability pairs')
@@ -79,10 +83,10 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     if not specifications: raise ValueError('Unknown model key: '+str(model_key))
     report = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': fingerprint(),
-              'stage': stage, 'candidate': candidate, 'requested_models': [m['model_id'] for m in specifications],
+              'stage': stage, 'candidate': candidate, 'backend': backend, 'requested_models': [m['model_id'] for m in specifications],
               'candidateFreezeSha256': sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None,
               'models': [], 'completed': False, 'failure': None,
-              'scope': 'Sequential pinned real CUDA providers; no other process terminated; one provider at a time'}
+              'scope': 'Sequential pinned explicitly selected providers; no other process terminated; one provider at a time'}
     def save():
         (output/'lifecycle.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
     save()
@@ -101,7 +105,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             model_path = ROOT/'models'/key.replace('-q4_k_m', '-gguf')/specification['file']
             ready, trace = folder/'provider-ready.json', folder/'provider-trace.jsonl'
             command = [str(provider_python), str(ROOT/'scripts/serve_local_model_eval.py'), '--model', str(model_path),
-                       '--model-key', key, '--metadata', str(metadata_paths[key]), '--ready', str(ready), '--trace', str(trace)]
+                       '--model-key', key, '--metadata', str(metadata_paths[key]), '--ready', str(ready), '--trace', str(trace),
+                       '--backend', backend]
             row = {'model_id': key, 'provider_command': command, 'provider_pid': None,
                    'gpu_before': gpu_snapshot(), 'processes_before': gpu_processes(),
                    'provider_ready': None, 'sampler_exit': None, 'provider_exit': None, 'cleanup_passed': False}
@@ -119,7 +124,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                         time.sleep(.1)
                     assert metadata['pid'] == process.pid
                     row['provider_ready'] = metadata; save()
-                    print(key, 'ready GPU', metadata['chosen_gpu']['index'], 'pid', process.pid, flush=True)
+                    print(key, 'ready backend', backend, 'GPU', metadata['chosen_gpu']['index'] if metadata['chosen_gpu'] else None,
+                          'pid', process.pid, flush=True)
                     with (folder/'sampler.log').open('x') as sampler_log:
                         sampler = ('evaluate_capability_pair.py' if stage == 'capability_pair' else
                             'evaluate_body_review_pair.py' if stage == 'prospective' else 'evaluate_native_output_audit.py')
@@ -173,9 +179,10 @@ if __name__ == '__main__':
     parser.add_argument('--protocol', type=Path)
     parser.add_argument('--pair-protocol', type=Path)
     parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2'], default='v1')
+    parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
     options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.
     # Make it absolute while preserving the requested venv entry point.
     main(options.output.resolve(), options.provider_python.expanduser().absolute(),
          options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate,
-         options.partition)
+         options.partition, options.backend)

@@ -1,10 +1,11 @@
 """Loopback-only serial evaluation provider; not a production server.
-Run in the isolated llama-cpp-python CUDA environment. No runtime model swap.
+Run in the isolated llama-cpp-python environment. CPU requires explicit selection.
 """
 import argparse
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -25,6 +26,17 @@ def sha(path):
     return digest.hexdigest()
 
 
+def validate_cpu_headroom(evidence, required_free_mib):
+    affinity = evidence['affinity']; memory = evidence['memory_available_mib']; load = evidence['load_average']
+    if (not isinstance(affinity, list) or len(affinity) < 4 or len(set(affinity)) != len(affinity)
+            or any(type(index) is not int or index < 0 for index in affinity)
+            or type(memory) is not int or memory < required_free_mib
+            or len(load) != 3 or any(not math.isfinite(value) or value < 0 for value in load)
+            or load[0] > len(affinity)-4):
+        raise RuntimeError('Insufficient measured CPU/memory headroom for explicit four-thread inference')
+    return {**evidence, 'n_threads': 4, 'required_free_mib': required_free_mib}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=Path, required=True)
@@ -32,6 +44,7 @@ def main():
     parser.add_argument('--metadata', type=Path, required=True)
     parser.add_argument('--ready', type=Path, required=True)
     parser.add_argument('--trace', type=Path, required=True)
+    parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
     args = parser.parse_args()
     if args.ready.exists() or args.trace.exists():
         raise ValueError('Use new evidence paths')
@@ -52,16 +65,29 @@ def main():
         index, uid, free, utilization = (part.strip() for part in line.split(','))
         inventory.append({'index':int(index),'uuid':uid,'free_mib':int(free),'utilization_percent':int(utilization)})
     requested_mask = os.environ.get('CUDA_VISIBLE_DEVICES')
-    chosen = select_available_gpu(inventory,required_free_mib=specification['required_free_mib'],visible_mask=requested_mask)
-    os.environ['CUDA_VISIBLE_DEVICES'] = chosen['uuid']
+    cpu_resources = None
+    if args.backend == 'cuda':
+        chosen = select_available_gpu(inventory,required_free_mib=specification['required_free_mib'],visible_mask=requested_mask)
+        os.environ['CUDA_VISIBLE_DEVICES'] = chosen['uuid']
+    else:
+        memory = Path('/proc/meminfo').read_text().splitlines()
+        available = int(next(line.split()[1] for line in memory if line.startswith('MemAvailable:')))//1024
+        cpu_resources = validate_cpu_headroom({'affinity': sorted(os.sched_getaffinity(0)),
+            'memory_available_mib': available, 'load_average': list(os.getloadavg())},
+            max(24576, specification['required_free_mib']))
+        chosen = None
+        os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     from llama_cpp import Llama, LlamaGrammar, llama_supports_gpu_offload
     from jinja2 import Environment, StrictUndefined
     from importlib.metadata import version
-    if not llama_supports_gpu_offload():
+    if args.backend == 'cuda' and not llama_supports_gpu_offload():
         raise RuntimeError('GPU offload unavailable; refusing silent CPU fallback')
     start = time.monotonic()
-    model = Llama(model_path=str(args.model),n_gpu_layers=-1,n_ctx=8192,n_batch=256,
-        n_threads=4,seed=42,flash_attn=True,verbose=True)
+    model_options = dict(model_path=str(args.model), n_gpu_layers=-1 if args.backend == 'cuda' else 0,
+        n_ctx=8192, n_batch=256, n_threads=4, seed=42, flash_attn=True, verbose=True)
+    if args.backend == 'cpu_explicit':
+        model_options.update(offload_kqv=False, n_threads_batch=4)
+    model = Llama(**model_options)
     load_seconds = time.monotonic()-start
     allocated = []
     raw_processes = subprocess.check_output(['nvidia-smi','--query-compute-apps=pid,used_memory',
@@ -70,8 +96,10 @@ def main():
         pid, used = (part.strip() for part in line.split(','))
         if int(pid) == os.getpid():
             allocated.append(int(used))
-    if not allocated or max(allocated) < 1024:
+    if args.backend == 'cuda' and (not allocated or max(allocated) < 1024):
         raise RuntimeError('No substantial model allocation on GPU; refusing unverified offload')
+    if args.backend == 'cpu_explicit' and allocated:
+        raise RuntimeError('Explicit CPU provider unexpectedly allocated GPU memory')
 
     # Use the official template embedded in the hash-verified GGUF, with explicit thinking=False.
     template_text = model.metadata['tokenizer.chat_template']
@@ -160,9 +188,13 @@ def main():
         'registry_sha256':sha('evals/interaction/cycle-02/model-scale-protocol.json'),
         'gguf_general_name':model.metadata.get('general.name'),
         'template_sha256':hashlib.sha256(template_text.encode()).hexdigest(),
+        'backend':args.backend, 'cpu_resources':cpu_resources,
         'gpu_snapshot_before':snapshot,'chosen_gpu':chosen,'requested_visible_devices':requested_mask,
+        'effective_visible_devices':os.environ['CUDA_VISIBLE_DEVICES'],
         'resource_selector_sha256':sha('src/avatar/gpu_resources.py'),
-        'configuration':{'n_gpu_layers':-1,'n_ctx':8192,'n_batch_prompt_tokens':256,'concurrent_sequences':1,
+        'configuration':{'n_gpu_layers':model_options['n_gpu_layers'],'n_threads':4,
+            **({'offload_kqv':False, 'n_threads_batch':4} if args.backend == 'cpu_explicit' else {}),
+            'n_ctx':8192,'n_batch_prompt_tokens':256,'concurrent_sequences':1,
             'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'flash_attention':True},
         'llama_cpp_python':version('llama-cpp-python'),'load_seconds':load_seconds,
         'provider_source_sha256':sha(__file__),'process_gpu_mib_after_load':allocated,
