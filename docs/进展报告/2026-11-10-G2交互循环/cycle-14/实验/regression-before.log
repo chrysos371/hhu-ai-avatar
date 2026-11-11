@@ -1,0 +1,76 @@
+..FFF..F.                                                                [100%]
+=================================== FAILURES ===================================
+_ test_mixed_writer_privacy_preserves_authority_provenance[cli_role_erase_name] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-185/test_mixed_writer_privacy_pres2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcf8695b0a0>
+case = {'id': 'cli_role_erase_name', 'writer': 'avatar', 'foreign': '我来扮演小说角色。', 'erase': 'after', ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda case: case['id'])
+    def test_mixed_writer_privacy_preserves_authority_provenance(tmp_path, monkeypatch, case):
+        monkeypatch.setattr(config.llm, 'api_key', '')
+        monkeypatch.setattr(config.embedding, 'model', '')
+        row = AUDIT.evaluate_case(tmp_path/'owned.db', case)
+        assert row['failure'] is None
+>       assert row['passed'], row['checks']
+E       AssertionError: {'profile': False, 'scope': False, 'reminders': True}
+E       assert False
+
+tests/test_mixed_writer_authority.py:22: AssertionError
+_ test_mixed_writer_privacy_preserves_authority_provenance[cli_role_erase_reminder] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-185/test_mixed_writer_privacy_pres3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcf867e3ca0>
+case = {'id': 'cli_role_erase_reminder', 'writer': 'avatar', 'foreign': '我来扮演小说角色。', 'erase': 'after', ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda case: case['id'])
+    def test_mixed_writer_privacy_preserves_authority_provenance(tmp_path, monkeypatch, case):
+        monkeypatch.setattr(config.llm, 'api_key', '')
+        monkeypatch.setattr(config.embedding, 'model', '')
+        row = AUDIT.evaluate_case(tmp_path/'owned.db', case)
+        assert row['failure'] is None
+>       assert row['passed'], row['checks']
+E       AssertionError: {'profile': True, 'scope': False, 'reminders': False}
+E       assert False
+
+tests/test_mixed_writer_authority.py:22: AssertionError
+_ test_mixed_writer_privacy_preserves_authority_provenance[direct_user_erase_name] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-185/test_mixed_writer_privacy_pres4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcf867e2860>
+case = {'id': 'direct_user_erase_name', 'writer': 'user', 'foreign': '我来扮演小说角色。', 'erase': 'after', ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda case: case['id'])
+    def test_mixed_writer_privacy_preserves_authority_provenance(tmp_path, monkeypatch, case):
+        monkeypatch.setattr(config.llm, 'api_key', '')
+        monkeypatch.setattr(config.embedding, 'model', '')
+        row = AUDIT.evaluate_case(tmp_path/'owned.db', case)
+        assert row['failure'] is None
+>       assert row['passed'], row['checks']
+E       AssertionError: {'profile': False, 'scope': False, 'reminders': True}
+E       assert False
+
+tests/test_mixed_writer_authority.py:22: AssertionError
+___ test_mixed_writer_privacy_preserves_authority_provenance[cli_real_erase] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-185/test_mixed_writer_privacy_pres7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcf86958160>
+case = {'id': 'cli_real_erase', 'writer': 'avatar', 'foreign': '继续现实聊天。', 'erase': 'after', ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda case: case['id'])
+    def test_mixed_writer_privacy_preserves_authority_provenance(tmp_path, monkeypatch, case):
+        monkeypatch.setattr(config.llm, 'api_key', '')
+        monkeypatch.setattr(config.embedding, 'model', '')
+        row = AUDIT.evaluate_case(tmp_path/'owned.db', case)
+        assert row['failure'] is None
+>       assert row['passed'], row['checks']
+E       AssertionError: {'profile': False, 'scope': False, 'reminders': True}
+E       assert False
+
+tests/test_mixed_writer_authority.py:22: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_mixed_writer_authority.py::test_mixed_writer_privacy_preserves_authority_provenance[cli_role_erase_name]
+FAILED tests/test_mixed_writer_authority.py::test_mixed_writer_privacy_preserves_authority_provenance[cli_role_erase_reminder]
+FAILED tests/test_mixed_writer_authority.py::test_mixed_writer_privacy_preserves_authority_provenance[direct_user_erase_name]
+FAILED tests/test_mixed_writer_authority.py::test_mixed_writer_privacy_preserves_authority_provenance[cli_real_erase]
+4 failed, 5 passed in 1.02s

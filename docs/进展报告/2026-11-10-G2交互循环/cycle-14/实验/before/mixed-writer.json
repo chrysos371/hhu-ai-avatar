@@ -1,0 +1,5669 @@
+{
+  "scope": "Actual Avatar and run_chat paths using separate SQLite connections in one OS process; not an interactive CLI subprocess, HTTP browser, real model or multi-day claim. Synthetic owned databases only.",
+  "head": "692b6938c89f71f77bc893aab88eeb03ae8151b0",
+  "sourceSha256": {
+    "src/avatar/main.py": "d3fa43ae4c3c382fee5bdb3d4a2c1124ff1f220158cba12ebefac19033b727af",
+    "src/avatar/web.py": "718677654baa419901205d9dff3e5b227f0dca8ae9de4c1a77d7bf19b02362da",
+    "src/avatar/brain/memory.py": "f3011d6c6c58edfc5f86b870d76a7e4b492eb4691aa2d77f6cdf201d88d3aeb4",
+    "src/avatar/brain/speaker_scope.py": "319305161b39f3e96b581bebd5cb925aaf743275edf58c6e132ee93ab01de69e",
+    "src/avatar/brain/speaker_context.py": "ea7fc5b374f8de1546e6d9b792a1cb52d50628e8050d220c41fab1efe40fecbe",
+    "evals/interaction/cycle-14/mixed-writer-protocol.json": "c6cbc506af8043dea651183faa71e9dcbe779a5f50455ffcc288f09614e339fd",
+    "scripts/lab/audit_mixed_writer_authority.py": "ccb78a7a0eb73db73d5fe34cab9625c1cf3746c5df94b64bc9fd74f8ab33a06e"
+  },
+  "cases": [
+    {
+      "id": "tracked_real_erase",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.197796,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.2137737,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2070405
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 2,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.197796,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.2137737,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+              "revision": 1,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 3,
+              "scope": "current_user",
+              "source_ids_json": "[3]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.197796,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.2137737,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.218215,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+                "created_at": 1794396495.220306,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 3,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.2190046
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+          "revision": 1,
+          "user_message_id": 3,
+          "assistant_message_id": 4
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [
+          2
+        ],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "80fcdd60116e61a84a9bd2bf33270496",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": true,
+        "scope": true,
+        "reminders": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": true
+    },
+    {
+      "id": "cli_role_no_erase",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2346392,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2367182,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2353675
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "cli-equivalent-avatar",
+          "result": {
+            "conversation": {
+              "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+              "revision": 0,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "fictional_character",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2346392,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2367182,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2386365,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2401211,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2353675
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "revision": 0,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_speaker_scope",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "unverified",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_speaker_scope",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 5,
+              "scope": "unverified",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2346392,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2367182,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2386365,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2401211,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.242022,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2433043,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2353675
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "real-confirmation",
+          "result": {
+            "conversation": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "revision": 0,
+              "user_message_id": 7,
+              "assistant_message_id": 8
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.575,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 7,
+              "scope": "current_user",
+              "source_ids_json": "[7]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2346392,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2367182,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2386365,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2401211,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.242022,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2433043,
+                "context_tracked": 1
+              },
+              {
+                "id": 7,
+                "role": "user",
+                "content": "回到现实。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2452304,
+                "context_tracked": 0
+              },
+              {
+                "id": 8,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2466223,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2353675
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "new-real-request",
+          "result": {
+            "conversation": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "revision": 0,
+              "user_message_id": 9,
+              "assistant_message_id": 10
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.6,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 9,
+              "scope": "current_user",
+              "source_ids_json": "[7, 9]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2346392,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2367182,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2386365,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "455168b7d8b2475e8d658bdc9541fce2",
+                "created_at": 1794396495.2401211,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.242022,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2433043,
+                "context_tracked": 1
+              },
+              {
+                "id": 7,
+                "role": "user",
+                "content": "回到现实。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2452304,
+                "context_tracked": 0
+              },
+              {
+                "id": 8,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2466223,
+                "context_tracked": 1
+              },
+              {
+                "id": 9,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2485812,
+                "context_tracked": 0
+              },
+              {
+                "id": 10,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+                "created_at": 1794396495.2507317,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2353675
+              },
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 9,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.249423
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+          "revision": 0,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_speaker_scope",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "unverified",
+          "persistent_facts_allowed": false,
+          "turn_tools_allowed": false,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_speaker_scope",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "efa175405c43b1abec63a928b1b7ceb7",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": true,
+        "scope": true,
+        "reminders": true,
+        "explicit_recovery": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": true
+    },
+    {
+      "id": "cli_role_erase_name",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2663465,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2683692,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2670999
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "cli-equivalent-avatar",
+          "result": {
+            "conversation": {
+              "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+              "revision": 0,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "fictional_character",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2663465,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2683692,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+                "created_at": 1794396495.270336,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+                "created_at": 1794396495.2715948,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2670999
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 4,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2663465,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2683692,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+                "created_at": 1794396495.270336,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+                "created_at": 1794396495.2715948,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+              "revision": 1,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 5,
+              "scope": "current_user",
+              "source_ids_json": "[5]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2663465,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2683692,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+                "created_at": 1794396495.270336,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "568ff5ef549b45d58e6739c36357d7ac",
+                "created_at": 1794396495.2715948,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2758431,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+                "created_at": 1794396495.2778978,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 5,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.2766325
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+          "revision": 1,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [
+          2
+        ],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "7072fd0d90f27b540748f6e6402f3c80",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": false,
+        "scope": false,
+        "reminders": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": false
+    },
+    {
+      "id": "cli_role_erase_reminder",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "33429a735dbcf0647564467a9c9e2d19",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "33429a735dbcf0647564467a9c9e2d19",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2944036,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2964215,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2951517
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "cli-equivalent-avatar",
+          "result": {
+            "conversation": {
+              "session_id": "ca991d759238475193a5659ed84e1c74",
+              "revision": 0,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "fictional_character",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "ca991d759238475193a5659ed84e1c74",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2944036,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2964215,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "ca991d759238475193a5659ed84e1c74",
+                "created_at": 1794396495.298351,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "ca991d759238475193a5659ed84e1c74",
+                "created_at": 1794396495.2996118,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.2951517
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 4,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2944036,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2964215,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "ca991d759238475193a5659ed84e1c74",
+                "created_at": 1794396495.298351,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "ca991d759238475193a5659ed84e1c74",
+                "created_at": 1794396495.2996118,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "33429a735dbcf0647564467a9c9e2d19",
+              "revision": 1,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "已设置提醒：2026-11-12 09:00（北京时间）带伞。程序运行并轮询时会在本机显示。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": {
+              "id": 1,
+              "title": "带伞",
+              "due_at": 1794445200.0,
+              "created_at": 1794396495.3054764,
+              "status": "active",
+              "notified_at": null
+            },
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "33429a735dbcf0647564467a9c9e2d19",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 5,
+              "scope": "current_user",
+              "source_ids_json": "[5]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2944036,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.2964215,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "ca991d759238475193a5659ed84e1c74",
+                "created_at": 1794396495.298351,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "ca991d759238475193a5659ed84e1c74",
+                "created_at": 1794396495.2996118,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.3038116,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "已设置提醒：2026-11-12 09:00（北京时间）带伞。程序运行并轮询时会在本机显示。",
+                "session_id": "33429a735dbcf0647564467a9c9e2d19",
+                "created_at": 1794396495.3066077,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": [
+              {
+                "id": 1,
+                "title": "带伞",
+                "due_at": 1794445200.0,
+                "created_at": 1794396495.3054764,
+                "status": "active",
+                "notified_at": null
+              }
+            ]
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "33429a735dbcf0647564467a9c9e2d19",
+          "revision": 1,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "已设置提醒：2026-11-12 09:00（北京时间）带伞。程序运行并轮询时会在本机显示。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [],
+        "reminder": {
+          "id": 1,
+          "title": "带伞",
+          "due_at": 1794445200.0,
+          "created_at": 1794396495.3054764,
+          "status": "active",
+          "notified_at": null
+        },
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "33429a735dbcf0647564467a9c9e2d19",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": true,
+        "scope": false,
+        "reminders": false,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": false
+    },
+    {
+      "id": "direct_user_erase_name",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3236556,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3256705,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.32441
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "direct-user",
+          "result": null,
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3236556,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3256705,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "separate-direct-writer",
+                "created_at": 1794396495.3275037,
+                "context_tracked": 0
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.32441
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 3,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3236556,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3256705,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "separate-direct-writer",
+                "created_at": 1794396495.3275037,
+                "context_tracked": 0
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+              "revision": 1,
+              "user_message_id": 4,
+              "assistant_message_id": 5
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 4,
+              "scope": "current_user",
+              "source_ids_json": "[4]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3236556,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3256705,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "separate-direct-writer",
+                "created_at": 1794396495.3275037,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3315618,
+                "context_tracked": 0
+              },
+              {
+                "id": 5,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+                "created_at": 1794396495.3336148,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 4,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.332343
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+          "revision": 1,
+          "user_message_id": 4,
+          "assistant_message_id": 5
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [
+          2
+        ],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "1bb6856cf8b4bd85f5dd40f126d3db3b",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": false,
+        "scope": false,
+        "reminders": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": false
+    },
+    {
+      "id": "cli_role_after_erase",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3508787,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3529663,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.3516214
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 2,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3508787,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3529663,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "cli-equivalent-avatar",
+          "result": {
+            "conversation": {
+              "session_id": "b04386ce074447c49603cc559653aaf4",
+              "revision": 1,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "fictional_character",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "b04386ce074447c49603cc559653aaf4",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 2,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3508787,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3529663,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.3571756,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.358444,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "revision": 1,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_speaker_scope",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "unverified",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": true,
+            "reply": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_speaker_scope",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 5,
+              "scope": "unverified",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3508787,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3529663,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.3571756,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.358444,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3602843,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3615527,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "real-confirmation",
+          "result": {
+            "conversation": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "revision": 1,
+              "user_message_id": 7,
+              "assistant_message_id": 8
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.575,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 7,
+              "scope": "current_user",
+              "source_ids_json": "[7]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3508787,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3529663,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.3571756,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.358444,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3602843,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3615527,
+                "context_tracked": 1
+              },
+              {
+                "id": 7,
+                "role": "user",
+                "content": "回到现实。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3634882,
+                "context_tracked": 0
+              },
+              {
+                "id": 8,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3648472,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "new-real-request",
+          "result": {
+            "conversation": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "revision": 1,
+              "user_message_id": 9,
+              "assistant_message_id": 10
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.6,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 9,
+              "scope": "current_user",
+              "source_ids_json": "[7, 9]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3508787,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3529663,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.3571756,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "b04386ce074447c49603cc559653aaf4",
+                "created_at": 1794396495.358444,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3602843,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3615527,
+                "context_tracked": 1
+              },
+              {
+                "id": 7,
+                "role": "user",
+                "content": "回到现实。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3634882,
+                "context_tracked": 0
+              },
+              {
+                "id": 8,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3648472,
+                "context_tracked": 1
+              },
+              {
+                "id": 9,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3667786,
+                "context_tracked": 0
+              },
+              {
+                "id": 10,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+                "created_at": 1794396495.3688362,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 9,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.3675704
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+          "revision": 1,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_speaker_scope",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "unverified",
+          "persistent_facts_allowed": false,
+          "turn_tools_allowed": false,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": true,
+        "reply": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_speaker_scope",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "5f4a31a3a78040582be85aa7840f42ef",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": true,
+        "scope": true,
+        "reminders": true,
+        "explicit_recovery": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": true
+    },
+    {
+      "id": "assistant_only_erase",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "e1f75d552ad72f952431c6208a172bf5",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "e1f75d552ad72f952431c6208a172bf5",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3875737,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3895679,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.3883162
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "direct-assistant",
+          "result": null,
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3875737,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3895679,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "assistant",
+                "content": "我来扮演小说角色。",
+                "session_id": "separate-direct-writer",
+                "created_at": 1794396495.391392,
+                "context_tracked": 0
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.3883162
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 3,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3875737,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3895679,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "separate-direct-writer",
+                "created_at": 1794396495.391392,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "e1f75d552ad72f952431c6208a172bf5",
+              "revision": 1,
+              "user_message_id": 4,
+              "assistant_message_id": 5
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "e1f75d552ad72f952431c6208a172bf5",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 4,
+              "scope": "current_user",
+              "source_ids_json": "[4]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3875737,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3895679,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "separate-direct-writer",
+                "created_at": 1794396495.391392,
+                "context_tracked": 1
+              },
+              {
+                "id": 4,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3954017,
+                "context_tracked": 0
+              },
+              {
+                "id": 5,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "e1f75d552ad72f952431c6208a172bf5",
+                "created_at": 1794396495.3974843,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 4,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.3962178
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "e1f75d552ad72f952431c6208a172bf5",
+          "revision": 1,
+          "user_message_id": 4,
+          "assistant_message_id": 5
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [
+          2
+        ],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "e1f75d552ad72f952431c6208a172bf5",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": true,
+        "scope": true,
+        "reminders": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": true
+    },
+    {
+      "id": "cli_real_erase",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.4167757,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.418809,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.4175367
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "cli-equivalent-avatar",
+          "result": {
+            "conversation": {
+              "session_id": "688a2bb644d34224a2ed90f0caae2110",
+              "revision": 0,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「继续现实聊天。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "688a2bb644d34224a2ed90f0caae2110",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.4167757,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.418809,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "继续现实聊天。",
+                "session_id": "688a2bb644d34224a2ed90f0caae2110",
+                "created_at": 1794396495.42072,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「继续现实聊天。」吧？",
+                "session_id": "688a2bb644d34224a2ed90f0caae2110",
+                "created_at": 1794396495.4221268,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.4175367
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 4,
+              "scope": "current_user",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.4167757,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.418809,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "继续现实聊天。",
+                "session_id": "688a2bb644d34224a2ed90f0caae2110",
+                "created_at": 1794396495.42072,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "688a2bb644d34224a2ed90f0caae2110",
+                "created_at": 1794396495.4221268,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+              "revision": 1,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 5,
+              "scope": "current_user",
+              "source_ids_json": "[5]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.4167757,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.418809,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "继续现实聊天。",
+                "session_id": "688a2bb644d34224a2ed90f0caae2110",
+                "created_at": 1794396495.42072,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "688a2bb644d34224a2ed90f0caae2110",
+                "created_at": 1794396495.4221268,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.4264092,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+                "created_at": 1794396495.428476,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 5,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.427198
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+          "revision": 1,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [
+          2
+        ],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "deb6a6f4f3ce7a1905d25c26808d4986",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": false,
+        "scope": false,
+        "reminders": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": false
+    },
+    {
+      "id": "tracked_role_erase",
+      "steps": [
+        {
+          "name": "initial-web",
+          "result": {
+            "conversation": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "revision": 0,
+              "user_message_id": 1,
+              "assistant_message_id": 2
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [
+              1
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 1,
+              "scope": "current_user",
+              "source_ids_json": "[1]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.449523,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4515905,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.4503117
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "other-tracked-web",
+          "result": {
+            "conversation": {
+              "session_id": "e9257fb459168c4e69a3418de1092272",
+              "revision": 0,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "fictional_character",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.525,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "e9257fb459168c4e69a3418de1092272",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 0,
+            "profile": {
+              "名字": "原真人名"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 0,
+              "cursor": 3,
+              "scope": "fictional_character",
+              "source_ids_json": "[3]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "我叫原真人名。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.449523,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫原真人名。」吧？",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4515905,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.453776,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演小说角色。」吧？",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.4551992,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 1,
+                "fragment_id": 1,
+                "source_message_id": 1,
+                "evidence": "我叫原真人名",
+                "created_at": 1794396495.4503117
+              }
+            ],
+            "reminders": []
+          }
+        },
+        {
+          "name": "external-forget",
+          "result": null,
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 4,
+              "scope": "unverified",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.449523,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4515905,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.453776,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.4551992,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "web-probe",
+          "result": {
+            "conversation": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "revision": 1,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_speaker_scope",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "unverified",
+              "persistent_facts_allowed": false,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": true,
+            "reply": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_speaker_scope",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 5,
+              "scope": "unverified",
+              "source_ids_json": "[]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.449523,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4515905,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.453776,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.4551992,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4594686,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4607723,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "real-confirmation",
+          "result": {
+            "conversation": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "revision": 1,
+              "user_message_id": 7,
+              "assistant_message_id": 8
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": false,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.575,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {},
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 7,
+              "scope": "current_user",
+              "source_ids_json": "[7]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.449523,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4515905,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.453776,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.4551992,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4594686,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4607723,
+                "context_tracked": 1
+              },
+              {
+                "id": 7,
+                "role": "user",
+                "content": "回到现实。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.462695,
+                "context_tracked": 0
+              },
+              {
+                "id": 8,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.464074,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [],
+            "reminders": []
+          }
+        },
+        {
+          "name": "new-real-request",
+          "result": {
+            "conversation": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "revision": 1,
+              "user_message_id": 9,
+              "assistant_message_id": 10
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_unconfigured",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+            "emotion": "中性",
+            "valence": 0.0,
+            "arousal": 0.0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_fallback",
+            "generation_mode": "rules_unconfigured",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0.0,
+            "user_arousal": 0.0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.6,
+            "recalled_ids": [
+              2
+            ],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null
+          },
+          "database": {
+            "revision": 1,
+            "profile": {
+              "名字": "陈宁"
+            },
+            "speaker_state": {
+              "id": 1,
+              "format_version": 1,
+              "context_revision": 1,
+              "cursor": 9,
+              "scope": "current_user",
+              "source_ids_json": "[7, 9]"
+            },
+            "messages": [
+              {
+                "id": 1,
+                "role": "user",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.449523,
+                "context_tracked": 0
+              },
+              {
+                "id": 2,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4515905,
+                "context_tracked": 1
+              },
+              {
+                "id": 3,
+                "role": "user",
+                "content": "我来扮演小说角色。",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.453776,
+                "context_tracked": 0
+              },
+              {
+                "id": 4,
+                "role": "assistant",
+                "content": "[redacted]",
+                "session_id": "e9257fb459168c4e69a3418de1092272",
+                "created_at": 1794396495.4551992,
+                "context_tracked": 1
+              },
+              {
+                "id": 5,
+                "role": "user",
+                "content": "提醒我明天9点带伞。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4594686,
+                "context_tracked": 0
+              },
+              {
+                "id": 6,
+                "role": "assistant",
+                "content": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4607723,
+                "context_tracked": 1
+              },
+              {
+                "id": 7,
+                "role": "user",
+                "content": "回到现实。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.462695,
+                "context_tracked": 0
+              },
+              {
+                "id": 8,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.464074,
+                "context_tracked": 1
+              },
+              {
+                "id": 9,
+                "role": "user",
+                "content": "我叫陈宁。",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.466014,
+                "context_tracked": 0
+              },
+              {
+                "id": 10,
+                "role": "assistant",
+                "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫陈宁。」吧？",
+                "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+                "created_at": 1794396495.4681096,
+                "context_tracked": 1
+              }
+            ],
+            "sources": [
+              {
+                "id": 2,
+                "fragment_id": 2,
+                "source_message_id": 9,
+                "evidence": "我叫陈宁",
+                "created_at": 1794396495.4668267
+              }
+            ],
+            "reminders": []
+          }
+        }
+      ],
+      "result": {
+        "conversation": {
+          "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+          "revision": 1,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_speaker_scope",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "unverified",
+          "persistent_facts_allowed": false,
+          "turn_tools_allowed": false,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": true,
+        "reply": "此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_speaker_scope",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "d6538b0cad25ee5d202aa023f17ea98a",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null
+      },
+      "checks": {
+        "profile": true,
+        "scope": true,
+        "reminders": true,
+        "explicit_recovery": true,
+        "sources_frozen": true
+      },
+      "failure": null,
+      "passed": true
+    }
+  ],
+  "completed": true,
+  "elapsedSeconds": 0.2965989809599705,
+  "allPassed": false
+}
