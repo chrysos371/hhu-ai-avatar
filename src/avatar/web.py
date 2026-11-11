@@ -113,7 +113,11 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.server.turns.refresh_privacy()
             if not post and parsed.path == '/api/v1/conversation/changes':
-                return self._conversation_changes(parsed)
+                try:
+                    return self._conversation_changes(parsed)
+                except OperationError as exc:
+                    return self._send(exc.status, {'data': None,
+                        'error': {'code': exc.code, 'message': exc.message}, 'request_id': self.request_id})
             if not post and re.fullmatch(r'/api/v1/turns/[A-Za-z0-9_-]{20,100}/events', parsed.path):
                 return self._turn_events(parsed)
             if not post and parsed.path.startswith("/api/v1/speech/audio/"):

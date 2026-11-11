@@ -22,6 +22,14 @@ def active(watch, count):
     pytest.fail(f'watcher count did not reach {count}')
 
 
+def free_connections(server, count):
+    for _ in range(400):
+        if server._connection_gate._value == count:
+            return
+        time.sleep(.005)
+    pytest.fail(f'free connection slots did not reach {count}')
+
+
 def initialized(tmp_path, **options):
     path = str(tmp_path/'watch.db')
     memory = MemoryStore(path); memory.close()
@@ -181,7 +189,9 @@ def test_metadata_disconnect_does_not_cancel_an_unrelated_running_turn(api_v1):
 
 @pytest.mark.parametrize('connections,limit', [(1, 0), (2, 1), (32, 4)])
 def test_http_watch_capacity_reserves_an_ordinary_connection(tmp_path, connections, limit):
-    server = create_server(str(tmp_path/'capacity.db'), port=0, max_connections=connections)
+    path_db = str(tmp_path/'capacity.db')
+    MemoryStore(path_db).close()
+    server = create_server(path_db, port=0, max_connections=connections)
     thread = threading.Thread(target=server.serve_forever); thread.start()
     sockets = []
     try:
@@ -194,10 +204,47 @@ def test_http_watch_capacity_reserves_an_ordinary_connection(tmp_path, connectio
         with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as regular:
             regular.request('GET', '/api/v1/system', headers={'X-Avatar-Token': server.token})
             response = regular.getresponse(); assert response.status == 200; response.read()
+        # Body receipt precedes request-thread cleanup and semaphore release.
+        # Probe the watch cap only after the ordinary connection is fully gone.
+        free_connections(server, connections-limit)
         with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as excess:
             excess.request('GET', path, headers={'X-Avatar-Token': server.token})
             response = excess.getresponse(); assert response.status == 429; response.read()
     finally:
         for conn in sockets: conn.close()
         active(server.conversation_changes, 0)
+        server.shutdown(); thread.join(); server.server_close()
+
+
+def test_completed_body_does_not_mean_its_connection_slot_is_already_released(tmp_path):
+    path_db = str(tmp_path/'two-slots.db'); MemoryStore(path_db).close()
+    server = create_server(path_db, port=0, max_connections=2)
+    thread = threading.Thread(target=server.serve_forever); thread.start()
+    entered, release = threading.Event(), threading.Event()
+    original = server.shutdown_request
+    target_port = None
+    def slow_cleanup(sock):
+        if sock.getpeername()[1] == target_port:
+            entered.set(); release.wait()
+        original(sock)
+    server.shutdown_request = slow_cleanup
+    watch = http.client.HTTPConnection('127.0.0.1', server.server_port)
+    regular = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)
+    try:
+        path = '/api/v1/conversation/changes?instance_id='+server.session_id+'&revision=0'
+        watch.request('GET', path, headers={'X-Avatar-Token': server.token}); active(server.conversation_changes, 1)
+        regular.connect(); target_port = regular.sock.getsockname()[1]
+        regular.request('GET', '/api/v1/system', headers={'X-Avatar-Token': server.token})
+        response = regular.getresponse(); assert response.status == 200; response.read()
+        assert entered.wait(2)
+        with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as overflow:
+            overflow.request('GET', path, headers={'X-Avatar-Token': server.token})
+            response = overflow.getresponse(); assert response.status == 503 and response.read() == b''
+        release.set(); free_connections(server, 1)
+        with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as excess:
+            excess.request('GET', path, headers={'X-Avatar-Token': server.token})
+            response = excess.getresponse(); body = json.loads(response.read())
+            assert response.status == 429 and body['error']['code'] == 'watch_capacity'
+    finally:
+        release.set(); regular.close(); watch.close(); active(server.conversation_changes, 0)
         server.shutdown(); thread.join(); server.server_close()
