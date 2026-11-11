@@ -7,6 +7,8 @@ from pathlib import Path
 import os
 import tempfile
 import subprocess
+import signal
+import threading
 import wave
 import numpy as np
 from avatar.config import config
@@ -96,6 +98,17 @@ if os.getenv('AVATAR_E2E_REAL_ASR_MODEL'):
 else:
     server.transcription.engine = FixtureASR()
 server.token = "mission-control-disposable-e2e-token"
+stopping = threading.Event()
+
+def request_shutdown(signum, frame):
+    if not stopping.is_set():
+        stopping.set()
+        # BaseServer.shutdown must run outside the serve_forever thread.
+        threading.Thread(target=server.shutdown, daemon=True).start()
+
+for stop_signal in (signal.SIGTERM, signal.SIGINT):
+    signal.signal(stop_signal, request_shutdown)
+
 try:
     server.serve_forever()
 finally:
