@@ -11,7 +11,7 @@ const page = { ...version, items: [item], has_more: false, next_after_id: null,
   scope: 'current_visible_local_sql_receipts', notification_delivery_verified: false };
 
 describe('actual local action records', () => {
-  beforeEach(() => read.mockReset());
+  beforeEach(() => { read.mockReset(); });
   it('reads only on explicit request and distinguishes claim from delivery', async () => {
     read.mockResolvedValue({ ...page, items: [{ ...item, action: 'reminder.claimed_due' }] });
     render(<LocalActionReceipts version={version} busy={false} />);

@@ -8,7 +8,7 @@ const item = { id: 2, source_message_id: 3, session_id: 'session', context_revis
 const page = { ...version, items: [item], has_more: false, next_after_id: null,
   scope: 'current_visible_local_sql_receipts', notification_delivery_verified: false };
 describe('action evidence transport', () => {
-  beforeEach(() => request.mockReset());
+  beforeEach(() => { request.mockReset(); });
   it('accepts only current server/revision with real local action schema', async () => {
     request.mockResolvedValue(page); const signal = new AbortController().signal;
     expect(await readActionReceipts(version, 0, signal)).toEqual(page);
