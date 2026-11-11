@@ -699,6 +699,16 @@ class Avatar:
             reviewed, metadata = self.final_reply_reviewer(user_text, reply)
             if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
                 raise ValueError('final reply reviewer returned invalid data')
+            checkpoint_context()
+            review_sources = metadata.get('source_message_ids', [])
+            if (not isinstance(review_sources, list) or len(review_sources) > 4
+                    or any(type(ident) is not int or not 0 < ident <= self._current_message_id for ident in review_sources)):
+                raise ValueError('final reply reviewer returned invalid source IDs')
+            for ident in review_sources:
+                source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?', (ident,)).fetchone()
+                if not source or source['role'] != 'user' or source['content'] == '[redacted]':
+                    raise ValueError('final reply reviewer source is not a valid user message')
+            response_source_ids.update(review_sources)
             self._response_review = {**metadata, 'stream_buffered': True}
             if reviewed != reply:
                 generation_mode = 'reviewed_response'

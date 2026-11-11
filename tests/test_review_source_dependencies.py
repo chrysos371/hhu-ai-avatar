@@ -23,3 +23,28 @@ def test_trusted_review_source_outside_window_is_bound_to_committed_response(che
                 bot.memory.forget(fact)
                 assert bot.memory._conn.execute('SELECT content FROM memory_messages WHERE id=?', (assistant,)).fetchone()[0] == '[redacted]'
         finally: bot.memory.close(); engine.close()
+
+
+@pytest.mark.parametrize('invalid', ['bool', 'string', 'negative', 'future', 'missing', 'assistant', 'redacted', 'too_many', 'not_list'])
+def test_invalid_review_sources_never_publish_or_commit_assistant(invalid):
+    with controlled_provider(delay=.0001) as (_, url):
+        engine = LLMEngine(base_url=url, api_key='fixture', model='fixture')
+        bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            user = bot.memory.add_message('user', '受控来源', 'old')
+            assistant = bot.memory.add_message('assistant', '旧回复', 'old')
+            ids = {'bool': [True], 'string': [str(user)], 'negative': [-1], 'future': [99999],
+                'missing': [assistant], 'assistant': [assistant], 'redacted': [user],
+                'too_many': [user]*5, 'not_list': str(user)}[invalid]
+            if invalid == 'missing':
+                bot.memory._conn.execute('DELETE FROM memory_messages WHERE id=?', (assistant,)); bot.memory._conn.commit()
+            if invalid == 'redacted':
+                bot.memory._conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?", (user,)); bot.memory._conn.commit()
+            bot.final_reply_reviewer = lambda text, reply: (reply, {'source_message_ids': ids})
+            pieces = []
+            with pytest.raises(ValueError, match='source'):
+                from avatar.cancellation import CancellationToken
+                bot.respond('fixture-review', cancel=CancellationToken(), on_delta=pieces.append)
+            assert not pieces
+            assert bot.memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant' AND session_id=?", (bot.session_id,)).fetchone()[0] == 0
+        finally: bot.memory.close(); engine.close()
