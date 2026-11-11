@@ -1,0 +1,80 @@
+{
+  "scope": "Immutable identity checkpoint; query status again for current liveness.",
+  "status": {
+    "state": "completed",
+    "started_utc": "2026-11-11T23:37:29.839878+00:00",
+    "worker": {
+      "pid": 3165777,
+      "start_ticks": 38043751,
+      "state": "R",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/scripts/lab/run_frozen_capability_job.py",
+        "--worker",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/jobs/cuda-v4-4b",
+        "--config-sha256",
+        "8be9b63ddc9d341763d236cf172e0b38490ff34b91729cfdc9e849c5399f0d20"
+      ],
+      "process_group": 3165777
+    },
+    "child": {
+      "pid": 3165842,
+      "start_ticks": 38043827,
+      "state": "R",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/scripts/run_native_output_models.py",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "--stage",
+        "capability_pair",
+        "--backend",
+        "cuda",
+        "--candidate",
+        "source_capability_v4",
+        "--partition",
+        "development",
+        "--model-key",
+        "qwen3-4b-q4_k_m",
+        "--candidate-freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/evals/interaction/cycle-23/candidate-development-freeze-v4.json",
+        "--protocol",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/evals/interaction/cycle-23/capability-output-protocol.json",
+        "--pair-protocol",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/evals/interaction/cycle-23/paired-capability-protocol.json",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/paired-cuda-development-4b"
+      ],
+      "process_group": 3165842
+    },
+    "return_code": 0,
+    "stop_signal": null,
+    "context": {
+      "freeze": "evals/interaction/cycle-23/candidate-development-freeze-v4.json",
+      "freeze_sha256": "b767dae54d5273d25bc4185867adc5693770cc8c964a83353caca8f044529aa1",
+      "frozen_inputs": 235,
+      "protocol_sha256": "439407ec62db876f8690939c5eacc259cf2398d387ce1d8be91728e7a1d93cfe",
+      "pair_protocol_sha256": "9716a5c294e4665e1588cac06efc06df9771cd643379547a0e9e86efd55e8978",
+      "backend": "cuda",
+      "model_key": "qwen3-4b-q4_k_m",
+      "partition": "development",
+      "output": "docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/paired-cuda-development-4b",
+      "whole_experiment_deadline": null,
+      "selection": {
+        "candidate": "source_capability_v4",
+        "candidate_freeze": "evals/interaction/cycle-23/candidate-development-freeze-v4.json",
+        "protocol": "evals/interaction/cycle-23/capability-output-protocol.json",
+        "pair_protocol": "evals/interaction/cycle-23/paired-capability-protocol.json",
+        "output": "docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/paired-cuda-development-4b",
+        "backend": "cuda",
+        "partition": "development",
+        "model_key": "qwen3-4b-q4_k_m",
+        "provider_python": "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+      }
+    },
+    "heartbeat_utc": "2026-11-11T23:38:30.637038+00:00",
+    "ended_utc": "2026-11-11T23:38:30.838826+00:00",
+    "worker_verified_alive": false,
+    "child_verified_alive": false
+  }
+}
