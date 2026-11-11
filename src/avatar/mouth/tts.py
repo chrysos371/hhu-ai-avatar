@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import asyncio
+import os
 from pathlib import Path
+import tempfile
 from typing import Protocol
 
 import edge_tts
@@ -30,12 +32,25 @@ class EdgeTTSEngine:
         return self.synthesize_cancellable(text, out_path, rate, pitch)
 
     def synthesize_cancellable(self, text, out_path, rate="+0%", pitch="+0Hz", *, cancel=None):
-        """合成到 MP3；取消时关闭本机异步网络任务。"""
+        """Publish a complete MP3 atomically; failed/cancelled saves retain the target."""
+        token = cancel or CancellationToken()
+        token.checkpoint()
+        target = Path(out_path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        descriptor, owned_path = tempfile.mkstemp(prefix='.avatar-tts-', suffix='.part', dir=target.parent)
+        os.close(descriptor)
+        staged = Path(owned_path)
 
         async def _run() -> None:
             communicate = edge_tts.Communicate(text, self.voice, rate=rate, pitch=pitch)
-            await asyncio.wait_for(communicate.save(out_path), timeout=self.timeout)
+            await asyncio.wait_for(communicate.save(str(staged)), timeout=self.timeout)
+            token.checkpoint()
+            if staged.stat().st_size == 0:
+                raise ValueError('TTS produced an empty audio file')
+            os.replace(staged, target)
 
-        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
-        (cancel or CancellationToken()).run_async(_run)
-        return out_path
+        try:
+            token.run_async(_run)
+            return out_path
+        finally:
+            staged.unlink(missing_ok=True)
