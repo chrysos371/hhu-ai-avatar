@@ -10,10 +10,13 @@ test('real verified identity does not bind a friend name to the user', async ({ 
   if (existsSync(output)) throw Error('Use a new identity evidence path');
   await page.goto('/chat#' + token);
   const replies: string[] = [];
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
   async function say(text: string) {
+    const before = await page.locator('.chat-message.assistant').count();
     await page.getByLabel('消息', { exact: true }).fill(text);
     await page.getByRole('button', { name: '发送消息' }).click();
-    await expect(page.locator('.chat-message.assistant details')).toHaveCount(replies.length + 1, { timeout: 20000 });
+    await expect(page.locator('.chat-message.assistant')).toHaveCount(before + 1, { timeout: 20000 });
+    await expect(page.locator('.chat-message.assistant').last().getByRole('button', { name: '朗读回复', exact: true })).toBeVisible({ timeout: 20000 });
     const reply = await page.locator('.chat-message.assistant > div').last().textContent();
     replies.push(reply ?? ''); return reply ?? '';
   }

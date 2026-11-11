@@ -17,6 +17,7 @@ function artifact(name: string, info: TestInfo) {
     createdUtc: new Date().toISOString(), protocolSha256: hash('../evals/interaction/cycle-08/playback-protocol.json'),
     sourceSha256: Object.fromEntries(['src/features/chat/useSpeechPlayer.ts', 'src/features/chat/AvatarStage.tsx',
       'src/features/chat/SpeechAvatarStage.tsx', 'src/features/chat/speechFrames.ts', 'src/features/chat/ChatPage.tsx',
+      'src/features/chat/useChatHistory.ts', 'src/lib/conversation.ts', '../src/avatar/brain/conversations.py',
       'e2e/playback-audit.spec.ts', '../tests/helpers/serve_admin_e2e.py', '../src/avatar/lab/transport_fixture.py'].map(path => [path, hash(path)])),
     servedBundleSha256: Object.fromEntries(['dist/index.html', ...readdirSync('dist/assets').filter(p => p.endsWith('.js')).map(p => 'dist/assets/' + p)].map(path => [path, hash(path)])) };
   return { folder, provenance, save: (value: unknown) => writeFileSync(path, JSON.stringify(value, null, 2) + '\n') };
@@ -81,11 +82,14 @@ async function open(page: Page) {
   });
 }
 async function chat(page: Page, segmented = false) {
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
+  const before = await page.locator('.chat-message.assistant').count();
   if (segmented) await page.getByLabel('自动分段朗读新回复').check();
   await page.getByLabel('消息', { exact: true }).fill(segmented ? 'fixture-playback-audit，请给出三段最终回复。' : '你好，做一次播放时钟测试。');
   await page.getByRole('button', { name: '发送消息' }).click();
-  await expect(page.locator('.chat-message.assistant details')).toHaveCount(1);
-  if (!segmented) await page.getByRole('button', { name: '朗读回复' }).click();
+  await expect(page.locator('.chat-message.assistant')).toHaveCount(before + 1);
+  await expect(page.locator('.chat-message.assistant').last().locator('details')).toHaveCount(1);
+  if (!segmented) await page.getByRole('button', { name: '朗读回复' }).last().click();
   await expect.poll(() => page.getByLabel(/语音播放器$/).evaluate((a: HTMLAudioElement) => a.currentTime)).toBeGreaterThan(.03);
 }
 async function setPosition(page: Page, rate: number, position: number) {

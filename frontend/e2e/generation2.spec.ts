@@ -3,6 +3,7 @@ const token = "mission-control-disposable-e2e-token";
 test.beforeEach(async ({ page }) => {
   await page.goto("/chat#" + token);
   await expect(page.getByRole("heading", { name: "对话观测", exact: true })).toBeVisible();
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
 });
 async function begin(page: Page) {
   await page.getByLabel("消息", { exact: true }).fill("请解释云为什么会移动，fixture-long");
@@ -11,8 +12,9 @@ async function begin(page: Page) {
   return (await submission).postDataJSON().request_id as string;
 }
 test('checked draft appears before completion and interruption stops the job', async ({ page }) => {
+  const before = await page.locator('.chat-message.assistant details').count();
   const id = await begin(page);
-  await expect(page.locator('.chat-message.assistant > div').first()).toContainText('云并不是');
+  await expect(page.locator('.chat-message.assistant > div').last()).toContainText('云并不是');
   await expect(page.getByText('正在生成；最终回复会完成检查后替换此草稿。')).toBeVisible();
   await page.getByRole('button', { name: '停止生成' }).click();
   await expect(page.getByText('已停止，未完成的助手内容不存入记忆。')).toBeVisible();
@@ -20,7 +22,7 @@ test('checked draft appears before completion and interruption stops the job', a
     const response = await page.request.get('/api/v1/turns/' + id, { headers: { 'X-Avatar-Token': token } });
     return (await response.json()).data.status;
   }).toBe('cancelled');
-  await expect(page.locator('.chat-message.assistant details')).toHaveCount(0);
+  await expect(page.locator('.chat-message.assistant details')).toHaveCount(before);
 });
 test('automatic speech is segmented and stopping it does not start the next part', async ({ page }) => {
   await page.getByLabel('自动分段朗读新回复').check();

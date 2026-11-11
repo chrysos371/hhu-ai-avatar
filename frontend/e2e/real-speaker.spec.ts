@@ -31,13 +31,16 @@ test('real character speech stays separate from user memory and reminder authori
   }, null, 2) + '\n');
   save(false);
   await page.goto('/chat#' + token);
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
   async function say(text: string) {
+    const before = await page.locator('.chat-message.assistant').count();
     const started = Date.now();
     const accepted = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/v1/turns');
     await page.getByLabel('消息', { exact: true }).fill(text);
     await page.getByRole('button', { name: '发送消息' }).click();
     const id = (await (await accepted).json()).data.job_id;
-    await expect(page.locator('.chat-message.assistant details')).toHaveCount(rows.length + 1, { timeout: 30000 });
+    await expect(page.locator('.chat-message.assistant')).toHaveCount(before + 1, { timeout: 30000 });
+    await expect(page.locator('.chat-message.assistant').last().getByRole('button', { name: '朗读回复', exact: true })).toBeVisible({ timeout: 30000 });
     const visible = await page.locator('.chat-message.assistant > div').last().textContent();
     const snapshot = await page.evaluate(async ({ jobId, auth }) => {
       const get = async (path: string) => {

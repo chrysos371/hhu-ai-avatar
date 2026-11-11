@@ -15,13 +15,16 @@ test('real task delivery keeps verbatim text across web turns', async ({ page },
   mkdirSync(folder, { recursive: true });
   await page.goto('/chat#' + token);
   const rows: DeliveryRow[] = [];
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
   async function say(text: string) {
+    const before = await page.locator('.chat-message.assistant').count();
     const started = Date.now();
     const accepted = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/v1/turns');
     await page.getByLabel('消息', { exact: true }).fill(text);
     await page.getByRole('button', { name: '发送消息' }).click();
     const jobId = (await (await accepted).json()).data.job_id;
-    await expect(page.locator('.chat-message.assistant details')).toHaveCount(rows.length + 1, { timeout: 30000 });
+    await expect(page.locator('.chat-message.assistant')).toHaveCount(before + 1, { timeout: 30000 });
+    await expect(page.locator('.chat-message.assistant').last().getByRole('button', { name: '朗读回复', exact: true })).toBeVisible({ timeout: 30000 });
     const visible = await page.locator('.chat-message.assistant > div').last().textContent();
     const job = await page.evaluate(async ({ id, auth }) => {
       const response = await fetch('/api/v1/turns/' + encodeURIComponent(id), { headers: { 'X-Avatar-Token': auth } });

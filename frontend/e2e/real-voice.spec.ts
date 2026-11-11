@@ -10,12 +10,14 @@ test('real local ASR draft reaches streamed response and real TTS playback', asy
   const timing = join(folder, 'real-voice-browser.json');
   if (existsSync(screenshot) || existsSync(timing)) throw Error('Use a fresh real-service evidence directory');
   await page.goto('/chat#mission-control-disposable-e2e-token');
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
+  const existing = await page.locator('.chat-message').count();
   await expect(page.getByLabel('上传 WAV 语音')).toBeEnabled();
   const begin = Date.now();
   await page.getByLabel('上传 WAV 语音').setInputFiles('../data/g2-cycle-01/voice-corpus/voice0-text2.wav');
   await expect(page.getByLabel('消息', { exact: true })).toHaveValue(/天空.*蓝色/);
   const asrDraftMs = Date.now() - begin;
-  await expect(page.locator('.chat-message')).toHaveCount(0);
+  await expect(page.locator('.chat-message')).toHaveCount(existing);
   await page.getByLabel('自动分段朗读新回复').check();
   const sent = Date.now();
   await page.getByRole('button', { name: '发送消息' }).click();

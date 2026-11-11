@@ -3,17 +3,19 @@ const token = "mission-control-disposable-e2e-token";
 test.beforeEach(async ({ page }) => {
   await page.goto("/chat#" + token);
   await expect(page.getByRole("heading", { name: "对话观测", exact: true })).toBeVisible();
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
 });
 async function chat(page: Page) {
+  const count = await page.locator('.chat-message.assistant').count();
   await page.getByLabel("消息", { exact: true }).fill("你好");
   await page.getByRole("button", { name: "发送消息" }).click();
-  await expect(page.locator(".chat-message.assistant")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "朗读回复" })).toBeVisible();
+  await expect(page.locator(".chat-message.assistant")).toHaveCount(count + 1);
+  await expect(page.getByRole("button", { name: "朗读回复" }).last()).toBeVisible();
 }
 test("playback follows the audio clock, pause and stop close the mouth", async ({ page }) => {
   await chat(page);
   const response = page.waitForResponse(r => r.url().includes("/speech/audio/"));
-  await page.getByRole("button", { name: "朗读回复" }).click();
+  await page.getByRole("button", { name: "朗读回复" }).last().click();
   const audioResponse = await response;
   expect(audioResponse.ok()).toBe(true);
   expect(audioResponse.url()).not.toContain(token);
@@ -38,19 +40,20 @@ test("playback follows the audio clock, pause and stop close the mouth", async (
 });
 test("speech failure keeps the text and permits retry", async ({ page }) => {
   await chat(page);
-  const text = await page.locator(".chat-message.assistant > div").first().textContent();
+  const text = await page.locator(".chat-message.assistant > div").last().textContent();
   await page.route("**/api/v1/speech", route => route.fulfill({ status: 503,
     contentType: "application/json", body: JSON.stringify({ data: null,
       error: { code: "speech_unavailable", message: "测试语音服务暂不可用" } }) }));
-  await page.getByRole("button", { name: "朗读回复" }).click();
+  await page.getByRole("button", { name: "朗读回复" }).last().click();
   await expect(page.getByRole("alert")).toContainText("测试语音服务暂不可用");
-  await expect(page.locator(".chat-message.assistant > div").first()).toHaveText(text!);
+  await expect(page.locator(".chat-message.assistant > div").last()).toHaveText(text!);
   await page.unroute("**/api/v1/speech");
-  await page.getByRole("button", { name: "朗读回复" }).click();
+  await page.getByRole("button", { name: "朗读回复" }).last().click();
   await expect(page.getByLabel(/语音播放器$/)).toBeVisible();
 });
 test("WAV and microphone transcription fill a draft without sending it", async ({ page, context }) => {
   const errors: string[] = [];
+  const before = await page.locator('.chat-message').count();
   page.on("pageerror", error => errors.push(error.message));
   await context.grantPermissions(["microphone"]);
   await expect(page.getByLabel("上传 WAV 语音")).toBeEnabled();
@@ -68,12 +71,12 @@ test("WAV and microphone transcription fill a draft without sending it", async (
   await page.waitForTimeout(500);
   await page.getByRole("button", { name: "结束并识别" }).click();
   await expect(page.getByLabel("消息", { exact: true })).toHaveValue("浏览器识别草稿\n浏览器识别草稿");
-  await expect(page.locator(".chat-message")).toHaveCount(0);
+  await expect(page.locator(".chat-message")).toHaveCount(before);
   expect(errors).toEqual([]);
 });
 test("leaving chat releases audio playback", async ({ page }) => {
   await chat(page);
-  await page.getByRole("button", { name: "朗读回复" }).click();
+  await page.getByRole("button", { name: "朗读回复" }).last().click();
   const player = page.getByLabel(/语音播放器$/);
   await expect.poll(() => player.evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThan(0.05);
   const audio = await player.elementHandle();

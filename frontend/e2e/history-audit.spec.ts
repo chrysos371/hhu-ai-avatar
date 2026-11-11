@@ -74,7 +74,9 @@ test('audits full chat history input diagnostics playback and navigation resourc
   const path = join(folder, 'history.json'); if (existsSync(path)) throw Error('Use fresh history evidence path');
   const sources = ['src/features/chat/ChatPage.tsx', 'src/features/chat/useSpeechPlayer.ts', 'src/features/chat/AvatarStage.tsx',
     'src/features/chat/SpeechAvatarStage.tsx', 'src/features/chat/speechFrames.ts', 'e2e/history-audit.spec.ts',
-    '../tests/helpers/serve_admin_e2e.py', '../src/avatar/lab/transport_fixture.py', '../evals/interaction/cycle-10/history-protocol.json'];
+    '../tests/helpers/serve_admin_e2e.py', '../src/avatar/lab/transport_fixture.py', '../evals/interaction/cycle-10/history-protocol.json',
+    '../evals/interaction/cycle-11/history-load-protocol.json', 'src/features/chat/useChatHistory.ts', 'src/lib/conversation.ts',
+    '../src/avatar/brain/conversations.py'];
   for (const optional of ['src/features/chat/ChatMessage.tsx', 'src/features/chat/ChatTrace.tsx']) if (existsSync(optional)) sources.push(optional);
   const report = { head: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     startedUtc: new Date().toISOString(), elapsedSeconds: 0,
@@ -179,7 +181,9 @@ test('audits full chat history input diagnostics playback and navigation resourc
     await page.getByRole('link', { name: '工具', exact: true }).click();
     await expect(page.getByRole('heading', { name: '工具', exact: true })).toBeVisible();
     await page.getByRole('link', { name: '对话观测', exact: true }).click();
-    await expect(page.getByRole('heading', { name: '开始一段对话', exact: true })).toBeVisible();
+    await expect(page.locator('.chat-message')).toHaveCount(100);
+    await page.getByRole('button', { name: '加载更早的对话', exact: true }).click();
+    await expect(page.locator('.chat-message')).toHaveCount(200);
     report.afterNavigation = await resources(page, cdp);
     if (report.turns.length !== 100 || report.turns.some(turn => !turn.result || turn.streamError)) report.violations.push('100 complete HTTP/SSE results');
     if (report.errors.length) report.violations.push('page errors');
