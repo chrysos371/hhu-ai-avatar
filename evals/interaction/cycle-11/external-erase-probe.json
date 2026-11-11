@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "scope": "Additional system-audit probe after the frozen14-scenario gate, not part of those three passes; direct API writer simulates a client that does not publish the frontend BroadcastChannel event",
+  "rounds": 1,
+  "setup": "Disposable seed fact only. Send its exact content as a new turn to ensure the original fact is recalled; require current trace to contain that fact before erasure.",
+  "erase": "POST memory batch forget and confirmation through APIRequestContext, no UI event injected; verify current backend history has advanced revision and no original assistant result",
+  "observation": "12 fixed RAF samples in the still-active original tab, then manual refresh control",
+  "gate": "Old trace must be removed in all fixed post-commit observations; independent repeated user text is not claimed erased by deleting a fact with no such source link",
+  "failurePolicy": "Retain failure and create a separate unresolved issue; do not retroactively describe the original three passes as external-writer coverage or tune their protocol",
+  "wallClockExperimentDeadline": null
+}
