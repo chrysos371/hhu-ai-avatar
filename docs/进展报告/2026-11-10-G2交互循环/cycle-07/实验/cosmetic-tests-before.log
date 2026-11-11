@@ -1,0 +1,42 @@
+FF.....                                                                  [100%]
+=================================== FAILURES ===================================
+_ test_explicit_period_stays_within_half_sample_hop_of_absolute_targets[22050-0.3-4] _
+
+sr = 22050, period = 0.3, duration = 4
+
+    @pytest.mark.parametrize('sr,period,duration',[(22050,.3,4),(16000,.035,2),(16000,.3,2)])
+    def test_explicit_period_stays_within_half_sample_hop_of_absolute_targets(sr,period,duration):
+        settings=dict(SPEC);settings['duration_seconds']=duration
+        samples=synthesize(settings,settings['anchors'][0],sr,'harmonic',100,.12,11)
+        base=LipSyncEngine().analyze(samples,sr)
+        decorated=LipSyncEngine(close_every=period).analyze(samples,sr)
+        events=[frame.time for original,frame in zip(base,decorated) if original.mouth_open!=frame.mouth_open]
+        assert len(events)==int(base[-1].time/period)
+>       assert max(abs(t-(i+1)*period) for i,t in enumerate(events))<=int(sr*.01)/sr/2+1e-12
+E       assert 0.008843537414966018 <= (((220 / 22050) / 2) + 1e-12)
+E        +  where 0.008843537414966018 = max(<generator object test_explicit_period_stays_within_half_sample_hop_of_absolute_targets.<locals>.<genexpr> at 0x7fefeca170d0>)
+E        +  and   220 = int((22050 * 0.01))
+
+tests/test_lipsync_cosmetic_clock.py:22: AssertionError
+_ test_explicit_period_stays_within_half_sample_hop_of_absolute_targets[16000-0.035-2] _
+
+sr = 16000, period = 0.035, duration = 2
+
+    @pytest.mark.parametrize('sr,period,duration',[(22050,.3,4),(16000,.035,2),(16000,.3,2)])
+    def test_explicit_period_stays_within_half_sample_hop_of_absolute_targets(sr,period,duration):
+        settings=dict(SPEC);settings['duration_seconds']=duration
+        samples=synthesize(settings,settings['anchors'][0],sr,'harmonic',100,.12,11)
+        base=LipSyncEngine().analyze(samples,sr)
+        decorated=LipSyncEngine(close_every=period).analyze(samples,sr)
+        events=[frame.time for original,frame in zip(base,decorated) if original.mouth_open!=frame.mouth_open]
+>       assert len(events)==int(base[-1].time/period)
+E       AssertionError: assert 65 == 56
+E        +  where 65 = len([0.03, 0.06, 0.09, 0.12, 0.15, 0.18, ...])
+E        +  and   56 = int((1.97 / 0.035))
+E        +    where 1.97 = LipSyncFrame(time=1.97, mouth_open=0.6666666666666666, vowel='a', energy=1.0).time
+
+tests/test_lipsync_cosmetic_clock.py:21: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_lipsync_cosmetic_clock.py::test_explicit_period_stays_within_half_sample_hop_of_absolute_targets[22050-0.3-4]
+FAILED tests/test_lipsync_cosmetic_clock.py::test_explicit_period_stays_within_half_sample_hop_of_absolute_targets[16000-0.035-2]
+2 failed, 5 passed in 1.45s
