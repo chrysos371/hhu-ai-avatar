@@ -56,3 +56,21 @@ def test_frozen_candidate_rejects_changed_bytes(tmp_path):
     manifest.write_text(json.dumps({'prospective_execution_authorized': True,
         'sha256': {'src/avatar/lab/body_review.py': 'wrong'}}))
     with pytest.raises(ValueError, match='mismatch'): pair.verify_freeze(manifest)
+
+
+def test_paired_collector_v2_uses_actual_source_bound_factory(monkeypatch):
+    from avatar.lab.source_bound_body_review import SourceBoundBodyReviewAvatar
+    claim = '那我们下次可以一起去爬山，享受大自然的风景。'
+    monkeypatch.setattr(pair, 'ExplicitBodyReviewAvatar', SourceBoundBodyReviewAvatar)
+    with controlled_provider(delay=.001, reply_overrides={'fixture-pair': claim}) as (_, url):
+        for name, value in [('base_url', url), ('api_key', 'fixture'), ('model', 'fixture')]:
+            monkeypatch.setattr(config.llm, name, value)
+        monkeypatch.setattr(config.embedding, 'model', '')
+        row = pair.collect_arm({'id': 'v2_transport', 'frame': 'fixture',
+            'turns': ['替我回复朋友，原样写出“约你去爬山”。fixture-pair']},
+            'candidate_lab_buffered_review', build_opener(ProxyHandler({})))
+    assert row['completed'], row['error']
+    turn = row['turns'][0]; review = turn['result']['response_review']
+    assert turn['visible'] == claim and review['reviewer'] == 'lab_source_bound_body_v2'
+    assert review['creative_exempt'] and review['source_message_ids']
+    assert main_module.Avatar is Avatar

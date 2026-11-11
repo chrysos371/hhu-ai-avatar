@@ -26,11 +26,17 @@ def has_pid(raw, pid):
     return any(line.split(',')[0].strip() == str(pid) for line in raw.splitlines())
 
 
-def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None):
+def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None,
+         protocol=None, pair_protocol=None, candidate='v1'):
     if stage == 'prospective':
         if candidate_freeze is None: raise ValueError('Prospective runs require --candidate-freeze')
         from evaluate_body_review_pair import verify_freeze
-        verify_freeze(candidate_freeze)
+        frozen = verify_freeze(candidate_freeze)
+        expected_candidate = 'lab_source_bound_body_v2' if candidate == 'source_bound_v2' else 'lab_explicit_body_v1'
+        if frozen['candidate'] != expected_candidate: raise ValueError('Candidate differs from frozen selection')
+        for path in [protocol, pair_protocol]:
+            if path is not None and str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
+                raise ValueError('Selected protocol is not frozen')
     output.mkdir(parents=True, exist_ok=False)
     registry_path = ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
     registry = json.loads(registry_path.read_text())
@@ -43,6 +49,9 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         paths += ['src/avatar/lab/body_review.py', 'src/avatar/lab/body_review_avatar.py',
                   'src/avatar/brain/tasks.py', 'scripts/evaluate_body_review_pair.py',
                   'evals/interaction/cycle-15/prospective-paired-protocol.json']
+        paths += [str(p.resolve().relative_to(ROOT)) for p in [protocol, pair_protocol] if p is not None]
+        if candidate == 'source_bound_v2':
+            paths += ['src/avatar/lab/composition_sources.py', 'src/avatar/lab/source_bound_body_review.py']
     def fingerprint(): return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
     metadata_paths = {'qwen3-4b-q4_k_m': ROOT/'data/g2-cycle-02/gguf-metadata.json',
                       'qwen3-14b-q4_k_m': ROOT/'data/g2-cycle-02/qwen14b-gguf-metadata.json'}
@@ -50,7 +59,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     if not specifications: raise ValueError('Unknown model key: '+str(model_key))
     report = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': fingerprint(),
-              'stage': stage, 'requested_models': [m['model_id'] for m in specifications],
+              'stage': stage, 'candidate': candidate, 'requested_models': [m['model_id'] for m in specifications],
               'candidateFreezeSha256': sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None,
               'models': [], 'completed': False, 'failure': None,
               'scope': 'Sequential pinned real CUDA providers; no other process terminated; one provider at a time'}
@@ -96,7 +105,9 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                         sampler_command = [sys.executable, str(ROOT/'scripts'/sampler),
                             '--provider', str(ready), '--output', str(folder/'sample')]
                         if stage == 'prospective':
-                            sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze)]
+                            sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze), '--candidate', candidate]
+                            if protocol is not None: sampler_command += ['--protocol', str(protocol)]
+                            if pair_protocol is not None: sampler_command += ['--pair-protocol', str(pair_protocol)]
                         row['sampler_command'] = sampler_command; save()
                         result = subprocess.run(sampler_command, cwd=ROOT,
                             stdout=sampler_log, stderr=subprocess.STDOUT)
@@ -131,8 +142,11 @@ if __name__ == '__main__':
     parser.add_argument('--stage', choices=['development', 'prospective'], default='development')
     parser.add_argument('--model-key', choices=['qwen3-4b-q4_k_m', 'qwen3-14b-q4_k_m'])
     parser.add_argument('--candidate-freeze', type=Path)
+    parser.add_argument('--protocol', type=Path)
+    parser.add_argument('--pair-protocol', type=Path)
+    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2'], default='v1')
     options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.
     # Make it absolute while preserving the requested venv entry point.
     main(options.output.resolve(), options.provider_python.expanduser().absolute(),
-         options.stage, options.model_key, options.candidate_freeze)
+         options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate)

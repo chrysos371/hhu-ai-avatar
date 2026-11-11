@@ -25,6 +25,7 @@ from evaluate_native_output_audit import events
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT/'evals/interaction/cycle-15/native-output-protocol.json'
 PAIR = ROOT/'evals/interaction/cycle-15/prospective-paired-protocol.json'
+CANDIDATE = 'lab_explicit_body_v1'
 
 
 def verify_freeze(path):
@@ -133,6 +134,11 @@ def collect_arm(case, arm, opener, trace=None):
 
 def evaluate(provider_path, trace, freeze, output):
     frozen = verify_freeze(freeze)
+    if frozen['candidate'] != CANDIDATE:
+        raise ValueError('Selected candidate differs from frozen implementation')
+    for path in [PROTOCOL, PAIR]:
+        if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
+            raise ValueError('Selected protocol is not bound by the freeze')
     output.mkdir(parents=True, exist_ok=False)
     protocol = json.loads(PROTOCOL.read_text()); provider = json.loads(provider_path.read_text())
     registry = json.loads((ROOT/protocol['models_registry']).read_text())
@@ -145,7 +151,7 @@ def evaluate(provider_path, trace, freeze, output):
         if provider['configuration'][key] != value: raise ValueError('Inference configuration differs: '+key)
     config.llm.base_url = provider['url']; config.llm.api_key = 'local-eval-only'; config.llm.model = provider['model_id']
     config.embedding.model = ''
-    report = {'partition': 'prospective', 'stage': 'C_frozen_paired', 'provider': provider,
+    report = {'partition': 'prospective', 'stage': 'C_frozen_paired', 'candidate': CANDIDATE, 'provider': provider,
         'candidateFreezeSha256': sha256(freeze.read_bytes()).hexdigest(), 'sourceSha256': frozen['sha256'],
         'createdUtc': datetime.now(timezone.utc).isoformat(),
         'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -165,7 +171,8 @@ def evaluate(provider_path, trace, freeze, output):
                 reply = engine.stream_chat(messages, temperature=0, max_tokens=16) if streaming else engine.chat(messages, temperature=0, max_tokens=16)
                 report['warmups'].append({'streaming': streaming, 'reply': reply, 'seconds': time.perf_counter()-tick}); save()
         finally: engine.close()
-        for index, case in enumerate(c for c in protocol['cases'] if c['partition'] == 'prospective'):
+        cases = [c for c in protocol['cases'] if c['partition'] == 'prospective']
+        for index, case in enumerate(cases):
             arms = json.loads(PAIR.read_text())['arms']
             if index % 2: arms.reverse()
             for arm in arms:
@@ -177,7 +184,8 @@ def evaluate(provider_path, trace, freeze, output):
         turns = [t for r in report['cases'] for t in r['turns']]
         report['generation_modes'] = dict(Counter(t['result']['generation_mode'] for t in turns))
         report['analysis_modes'] = dict(Counter(t['result']['analysis_mode'] for t in turns))
-        report['execution_complete'] = len(report['cases']) == 24 and len(turns) == 30 and all(r['completed'] for r in report['cases'])
+        expected_turns = 2*sum(len(c['turns']) for c in cases)
+        report['execution_complete'] = len(report['cases']) == 2*len(cases) and len(turns) == expected_turns and all(r['completed'] for r in report['cases'])
         report['engineering_passed'] = report['execution_complete']
     except Exception as error: report['failure'] = repr(error)
     finally: save()
@@ -189,6 +197,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     for name in ['provider', 'trace', 'candidate-freeze', 'output']:
         parser.add_argument('--'+name, type=Path, required=True)
+    parser.add_argument('--protocol', type=Path, default=PROTOCOL)
+    parser.add_argument('--pair-protocol', type=Path, default=PAIR)
+    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2'], default='v1')
     options = parser.parse_args()
+    PROTOCOL, PAIR = options.protocol.resolve(), options.pair_protocol.resolve()
+    if options.candidate == 'source_bound_v2':
+        from avatar.lab.source_bound_body_review import SourceBoundBodyReviewAvatar
+        ExplicitBodyReviewAvatar = SourceBoundBodyReviewAvatar
+        CANDIDATE = 'lab_source_bound_body_v2'
     if not evaluate(options.provider, options.trace, options.candidate_freeze, options.output.resolve())['engineering_passed']:
         raise SystemExit(1)
