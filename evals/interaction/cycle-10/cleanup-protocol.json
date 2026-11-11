@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "scope": "Disposable browser helper process only, not production server or user DB",
+  "rounds": "One old-helper SIGTERM observation, implement graceful stop if failure, one changed-helper SIGTERM observation plus default browser regression",
+  "operation": "Require unused loopback port18765, start helper, poll health up to200 attempts with 50ms retry and 1s per-request timeout, record newly created admin-e2e folders, send SIGTERM to this owned PID, wait for terminal process and inspect only those folders",
+  "gates": {"cleanExitCode": 0, "createdFolders": 1, "remainingCreatedFoldersAfterExit": 0},
+  "preserveFailures": true,
+  "deleteOtherTemporaryDirectories": false,
+  "experimentWallClockDeadline": null
+}
