@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "a8b3754",
+  "target": "Close G2C11-003 external-writer notification gap without transcript polling or model/tool replay",
+  "transport": {
+    "path": "/api/v1/conversation/changes",
+    "method": "Authenticated held GET with known instance_id and nonnegative revision",
+    "payload": "Only instance_id and revision inside existing envelope; no transcript/fact/trace",
+    "normal": "one held request per mounted chat; unchanged heartbeat10s; version change returns immediately",
+    "serverBounds": "At most4 held requests and reserve at least1 ordinary server slot; one shared monitor only while watchers exist, DB polling100ms; successful API responses also check committed revision before returning",
+    "disconnect": "Check peer close at100ms; release watcher slot, close monitor on server close",
+    "clientFailure": "Clear stale view/cancel old playback and turn once per outage; abort-aware250/500/1000/2000/5000ms capped backoff; terminal403;15s per-watch network timeout is operational, no experiment deadline"
+  },
+  "experiments": {
+    "originalProbe": "Retain cycle11 failure and rerun original external-erase.spec.ts without relaxing its12 RAF gate",
+    "fixedAfterRounds": 3,
+    "newCases": ["API auth/cursor/admission/heartbeat/peer close/server close", "other SQLite connection committed revision", "out-of-order checks cannot lower version", "metadata contains no erased text", "network failure/reconnect same version revalidates", "old callback after unmount cannot alter UI", "external erase interrupts playing/streaming", "ordinary current-turn fact changes remain usable", "legacy snapshot and pending-result epoch barriers"]
+  },
+  "gates": "Original external API probe all12 oldTraceVisible=false, refresh control stays valid; bounded slots/read requests and no model replay; existing Python/frontend/restore/PCM/long-history regressions hold",
+  "limits": "Single-host finite controlled providers and software browser checks; no general semantic, physical-device or multi-day claim. Any failure is retained; no threshold increase to make it pass.",
+  "wallClockExperimentDeadline": null
+}
