@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "5dd6d65",
+  "objective": "Restore privacy-valid persisted conversations across SPA navigation and refresh, retain inspectable new-turn provenance and speech, avoid stale cache or cancelled-draft resurrection",
+  "cacheExperiment": {
+    "turns": 40,
+    "method": "Actual ChatPage with controlled fetch/SSE and a real QueryClient; inspect mutation cache after unmount and a next task",
+    "expectedRetainedChatMutations": 0,
+    "expectedRetainedSensitiveReplies": 0
+  },
+  "readApi": {
+    "path": "/api/v1/conversation",
+    "authentication": "existing token requirement, read only, no model or tool replay",
+    "pagination": "positive before_id optional, limit 1..200 default100; older rows available explicitly; stable source IDs and same revision required across pages",
+    "snapshot": "instance_id, revision, items ordered by source id, has_more, next_before_id",
+    "item": "id, role user/assistant, text, session_id, created_at, redacted, optional original ChatResult for valid stored new assistant trace",
+    "redaction": "Join current message contents; never replay old plaintext traces across a privacy revision. Old records without stored trace remain readable with honest provenance availability."
+  },
+  "requiredScenarios": [
+    "token denial and malformed pagination",
+    "legacy messages readable without fabricated trace",
+    "new completed turns restore exact role/text/source IDs and original trace",
+    "SPA navigation restores conversation, including older pages",
+    "browser refresh restores persisted conversation",
+    "history read and replay UI do not call models or tools",
+    "cancel before final commit does not restore an assistant draft",
+    "read during a pending turn does not duplicate its user row",
+    "forget source and dependent replies clears old traces in the same revision transaction",
+    "held old history response cannot override a newer privacy event/snapshot",
+    "held old final result cannot repopulate rows after privacy clear",
+    "cross-tab privacy notification and focus refresh revalidate without localStorage transcript",
+    "original playback and cancellation tests remain valid",
+    "finite long-history browser run and resource observations with explicit duration"
+  ],
+  "experimentCounts": {
+    "cacheBaseline": 1,
+    "cacheAfter": 1,
+    "newBrowserBefore": 1,
+    "newBrowserAfterFrozenImplementation": 3
+  },
+  "gates": "Exact content/source/trace checks, no cancelled assistant restore, no erased marker in current UI or returned trace, no duplicate rows or model/tool re-execution from reads, all required regressions pass",
+  "limitations": "Finite fixtures and HTTP/SSE tests do not approve general semantics, human ASR/vowels, physical AV or multi-day stability. Cache entry counts do not alone explain all heap growth.",
+  "wallClockExperimentDeadline": null,
+  "browserWorkload": {
+    "completedTurns": 54,
+    "cancelledTurn": 1,
+    "partialDraftRequired": "Wait actual streamed 云并不是 before cancel",
+    "pagination": "108 completed messages; navigate newest100, load older8; unique IDs; after cancel user only",
+    "erase": "Selected summary source must be visible in primary tab before secondary-tab confirmation; hold one genuine pre-delete history response and release after notification"
+  },
+  "browserResources": {
+    "method": "Three forced GCs then CDP Performance/DOM counters; record actual Chromium version",
+    "checkpoints": [
+      "empty",
+      "54 turns with108 loaded messages",
+      "after privacy current100 message page"
+    ],
+    "scope": "Descriptive resource use in changed UI states, not a direct speed/heap comparison with cycle10 empty navigation, not a full leak proof"
+  }
+}
