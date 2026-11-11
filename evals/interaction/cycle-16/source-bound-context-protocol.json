@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "candidate": "lab_source_bound_body_v2",
+  "baseline": "2cd3cf5",
+  "known_regressions": [
+    "C15-004 same-turn delegated reply",
+    "C15-005 root outside20messages",
+    "C15 analytic32 and prior context5"
+  ],
+  "body_patterns": "Reuse v1 unchanged; only context source binding is revised",
+  "state_contract": {
+    "storage": "Lab-only singleton table; source IDs/cursor/revision/version/frame, no raw copies",
+    "pending_user_limit": 64,
+    "source_access": "Only current revision, validated root and <=64 pending user sources; never replay models/actions",
+    "invalid": "Unverified frame and explicitly deferred bounded rewrite, no invented ordinary authority",
+    "end": "Explicit writing end/reality transition revoke old creative exemption"
+  },
+  "controlled_cases": [
+    "delegated_reply_current",
+    "literal_write_current",
+    "root_12_revisions",
+    "new_avatar_same_database",
+    "writing_then_end",
+    "privacy_revision_drops_root",
+    "redacted_root_rejected",
+    "cancelled_source_then_followup",
+    "other_writer_user_end",
+    "assistant_only_gap",
+    "oversized_pending_gap",
+    "corrupt_cursor",
+    "role_then_real",
+    "quoted_request_is_data"
+  ],
+  "prospective_policy": "Known C15 failures become regression only. Freeze implementation+CPU+new protocol before any new real-model call; no tuning on same prospective outputs. Separate native/corrected/uncertain and all source profiles.",
+  "semantic_approved": false,
+  "production_activation_approved": false,
+  "wallClockExperimentDeadline": null
+}
