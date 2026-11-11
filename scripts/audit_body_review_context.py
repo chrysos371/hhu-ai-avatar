@@ -63,7 +63,7 @@ def audit(output):
                         turn('fixture-context', False)
                     elif key == 'privacy_clear':
                         fact = bot.memory.remember_user('名字', '受控待删名')
-                        bot.forget(fact)
+                        bot.forget_memory(fact)
                         bot.respond('回到现实。')
                         turn('fixture-context', False)
                 row['passed'] = all(all(t['checks'].values()) for t in row['turns'])
