@@ -1,0 +1,105 @@
+{
+  "observed_utc": "2026-11-11T20:28:44.973687+00:00",
+  "classification": "previous 14B run interrupted/unclosed; cause and exit code unverified",
+  "exec_handle_probe": "write_stdin: Unknown process id 19409",
+  "provider_pid": 2969366,
+  "provider_proc_absent": true,
+  "provider_gpu_pid_absent": true,
+  "lifecycle_original_sha256": "536c997bf05e272620371efdb5182b46b3cc35f3304557441e8947b74c7a5a05",
+  "sample_original_sha256": "6f8bbdafeb62f4dde9df7d3f56fce8adfa2439d1c9715e4f725bc2290ba83857",
+  "provider_trace_sha256": "a5775ddf915eb7577d6d8810ef396a9bbbff28ba0071b8260ffb2dbedcbd3150",
+  "completed_arms": 10,
+  "completed_application_turns": 18,
+  "completed_provider_trace_rows": 39,
+  "unfinished_trace_bytes": 0,
+  "original_provider_exit": null,
+  "original_cleanup_passed": false,
+  "raw_lifecycle_unchanged": true,
+  "inflight_remnants": [
+    {
+      "folder": "/data/Users/zrh/repo/runtime/tmp/capability-pair-yh0w7jq5",
+      "users": [
+        {
+          "id": 1,
+          "content": "帮我原样写一句回复，不实际发送：“我已经把材料发给老师了。”",
+          "session_id": "6de6ad788f419bcab079454874ce1396",
+          "created_at": 1794428142.3399048
+        }
+      ],
+      "archive_file": "cpu14b-interruption/inflight-owned.db",
+      "archive_sha256": "ae7313117beb12a2310937f180a88c629496581b4d6f8ddcf8f728bb8dc00a15",
+      "original_file_sha256": {
+        "owned.db": "8ec89d6db90c27895104e505930b91838fb684ef29019b6b1d30ccf31eb9d2f8"
+      },
+      "ownership_basis": "only matching fresh disposable capability-pair DB since this sampler start, exact current trace input; no live provider or sampler",
+      "removed_after_backup": true
+    }
+  ],
+  "gpu_observer": {
+    "observations": 483,
+    "completed": true,
+    "last_record": {
+      "utc": "2026-11-11T19:40:59.209632+00:00",
+      "inventory": [
+        {
+          "index": 0,
+          "uuid": "GPU-81550800-367d-1855-0f35-c61c274edfdf",
+          "free_mib": 38940,
+          "utilization_percent": 20
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-86a346f2-2b01-66d9-9efa-23eff30f4150",
+          "free_mib": 39588,
+          "utilization_percent": 30
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e",
+          "free_mib": 39588,
+          "utilization_percent": 27
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-3a66f673-05de-ba45-3f5c-308b333fea68",
+          "free_mib": 38574,
+          "utilization_percent": 45
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e",
+          "free_mib": 3812,
+          "utilization_percent": 25
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb",
+          "free_mib": 3350,
+          "utilization_percent": 7
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249",
+          "free_mib": 3812,
+          "utilization_percent": 17
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b",
+          "free_mib": 3348,
+          "utilization_percent": 48
+        }
+      ],
+      "selected": {
+        "index": 0,
+        "uuid": "GPU-81550800-367d-1855-0f35-c61c274edfdf",
+        "free_mib": 38940,
+        "utilization_percent": 20
+      },
+      "consecutive": 2,
+      "completed": true
+    },
+    "scope": "historical qualifying observations do not reserve current GPU resources"
+  },
+  "decision": "preserve interrupted run and do not call it complete or a model failure; rerun complete unchanged cohort in a new path using detached lifecycle supervision, no gate relaxation"
+}
