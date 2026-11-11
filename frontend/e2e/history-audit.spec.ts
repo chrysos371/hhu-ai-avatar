@@ -81,10 +81,10 @@ test('audits full chat history input diagnostics playback and navigation resourc
     scope: 'Full production ChatPage, real local HTTP/SSE controlled provider, disposable DB, actual PCM playback with intercepted speech oracle; no real model or physical/multi-day approval',
     sourceSha256: Object.fromEntries(sources.map(p => [p, digest(p)])),
     servedBundleSha256: Object.fromEntries(['dist/index.html', ...readdirSync('dist/assets').filter(p => p.endsWith('.js')).map(p => 'dist/assets/' + p)].map(p => [p, digest(p)])),
-    turns: [] as { id: string; text: string; result?: any; streamError?: string }[],
+    turns: [] as { id: string; text: string; result?: any; resultSource?: string; jobStatus?: string; streamError?: string }[],
     checkpoints: [] as any[], initial: null as unknown, afterNavigation: null as unknown,
     violations: [] as string[], errors: [] as string[], allCheckpointsObserved: false, completed: false, failure: null as string | null };
-  const started = Date.now(), pending: Promise<void>[] = [];
+  const started = Date.now();
   const save = () => { report.elapsedSeconds = (Date.now() - started) / 1000; writeFileSync(path, JSON.stringify(report, null, 2) + '\n'); };
   save();
   page.on('pageerror', error => report.errors.push(error.message));
@@ -93,24 +93,11 @@ test('audits full chat history input diagnostics playback and navigation resourc
       const body = request.postDataJSON(); report.turns.push({ id: body.request_id, text: body.text });
     }
   });
-  page.on('response', response => {
-    if (!/\/api\/v1\/turns\/[^/]+\/events$/.test(new URL(response.url()).pathname)) return;
-    const job = new URL(response.url()).pathname.split('/').at(-2)!;
-    pending.push((async () => {
-      const row = report.turns.find(row => row.id === job); if (!row) throw Error('Missing matching submitted turn');
-      try {
-        const body = await response.text();
-        for (const block of body.split(/\r?\n\r?\n/)) if (block.startsWith('event: result\n')) {
-          row.result = JSON.parse(block.split('\n').find(line => line.startsWith('data:'))!.slice(5));
-        }
-      } catch (error) { row.streamError = String(error); }
-    })());
-  });
   await page.addInitScript(() => {
     const scope = window as Scope; scope.__historyAudit = { decisions: 0, inputRows: [] };
     const original = JSON.stringify;
     JSON.stringify = function(value: unknown, ...args: any[]) {
-      if (value && typeof value === 'object' && 'speech_rate' in value && 'mouth_intensity' in value) scope.__historyAudit.decisions++;
+      if (value && typeof value === 'object' && 'analysis_mode' in value && 'generation_mode' in value) scope.__historyAudit.decisions++;
       return Reflect.apply(original, JSON, [value, ...args]);
     };
     document.addEventListener('input', event => {
@@ -140,7 +127,14 @@ test('audits full chat history input diagnostics playback and navigation resourc
       await page.getByRole('button', { name: '发送消息', exact: true }).click();
       await expect(page.locator('.chat-message.assistant details')).toHaveCount(turn);
       await expect(page.getByRole('button', { name: '发送消息', exact: true })).toBeDisabled();
-      await Promise.all(pending); save();
+      // The UI consumes SSE; its reader cancels after the result. Capture the
+      // canonical completed job separately instead of rereading that stream.
+      const row = report.turns.at(-1)!;
+      const delivered = await page.request.get('/api/v1/turns/' + row.id, { headers: { 'X-Avatar-Token': token } });
+      expect(delivered.ok()).toBe(true);
+      const job = (await delivered.json()).data;
+      row.jobStatus = job.status; row.result = job.result; row.resultSource = 'canonical job GET after final UI';
+      save();
       if (![1, 25, 100].includes(turn)) continue;
       const entry: any = { replies: turn, closed: await resources(page, cdp), clocks: [], input: null, trace: null, stopped: null };
       report.checkpoints.push(entry); save();
@@ -187,12 +181,11 @@ test('audits full chat history input diagnostics playback and navigation resourc
     await page.getByRole('link', { name: '对话观测', exact: true }).click();
     await expect(page.getByRole('heading', { name: '开始一段对话', exact: true })).toBeVisible();
     report.afterNavigation = await resources(page, cdp);
-    await Promise.all(pending);
     if (report.turns.length !== 100 || report.turns.some(turn => !turn.result || turn.streamError)) report.violations.push('100 complete HTTP/SSE results');
     if (report.errors.length) report.violations.push('page errors');
     save();
     expect(report.violations).toEqual([]); report.completed = true;
     await page.screenshot({ path: join(folder, 'history-after-navigation.png') });
   } catch (error) { report.failure = String(error); throw error; }
-  finally { await Promise.allSettled(pending); save(); await cdp.detach(); }
+  finally { save(); await cdp.detach(); }
 });
