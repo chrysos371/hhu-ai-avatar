@@ -7,6 +7,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import threading
@@ -113,7 +114,7 @@ def main():
                     if schema is None:
                         self.send_json(400,{'error':{'message':'schema required'}});return
                     grammar=LlamaGrammar.from_json_schema(json.dumps(schema),verbose=False)
-                started=time.monotonic();first=None;parts=[];outcome='completed';usage=None
+                started=time.monotonic();first=None;parts=[];outcome='completed';usage=None;finish_reason=None
                 stream=bool(data.get('stream'))
                 try:
                     if stream:
@@ -125,6 +126,8 @@ def main():
                     if stream:
                         try:
                             for chunk in response:
+                                if chunk['choices'][0]['finish_reason'] is not None:
+                                    finish_reason=chunk['choices'][0]['finish_reason']
                                 text=chunk['choices'][0]['text'];parts.append(text)
                                 if first is None and text:first=time.monotonic()-started
                                 obj={'id':identifier,'object':'chat.completion.chunk','model':args.model_key,
@@ -135,6 +138,7 @@ def main():
                             response.close()
                     else:
                         text=response['choices'][0]['text'];parts=[text];usage=response.get('usage')
+                        finish_reason=response['choices'][0]['finish_reason']
                         first=time.monotonic()-started
                         self.send_json(200,{'id':identifier,'object':'chat.completion','model':args.model_key,
                             'choices':[{'index':0,'message':{'role':'assistant','content':text},
@@ -148,7 +152,7 @@ def main():
                     trace.write(json.dumps({'id':identifier,'stream':stream,'analysis':grammar is not None,
                         'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),'messages':data['messages'],
                         'response':''.join(parts),'first_seconds':first,'total_seconds':time.monotonic()-started,
-                        'usage':usage,'outcome':outcome},ensure_ascii=False)+'\n');trace.flush()
+                        'usage':usage,'finish_reason':finish_reason,'outcome':outcome},ensure_ascii=False)+'\n');trace.flush()
     server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
     server.daemon_threads=True
     args.ready.write_text(json.dumps({'url':f'http://127.0.0.1:{server.server_port}/v1',
@@ -163,8 +167,17 @@ def main():
         'llama_cpp_python':version('llama-cpp-python'),'load_seconds':load_seconds,
         'provider_source_sha256':sha(__file__),'process_gpu_mib_after_load':allocated,
         'pid':os.getpid()},indent=2)+'\n')
+    stopping=threading.Event()
+    def shutdown(signum, frame):
+        if not stopping.is_set():
+            stopping.set()
+            threading.Thread(target=server.shutdown,daemon=True).start()
+    for signum in (signal.SIGINT,signal.SIGTERM):signal.signal(signum,shutdown)
     try:server.serve_forever()
-    finally:server.server_close();trace.close();model.close()
+    finally:
+        server.server_close()
+        with guard:
+            trace.close();model.close()
 
 
 if __name__=='__main__':main()
