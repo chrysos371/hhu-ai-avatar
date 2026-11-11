@@ -84,3 +84,39 @@ it('accepts revision zero in a different server namespace', async () => {
   await watchConversationChanges(initial, controller.signal, { onVersion, onUnavailable: vi.fn() });
   expect(onVersion).toHaveBeenCalledWith({ instance_id: 'two', revision: 0 });
 });
+
+it('opts into one source-cursor wait and advances ordinary context without a privacy revision change', async () => {
+  const value = { ...initial, context_cursor: 0 };
+  let release!: (value: unknown) => void;
+  const fetch = vi.fn().mockResolvedValueOnce(response(value))
+    .mockResolvedValueOnce(response({ ...value, context_cursor: 3 }))
+    .mockImplementation(() => new Promise(resolve => { release = resolve; }));
+  vi.stubGlobal('fetch', fetch); const onVersion = vi.fn(), onUnavailable = vi.fn();
+  const running = watchConversationChanges(value, controller.signal, { onVersion, onUnavailable }); await settle();
+  expect(fetch).toHaveBeenCalledTimes(3);
+  expect(fetch.mock.calls.map(row => row[0])).toEqual([
+    '/api/v1/conversation/changes?instance_id=one&revision=2&context_cursor=0',
+    '/api/v1/conversation/changes?instance_id=one&revision=2&context_cursor=0',
+    '/api/v1/conversation/changes?instance_id=one&revision=2&context_cursor=3']);
+  expect(onVersion.mock.calls.map(row => row[0])).toEqual([value, { ...value, context_cursor: 3 }]);
+  controller.abort(); release(response(value)); await running;
+  expect(onUnavailable).not.toHaveBeenCalled(); expect(vi.getTimerCount()).toBe(0);
+});
+
+it.each([{ ...initial }, { ...initial, context_cursor: -1 }, { ...initial, context_cursor: 1 },
+  { ...initial, context_cursor: 4, text: 'private-text' }, { ...initial, context_cursor: Number.MAX_SAFE_INTEGER + 1 },
+])('fails closed for invalid or regressing opted-in cursor %#', async data => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(data)));
+  const onUnavailable = vi.fn(), onVersion = vi.fn();
+  const running = watchConversationChanges({ ...initial, context_cursor: 3 }, controller.signal, { onVersion, onUnavailable }); await settle();
+  expect(onUnavailable).toHaveBeenCalledTimes(1); expect(onVersion).not.toHaveBeenCalled();
+  controller.abort(); await running; expect(vi.getTimerCount()).toBe(0);
+});
+
+it('accepts a fresh source cursor only when the server namespace changes', async () => {
+  const value = { instance_id: 'two', revision: 0, context_cursor: 0 };
+  const onVersion = vi.fn(() => controller.abort());
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(value)));
+  await watchConversationChanges({ ...initial, context_cursor: 5 }, controller.signal, { onVersion, onUnavailable: vi.fn() });
+  expect(onVersion).toHaveBeenCalledWith(value);
+});
