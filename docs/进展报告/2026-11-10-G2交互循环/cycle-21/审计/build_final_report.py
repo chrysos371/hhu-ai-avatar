@@ -70,6 +70,18 @@ def seal():
         else:
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_bytes(path.read_bytes())
+    canonical = {}
+    for name in ('AGENTS.md', 'README.md', 'docs/backend.md', 'docs/本地动作回执.md', 'docs/项目进度.md'):
+        value = subprocess.check_output(['git', 'show', '22ed173:' + name], cwd=ROOT)
+        assert value == (ROOT / name).read_bytes(), name
+        dest = HERE / '交付核验/交付规范文档/22ed173' / name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if dest.exists():
+            assert dest.read_bytes() == value
+        else:
+            dest.write_bytes(value)
+        canonical[name] = {'git_ref': '22ed173', 'sha256': sha256(value).hexdigest()}
+    (HERE / '交付核验/交付规范文档/来源.json').write_text(json.dumps(canonical, ensure_ascii=False, indent=2) + '\n')
     excluded = set(live) | {HERE / '证据清单.json'}
     manifest = {path.relative_to(BASE).as_posix(): digest(path)
                 for path in sorted(BASE.rglob('*')) if path.is_file() and path not in excluded}
