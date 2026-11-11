@@ -6,8 +6,11 @@ import json
 from pathlib import Path
 import subprocess
 import time
+import wave
 import numpy as np
 from avatar.face.lipsync import LipSyncEngine
+from avatar.main import Avatar
+from avatar.brain.memory import MemoryStore
 from evaluate_analytic_lipsync import legacy
 from evaluate_real_interaction import save,sha
 
@@ -41,7 +44,28 @@ def run(arm,output):
             'sample_clock_passed':maximum<=spec['gates']['max_absolute_error_samples'] and within and len(frames)==expected_count}
         report['rows'].append(row);save(output,report)
         print(arm,sr,item['hop_ms'],item['duration_seconds'],row['max_error_ms'],row['sample_clock_passed'],flush=True)
-    report.update(execution_complete=True,sample_clock_gate_passed=all(row['sample_clock_passed'] for row in report['rows']),seconds=time.perf_counter()-started)
+    class Offline:
+        available=False
+    class LocalWave:
+        def synthesize(self,text,path,rate,pitch):
+            samples=.1*np.sin(2*np.pi*300*np.arange(44100)/22050)
+            with wave.open(path,'wb') as target:
+                target.setparams((1,2,22050,0,'NONE','not compressed'))
+                target.writeframes((samples*32767).astype('<i2').tobytes())
+            return path
+    audio_path=output.with_suffix('.wav')
+    if audio_path.exists():raise FileExistsError(audio_path)
+    memory=MemoryStore(':memory:');bot=Avatar(memory=memory,llm=Offline(),tts=LocalWave())
+    bot.lipsync=engine_class()
+    try:
+        result=bot.respond('读一段测试。',use_tts=True,tts_path=str(audio_path))
+        if result['lipsync_error'] is not None:raise AssertionError('Actual file TTS analysis failed')
+        frames=result['lip_sync_frames'];error=max(abs(row['time']*22050-index*220) for index,row in enumerate(frames))
+        report['file_api']={'scope':'Actual Avatar.respond with injected local WAV; no remote model/TTS',
+            'audio_sha256':sha(audio_path),'sample_rate':22050,'sample_count':44100,
+            'frames':frames,'max_error_samples':error,'max_error_ms':error/22050*1000,'passed':error<=1e-6}
+    finally:memory.close()
+    report.update(execution_complete=True,sample_clock_gate_passed=all(row['sample_clock_passed'] for row in report['rows']) and report['file_api']['passed'],seconds=time.perf_counter()-started)
     save(output,report)
     print(json.dumps({'passed':report['sample_clock_gate_passed'],'cases':len(report['rows']),'max_error_ms':max(row['max_error_ms'] for row in report['rows'])}))
 

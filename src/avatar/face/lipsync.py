@@ -155,7 +155,10 @@ class LipSyncEngine:
         if (not np.isfinite(frame_samples) or not np.isfinite(hop_samples)
                 or max(frame_samples, hop_samples) >= np.iinfo(np.intp).max):
             raise ValueError('frame and hop sizes exceed representable sample dimensions')
-        if int(frame_samples) < 2 or int(hop_samples) < 1:
+        # Use the same arithmetic and integer geometry as frame_signal.
+        frame_length = int(sr * self.frame_ms / 1000)
+        sample_hop = int(sr * self.hop_ms / 1000)
+        if frame_length < 2 or sample_hop < 1:
             raise ValueError('frame and hop must span at least two and one samples')
         samples = np.asarray(samples)
         if (samples.ndim != 1 or samples.dtype.kind not in 'iuf'
@@ -170,7 +173,7 @@ class LipSyncEngine:
         if n == 0:
             return []
 
-        times = np.arange(n) * self.hop_ms / 1000.0
+        times = np.arange(n) * sample_hop / sr
         # 能量（RMS）与静音判定
         energy = np.sqrt(np.mean(frames**2, axis=1))
         peak = energy.max() if energy.size else 0.0
@@ -207,9 +210,8 @@ class LipSyncEngine:
             mouth = np.convolve(mouth, kernel, mode="same")
 
         # Optional cosmetic motion; no acoustic evidence of a pause is implied.
-        if self.close_every is not None and self.close_every < n * self.hop_ms / 1000:
-            hop = int(sr * self.hop_ms / 1000)
-            close_every_frames = max(1, int(self.close_every * sr / hop))
+        if self.close_every is not None and self.close_every < n * sample_hop / sr:
+            close_every_frames = max(1, int(self.close_every * sr / sample_hop))
             for i in range(close_every_frames, n, close_every_frames):
                 if mouth[i] > 0.3:
                     mouth[i] = 0.05
