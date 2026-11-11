@@ -89,11 +89,13 @@ def audit(output):
             save()
         assert fingerprint() == report['sourceSha256']
         print(case['id'], row['passed'], row['failure'], flush=True)
-    report['completed'] = len(report['cases']) == 7 and all(r['failure'] is None for r in report['cases'])
+    report['completed'] = len(report['cases']) == len(protocol['cases']) and all(r['failure'] is None for r in report['cases'])
     report['allPassed'] = report['completed'] and all(r['passed'] for r in report['cases']); save()
     return report
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--output', type=Path, required=True)
-    if not audit(parser.parse_args().output.resolve())['allPassed']: raise SystemExit(1)
+    parser.add_argument('--protocol', type=Path, default=PROTOCOL)
+    options = parser.parse_args(); PROTOCOL = options.protocol.resolve()
+    if not audit(options.output.resolve())['allPassed']: raise SystemExit(1)
