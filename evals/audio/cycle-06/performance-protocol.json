@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "rounds": 9,
+  "order": "alternating baseline/candidate; both warmed once, cold first traversal also reported",
+  "baseline_revision": "45840bd",
+  "protocol": "evals/audio/cycle-06/formant-protocol.json",
+  "analytic_inputs": [
+    {
+      "anchor_index": 0,
+      "sample_rate": 16000,
+      "excitation": "harmonic",
+      "f0": 100,
+      "rms": 0.12,
+      "seed": 11
+    },
+    {
+      "anchor_index": 3,
+      "sample_rate": 24000,
+      "excitation": "harmonic",
+      "f0": 180,
+      "rms": 0.03,
+      "seed": 11
+    },
+    {
+      "anchor_index": 2,
+      "sample_rate": 48000,
+      "excitation": "white_noise",
+      "f0": 100,
+      "rms": 0.03,
+      "seed": 11
+    },
+    {
+      "anchor_index": 1,
+      "sample_rate": 16000,
+      "excitation": "white_noise",
+      "f0": 100,
+      "rms": 0.03,
+      "seed": 29
+    },
+    {
+      "anchor_index": 4,
+      "sample_rate": 24000,
+      "excitation": "harmonic",
+      "f0": 250,
+      "rms": 0.12,
+      "seed": 11
+    },
+    {
+      "anchor_index": 0,
+      "sample_rate": 48000,
+      "excitation": "harmonic",
+      "f0": 180,
+      "rms": 0.03,
+      "seed": 11
+    }
+  ],
+  "analytic_routes": [
+    "component_native_rate",
+    "web_analysis_16k"
+  ],
+  "archived_reading_inputs": [
+    {
+      "id": "BAC009S0764W0121",
+      "path": "data/g2-cycle-02/aishell/audio/BAC009S0764W0121.wav",
+      "audio_sha256": "46dbc998c9d1d48111267c40741dd3200f2e5bcf4075f8c4c97f4451160dce50",
+      "duration_seconds": 4.2039375
+    },
+    {
+      "id": "BAC009S0764W0309",
+      "path": "data/g2-cycle-02/aishell/audio/BAC009S0764W0309.wav",
+      "audio_sha256": "f3e968cc05adca6acbbb8fc1ee413d2d64b53195fa72b2c07829e8c2fe254232",
+      "duration_seconds": 3.506125
+    }
+  ],
+  "reading_scope": "Same existing two public reading files, no new phonetic labels. Timing and exact-output equality only.",
+  "cpu_policy": "One allowed logical CPU, single BLAS/OpenMP thread; capture affinity and host; no experiment wall-clock cutoff",
+  "median_speedup_gate": 1.15,
+  "exact_output_gate": true
+}
