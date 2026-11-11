@@ -1,0 +1,26 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_fictional_turn_does_not_claim_real_due_reminders _____________
+
+    def test_fictional_turn_does_not_claim_real_due_reminders():
+        bot = Avatar(db_path=':memory:', llm=Offline())
+        try:
+            bot.respond('我来扮演小说角色。')
+            reminder = bot.reminders.create('提醒我明天9点带伞。')
+            bot.memory._conn.execute('UPDATE memory_reminders SET due_at=1 WHERE id=?', (reminder['id'],))
+            bot.memory._conn.commit()
+            result = bot.respond('继续聊剧情。')
+            assert result['due_reminders'] == []
+            assert bot.reminders.list()[0]['notified_at'] is None
+            bot.respond('回到现实。')
+            real = bot.respond('现在继续现实聊天。')
+>           assert [row['id'] for row in real['due_reminders']] == [reminder['id']]
+E           assert [] == [1]
+E             
+E             Right contains one more item: 1
+E             Use -v to get more diff
+
+tests/test_speaker_actions.py:95: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_actions.py::test_fictional_turn_does_not_claim_real_due_reminders
+1 failed, 6 deselected in 0.72s

@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_fictional_turn_does_not_claim_real_due_reminders _____________
+
+    def test_fictional_turn_does_not_claim_real_due_reminders():
+        import time
+        bot = Avatar(db_path=':memory:', llm=Offline())
+        try:
+            bot.respond('我来扮演小说角色。')
+            reminder = bot.reminders.create('提醒我明天9点带伞。')
+            bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?', (time.time()-1, reminder['id']))
+            bot.memory._conn.commit()
+            result = bot.respond('继续聊剧情。')
+>           assert result['due_reminders'] == []
+E           AssertionError: assert [{'id': 1, 't...1593535, ...}] == []
+E             
+E             Left contains one more item: {'id': 1, 'title': '带伞', 'due_at': 1794394987.1594121, 'created_at': 1794394988.1593535, ...}
+E             Use -v to get more diff
+
+tests/test_speaker_actions.py:92: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_actions.py::test_fictional_turn_does_not_claim_real_due_reminders
+1 failed, 6 deselected in 0.72s

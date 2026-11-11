@@ -78,3 +78,21 @@ def test_mixed_scope_tool_request_requires_a_separate_real_request():
         bot.respond('请搜索明天的天气。',use_web=True)
         assert agent.calls==1
     finally:bot.memory.close()
+
+
+def test_fictional_turn_does_not_claim_real_due_reminders():
+    import time
+    bot = Avatar(db_path=':memory:', llm=Offline())
+    try:
+        bot.respond('我来扮演小说角色。')
+        reminder = bot.reminders.create('提醒我明天9点带伞。')
+        bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?', (time.time()-1, reminder['id']))
+        bot.memory._conn.commit()
+        result = bot.respond('继续聊剧情。')
+        assert result['due_reminders'] == []
+        assert bot.reminders.list()[0]['notified_at'] is None
+        bot.respond('回到现实。')
+        real = bot.respond('现在继续现实聊天。')
+        assert [row['id'] for row in real['due_reminders']] == [reminder['id']]
+    finally:
+        bot.memory.close()

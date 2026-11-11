@@ -546,7 +546,8 @@ class Avatar:
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
         if self.summary_enabled:
             self.summaries.refresh(self.session_id)
-        self._due_reminders = self.reminders.claim_due() if boundary.reply is None else []
+        self._due_reminders = (self.reminders.claim_due()
+                               if boundary.reply is None and self.speaker_scope.allows_actions else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
