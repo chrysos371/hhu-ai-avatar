@@ -64,12 +64,16 @@ test('notification loss, reconnect, natural fact updates, playback and streaming
     // Fail only the watch. Ordinary authenticated snapshot reads remain available.
     let first = true, broken = true, resumed = false, release!: () => void;
     let cursor = await api('/conversation');
+    let contextCursor = await api('/conversation/speaker');
     await page.route('**/api/v1/conversation/changes?*', async route => {
       if (first) { first = false; await new Promise<void>(resolve => { release = resolve; }); }
       if (broken) return route.abort('failed');
       if (resumed) return route.continue();
       resumed = true;
-      return route.fulfill({ json: { data: { instance_id: cursor.instance_id, revision: cursor.revision }, error: null, request_id: 'controlled-reconnect' } });
+      expect(new URL(route.request().url()).searchParams.has('context_cursor')).toBe(true);
+      const data = { instance_id: cursor.instance_id, revision: cursor.revision, context_cursor: contextCursor.context_cursor };
+      report.steps.push({ name: 'controlled-valid-context-reconnect', data }); save();
+      return route.fulfill({ json: { data, error: null, request_id: 'controlled-reconnect' } });
     });
     await page.reload(); await ready();
     await expect.poll(() => !!release).toBe(true); release();
@@ -81,7 +85,7 @@ test('notification loss, reconnect, natural fact updates, playback and streaming
     await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'false');
     await expect(page.locator('.chat-message')).toHaveCount(0);
     report.steps.push({ name: 'outage-paused-even-after-refresh', messages: await page.locator('.chat-message').count() }); save();
-    cursor = await api('/conversation'); broken = false;
+    cursor = await api('/conversation'); contextCursor = await api('/conversation/speaker'); broken = false;
     // Fulfill just one reconnect; let subsequent requests use the real server.
     await expect(page.locator('.chat-message')).toHaveCount(cursor.items.length); await ready();
     await page.unroute('**/api/v1/conversation/changes?*');
