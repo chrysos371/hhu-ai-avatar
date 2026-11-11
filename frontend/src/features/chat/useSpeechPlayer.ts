@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ApiError, apiRequest, fetchSpeechAudio } from "../../lib/api";
 import type { ChatResult, LipFrame, SpeechResult } from "../../lib/types";
 import { splitSpeechText } from "./segmentation";
@@ -64,7 +64,7 @@ export function useSpeechPlayer() {
     setStatus("idle"); setActive(null); mouthFrames.publish(null);
     setWarning(null); setError(null); setSegment({ index: 0, total: 0 });
   }, [release]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const audio = audioRef.current;
     return () => {
       release();
