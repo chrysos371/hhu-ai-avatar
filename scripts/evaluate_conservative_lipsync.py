@@ -41,7 +41,9 @@ def run(split,output,development_evidence):
         'script_sha256':sha(__file__),'development_evidence_sha256':sha(development_evidence),
         'split':split,'seed':seed,'scope':'Actual component opt-in on synthetic mechanism fixtures; not human phonetic approval',
         'rows':[],'summary':{},'execution_complete':False,'engineering_gate_passed':False,
-        'actual_component_matches_reanalysis':True,'human_approved':False,'failure':None}
+        'actual_component_matches_reanalysis':True if split=='development' else None,
+        'new_waveforms_per_route':protocol['prospective']['count_per_route'] if split=='prospective' else 0,
+        'human_approved':False,'failure':None}
     save(output,report);started=time.perf_counter()
     try:
         for anchor,sr,rms,excitation in itertools.product(spec['anchors'],spec['sample_rates'],spec['target_rms'],spec['excitations']):
