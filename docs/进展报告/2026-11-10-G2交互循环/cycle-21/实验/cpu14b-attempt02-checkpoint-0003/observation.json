@@ -1,0 +1,119 @@
+{
+  "scope": "Ongoing same-cohort prefix; overlaps other checkpoints and final, not extra samples or final quality.",
+  "state": {
+    "state": "running",
+    "started_utc": "2026-11-11T20:48:02.645093+00:00",
+    "worker": {
+      "pid": 3013485,
+      "start_ticks": 37027031,
+      "state": "R",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/run_frozen_capability_job.py",
+        "--worker",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-21/实验/jobs/cpu14b-attempt02",
+        "--config-sha256",
+        "0ecd862918bddc760076dab9a1a4c807725f10d032121f234b226529404185e0"
+      ],
+      "process_group": 3013485
+    },
+    "child": {
+      "pid": 3013562,
+      "start_ticks": 37027110,
+      "state": "R",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/run_native_output_models.py",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "--stage",
+        "capability_pair",
+        "--backend",
+        "cpu_explicit",
+        "--candidate",
+        "source_capability_v2",
+        "--partition",
+        "development",
+        "--model-key",
+        "qwen3-14b-q4_k_m",
+        "--candidate-freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-21/candidate-development-freeze-v2-cpu.json",
+        "--protocol",
+        "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-21/cpu-capability-output-protocol.json",
+        "--pair-protocol",
+        "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-21/paired-capability-protocol.json",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-21/实验/paired-cpu-development-14b-attempt02"
+      ],
+      "process_group": 3013562
+    },
+    "return_code": null,
+    "stop_signal": null,
+    "context": {
+      "freeze": "evals/interaction/cycle-21/candidate-development-freeze-v2-cpu.json",
+      "freeze_sha256": "070685ecc51f70038c71021a63ddc916f28f2087ae73b0e2246160ed462a5ecc",
+      "frozen_inputs": 254,
+      "protocol_sha256": "b2c5bb492ec3eea5a6e79308702db217038efb0f1c8a12a7198488b728d06261",
+      "pair_protocol_sha256": "c9aa47a44e45af26413bfb0ff5312a623ced5d010760926136935812cd9a4e3c",
+      "backend": "cpu_explicit",
+      "model_key": "qwen3-14b-q4_k_m",
+      "partition": "development",
+      "output": "docs/进展报告/2026-11-10-G2交互循环/cycle-21/实验/paired-cpu-development-14b-attempt02",
+      "whole_experiment_deadline": null,
+      "selection": {
+        "candidate": "source_capability_v2",
+        "candidate_freeze": "evals/interaction/cycle-21/candidate-development-freeze-v2-cpu.json",
+        "protocol": "evals/interaction/cycle-21/cpu-capability-output-protocol.json",
+        "pair_protocol": "evals/interaction/cycle-21/paired-capability-protocol.json",
+        "output": "docs/进展报告/2026-11-10-G2交互循环/cycle-21/实验/paired-cpu-development-14b-attempt02",
+        "backend": "cpu_explicit",
+        "partition": "development",
+        "model_key": "qwen3-14b-q4_k_m",
+        "provider_python": "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+      }
+    },
+    "heartbeat_utc": "2026-11-11T21:45:53.470318+00:00",
+    "worker_verified_alive": true,
+    "child_verified_alive": true
+  },
+  "provider_identity": {
+    "pid": 3013581,
+    "start_ticks": 37027219,
+    "state": "S",
+    "argv": [
+      "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+      "--model",
+      "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-14b-gguf/Qwen3-14B-Q4_K_M.gguf",
+      "--model-key",
+      "qwen3-14b-q4_k_m",
+      "--metadata",
+      "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-02/qwen14b-gguf-metadata.json",
+      "--ready",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-21/实验/paired-cpu-development-14b-attempt02/qwen3-14b-q4_k_m/provider-ready.json",
+      "--trace",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-21/实验/paired-cpu-development-14b-attempt02/qwen3-14b-q4_k_m/provider-trace.jsonl",
+      "--backend",
+      "cpu_explicit"
+    ],
+    "process_group": 3013562
+  },
+  "counts": {
+    "complete_arms": 10,
+    "application_turns": 18,
+    "trace_rows": 39
+  },
+  "sha256": {
+    "model/lifecycle.json": "ac9c3546ed55f237f559b544b89e06ece040c3eb00e28daf24279390b54994ab",
+    "model/qwen3-14b-q4_k_m/provider.log": "d4fe39dab83d485a9281e5ea9cdd482c847b83d1e6e169e1740b6f02a83eb2b9",
+    "model/qwen3-14b-q4_k_m/sampler.log": "103cac2aaee5aa3996fd7d188e0d2ef45a8e8ee325379a7fb88853868f6ebf9e",
+    "model/qwen3-14b-q4_k_m/provider-ready.json": "1fc18e76b63e9dbe92b3cc3483cc9cfd88feaf775a16be01eb2197b360cefba5",
+    "model/qwen3-14b-q4_k_m/provider-trace.jsonl": "1d1f4b34cfa92a373a3eb0b4039b02fda49ba186f91090605acccd4ef37a6e96",
+    "model/qwen3-14b-q4_k_m/sample/paired-output.json": "aac2683d9587d59f502d09aec10a35dbd97a8b64660e12c0cda12fb71737f17e",
+    "job/config.json": "0ecd862918bddc760076dab9a1a4c807725f10d032121f234b226529404185e0",
+    "job/supervisor.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "job/experiment.log": "6680d9f4bc367680679190aeedfd370c47912a0f564e160e3f602a41a6d469cb",
+    "job/launch.json": "6acd9af7ed9f712add0eed1a1ba1491280b22d65319efaa6326e9284f2c25f22",
+    "job/status.json": "f7725406734f8ad32e6f4bf5c78c0d2b055178a45d5c0e5d11bfcd8d9de64637"
+  }
+}

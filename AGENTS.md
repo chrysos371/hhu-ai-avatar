@@ -5,6 +5,8 @@
 
 ## 2026-11-12 第二十一轮进行中（优先）
 
+最新阶段与当前工作：回执b090960封58证据/298路径+SHA；事实修复cb4963e封26/209（完整1436/1/98.36s@054249b，实际绑定浏览器15/12/37.2s，后加4锁等待仅补测，不称1440完整）。010/P1原已验证事实在公共forget/correct后仍写回，已独立修事务始/逐项/末尾原turn+token，主树尚未合。所有008/009/010阶段工作目录及清单封存，不继续改其进展；live issue可更新。新integration/cycle21-source-actions树/data/Users/zrh/repo/hhu-ai-avatar-cycle21-integration，60013e8合修复链、81b8dda核验阶段证据；仅6严格前缀文档冲突，产品无冲突。规范backend文档因合主树新段落与旧阶段不同，旧输入用b090960 Git/不可变副本核验，不回写旧清单。组合完整Python/前端unit/build/lint正在运行。主树254冻结仍不动，CPU14B checkpoint0003 {'complete_arms': 10, 'application_turns': 18, 'trace_rows': 39}，worker3013485/runner3013562/provider3013581实际活着，未完成；目标active。
+
 验收勘误优先（C21-009）：独立分支旧浏览器命令PYTHONPATH=src在npm frontend cwd失效，实际导入共享editable主树并服务主树dist。007已封报告15/11/36.9s以及008旧15/11/37.1s撤回为分支验收；SDK旧分支亦待重测，不改原封存阶段，见审计/本地动作修复阶段勘误.md与009。仓库cwd PYTHONPATH=src的完整Python/SDK/HTTP逐源SHA仍有效。f2ec8c4在新回执分支固定绝对src并核验启动runtime，2真实子进程测试3.21s；未合主树，254冻结仍保持，修后各分支浏览器待重跑。回执分支完整1424/1/93.42s与前端143/7.84s有效，浏览器尚未验收，不因build通过就称实际服务新包。
 
 最新独立本地动作修复17fae78（fix/reminder-transaction-cycle21，基于SDK c33135d），尚未合并。007/P1受控真实SQL6取消/forget反例均误写；bc5d750移到BEGIN IMMEDIATE持锁后核验原turn，SDK与鉴权HTTP/SSE各9例3正常/6失效零动作。21新增用例含锁等待与回滚；完整1394/1/87.93s、浏览器15/11/36.9s绑定56ca7cb，前端未改/构建未重跑。报告本地动作事务边界修复报告.md/html，25哈希证据/204路径+SHA，四表双视口通过；封存工作目录007与阶段清单不回写，live issue状态可合并后更新。主树254冻结保持，CPU14B新后台checkpoint0001为2完整臂/2应用回合/8trace，真实worker3013485/runner3013562/provider3013581核验活着，未完成；这些数不重复加最终队列。
