@@ -131,6 +131,7 @@ def lock_models(config, output):
             for f in metadata["siblings"]:
                 if f["rfilename"] in (
                     "config.json",
+                    "model.safetensors.index.json",
                     "generation_config.json",
                     "tokenizer.json",
                     "tokenizer_config.json",
@@ -152,6 +153,10 @@ def lock_models(config, output):
                 raise ValueError("Missing tokenizer/config provenance")
             if not files or any(not f["sha256"] or not f["bytes"] for f in files):
                 raise ValueError("Missing weight hashes/sizes")
+            if len(files) > 1 and 'model.safetensors.index.json' not in {
+                asset['path'] for asset in assets
+            }:
+                raise ValueError('Missing sharded checkpoint index provenance')
             row.update(
                 revision=metadata["sha"],
                 files=files,
