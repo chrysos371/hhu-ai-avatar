@@ -5,17 +5,21 @@
 
 ## 2026-11-12 第二十一轮进行中（优先）
 
-续更优先：G2C21-002/P1在ac3142a独立实际HTTP审计确认：工具完成时取消/外部forget后，内置WebAgent仍合成调用1次，最终cancelled/assistant0；9b66e86补连接/发现/规划/工具/合成异步前后检查及Cancelled逐层抛出、Avatar入口/返回复核，实际重放正常1、取消0、遗忘0。91相关1.41s及新增会话/typed取消共24相关0.92s。旧自定义两参数代理保持接口，仅外层检查；已发阻塞调用不宣称可撤回。
+当前默认两项P1已修，尚未封全轮。001默认system编译后独立forget提交仍外发旧姓名的实际HTTP1次→3de52eb后0；已封隐私阶段ac3142a，报告cycle-21/审计/隐私修复阶段报告.md/html，23证据/453逐文件Git绑定（不叫453独立源版本），1440/390四表无溢出/错误，阶段文件不回写。其完整1304/1是5576bab旧快照。
 
-原225冻结也已84d6794明确退役，0真实模型样本/仅两次资源拒绝，源码随002修复变更，不能启动旧225采样。全量/浏览器当前入口4843bc5正在复测（exec98837/65596），日志python-full-web-fixed/browser-default-web-fixed；完成前不冒称全量1319。资源只读观察器91665仍运行，74观察前缀已4843bc5不可变提交，实时jsonl尚增长。先完成系统外发入口审计/必要修复，再另冻新候选基线启动GPU质量；以下225“待执行/不改”段属于较早快照，由本段新决策覆盖。封存隐私阶段23证据文件不回写，后续全轮另报告。
+002内置WebAgent在工具完成后取消/forget仍1次合成HTTP，9b66e86加连接/发现/规划/工具/合成边界检查和Cancelled逐层抛出。首完整1318通过/1失败/1跳过为旧两参数WebAgent.run替换被误传checkpoint，01c008a按真实签名修兼容，旧断言不放宽。最终完整1320/1（85.99s）、默认浏览器15/11（35.3s），源/测试/入口绑定01c008a；105相关5.85s。最新实际HTTP web-dispatch-final正常1/assistant1，工具后取消0、遗忘0/assistant0，全部库清理。被动等待中的阻塞请求不承诺撤回，旧自定义代理仅外层检查。前端unit/build/百轮/PCM未本轮重跑。
 
-已完成隐私阶段，报告cycle-21/审计/隐私修复阶段报告.md/html：23证据哈希、453逐文件Git绑定（含不同阶段同字节的ref绑定，不叫453独立源版本）；1440/390四表无溢出/脚本错误，全部相对链接有效。默认G2C21-001/P1真实HTTP：system编译后独立forget提交，旧默认仍1回复请求含合成姓名，随后取消/assistant0不能撤回；3de52eb修复后0。每臂此前分析1次在遗忘前，各新话题2请求/llm无旧名，库全清理。十项隐私反控；最终完整1304/1（86.03s）源/测试/入口5576bab，默认浏览器15/11（36.4s）。前端unit/build/百轮/PCM未本轮重跑。
+lab SourceCapabilityPromptAvatar只普通生成追加真实注册声明/空回执+本轮source/revision/scope，默认工厂不安装、无后处理/额外模型或工具调用，C19 v1仍拒绝。原211/225 GPU开发冻结均retired、0真实模型样本（仅两次GPU入场拒绝），不能拿它们跑当前源，不回写文件。
 
-新lab SourceCapabilityPromptAvatar只普通生成追加实际注册/空回执+本轮用户source/revision/scope，读快照核验后再后置检查，无原文复制/持久化/额外模型调用，默认工厂不安装，C19 v1仍拒绝。225新开发冻结candidate-development-freeze-v2-privacy-fixed.json已22bd478提交，只授权C19已知12场景20回合/臂，前瞻拒绝；原211冻结因隐私修复已retired、未跑真实模型，不回写。所有225输入不得在实验期间修改。
+GPU持续忙，按实际余量选择原util<=20/16–24GiB门槛。两自建PID2917684/2918920退出1无ready/无采样，/proc和GPU已离开，raw cleanup_passed=false保留。只读wait_for_gpu_headroom.py仍运行（exec91665），实时实验/gpu-watch-4b-01.jsonl/log继续；74次观察的不可变前缀已4843bc5提交。无自建GPU模型。
 
-当前GPU两次入场拒绝（paired-development-4b、attempt02），自建PID2917684/2918920退出1无ready/无采样，/proc和GPU均已离开，原cleanup_passed=false保留，不算模型样本。只读wait_for_gpu_headroom.py观察器仍运行（exec session91665），输出实验/gpu-watch-4b-01.jsonl/log；连续两次同卡符合原16/24GiB及util<=20才返回，不分配GPU/无墙钟截止，之后提供方仍需复核。当前没有自建GPU模型。
+已另登记显式CPU开发：CPU对照补充计划.md和cpu-capability-output-protocol.json，96逻辑核/约715GiB可用RAM，单提供方解码/batch各4计算线程、CUDA_VISIBLE_DEVICES=-1、n_gpu_layers=0/KV offloadFalse；传输900秒，不设实验墙钟截止。b04bf96实现，CPU16+来源/冻结31共47通过（2.02s），只新增实验源/测试；1320完整仍默认01快照，不称1336完整重跑。原cuda默认和入场保持。
 
-下一步一旦资源合格，独立attempt03目录运行当前冻结4B再14B实际配对，原生/可见/最终/存储/副作用逐项记录和span审阅，开发失败不跑前瞻。等待期间继续独立只读审计/文档，不改225冻结源。所有运行源以/data/Users/zrh路径、spinner-bot作者/指定SSH及时小步提交推送。Goal active，不宣告全轮或远期代际跃迁完成。
+3eeebfc提交candidate-development-freeze-v2-cpu.json，254源/协议/测试/已完成证据冻结，仅development；C19/C21全部case数组相同共同SHA，固定12开发/20回合/臂，前瞻12/21未授权。运行期间不改254项输入。增长GPU观察日志排除，74次不可变前缀纳入。事后summarize_capability_pair.py不在254中，可加backend/协议/传输标签；C19已封40对/7字段逐项复读相同（初忘传旧native-summary比较前提留JSON，不改旧证据）。
+
+当前真实CPU4B配对运行：exec59445，provider PID2938803，ready CPU/4线程/无GPU分配，2 warmup完成；实验/paired-cpu-development-4b，少量场景臂已完成，尚无全开发结论。完成后保存全部raw/visible/final/stored/真实提醒投影、逐span代理审阅，及时提交/推送，再同冻结14B串行；开发失败不启前瞻。CPU与GPU硬件路径分开标记，不要求旧GPU文字全相同、不报跨硬件速度倍数。实时检查实际进程/文件，不因exec观察时间短误杀或重启。
+
+下一步继续当前CPU实验并保留进展、对默认外发入口的后续只读审计；新修复需等当前冻结实验完成或显式退役另冻。最后全轮MD/HTML/哈希审计，进入下一循环。Goal active，/data/Users/zrh路径、spinner-bot作者/指定SSH小步及时提交，不宣告全轮/代际跃迁完成。
 
 ## 2026-11-12 第二十轮归档（优先）
 

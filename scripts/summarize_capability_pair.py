@@ -7,7 +7,7 @@ from pathlib import Path
 from statistics import median
 
 
-def summarize(folder, native_summary=None):
+def summarize(folder, native_summary=None, protocol_path=None):
     lifecycle = json.loads((folder/'lifecycle.json').read_text())
     assert lifecycle['completed'] and lifecycle['failure'] is None and len(lifecycle['models']) == 1
     model = lifecycle['models'][0]; key = model['model_id']
@@ -15,7 +15,10 @@ def summarize(folder, native_summary=None):
     source = folder/key/'sample/paired-output.json'; data = json.loads(source.read_text())
     assert data['execution_complete'] and data['engineering_passed'] and data['failure'] is None
     root = Path(__file__).resolve().parents[1]
-    protocol = json.loads((root/'evals/interaction/cycle-19/capability-output-protocol.json').read_text())
+    protocol_path = protocol_path or root/'evals/interaction/cycle-19/capability-output-protocol.json'
+    protocol = json.loads(protocol_path.read_text())
+    backend = data.get('provider_backend', 'cuda')
+    assert backend == protocol.get('provider_backend', 'cuda')
     expected = {case['id']: case for case in protocol['cases'] if case['partition'] == data['partition']}
     baseline = 'baseline_current_defaults'; candidate = 'candidate_lab_capability_prompt'
     cases = {}
@@ -56,7 +59,11 @@ def summarize(folder, native_summary=None):
         turns = [turn for case in data['cases'] if case['arm'] == arm for turn in case['turns']]
         arms[arm] = {'turns': len(turns), 'generation_modes': dict(Counter(turn['result']['generation_mode'] for turn in turns)),
             'median_complete_seconds': median(turn['seconds'] for turn in turns)}
-    return {'model_id': key, 'partition': data['partition'], 'sample_sha256': sha256(source.read_bytes()).hexdigest(),
+    return {'model_id': key, 'partition': data['partition'], 'provider_backend': backend,
+        'http_timeout_seconds': data.get('http_timeout_seconds', 180),
+        'application_transport_timeout_seconds': data.get('application_transport_timeout_seconds', 30),
+        'protocol_sha256': sha256(protocol_path.read_bytes()).hexdigest(),
+        'sample_sha256': sha256(source.read_bytes()).hexdigest(),
         'candidate_freeze_sha256': data['candidateFreezeSha256'],
         'source_sha256': {str(Path(__file__).resolve().relative_to(root)): sha256(Path(__file__).read_bytes()).hexdigest()},
         'scope': 'Mechanical native/visible/final/stored and side-effect comparison, observational timing only; separate complete span review, no semantic approval',
@@ -70,6 +77,7 @@ def summarize(folder, native_summary=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--folder', type=Path, required=True)
     parser.add_argument('--native-summary', type=Path); parser.add_argument('--output', type=Path, required=True)
-    args = parser.parse_args(); result = summarize(args.folder, args.native_summary)
+    parser.add_argument('--protocol', type=Path)
+    args = parser.parse_args(); result = summarize(args.folder, args.native_summary, args.protocol)
     with args.output.open('x') as stream: json.dump(result, stream, ensure_ascii=False, indent=2); stream.write('\n')
     print(result['model_id'], len(result['pairs']), 'pairs;', result['provider_calls'], 'provider calls;', result['finish_reasons'])
