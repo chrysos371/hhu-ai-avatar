@@ -1,5 +1,6 @@
 """Post-freeze fault probes; synthetic DBs, no model-quality claims or tuning."""
 from contextlib import closing
+import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -19,7 +20,10 @@ ROOT = HERE.parents[4]
 CLAIM = '那我们下次可以一起去爬山，享受大自然的风景。'
 
 
-def main():
+def main(output_name):
+    path = HERE.parent/'实验'/output_name
+    if path.exists() or path.name != output_name:
+        raise ValueError('Use a fresh evidence filename without directories')
     report = {'scope': 'Post-freeze controlled actual SDK drafting and default Web run_chat authority; not fresh GPU validation or human gold',
         'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         'sourceSha256': {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest() for p in sorted([*ROOT.glob('src/avatar/**/*.py'), Path(__file__).resolve()])},
@@ -47,7 +51,7 @@ def main():
             with tempfile.TemporaryDirectory(prefix='authority-probe-', dir=ROOT.parent/'runtime/tmp') as folder:
                 db = str(Path(folder)/'owned.db'); server = create_server(db, port=0, legacy_writes=False)
                 try:
-                    inputs = [declaration, '我叫许照。', '提醒我明天早上九点去码头。']
+                    inputs = [declaration, '我叫许照。', '提醒我明天下午3点去码头']
                     turns = [run_chat(server, text) for text in inputs]
                     with closing(MemoryStore(db)) as memory:
                         profile = memory.get_user_profile()
@@ -59,9 +63,10 @@ def main():
                         'turns': turns, 'profile': profile, 'reminders': reminders, 'checks': checks})
                 finally: server.server_close()
     finally: config.llm.api_key = original_key; config.embedding.model = original_embedding
-    path = HERE.parent/'实验/remaining-context-probes.json'
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
     print(json.dumps({group: [(r['id'], r['checks']) for r in report[group]] for group in ['drafts', 'authority']}, ensure_ascii=False))
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(); parser.add_argument('--output-name', required=True)
+    main(parser.parse_args().output_name)
