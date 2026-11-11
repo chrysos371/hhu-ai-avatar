@@ -11,16 +11,18 @@ function Harness() {
     <audio data-testid="audio" ref={speech.audioRef} onPlay={speech.onPlay} onPause={speech.onPause}
       onEnded={speech.onEnded} onError={speech.onError} /></>;
 }
-let media: { paused: boolean; ended: boolean; error: MediaError | null };
+let media: { paused: boolean; ended: boolean; error: MediaError | null; source: string };
 let prepared: number;
 const originalError = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'error');
+const originalCurrentSrc = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'currentSrc');
 beforeEach(() => {
-  media = { paused: true, ended: false, error: null }; prepared = 0;
+  media = { paused: true, ended: false, error: null, source: '' }; prepared = 0;
   sessionStorage.setItem('avatar-token', 'queued-media-event-unit-token');
   vi.spyOn(HTMLMediaElement.prototype, 'paused', 'get').mockImplementation(() => media.paused);
   vi.spyOn(HTMLMediaElement.prototype, 'ended', 'get').mockImplementation(() => media.ended);
   // This JSDOM version omits MediaError; model its browser getter explicitly.
   Object.defineProperty(HTMLMediaElement.prototype, 'error', { configurable: true, get: () => media.error });
+  Object.defineProperty(HTMLMediaElement.prototype, 'currentSrc', { configurable: true, get: () => media.source });
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(function (this: HTMLMediaElement) {
     media.paused = false; media.ended = false; this.dispatchEvent(new Event('play')); return Promise.resolve();
   });
@@ -38,6 +40,8 @@ afterEach(() => {
   vi.restoreAllMocks(); vi.unstubAllGlobals();
   if (originalError) Object.defineProperty(HTMLMediaElement.prototype, 'error', originalError);
   else Reflect.deleteProperty(HTMLMediaElement.prototype, 'error');
+  if (originalCurrentSrc) Object.defineProperty(HTMLMediaElement.prototype, 'currentSrc', originalCurrentSrc);
+  else Reflect.deleteProperty(HTMLMediaElement.prototype, 'currentSrc');
 });
 async function begin() {
   render(<Harness />); fireEvent.click(screen.getByText('开始'));
@@ -65,6 +69,13 @@ it('does not advance the current queue when an old ended event arrives mid-play'
 });
 it('does not release a healthy new source on an old error event', async () => {
   const audio = await begin(); expect(media.error).toBeNull();
+  fireEvent.error(audio);
+  expect(audio).toHaveAttribute('src');
+  expect(screen.getByTestId('status')).toHaveTextContent('playing');
+});
+it('does not apply decoder errors still belonging to the previous selected source', async () => {
+  const audio = await begin(); media.source = 'blob:previous-resource';
+  media.error = { code: 3, message: 'old decoder failure' } as MediaError;
   fireEvent.error(audio);
   expect(audio).toHaveAttribute('src');
   expect(screen.getByTestId('status')).toHaveTextContent('playing');
