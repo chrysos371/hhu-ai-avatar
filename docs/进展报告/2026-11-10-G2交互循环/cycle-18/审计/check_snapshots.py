@@ -14,6 +14,10 @@ def main():
     bindings = {}
     for evidence in EV.rglob('*.json'):
         data = json.loads(evidence.read_text())
+        if 'protocolSha256' in data:
+            assert evidence.parent.name == 'playback', evidence
+            bindings.setdefault(('evals/interaction/cycle-08/playback-protocol.json', data['protocolSha256']), []).append(
+                {'evidence': evidence.relative_to(EV).as_posix(), 'field': 'protocolSha256'})
         for field in ('sourceSha256', 'source_sha256', 'servedBundleSha256'):
             table = data.get(field, {})
             assert isinstance(table, dict)
