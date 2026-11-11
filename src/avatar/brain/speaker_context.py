@@ -8,6 +8,21 @@ class SpeakerContextStore:
     def __init__(self, memory):
         self.memory, self.conn = memory, memory._conn
 
+    def require_context(self, expected, instance_id):
+        """Compare before inserting a user source under the caller's write lock.
+
+        This is an admission check, not a continuing-turn check: our own source
+        necessarily advances the cursor. No historical content is replayed.
+        """
+        if not self.conn.in_transaction:
+            raise RuntimeError('context admission requires source transaction')
+        state = self.conn.execute("SELECT revision,(SELECT COALESCE(MAX(id),0) FROM memory_messages "
+            "WHERE role='user') FROM memory_context_revision WHERE id=1").fetchone()
+        if (state is None or any(type(value) is not int or value < 0 for value in state)
+                or expected != {'instance_id': instance_id, 'revision': state[0], 'context_cursor': state[1]}):
+            from .operations import OperationError
+            raise OperationError(409, 'speaker_context_changed', '语境已变化，请确认当前模式后重新发送。')
+
     def read(self, instance_id):
         """Current source-verified control metadata, never a historical trace.
 

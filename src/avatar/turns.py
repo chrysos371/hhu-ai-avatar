@@ -28,6 +28,7 @@ class Turn:
     changed: threading.Condition = field(default_factory=threading.Condition)
     subscribers: int = 0
     redacted: bool = False
+    expected_context: dict | None = None
 
     def emit(self, kind, data):
         with self.changed:
@@ -80,12 +81,20 @@ class TurnCoordinator:
 
     @staticmethod
     def validate(data):
-        if (not isinstance(data, dict) or not set(data) <= {'request_id', 'text', 'use_web'}
+        if (not isinstance(data, dict) or not set(data) <= {'request_id', 'text', 'use_web', 'expected_context'}
                 or not isinstance(data.get('request_id'), str)
                 or not re.fullmatch(r'[A-Za-z0-9_-]{20,100}', data['request_id'])
                 or not isinstance(data.get('text'), str) or not 1 <= len(data['text'].strip()) <= 4000
                 or type(data.get('use_web', False)) is not bool):
             raise OperationError(422, 'invalid_turn', '消息或请求编号无效。')
+        if 'expected_context' in data:
+            context = data['expected_context']
+            if (not isinstance(context, dict) or set(context) != {'instance_id', 'revision', 'context_cursor'}
+                    or not isinstance(context['instance_id'], str)
+                    or not re.fullmatch(r'[A-Za-z0-9_-]{1,100}', context['instance_id'])
+                    or any(type(context[key]) is not int or not 0 <= context[key] <= 2**53-1
+                           for key in ('revision', 'context_cursor'))):
+                raise OperationError(422, 'invalid_turn', '提交语境无效，请重新核验。')
         return data['request_id'], data['text'].strip(), data.get('use_web', False)
 
     def _ledger(self, request_id, fingerprint, status=None):
@@ -108,15 +117,19 @@ class TurnCoordinator:
 
     def submit(self, data):
         request_id, text, use_web = self.validate(data)
+        expected = dict(data['expected_context']) if 'expected_context' in data else None
         self.refresh_privacy()
-        fingerprint = hashlib.sha256(json.dumps([text, use_web], ensure_ascii=False).encode()).hexdigest()
+        # Keep the existing durable fingerprint byte-for-byte for legacy callers.
+        parts = [text, use_web] if expected is None else [text, use_web, expected]
+        fingerprint = hashlib.sha256(json.dumps(parts, ensure_ascii=False,
+            **({'sort_keys': True} if expected is not None else {})).encode()).hexdigest()
         with self._lock:
             if self._closed:
                 raise OperationError(503, 'runtime_closed', '对话服务正在关闭。')
             self._prune_locked()
             if request_id in self._jobs:
                 job = self._jobs[request_id]
-                if (job.text, job.use_web) != (text, use_web):
+                if (job.text, job.use_web, job.expected_context) != (text, use_web, expected):
                     raise OperationError(409, 'request_id_conflict', '请求编号已用于另一条消息。')
                 return job
             if self._active is not None:
@@ -125,7 +138,7 @@ class TurnCoordinator:
                 _, old = self._jobs.popitem(last=False)
                 self._redact(old, 'expired')
             self._ledger(request_id, fingerprint)
-            job = Turn(request_id, text, use_web)
+            job = Turn(request_id, text, use_web, expected_context=expected)
             job.emit('status', {'status': 'queued'})
             self._jobs[request_id] = job
             self._active = job
@@ -144,6 +157,9 @@ class TurnCoordinator:
             status, kind, data = 'completed', 'result', result
         except Cancelled:
             status, kind, data = 'cancelled', 'cancelled', {'status': 'cancelled'}
+        except OperationError as error:
+            if error.code == 'speaker_context_changed':
+                data = {'code': error.code, 'message': error.message}
         except Exception:
             pass
         finally:
@@ -174,7 +190,7 @@ class TurnCoordinator:
     def _redact(job, status):
         with job.changed:
             job.redacted = True
-            job.text, job.result = '', None
+            job.text, job.result, job.expected_context = '', None, None
             job.events.clear()
             job.status = status
             job.changed.notify_all()

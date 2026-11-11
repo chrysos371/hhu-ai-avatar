@@ -468,6 +468,7 @@ class Avatar:
         use_web: bool = False,
         cancel: Optional[CancellationToken] = None,
         on_delta=None,
+        source_precondition=None,
     ) -> dict:
         """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
         self._cancel_token = cancel
@@ -490,13 +491,16 @@ class Avatar:
             checkpoint_context()
             if on_delta:
                 on_delta(piece)
-        # 1. 短期记忆记下用户输入
-        self.memory.add_short_term("user", user_text)
         # Source and durable control state commit together before any model,
         # fact extraction or tool. Cancellation cannot leave a committed role
         # declaration without its attribution state across a process restart.
         with self.memory.transaction():
             checkpoint_context()
+            if source_precondition is not None:
+                source_precondition()
+            # A rejected admission must leave neither a durable user source nor
+            # an in-memory phantom which run_chat would retain in its finally.
+            self.memory.add_short_term("user", user_text)
             self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
             if self.speaker_context_store is not None:
                 self.speaker_scope = self.speaker_context_store.observe(

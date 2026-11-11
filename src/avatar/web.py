@@ -547,7 +547,9 @@ def run_chat(server, user_text, use_web=False, *, job=None):
             if server.task_delivery_check and message['role'] == 'user':
                 avatar.tasks.update(message['content'])
         result = avatar.respond(user_text, use_web=use_web, **(
-            {'cancel': token, 'on_delta': lambda text: job.emit('text', {'text': text})} if job else {}))
+            {'cancel': token, 'on_delta': lambda text: job.emit('text', {'text': text}),
+             **({'source_precondition': lambda: avatar.speaker_context_store.require_context(
+                 job.expected_context, server.session_id)} if job.expected_context is not None else {})} if job else {}))
         if job:
             from .web_api import enrich_chat_result
             result = enrich_chat_result(server, memory, result)
