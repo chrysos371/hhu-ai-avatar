@@ -1,0 +1,150 @@
+FFFFF.........FF                                                         [100%]
+=================================== FAILURES ===================================
+_ test_canonical_control_never_asks_model_to_confirm_action_state[\u6211\u6765\u626e\u6f14\u4e00\u4e2a\u865a\u6784\u89d2\u8272\u3002-fictional_character] _
+
+text = '我来扮演一个虚构角色。', scope = 'fictional_character'
+
+    @pytest.mark.parametrize('text,scope', [
+        ('我来扮演一个虚构角色。', 'fictional_character'),
+        ('我来扮演一个虚构角色', 'fictional_character'),
+        ('回到现实。', 'current_user'), ('回到现实', 'current_user'),
+        ('  回到现实。\n', 'current_user'),
+    ])
+    def test_canonical_control_never_asks_model_to_confirm_action_state(text, scope):
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            result = bot.respond(text, cancel=CancellationToken())
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'llm' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             + llm
+
+tests/test_canonical_speaker_control.py:34: AssertionError
+_ test_canonical_control_never_asks_model_to_confirm_action_state[\u6211\u6765\u626e\u6f14\u4e00\u4e2a\u865a\u6784\u89d2\u8272-fictional_character] _
+
+text = '我来扮演一个虚构角色', scope = 'fictional_character'
+
+    @pytest.mark.parametrize('text,scope', [
+        ('我来扮演一个虚构角色。', 'fictional_character'),
+        ('我来扮演一个虚构角色', 'fictional_character'),
+        ('回到现实。', 'current_user'), ('回到现实', 'current_user'),
+        ('  回到现实。\n', 'current_user'),
+    ])
+    def test_canonical_control_never_asks_model_to_confirm_action_state(text, scope):
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            result = bot.respond(text, cancel=CancellationToken())
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'llm' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             + llm
+
+tests/test_canonical_speaker_control.py:34: AssertionError
+_ test_canonical_control_never_asks_model_to_confirm_action_state[\u56de\u5230\u73b0\u5b9e\u3002-current_user] _
+
+text = '回到现实。', scope = 'current_user'
+
+    @pytest.mark.parametrize('text,scope', [
+        ('我来扮演一个虚构角色。', 'fictional_character'),
+        ('我来扮演一个虚构角色', 'fictional_character'),
+        ('回到现实。', 'current_user'), ('回到现实', 'current_user'),
+        ('  回到现实。\n', 'current_user'),
+    ])
+    def test_canonical_control_never_asks_model_to_confirm_action_state(text, scope):
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            result = bot.respond(text, cancel=CancellationToken())
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'llm' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             + llm
+
+tests/test_canonical_speaker_control.py:34: AssertionError
+_ test_canonical_control_never_asks_model_to_confirm_action_state[\u56de\u5230\u73b0\u5b9e-current_user] _
+
+text = '回到现实', scope = 'current_user'
+
+    @pytest.mark.parametrize('text,scope', [
+        ('我来扮演一个虚构角色。', 'fictional_character'),
+        ('我来扮演一个虚构角色', 'fictional_character'),
+        ('回到现实。', 'current_user'), ('回到现实', 'current_user'),
+        ('  回到现实。\n', 'current_user'),
+    ])
+    def test_canonical_control_never_asks_model_to_confirm_action_state(text, scope):
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            result = bot.respond(text, cancel=CancellationToken())
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'llm' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             + llm
+
+tests/test_canonical_speaker_control.py:34: AssertionError
+_ test_canonical_control_never_asks_model_to_confirm_action_state[  \u56de\u5230\u73b0\u5b9e\u3002\n-current_user] _
+
+text = '  回到现实。\n', scope = 'current_user'
+
+    @pytest.mark.parametrize('text,scope', [
+        ('我来扮演一个虚构角色。', 'fictional_character'),
+        ('我来扮演一个虚构角色', 'fictional_character'),
+        ('回到现实。', 'current_user'), ('回到现实', 'current_user'),
+        ('  回到现实。\n', 'current_user'),
+    ])
+    def test_canonical_control_never_asks_model_to_confirm_action_state(text, scope):
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            result = bot.respond(text, cancel=CancellationToken())
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'llm' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             + llm
+
+tests/test_canonical_speaker_control.py:34: AssertionError
+_____ test_reality_control_does_not_confirm_or_replay_blocked_old_reminder _____
+
+    def test_reality_control_does_not_confirm_or_replay_blocked_old_reminder():
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+        try:
+            bot.respond('我来扮演一个虚构角色。')
+            blocked = bot.respond('提醒我明天下午3点去码头')
+            assert blocked['speaker_tool_blocked'] and not bot.reminders.list()
+            before = (engine.analysis_calls, engine.reply_calls)
+            result = bot.respond('回到现实。')
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'llm' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             + llm
+
+tests/test_canonical_speaker_control.py:69: AssertionError
+__________________ test_control_use_web_true_cannot_run_agent __________________
+
+    def test_control_use_web_true_cannot_run_agent():
+        class Forbidden:
+            def run(self, *args, **kwargs): pytest.fail('canonical control must not invoke web agent')
+        engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine); bot.web_agent = Forbidden()
+        try:
+            result = bot.respond('回到现实。', use_web=True)
+>           assert result['generation_mode'] == 'rules_speaker_control'
+E           AssertionError: assert 'rules_speaker_scope' == 'rules_speaker_control'
+E             
+E             - rules_speaker_control
+E             ?                 ^^^^^
+E             + rules_speaker_scope
+E             ?               +  ^^
+
+tests/test_canonical_speaker_control.py:83: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_canonical_speaker_control.py::test_canonical_control_never_asks_model_to_confirm_action_state[\u6211\u6765\u626e\u6f14\u4e00\u4e2a\u865a\u6784\u89d2\u8272\u3002-fictional_character]
+FAILED tests/test_canonical_speaker_control.py::test_canonical_control_never_asks_model_to_confirm_action_state[\u6211\u6765\u626e\u6f14\u4e00\u4e2a\u865a\u6784\u89d2\u8272-fictional_character]
+FAILED tests/test_canonical_speaker_control.py::test_canonical_control_never_asks_model_to_confirm_action_state[\u56de\u5230\u73b0\u5b9e\u3002-current_user]
+FAILED tests/test_canonical_speaker_control.py::test_canonical_control_never_asks_model_to_confirm_action_state[\u56de\u5230\u73b0\u5b9e-current_user]
+FAILED tests/test_canonical_speaker_control.py::test_canonical_control_never_asks_model_to_confirm_action_state[  \u56de\u5230\u73b0\u5b9e\u3002\n-current_user]
+FAILED tests/test_canonical_speaker_control.py::test_reality_control_does_not_confirm_or_replay_blocked_old_reminder
+FAILED tests/test_canonical_speaker_control.py::test_control_use_web_true_cannot_run_agent
+7 failed, 9 passed in 0.82s
