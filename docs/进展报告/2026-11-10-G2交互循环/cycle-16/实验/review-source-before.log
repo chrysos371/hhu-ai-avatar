@@ -1,0 +1,57 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_trusted_review_source_outside_window_is_bound_to_committed_response[dependency] _
+
+check = 'dependency'
+
+    @pytest.mark.parametrize('check', ['dependency', 'privacy'])
+    def test_trusted_review_source_outside_window_is_bound_to_committed_response(check):
+        with controlled_provider(delay=.0001) as (_, url):
+            engine = LLMEngine(base_url=url, api_key='fixture', model='fixture')
+            bot = Avatar(db_path=':memory:', llm=engine)
+            try:
+                root = bot.memory.add_message('user', '帮我写一条含私密称呼的短信。', 'old-session')
+                bot.final_reply_reviewer = lambda text, reply: (reply, {'source_message_ids': [root]})
+                result = bot.respond('fixture-review')
+                assistant = result['conversation']['assistant_message_id']
+                if check == 'dependency':
+>                   assert bot.memory._conn.execute("SELECT 1 FROM memory_response_context WHERE message_id=? AND source_type='message' AND source_id=?", (assistant, root)).fetchone()
+E                   assert None
+E                    +  where None = <built-in method fetchone of sqlite3.Cursor object at 0x7f0539d520c0>()
+E                    +    where <built-in method fetchone of sqlite3.Cursor object at 0x7f0539d520c0> = <sqlite3.Cursor object at 0x7f0539d520c0>.fetchone
+E                    +      where <sqlite3.Cursor object at 0x7f0539d520c0> = <built-in method execute of sqlite3.Connection object at 0x7f053a7a1b40>("SELECT 1 FROM memory_response_context WHERE message_id=? AND source_type='message' AND source_id=?", (3, 1))
+E                    +        where <built-in method execute of sqlite3.Connection object at 0x7f053a7a1b40> = <sqlite3.Connection object at 0x7f053a7a1b40>.execute
+E                    +          where <sqlite3.Connection object at 0x7f053a7a1b40> = <avatar.brain.memory.MemoryStore object at 0x7f053a655210>._conn
+E                    +            where <avatar.brain.memory.MemoryStore object at 0x7f053a655210> = <avatar.main.Avatar object at 0x7f053a6551b0>.memory
+
+tests/test_review_source_dependencies.py:20: AssertionError
+_ test_trusted_review_source_outside_window_is_bound_to_committed_response[privacy] _
+
+check = 'privacy'
+
+    @pytest.mark.parametrize('check', ['dependency', 'privacy'])
+    def test_trusted_review_source_outside_window_is_bound_to_committed_response(check):
+        with controlled_provider(delay=.0001) as (_, url):
+            engine = LLMEngine(base_url=url, api_key='fixture', model='fixture')
+            bot = Avatar(db_path=':memory:', llm=engine)
+            try:
+                root = bot.memory.add_message('user', '帮我写一条含私密称呼的短信。', 'old-session')
+                bot.final_reply_reviewer = lambda text, reply: (reply, {'source_message_ids': [root]})
+                result = bot.respond('fixture-review')
+                assistant = result['conversation']['assistant_message_id']
+                if check == 'dependency':
+                    assert bot.memory._conn.execute("SELECT 1 FROM memory_response_context WHERE message_id=? AND source_type='message' AND source_id=?", (assistant, root)).fetchone()
+                else:
+                    fact = bot.memory.remember('受控私密来源', source_message_id=root)
+                    bot.memory.forget(fact)
+>                   assert bot.memory._conn.execute('SELECT content FROM memory_messages WHERE id=?', (assistant,)).fetchone()[0] == '[redacted]'
+E                   AssertionError: assert '第一句已经生成。第二句继续说明。第三句完成交付。' == '[redacted]'
+E                     
+E                     - [redacted]
+E                     + 第一句已经生成。第二句继续说明。第三句完成交付。
+
+tests/test_review_source_dependencies.py:24: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_review_source_dependencies.py::test_trusted_review_source_outside_window_is_bound_to_committed_response[dependency]
+FAILED tests/test_review_source_dependencies.py::test_trusted_review_source_outside_window_is_bound_to_committed_response[privacy]
+2 failed in 1.82s
