@@ -1,0 +1,173 @@
+........................................................................ [  5%]
+........................................................................ [ 10%]
+........................................................................ [ 15%]
+........................................................................ [ 20%]
+........................................................................ [ 25%]
+........................................................................ [ 30%]
+........................................................................ [ 35%]
+........................................................................ [ 40%]
+........................................................................ [ 45%]
+........................................................................ [ 50%]
+........................................................................ [ 56%]
+........................................................................ [ 61%]
+........................................................................ [ 66%]
+...................................................................F...F [ 71%]
+........................................................................ [ 76%]
+........................................................................ [ 81%]
+.......s................................................................ [ 86%]
+........................................................................ [ 91%]
+........................................................................ [ 96%]
+..............................................                           [100%]
+=================================== FAILURES ===================================
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-metadata-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-252/test_sdk_rechecks_original_tur7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa6a93fe6e0>
+when = 'metadata', use_tts = False, change = 'external_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+            with pytest.raises(Cancelled):
+>               bot.respond('我的名字是'+PRIVATE+'。', use_tts=use_tts,
+                            tts_path=str(tmp_path/'reply.wav'), cancel=token)
+
+tests/test_sdk_tts_privacy.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/main.py:889: in respond
+    result['action_receipts'] = ActionReceiptStore(self.memory).read(self.session_id,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.brain.action_receipts.ActionReceiptStore object at 0x7fa6a926d8a0>
+instance_id = 'e14e9ced22084c7f98f3690ffbad0fea', revision = 0
+source_message_id = 1, after_id = 0, limit = 100
+
+    def read(self, instance_id, *, revision=None, source_message_id=None, after_id=0, limit=100):
+        if (type(limit) is not int or not 1 <= limit <= 200 or type(after_id) is not int
+                or not 0 <= after_id <= 2**63-1
+                or revision is not None and (type(revision) is not int or not 0 <= revision <= 2**63-1)
+                or source_message_id is not None and (type(source_message_id) is not int
+                                                      or not 0 < source_message_id <= 2**63-1)):
+            raise OperationError(422, 'invalid_action_receipts_query')
+        # Release the snapshot before serialization; no migration or writes here.
+        owned = not self.conn.in_transaction
+        if owned: self.conn.execute('BEGIN')
+        try:
+            current = self.memory.context_revision
+            if revision is not None and revision != current:
+>               raise OperationError(409, 'action_receipts_changed', '记忆已更新，请重新读取操作记录。')
+E               avatar.brain.operations.OperationError: action_receipts_changed
+
+src/avatar/brain/action_receipts.py:50: OperationError
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-metadata-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-252/test_sdk_rechecks_original_tur11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fa6a917d6c0>
+when = 'metadata', use_tts = False, change = 'same_instance_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+            with pytest.raises(Cancelled):
+>               bot.respond('我的名字是'+PRIVATE+'。', use_tts=use_tts,
+                            tts_path=str(tmp_path/'reply.wav'), cancel=token)
+
+tests/test_sdk_tts_privacy.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/main.py:889: in respond
+    result['action_receipts'] = ActionReceiptStore(self.memory).read(self.session_id,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.brain.action_receipts.ActionReceiptStore object at 0x7fa6a917cc40>
+instance_id = '8902cc64591b4f86b283d02d64c9c22f', revision = 0
+source_message_id = None, after_id = 0, limit = 100
+
+    def read(self, instance_id, *, revision=None, source_message_id=None, after_id=0, limit=100):
+        if (type(limit) is not int or not 1 <= limit <= 200 or type(after_id) is not int
+                or not 0 <= after_id <= 2**63-1
+                or revision is not None and (type(revision) is not int or not 0 <= revision <= 2**63-1)
+                or source_message_id is not None and (type(source_message_id) is not int
+                                                      or not 0 < source_message_id <= 2**63-1)):
+            raise OperationError(422, 'invalid_action_receipts_query')
+        # Release the snapshot before serialization; no migration or writes here.
+        owned = not self.conn.in_transaction
+        if owned: self.conn.execute('BEGIN')
+        try:
+            current = self.memory.context_revision
+            if revision is not None and revision != current:
+>               raise OperationError(409, 'action_receipts_changed', '记忆已更新，请重新读取操作记录。')
+E               avatar.brain.operations.OperationError: action_receipts_changed
+
+src/avatar/brain/action_receipts.py:50: OperationError
+=========================== short test summary info ============================
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-metadata-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-metadata-False]
+2 failed, 1411 passed, 1 skipped in 89.27s (0:01:29)
