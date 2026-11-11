@@ -18,7 +18,7 @@ test('restores paginated source history and blocks cancelled and erased content 
     sourceSha256: Object.fromEntries(sources.map(p => [p, hash(p)])),
     servedBundleSha256: Object.fromEntries(['dist/index.html', ...readdirSync('dist/assets').filter(p => p.endsWith('.js')).map(p => 'dist/assets/' + p)].map(p => [p, hash(p)])),
     scope: 'Actual browser/local HTTP/SSE, controlled provider and disposable database; no real model, physical or multi-day approval',
-    elapsedSeconds: 0, turns: [] as any[], steps: [] as any[], errors: [] as string[],
+    elapsedSeconds: 0, turns: [] as any[], steps: [] as any[], resources: [] as any[], errors: [] as string[],
     completed: false, failure: null as string | null };
   const started = Date.now(); const save = () => { report.elapsedSeconds = (Date.now() - started) / 1000; writeFileSync(file, JSON.stringify(report, null, 2) + '\n'); };
   let releaseHeld = () => {};
@@ -28,6 +28,16 @@ test('restores paginated source history and blocks cancelled and erased content 
   const get = async (path: string) => {
     const response = await page.request.get('/api/v1' + path, { headers: { 'X-Avatar-Token': token } });
     expect(response.ok()).toBe(true); return (await response.json()).data;
+  };
+  const cdp = await context.newCDPSession(page); await cdp.send('Performance.enable');
+  const resources = async (name: string) => {
+    for (let i = 0; i < 3; i++) await cdp.send('HeapProfiler.collectGarbage');
+    const metrics = await cdp.send('Performance.getMetrics');
+    report.resources.push({ name, browserVersion: context.browser()?.version(),
+      metrics: Object.fromEntries(metrics.metrics.map((m: { name: string; value: number }) => [m.name, m.value])),
+      counters: await cdp.send('Memory.getDOMCounters'),
+      dom: await page.evaluate(() => ({ elements: document.querySelectorAll('*').length, messages: document.querySelectorAll('.chat-message').length })) });
+    save();
   };
   const send = async (i: number) => {
     const text = `项目代号恢复审计第${String(i).padStart(3, '0')}号，继续规划。`;
@@ -41,6 +51,7 @@ test('restores paginated source history and blocks cancelled and erased content 
   try {
     await page.goto('/chat#' + token);
     await expect(page.getByRole('heading', { name: '对话观测', exact: true })).toBeVisible();
+    await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true'); await resources('empty');
     const first = await send(1); await send(2);
     const before = await page.locator('.chat-message > div').allTextContents();
     await page.getByRole('link', { name: '工具', exact: true }).click();
@@ -66,6 +77,7 @@ test('restores paginated source history and blocks cancelled and erased content 
     const snapshot = await get('/conversation?limit=200');
     expect(snapshot.items.map((m: any) => m.text)).toEqual(report.turns.flatMap(row => [row.text, row.result.reply]));
     report.steps.push({ name: '54 turns and source pagination', ids, snapshot }); save();
+    await resources('54 turns with all108 messages loaded');
     await page.getByLabel('消息', { exact: true }).fill('请解释云为什么会移动，fixture-long');
     await page.getByRole('button', { name: '发送消息', exact: true }).click();
     await expect(page.getByText('正在生成；最终回复会完成检查后替换此草稿。', { exact: true })).toBeVisible();
@@ -111,7 +123,8 @@ test('restores paginated source history and blocks cancelled and erased content 
     expect(submitted).toHaveLength(55);
     report.steps.push({ name: 'cross-tab erase invalidates held old snapshot and traces', erasedSource: selected.message_id,
       erasedText: selected.text, fulfillmentError, current, submitted: submitted.length });
+    await resources('after privacy current100 message page');
     await other.close(); expect(report.errors).toEqual([]); report.completed = true;
   } catch (error) { report.failure = String(error); throw error; }
-  finally { releaseHeld(); save(); await page.screenshot({ path: join(folder, 'restore-final.png') }).catch(() => {}); }
+  finally { releaseHeld(); save(); await page.screenshot({ path: join(folder, 'restore-final.png') }).catch(() => {}); await cdp.detach(); }
 });
