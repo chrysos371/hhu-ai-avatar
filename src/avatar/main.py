@@ -8,6 +8,7 @@ Avatar 类集成 LLM / 记忆 / 情绪与文本回应；`respond_audio()` 可接
 from __future__ import annotations
 
 import json
+import inspect
 import logging
 import math
 import re
@@ -645,7 +646,12 @@ class Avatar:
             checkpoint_context()
             run = self.web_agent.run
             engine = self.llm if self._llm_available else None
-            if getattr(run, '__func__', None) is WebAgent.run:
+            try:
+                parameter = inspect.signature(run).parameters.get('checkpoint')
+            except (TypeError, ValueError):
+                parameter = None
+            if parameter is not None and parameter.kind in (
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
                 web_result = run(user_text, engine, checkpoint=checkpoint_context)
             else:
                 # Preserve the two-argument API of injected custom agents. Their

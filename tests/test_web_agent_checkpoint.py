@@ -153,3 +153,20 @@ def test_no_intent_early_return_checks_after_session_cleanup():
     with pytest.raises(Cancelled, match='changed at cleanup'):
         WebAgent(connect=connect).run('普通闲聊', checkpoint=guard)
     assert ended == [True]
+
+
+def test_injected_agent_can_explicitly_adopt_checkpoint_protocol():
+    seen = []
+    class Offline:
+        available = False
+    class Agent:
+        def run(self, text, llm, *, checkpoint=None):
+            seen.append((text, llm, callable(checkpoint)))
+            checkpoint()
+            return {'reply': '受控代理回复。', 'sources': [], 'tool_calls': []}
+    bot = Avatar(db_path=':memory:', llm=Offline(), web_agent=Agent())
+    try:
+        assert bot.respond('搜索实验', use_web=True)['reply'] == '受控代理回复。'
+        assert seen == [('搜索实验', None, True)]
+    finally:
+        bot.memory.close()
