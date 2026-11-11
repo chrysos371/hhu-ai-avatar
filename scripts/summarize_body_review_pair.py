@@ -7,23 +7,30 @@ from pathlib import Path
 from statistics import median
 
 
-def summarize(folder):
+def summarize(folder, protocol_path=None):
+    root = Path(__file__).resolve().parents[1]
+    protocol_path = protocol_path or root/'evals/interaction/cycle-15/native-output-protocol.json'
+    expected = {c['id']: c for c in json.loads(protocol_path.read_text())['cases'] if c['partition'] == 'prospective'}
+    expected_turns = sum(len(c['turns']) for c in expected.values())
     lifecycle = json.loads((folder/'lifecycle.json').read_text())
     assert lifecycle['completed'] and lifecycle['failure'] is None
     model = lifecycle['models'][0]; key = model['model_id']
     assert model['provider_exit'] == model['sampler_exit'] == 0 and model['cleanup_passed']
     source = folder/key/'sample/paired-output.json'
     data = json.loads(source.read_text())
+    assert data['sourceSha256'][str(protocol_path.resolve().relative_to(root))] == sha256(protocol_path.read_bytes()).hexdigest()
     assert data['engineering_passed'] and data['execution_complete'] and data['failure'] is None
     cases = {}
     for row in data['cases']:
         assert row['completed'] and row['error'] is None
-        cases.setdefault(row['id'], {})[row['arm']] = row
-    assert len(cases) == 12
+        assert [t['input'] for t in row['turns']] == expected[row['id']]['turns']
+        assert row['arm'] not in cases.setdefault(row['id'], {})
+        cases[row['id']][row['arm']] = row
+    assert set(cases) == set(expected)
     pairs = []; arms = {}
     for arm in ['baseline_current_defaults', 'candidate_lab_buffered_review']:
         turns = [t for r in data['cases'] if r['arm'] == arm for t in r['turns']]
-        assert len(turns) == 15
+        assert len(turns) == expected_turns
         arms[arm] = {'turns': len(turns), 'generation_modes': dict(Counter(t['result']['generation_mode'] for t in turns)),
             'median_first_visible_seconds': median(t['firstVisibleSeconds'] for t in turns),
             'median_complete_seconds': median(t['seconds'] for t in turns),
@@ -47,6 +54,7 @@ def summarize(folder):
                 'changed': b['result']['generation_mode'] == 'reviewed_response'})
     trace = [json.loads(line) for line in (folder/key/'provider-trace.jsonl').read_text().splitlines()]
     return {'model_id': key, 'sample_sha256': sha256(source.read_bytes()).hexdigest(),
+        'expected_protocol_sha256': sha256(protocol_path.read_bytes()).hexdigest(),
         'candidateFreezeSha256': data['candidateFreezeSha256'], 'engineering_passed': True,
         'scope': 'Mechanical replay and observational timings; separate agent review required. No semantic or production approval.',
         'pairs': pairs, 'arms': arms, 'same_native_pairs': sum(p['same_native_bytes'] for p in pairs),
@@ -58,7 +66,8 @@ def summarize(folder):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--folder', type=Path, required=True)
+    parser.add_argument('--protocol', type=Path)
     parser.add_argument('--output', type=Path, required=True); args = parser.parse_args()
-    result = summarize(args.folder)
+    result = summarize(args.folder, args.protocol)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')
     print(result['model_id'], result['same_native_pairs'], 'same native pairs;', result['same_profile_pairs'], 'same profiles')
