@@ -16,6 +16,7 @@ function artifact(name: string, info: TestInfo) {
   const provenance = { sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     createdUtc: new Date().toISOString(), protocolSha256: hash('../evals/interaction/cycle-08/playback-protocol.json'),
     sourceSha256: Object.fromEntries(['src/features/chat/useSpeechPlayer.ts', 'src/features/chat/AvatarStage.tsx',
+      'src/features/chat/SpeechAvatarStage.tsx', 'src/features/chat/speechFrames.ts', 'src/features/chat/ChatPage.tsx',
       'e2e/playback-audit.spec.ts', '../tests/helpers/serve_admin_e2e.py', '../src/avatar/lab/transport_fixture.py'].map(path => [path, hash(path)])),
     servedBundleSha256: Object.fromEntries(['dist/index.html', ...readdirSync('dist/assets').filter(p => p.endsWith('.js')).map(p => 'dist/assets/' + p)].map(path => [path, hash(path)])) };
   return { folder, provenance, save: (value: unknown) => writeFileSync(path, JSON.stringify(value, null, 2) + '\n') };

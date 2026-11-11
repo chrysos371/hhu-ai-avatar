@@ -6,12 +6,14 @@ import { execFileSync } from 'node:child_process';
 import type { ChatResult, LipFrame } from '../../lib/types';
 import { SpeechAvatarStage } from './SpeechAvatarStage';
 import { useSpeechPlayer } from './useSpeechPlayer';
+import { StrictMode } from 'react';
 
 const frames: LipFrame[] = Array.from({ length: 61 }, (_, i) => ({
   time: i * .01, mouth_open: (i + 1) / 100, vowel: 'a', energy: 1,
 }));
 let parentRenders: number, rowVisits: number, clock: number, paused: boolean;
 let raf: Map<number, FrameRequestCallback>, serial: number;
+let latest: ReturnType<typeof useSpeechPlayer>;
 function History({ count }: { count: number }) {
   return <div>{Array.from({ length: count }, (_, index) => {
     rowVisits++;
@@ -23,6 +25,7 @@ function History({ count }: { count: number }) {
 function Harness({ count }: { count: number }) {
   parentRenders++;
   const speech = useSpeechPlayer();
+  latest = speech;
   return <><button onClick={() => void speech.play(0, { reply: '受控帧测试' } as ChatResult)}>开始</button>
     <button onClick={speech.stop}>停止</button><output>{speech.status}</output>
     <SpeechAvatarStage frameSource={speech.mouthFrames} /><History count={count} />
@@ -46,6 +49,19 @@ beforeEach(() => {
   vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(url.endsWith('/speech')
     ? { ok: true, json: async () => ({ data: { audio_id: 'render_audit_audio_identifier', frames, warning: null } }) }
     : { ok: true, blob: async () => new Blob(['controlled-media']) })));
+});
+
+it('clears the local frame and pending RAF on pause and StrictMode unmount', async () => {
+  const view = render(<StrictMode><Harness count={25} /></StrictMode>);
+  fireEvent.click(screen.getByText('开始')); await screen.findByText('playing');
+  const source = latest.mouthFrames, audio = screen.getByTestId('audio') as HTMLAudioElement;
+  expect(source.getSnapshot()?.mouth_open).toBe(.01);
+  paused = true; fireEvent.pause(audio);
+  expect(source.getSnapshot()).toBeNull(); expect(raf.size).toBe(0);
+  await act(async () => { await audio.play(); });
+  expect(source.getSnapshot()?.mouth_open).toBe(.01);
+  view.unmount(); expect(source.getSnapshot()).toBeNull(); expect(raf.size).toBe(0);
+  expect(audio).not.toHaveAttribute('src'); expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1);
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
