@@ -97,3 +97,22 @@ def test_late_cancelled_save_cannot_damage_another_calls_successful_output(tmp_p
         finally: published.set()
         future.result(timeout=3)
     assert target.read_bytes() == NEW and set(tmp_path.iterdir()) == {target}
+
+
+@pytest.mark.parametrize('phase', ['before', 'after'])
+def test_checkpoint_runs_on_caller_thread_before_component_and_before_publish(tmp_path, monkeypatch, phase):
+    target = tmp_path/'output.mp3'; target.write_bytes(OLD)
+    caller = threading.get_ident(); revoked = phase == 'before'; calls = []
+    class Communicate:
+        def __init__(self, *args, **kwargs): calls.append('component')
+        async def save(self, path):
+            nonlocal revoked
+            Path(path).write_bytes(NEW); revoked = True
+    def check():
+        assert threading.get_ident() == caller  # SQLite callbacks belong to this thread.
+        if revoked: raise Cancelled('source revoked')
+    monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+    with pytest.raises(Cancelled, match='source revoked'):
+        EdgeTTSEngine().synthesize_cancellable('受控文本', str(target), checkpoint=check)
+    assert calls == ([] if phase == 'before' else ['component'])
+    assert target.read_bytes() == OLD and set(tmp_path.iterdir()) == {target}

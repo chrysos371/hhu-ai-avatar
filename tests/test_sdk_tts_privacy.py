@@ -125,3 +125,29 @@ def test_sdk_edge_uses_turn_token_for_actual_async_save_lifecycle(tmp_path, monk
             assert started == finished == [True] and result['audio_path'] == path
     finally:
         bot.memory.close()
+
+
+@pytest.mark.parametrize('provide_cancel', [False, True])
+@pytest.mark.parametrize('existing', [False, True])
+def test_native_edge_publication_checks_context_after_save(tmp_path, monkeypatch, provide_cancel, existing):
+    path = str(tmp_path/'sdk.db'); audio_dir = tmp_path/'audio'; audio_dir.mkdir()
+    target = audio_dir/'reply.mp3'; old = b'previous-user-output'; saved = []
+    if existing: target.write_bytes(old)
+    class Communicate:
+        def __init__(self, *args, **kwargs): pass
+        async def save(self, out_path):
+            silence(out_path); saved.append(True)
+            with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+    monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+    bot = Avatar(db_path=path, llm=Engine(), tts=EdgeTTSEngine())
+    fragment = bot.memory.remember_user('名字', PRIVATE)
+    try:
+        with pytest.raises(Cancelled):
+            bot.respond('我的名字是'+PRIVATE+'。', use_tts=True, tts_path=str(target),
+                        cancel=CancellationToken() if provide_cancel else None)
+        assert saved == [True] and bot.memory.context_revision == 1
+        if existing: assert target.read_bytes() == old
+        else: assert not target.exists()
+        assert set(audio_dir.iterdir()) == ({target} if existing else set())
+    finally:
+        bot.memory.close()
