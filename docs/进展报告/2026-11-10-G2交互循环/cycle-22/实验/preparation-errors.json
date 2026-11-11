@@ -1,0 +1,18 @@
+{
+  "scope": "Preparation failures only, before any provider or experiment; summaries copied from tool results, not reconstructed raw logs.",
+  "failures": [
+    {
+      "step": "preflight record",
+      "error": "FileNotFoundError: cycle-22/实验/gpu-preflight-v3.json",
+      "reason": "Empty experiment directory was not tracked into new worktree."
+    },
+    {
+      "step": "launcher",
+      "error": "FileNotFoundError: cycle-22/实验/jobs/cuda-v3-4b-spec.json",
+      "reason": "Dependent launch was mistakenly attempted after failed preparation; exited before prepare/provider."
+    }
+  ],
+  "corrective_action": "Create isolated experiment directory, record preflight/specs and commit successfully before launch.",
+  "model_samples": 0,
+  "provider_started": false
+}
