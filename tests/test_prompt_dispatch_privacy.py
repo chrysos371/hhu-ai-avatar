@@ -57,3 +57,24 @@ def test_cancel_during_system_compilation_stops_before_reply_method(monkeypatch)
         assert len(engine.analysis) == 1 and not engine.native
     finally:
         bot.memory.close()
+
+
+@pytest.mark.parametrize('change', ['external_forget', 'same_instance_forget', 'cancel'])
+def test_analysis_dispatch_also_checks_immutable_turn_after_fact_context(tmp_path, monkeypatch, change):
+    path = str(tmp_path/'analysis.db'); engine = Recorder('must not dispatch')
+    bot = Avatar(db_path=path, llm=engine); token = CancellationToken()
+    fragment = bot.memory.remember_user('名字', '待删分析名')
+    original = bot._check_fact_context
+    def change_after_check():
+        original()
+        if change == 'cancel': token.cancel()
+        elif change == 'same_instance_forget': bot.forget_memory(fragment)
+        else:
+            with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+    monkeypatch.setattr(bot, '_check_fact_context', change_after_check)
+    try:
+        with pytest.raises(Cancelled): bot.respond('普通话题。', cancel=token)
+        assert not engine.analysis and not engine.native
+        assert not bot.memory._conn.execute("SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+    finally:
+        bot.memory.close()
