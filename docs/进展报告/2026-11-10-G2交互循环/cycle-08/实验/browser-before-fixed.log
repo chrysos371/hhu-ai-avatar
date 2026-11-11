@@ -1,0 +1,76 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test playback-audit.spec.ts
+
+
+Running 3 tests using 1 worker
+
+(node:2362723) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2362723) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/playback-audit.spec.ts:133:1 › measures actual media clock across rates seeks pause end and stop (7.7s)
+(node:2362994) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2362994) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 e2e/playback-audit.spec.ts:164:1 › plays all final segments in order with fresh clocks (11.0s)
+  ✘  3 e2e/playback-audit.spec.ts:181:1 › stop during prefetch survives injected queued play and late completion (3.8s)
+
+
+  1) e2e/playback-audit.spec.ts:133:1 › measures actual media clock across rates seeks pause end and stop 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      155 |     const stopped = await samples(page, control.mapping, 6), stopPass = stopped.every(row => row.src === '' && row.open === '0.000' && !row.speaking);
+      156 |     report.controls.push({ name: 'stop', rows: stopped, passed: stopPass }); file.save(report);
+    > 157 |     expect(report.cases.every(item => item.gate.passed)).toBe(true); expect(pausePass && endedPass && stopPass).toBe(true);
+          |                                                          ^
+      158 |     report.completed = true;
+      159 |     await page.screenshot({ path: join(file.folder, 'clock.png') });
+      160 |   } catch (error) { report.failure = String(error); throw error; }
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/playback-audit.spec.ts:157:58
+
+    Error Context: test-results/playback-audit-measures-ac-c6fd7-es-seeks-pause-end-and-stop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playback-audit-measures-ac-c6fd7-es-seeks-pause-end-and-stop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playback-audit-measures-ac-c6fd7-es-seeks-pause-end-and-stop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e/playback-audit.spec.ts:181:1 › stop during prefetch survives injected queued play and late completion 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      190 |     await page.getByLabel(/语音播放器$/).evaluate((a: HTMLAudioElement) => a.dispatchEvent(new Event('play')));
+      191 |     control.releaseSecond(); report.rows = await samples(page, control.mapping, 60); file.save(report);
+    > 192 |     expect(report.rows.every(row => row.src === '' && row.open === '0.000' && !row.speaking)).toBe(true);
+          |                                                                                               ^
+      193 |     expect(control.requests).toHaveLength(2); expect(control.cancels.length).toBeGreaterThan(0); report.completed = true;
+      194 |   } catch (error) { report.failure = String(error); throw error; }
+      195 |   finally { control.releaseSecond(); report.mediaEvents = await mediaEvents(page).catch(() => []); file.save(report); }
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/playback-audit.spec.ts:192:95
+
+    Error Context: test-results/playback-audit-stop-during-2f69c-ed-play-and-late-completion/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playback-audit-stop-during-2f69c-ed-play-and-late-completion/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playback-audit-stop-during-2f69c-ed-play-and-late-completion/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    e2e/playback-audit.spec.ts:133:1 › measures actual media clock across rates seeks pause end and stop 
+    e2e/playback-audit.spec.ts:181:1 › stop during prefetch survives injected queued play and late completion 
+  1 passed (25.9s)
