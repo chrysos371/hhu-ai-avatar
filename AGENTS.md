@@ -17,7 +17,11 @@ GPU持续忙，按实际余量选择原util<=20/16–24GiB门槛。两自建PID2
 
 3eeebfc提交candidate-development-freeze-v2-cpu.json，254源/协议/测试/已完成证据冻结，仅development；C19/C21全部case数组相同共同SHA，固定12开发/20回合/臂，前瞻12/21未授权。运行期间不改254项输入。增长GPU观察日志排除，74次不可变前缀纳入。事后summarize_capability_pair.py不在254中，可加backend/协议/传输标签；C19已封40对/7字段逐项复读相同（初忘传旧native-summary比较前提留JSON，不改旧证据）。
 
-当前真实CPU4B配对运行：exec59445，provider PID2938803，ready CPU/4线程/无GPU分配，2 warmup完成；实验/paired-cpu-development-4b，少量场景臂已完成，尚无全开发结论。完成后保存全部raw/visible/final/stored/真实提醒投影、逐span代理审阅，及时提交/推送，再同冻结14B串行；开发失败不启前瞻。CPU与GPU硬件路径分开标记，不要求旧GPU文字全相同、不报跨硬件速度倍数。实时检查实际进程/文件，不因exec观察时间短误杀或重启。
+CPU4B已a9330f1完整归档：24臂/40回复/20对，1706.734071s，70提供方stop/完成，每臂16模型+4规则，profile/提醒20/20相同，候选16元数据实际绑定。PID2938803退出0/已消失，无GPU。代理span审阅主要能力失败基线6/16→候选4/16（承诺/提议仍在，不能把全部叫已完成），拒绝4B开发/前瞻/生产；005归并C19-001不新增根因。已知输入相关多轮，非独立真人金标/硬件性能比较，角色规则不算提示收益。
+
+CPU14B按原计划同254冻结继续开发，exec19409，provider PID2969366，ready0GPU/4计算线程，尚未完成；独立实验/paired-cpu-development-14b，0001不可变检查点2完整臂/2应用回合，trace7含下一未完成臂调用。旧4B检查点与完整结果不重复计数。GPU只读观察器91665仍运行，第二前缀415观察与原74重叠，不是489独立样本。
+
+独立SDK/文件修复树/data/Users/zrh/repo/hhu-ai-avatar-sdk-privacy，分支fix/sdk-tts-privacy-cycle21，尚未合并主树。003 dadcdc2提交后/TTS前后/返回前检查+原token接口，组件重放取消/遗忘后TTS1→0且无旧result，完整1352/1/87.39s，浏览器15/11/36.8s为dad源码。004 b79ce57自有.part/非空/原子替换，异常/取消保旧不留半成品，33相关1.75s及并发所有权通过，最新完整1367/1/86.41s源/测试/入口f71ed28（7d42bf3归档），Edge变更后浏览器未重跑，待合并后统一检查。继续审查合成期间来源改变的最终发布边界；主树254输入不改。
 
 下一步继续当前CPU实验并保留进展、对默认外发入口的后续只读审计；新修复需等当前冻结实验完成或显式退役另冻。最后全轮MD/HTML/哈希审计，进入下一循环。Goal active，/data/Users/zrh路径、spinner-bot作者/指定SSH小步及时提交，不宣告全轮/代际跃迁完成。
 
