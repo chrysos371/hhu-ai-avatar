@@ -98,6 +98,9 @@ class Avatar:
         self.boundaries = BoundaryPolicy()
         self.speaker_scope = SpeakerScope()
         self.speaker_context_store = None
+        # Trusted in-process experiment hook; defaults install no reviewer.
+        self.final_reply_reviewer = None
+        self._response_review = None
         self.tasks = TaskTracker()
         self._task_context_revision = self.memory.context_revision
         self.task_contract_enabled = task_contract_enabled
@@ -468,6 +471,7 @@ class Avatar:
     ) -> dict:
         """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
         self._cancel_token = cancel
+        self._response_review = None
         self.analysis_mode = 'boundary_or_tool_rules'
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
@@ -570,7 +574,8 @@ class Avatar:
         delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
             and boundary.reply is None and reminder is None and cancelled_reminder_id is None
             and not reminder_error and not use_web)
-        buffer_reply = self.profile_grounding_enabled or delivery_guard_active
+        buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
+                        or self.final_reply_reviewer is not None)
         streamed_prefix = []
         grounding_action = None
         profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
@@ -690,13 +695,22 @@ class Avatar:
         writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
         if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
+        if self.final_reply_reviewer is not None and generation_mode == 'llm':
+            reviewed, metadata = self.final_reply_reviewer(user_text, reply)
+            if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
+                raise ValueError('final reply reviewer returned invalid data')
+            self._response_review = {**metadata, 'stream_buffered': True}
+            if reviewed != reply:
+                generation_mode = 'reviewed_response'
+            reply = reviewed
         # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
         repair_succeeded = repair_succeeded and not final_delivery_issues
-        if buffer_reply and generation_mode in {'llm', 'llm_literal_composition'} and on_delta:
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition'}
+                              or self._response_review is not None) and on_delta):
             emit_checked(reply)
         elif generation_mode == 'llm' and on_delta:
             # Sentence checks leave closing quotes, emoji and unpunctuated
@@ -732,7 +746,7 @@ class Avatar:
             except Exception as exc:
                 logger.warning('口型分析失败：%s', type(exc).__name__)
                 lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
-        return {
+        result = {
             "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
                              "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
             "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
@@ -782,6 +796,9 @@ class Avatar:
             "tool_calls": web_result['tool_calls'],
             "web_error": web_result.get('web_error'),
         }
+        if self._response_review is not None:
+            result['response_review'] = self._response_review
+        return result
 
     def respond_audio(
         self,
