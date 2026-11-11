@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { frameAt, useSpeechPlayer } from "./useSpeechPlayer";
 import { AvatarStage } from "./AvatarStage";
 import type { ChatResult, LipFrame } from "../../lib/types";
@@ -7,6 +7,7 @@ import { splitSpeechText } from "./segmentation";
 const frames: LipFrame[] = [{ time: 0, mouth_open: 0.7, vowel: "a", energy: 1 },
   { time: 0.01, mouth_open: 0.3, vowel: "i", energy: 0.5 }];
 const result = { reply: "你好", speech_rate: "-10%", speech_pitch: "-5Hz", mouth_intensity: 0.6 } as ChatResult;
+let media: { paused: boolean; ended: boolean };
 function Harness() {
   const player = useSpeechPlayer();
   return <><button onClick={() => void player.play(0, result)}>朗读</button>
@@ -17,16 +18,20 @@ function Harness() {
   </>;
 }
 beforeEach(() => {
+  media = { paused: true, ended: false };
   sessionStorage.setItem("avatar-token", "unit-session-token-123456");
-  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
-  vi.spyOn(HTMLMediaElement.prototype, "load").mockImplementation(() => {});
+  vi.spyOn(HTMLMediaElement.prototype, "paused", "get").mockImplementation(() => media.paused);
+  vi.spyOn(HTMLMediaElement.prototype, "ended", "get").mockImplementation(() => media.ended);
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => { media.paused = true; });
+  vi.spyOn(HTMLMediaElement.prototype, "load").mockImplementation(() => { media.paused = true; media.ended = false; });
   vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function(this: HTMLMediaElement) {
+    media.paused = false; media.ended = false;
     this.dispatchEvent(new Event("play")); return Promise.resolve();
   });
   URL.createObjectURL = vi.fn(() => "blob:unit-audio");
   URL.revokeObjectURL = vi.fn();
 });
-afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 it("uses audio timestamps without extrapolating beyond the last frame", () => {
   expect(frameAt(frames, -1)).toBeNull();
   expect(frameAt(frames, 0.005)?.vowel).toBe("a");
@@ -45,9 +50,8 @@ it("fetches audio with a token header, forwards expression parameters, closes on
   expect(fetch.mock.calls[1][0]).not.toContain("token");
   expect(fetch.mock.calls[1][1].headers["X-Avatar-Token"]).toBe("unit-session-token-123456");
   const audio = screen.getByTestId("audio") as HTMLAudioElement;
-  Object.defineProperty(audio, "paused", { configurable: true, value: false });
   await waitFor(() => expect(screen.getByRole("img")).toHaveAttribute("data-mouth-open", "0.700"));
-  fireEvent.pause(audio);
+  media.paused = true; fireEvent.pause(audio);
   expect(screen.getByRole("img")).toHaveAttribute("data-mouth-open", "0.000");
   fireEvent.click(screen.getByText("停止"));
   expect(audio).not.toHaveAttribute("src");
@@ -82,7 +86,7 @@ it("bounds segments without losing the spoken content and prefetches only one up
   fireEvent.click(screen.getByText('分段朗读'));
   await screen.findByText('playing');
   await waitFor(() => expect(count).toBe(2));
-  fireEvent.ended(screen.getByTestId('audio'));
+  media.ended = true; media.paused = true; fireEvent.ended(screen.getByTestId('audio'));
   await waitFor(() => expect(count).toBe(3));
   fireEvent.click(screen.getByText('停止'));
   fireEvent.ended(screen.getByTestId('audio'));

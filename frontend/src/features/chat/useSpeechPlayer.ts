@@ -141,11 +141,20 @@ export function useSpeechPlayer() {
     await startPart(0);
   }
   return { audioRef, active, status, error, warning, mouth, segment, play, stop,
-    onPlay: () => setStatus("playing"),
-    onPause: () => { if (audioRef.current?.hasAttribute("src")) { setMouth(null); setStatus("paused"); } },
-    onEnded: () => { setMouth(null); const next = nextPart.current; nextPart.current = null; if (next) next(); else setStatus("ended"); },
-    onError: () => { if (audioRef.current?.hasAttribute("src")) failedPlayback(); },
+    onPlay: () => { const audio = sourceAudio(); if (audio && !audio.paused && !audio.ended) setStatus("playing"); },
+    onPause: () => { const audio = sourceAudio(); if (audio?.paused && !audio.ended) { setMouth(null); setStatus("paused"); } },
+    onEnded: () => {
+      if (!sourceAudio()?.ended) return;
+      setMouth(null); const next = nextPart.current; nextPart.current = null; if (next) next(); else setStatus("ended");
+    },
+    onError: () => { if (sourceAudio()?.error) failedPlayback(); },
   };
+  function sourceAudio() {
+    const audio = audioRef.current, owned = objectUrl.current;
+    if (!audio || !owned || audio.getAttribute("src") !== owned) return null;
+    if (audio.currentSrc && audio.currentSrc !== owned) return null;
+    return audio;
+  }
   function failedPlayback() {
     release(); setMouth(null); setStatus("error"); setError("音频无法播放，请重新生成。");
   }

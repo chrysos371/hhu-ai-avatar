@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ChatResult } from '../../lib/types';
 import { useSpeechPlayer } from './useSpeechPlayer';
 
@@ -37,6 +37,7 @@ beforeEach(() => {
       : { ok: true, blob: async () => new Blob(['controlled-unit-audio']) })));
 });
 afterEach(() => {
+  cleanup();
   vi.restoreAllMocks(); vi.unstubAllGlobals();
   if (originalError) Object.defineProperty(HTMLMediaElement.prototype, 'error', originalError);
   else Reflect.deleteProperty(HTMLMediaElement.prototype, 'error');
