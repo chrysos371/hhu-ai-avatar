@@ -1,0 +1,47 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test history-audit.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:2406569) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2406569) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/history-audit.spec.ts:70:1 › audits full chat history input diagnostics playback and navigation resources (1.9m)
+
+
+  1) e2e/history-audit.spec.ts:70:1 › audits full chat history input diagnostics playback and navigation resources 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 9[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "1: 5 closed-trace pre nodes",[39m
+    [31m+   "1: opened decision differs from delivered trace",[39m
+    [31m+   "25: 125 closed-trace pre nodes",[39m
+    [31m+   "25: opened decision differs from delivered trace",[39m
+    [31m+   "100: 500 closed-trace pre nodes",[39m
+    [31m+   "100: opened decision differs from delivered trace",[39m
+    [31m+   "100 complete HTTP/SSE results",[39m
+    [31m+ ][39m
+
+      192 |
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/history-audit.spec.ts:194:31
+
+    Error Context: test-results/history-audit-audits-full--1d587-ck-and-navigation-resources/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/history-audit-audits-full--1d587-ck-and-navigation-resources/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/history-audit-audits-full--1d587-ck-and-navigation-resources/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/history-audit.spec.ts:70:1 › audits full chat history input diagnostics playback and navigation resources 

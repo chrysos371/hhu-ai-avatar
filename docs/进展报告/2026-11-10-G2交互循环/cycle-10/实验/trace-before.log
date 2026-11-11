@@ -1,0 +1,44 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/ChatPage.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/features/chat/ChatPage.test.tsx (1 test | 1 failed) 225ms
+   × streams a reviewed draft then replaces it with the final traced reply 222ms
+     → expected <pre></pre>
+<pre></pre>
+<pre></pre>
+…(2) to have a length of +0 but got 5
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/ChatPage.test.tsx > streams a reviewed draft then replaces it with the final traced reply
+AssertionError: expected <pre></pre>
+<pre></pre>
+<pre></pre>
+…(2) to have a length of +0 but got 5
+
+- Expected
++ Received
+
+- 0
++ 5
+
+ ❯ src/features/chat/ChatPage.test.tsx:31:41
+     29|   expect(screen.getByText("本轮决策与来源").closest("details")).not.toHaveAtt…
+     30|   const trace = screen.getByText("本轮决策与来源").closest("details")!;
+     31|   expect(trace.querySelectorAll('pre')).toHaveLength(0);
+       |                                         ^
+     32|   fireEvent.click(screen.getByText("本轮决策与来源"));
+     33|   await waitFor(() => expect(trace.querySelectorAll('pre')).toHaveLeng…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  16:51:34
+   Duration  1.85s (transform 267ms, setup 149ms, collect 398ms, tests 225ms, environment 382ms, prepare 80ms)
+

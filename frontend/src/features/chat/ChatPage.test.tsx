@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ChatPage } from "./ChatPage";
 afterEach(() => vi.unstubAllGlobals());
@@ -27,4 +27,11 @@ it("streams a reviewed draft then replaces it with the final traced reply", asyn
   expect(await screen.findByText("你好，我在。")).toBeInTheDocument();
   expect(screen.queryByText("已检查的草稿。")).not.toBeInTheDocument();
   expect(screen.getByText("本轮决策与来源").closest("details")).not.toHaveAttribute("open");
+  const trace = screen.getByText("本轮决策与来源").closest("details")!;
+  expect(trace.querySelectorAll('pre')).toHaveLength(0);
+  fireEvent.click(screen.getByText("本轮决策与来源"));
+  await waitFor(() => expect(trace.querySelectorAll('pre')).toHaveLength(5));
+  expect(JSON.parse(trace.querySelector('pre')!.textContent!)).toEqual(result.trace.decision);
+  fireEvent.click(screen.getByText("本轮决策与来源"));
+  await waitFor(() => expect(trace.querySelectorAll('pre')).toHaveLength(0));
 });
