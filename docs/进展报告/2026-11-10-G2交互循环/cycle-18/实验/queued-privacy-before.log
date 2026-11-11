@@ -1,0 +1,988 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/ChatQueuedPrivacy.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/features/chat/ChatQueuedPrivacy.test.tsx (2 tests | 2 failed) 434ms
+   × does not post a queued request whose epoch expired before mutationFn starts 207ms
+     → expected [ [ '/api/v1/turns', …(1) ] ] to have a length of +0 but got 1
+   × an old queued settlement cannot reset a newer running mutation 224ms
+     → Unable to find an accessible element with the role "button" and name "等待回复…"
+
+Here are the accessible roles:
+
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"page-description"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "对话观测":
+  [36m<h1 />[39m
+
+  Name "排队测试在这里":
+  [36m<h2 />[39m
+
+  Name "开始一段对话":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "排队测试，正在聆听":
+  [36m<div[39m
+    [33maria-label[39m=[32m"排队测试，正在聆听"[39m
+    [33mclass[39m=[32m"avatar-stage"[39m
+    [33mdata-mouth-open[39m=[32m"0.000"[39m
+    [33mrole[39m=[32m"img"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  checkbox:
+
+  Name "自动分段朗读新回复":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  Name "停顿后自动结束录音":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  Name "本轮允许联网工具":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "刷新对话记录":
+  [36m<button[39m
+    [33mclass[39m=[32m"button secondary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "麦克风输入":
+  [36m<button[39m
+    [33mclass[39m=[32m"button secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "发送消息":
+  [36m<button[39m
+    [33mclass[39m=[32m"button"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "消息":
+  [36m<textarea[39m
+    [33mid[39m=[32m"chat-message"[39m
+    [33mmaxlength[39m=[32m"4000"[39m
+    [33mplaceholder[39m=[32m"说说现在的想法，或交给排队测试一个具体任务…"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"page-heading"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mMISSION CONTROL[0m
+          [36m</p>[39m
+          [36m<h1>[39m
+            [0m对话观测[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"page-description"[39m
+          [36m>[39m
+            [0m与排队测试聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"speech-panel panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"排队测试，正在聆听"[39m
+          [33mclass[39m=[32m"avatar-stage"[39m
+          [33mdata-mouth-open[39m=[32m"0.000"[39m
+          [33mrole[39m=[32m"img"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mviewBox[39m=[32m"0 0 300 260"[39m
+          [36m>[39m
+            [36m<ellipse[39m
+              [33mclass[39m=[32m"avatar-aura"[39m
+              [33mcx[39m=[32m"150"[39m
+              [33mcy[39m=[32m"140"[39m
+              [33mrx[39m=[32m"116"[39m
+              [33mry[39m=[32m"105"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M68 135C58 35 95 12 150 12s92 23 82 123l-18 61H86z"[39m
+              [33mfill[39m=[32m"#253b52"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M58 260q10-78 92-78t92 78"[39m
+              [33mfill[39m=[32m"#456f88"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m118 184 32 29 32-29 13 76h-90z"[39m
+              [33mfill[39m=[32m"#b0d8df"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M80 80q0-47 70-47t70 47v50c0 43-32 65-70 65s-70-22-70-65z"[39m
+              [33mfill[39m=[32m"#f5dbc7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M72 96q-5-75 78-75t78 75q-49-11-61-48-28 37-95 48"[39m
+              [33mfill[39m=[32m"#253b52"[39m
+            [36m/>[39m
+            [36m<g[39m
+              [33mclass[39m=[32m"avatar-eyes"[39m
+              [33mstyle[39m=[32m"transform-origin: 150px 117px;"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M104 115q12-7 24 0M172 115q12-7 24 0"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"#253b52"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"5"[39m
+              [36m/>[39m
+              [36m<ellipse[39m
+                [33mcx[39m=[32m"116"[39m
+                [33mcy[39m=[32m"120"[39m
+                [33mfill[39m=[32m"#253b52"[39m
+                [33mrx[39m=[32m"5"[39m
+                [33mry[39m=[32m"6"[39m
+              [36m/>[39m
+              [36m<ellipse[39m
+                [33mcx[39m=[32m"184"[39m
+                [33mcy[39m=[32m"120"[39m
+                [33mfill[39m=[32m"#253b52"[39m
+                [33mrx[39m=[32m"5"[39m
+                [33mry[39m=[32m"6"[39m
+              [36m/>[39m
+            [36m</g>[39m
+            [36m<ellipse[39m
+              [33mcx[39m=[32m"103"[39m
+              [33mcy[39m=[32m"139"[39m
+              [33mfill[39m=[32m"#e9a4a0"[39m
+              [33mopacity[39m=[32m".5"[39m
+              [33mrx[39m=[32m"12"[39m
+              [33mry[39m=[32m"5"[39m
+            [36m/>[39m
+            [36m<ellipse[39m
+              [33mcx[39m=[32m"197"[39m
+              [33mcy[39m=[32m"139"[39m
+              [33mfill[39m=[32m"#e9a4a0"[39m
+              [33mopacity[39m=[32m".5"[39m
+              [33mrx[39m=[32m"12"[39m
+              [33mry[39m=[32m"5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M138 153q12 9 24 0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mstroke[39m=[32m"#a06465"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m141 218 9 12 9-12-9-7z"[39m
+              [33mfill[39m=[32m"#78bdcd"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"avatar-caption"[39m
+          [36m>[39m
+            [36m<i />[39m
+            [0m正在聆听[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"speech-controls"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m排队测试[0m
+            [0m在这里[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [0m朗读会把这段文字交给在线语音服务。默认不自动播放。[0m
+          [36m</p>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"checkbox-row"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0m自动分段朗读新回复[0m
+          [36m</label>[39m
+          [36m<audio[39m
+            [33maria-label[39m=[32m"排队测试语音播放器"[39m
+            [33mcontrols[39m=[32m""[39m
+            [33mhidden[39m=[32m""[39m
+            [33mpreload[39m=[32m"none"[39m
+          [36m/>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"section-top"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button secondary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m刷新对话记录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-live[39m=[32m"polite"[39m
+          [33mclass[39m=[32m"chat-history"[39m
+          [33mdata-history-ready[39m=[32m"true"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"empty"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"28"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mstyle[39m=[32m"margin: 0px auto 12px;"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"28"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<h2>[39m
+              [0m开始一段对话[0m
+            [36m</h2>[39m
+            [36m<p>[39m
+              [0m回复会使用已生效的人设、记忆与知识。未配置对话模型时使用规则回退。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"voice-input"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"voice-buttons"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-mic"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 19v3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M19 10v2a7 7 0 0 1-14 0v-2"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mrx[39m=[32m"3"[39m
+                  [33mwidth[39m=[32m"6"[39m
+                  [33mx[39m=[32m"9"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m麦克风输入[0m
+            [36m</button>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"button secondary disabled"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-upload"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 3v12"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m17 8-5-5-5 5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m上传语音[0m
+              [36m<input[39m
+                [33maccept[39m=[32m".wav,audio/wav"[39m
+                [33maria-label[39m=[32m"上传 WAV 语音"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mhidden[39m=[32m""[39m
+                [33mtype[39m=[32m"file"[39m
+              [36m/>[39m
+            [36m</label>[39m
+          [36m</div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0m 停顿后自动结束录音[0m
+          [36m</label>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [0m默认手动结束录音。开启自动结束后，停顿约 1.2 秒就会识别，8 秒未检测到语音会释放麦克风；轻声或较长停顿可能提前截断，请检查草稿。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m正在查询语音识别状态…[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<form>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"chat-message"[39m
+            [36m>[39m
+              [0m消息[0m
+            [36m</label>[39m
+            [36m<textarea[39m
+              [33mid[39m=[32m"chat-message"[39m
+              [33mmaxlength[39m=[32m"4000"[39m
+              [33mplaceholder[39m=[32m"说说现在的想法，或交给排队测试一个具体任务…"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"section-top"[39m
+            [33mstyle[39m=[32m"margin-bottom: 0px;"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"checkbox-row"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m本轮允许联网工具[0m
+            [36m</label>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-send"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21.854 2.147-10.94 10.939"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m发送消息[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</form>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/ChatQueuedPrivacy.test.tsx > does not post a queued request whose epoch expired before mutationFn starts
+AssertionError: expected [ [ '/api/v1/turns', …(1) ] ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/features/chat/ChatQueuedPrivacy.test.tsx:57:80
+     55|   await act(async () => control.release());
+     56|   await waitFor(() => expect(control.client.getMutationCache().getAll(…
+     57|   expect(control.fetcher.mock.calls.filter(([url]) => url.endsWith('/t…
+       |                                                                                ^
+     58|   control.client.clear();
+     59| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/chat/ChatQueuedPrivacy.test.tsx > an old queued settlement cannot reset a newer running mutation
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "等待回复…"
+
+Here are the accessible roles:
+
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"eyebrow"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"page-description"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "对话观测":
+  [36m<h1 />[39m
+
+  Name "排队测试在这里":
+  [36m<h2 />[39m
+
+  Name "开始一段对话":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "排队测试，正在聆听":
+  [36m<div[39m
+    [33maria-label[39m=[32m"排队测试，正在聆听"[39m
+    [33mclass[39m=[32m"avatar-stage"[39m
+    [33mdata-mouth-open[39m=[32m"0.000"[39m
+    [33mrole[39m=[32m"img"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  checkbox:
+
+  Name "自动分段朗读新回复":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  Name "停顿后自动结束录音":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  Name "本轮允许联网工具":
+  [36m<input[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "刷新对话记录":
+  [36m<button[39m
+    [33mclass[39m=[32m"button secondary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "麦克风输入":
+  [36m<button[39m
+    [33mclass[39m=[32m"button secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "发送消息":
+  [36m<button[39m
+    [33mclass[39m=[32m"button"[39m
+    [33mdisabled[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"muted"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "消息":
+  [36m<textarea[39m
+    [33mid[39m=[32m"chat-message"[39m
+    [33mmaxlength[39m=[32m"4000"[39m
+    [33mplaceholder[39m=[32m"说说现在的想法，或交给排队测试一个具体任务…"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"page-heading"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mMISSION CONTROL[0m
+          [36m</p>[39m
+          [36m<h1>[39m
+            [0m对话观测[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"page-description"[39m
+          [36m>[39m
+            [0m与排队测试聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"speech-panel panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"排队测试，正在聆听"[39m
+          [33mclass[39m=[32m"avatar-stage"[39m
+          [33mdata-mouth-open[39m=[32m"0.000"[39m
+          [33mrole[39m=[32m"img"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mviewBox[39m=[32m"0 0 300 260"[39m
+          [36m>[39m
+            [36m<ellipse[39m
+              [33mclass[39m=[32m"avatar-aura"[39m
+              [33mcx[39m=[32m"150"[39m
+              [33mcy[39m=[32m"140"[39m
+              [33mrx[39m=[32m"116"[39m
+              [33mry[39m=[32m"105"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M68 135C58 35 95 12 150 12s92 23 82 123l-18 61H86z"[39m
+              [33mfill[39m=[32m"#253b52"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M58 260q10-78 92-78t92 78"[39m
+              [33mfill[39m=[32m"#456f88"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m118 184 32 29 32-29 13 76h-90z"[39m
+              [33mfill[39m=[32m"#b0d8df"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M80 80q0-47 70-47t70 47v50c0 43-32 65-70 65s-70-22-70-65z"[39m
+              [33mfill[39m=[32m"#f5dbc7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M72 96q-5-75 78-75t78 75q-49-11-61-48-28 37-95 48"[39m
+              [33mfill[39m=[32m"#253b52"[39m
+            [36m/>[39m
+            [36m<g[39m
+              [33mclass[39m=[32m"avatar-eyes"[39m
+              [33mstyle[39m=[32m"transform-origin: 150px 117px;"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M104 115q12-7 24 0M172 115q12-7 24 0"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mstroke[39m=[32m"#253b52"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"5"[39m
+              [36m/>[39m
+              [36m<ellipse[39m
+                [33mcx[39m=[32m"116"[39m
+                [33mcy[39m=[32m"120"[39m
+                [33mfill[39m=[32m"#253b52"[39m
+                [33mrx[39m=[32m"5"[39m
+                [33mry[39m=[32m"6"[39m
+              [36m/>[39m
+              [36m<ellipse[39m
+                [33mcx[39m=[32m"184"[39m
+                [33mcy[39m=[32m"120"[39m
+                [33mfill[39m=[32m"#253b52"[39m
+                [33mrx[39m=[32m"5"[39m
+                [33mry[39m=[32m"6"[39m
+              [36m/>[39m
+            [36m</g>[39m
+            [36m<ellipse[39m
+              [33mcx[39m=[32m"103"[39m
+              [33mcy[39m=[32m"139"[39m
+              [33mfill[39m=[32m"#e9a4a0"[39m
+              [33mopacity[39m=[32m".5"[39m
+              [33mrx[39m=[32m"12"[39m
+              [33mry[39m=[32m"5"[39m
+            [36m/>[39m
+            [36m<ellipse[39m
+              [33mcx[39m=[32m"197"[39m
+              [33mcy[39m=[32m"139"[39m
+              [33mfill[39m=[32m"#e9a4a0"[39m
+              [33mopacity[39m=[32m".5"[39m
+              [33mrx[39m=[32m"12"[39m
+              [33mry[39m=[32m"5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M138 153q12 9 24 0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mstroke[39m=[32m"#a06465"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m141 218 9 12 9-12-9-7z"[39m
+              [33mfill[39m=[32m"#78bdcd"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"avatar-caption"[39m
+          [36m>[39m
+            [36m<i />[39m
+            [0m正在聆听[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"speech-controls"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m排队测试[0m
+            [0m在这里[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [0m朗读会把这段文字交给在线语音服务。默认不自动播放。[0m
+          [36m</p>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"checkbox-row"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0m自动分段朗读新回复[0m
+          [36m</label>[39m
+          [36m<audio[39m
+            [33maria-label[39m=[32m"排队测试语音播放器"[39m
+            [33mcontrols[39m=[32m""[39m
+            [33mhidden[39m=[32m""[39m
+            [33mpreload[39m=[32m"none"[39m
+          [36m/>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"panel"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"section-top"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button secondary"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m刷新对话记录[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33maria-live[39m=[32m"polite"[39m
+          [33mclass[39m=[32m"chat-history"[39m
+          [33mdata-history-ready[39m=[32m"true"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"empty"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"28"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mstyle[39m=[32m"margin: 0px auto 12px;"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"28"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<h2>[39m
+              [0m开始一段对话[0m
+            [36m</h2>[39m
+            [36m<p>[39m
+              [0m回复会使用已生效的人设、记忆与知识。未配置对话模型时使用规则回退。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"voice-input"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"voice-buttons"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button secondary"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-mic"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 19v3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M19 10v2a7 7 0 0 1-14 0v-2"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"13"[39m
+                  [33mrx[39m=[32m"3"[39m
+                  [33mwidth[39m=[32m"6"[39m
+                  [33mx[39m=[32m"9"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m麦克风输入[0m
+            [36m</button>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"button secondary disabled"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-upload"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 3v12"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m17 8-5-5-5 5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m上传语音[0m
+              [36m<input[39m
+                [33maccept[39m=[32m".wav,audio/wav"[39m
+                [33maria-label[39m=[32m"上传 WAV 语音"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mhidden[39m=[32m""[39m
+                [33mtype[39m=[32m"file"[39m
+              [36m/>[39m
+            [36m</label>[39m
+          [36m</div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mtype[39m=[32m"checkbox"[39m
+            [36m/>[39m
+            [0m 停顿后自动结束录音[0m
+          [36m</label>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [0m默认手动结束录音。开启自动结束后，停顿约 1.2 秒就会识别，8 秒未检测到语音会释放麦克风；轻声或较长停顿可能提前截断，请检查草稿。[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m正在查询语音识别状态…[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<form>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"field"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mfor[39m=[32m"chat-message"[39m
+            [36m>[39m
+              [0m消息[0m
+            [36m</label>[39m
+            [36m<textarea[39m
+              [33mid[39m=[32m"chat-message"[39m
+              [33mmaxlength[39m=[32m"4000"[39m
+              [33mplaceholder[39m=[32m"说说现在的想法，或交给排队测试一个具体任务…"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"section-top"[39m
+            [33mstyle[39m=[32m"margin-bottom: 0px;"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"checkbox-row"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mtype[39m=[32m"checkbox"[39m
+              [36m/>[39m
+              [0m本轮允许联网工具[0m
+            [36m</label>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-send"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21.854 2.147-10.94 10.939"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m发送消息[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</form>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/chat/ChatQueuedPrivacy.test.tsx:68:17
+     66|   await act(async () => control.release());
+     67|   await waitFor(() => expect(control.client.getMutationCache().getAll(…
+     68|   expect(screen.getByRole('button', { name: '等待回复…' })).toBeDisabled();
+       |                 ^
+     69|   expect(screen.getByRole('button', { name: '停止生成' })).toBeEnabled();
+     70|   await act(async () => control.finishNew());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  23:17:08
+   Duration  2.16s (transform 316ms, setup 151ms, collect 508ms, tests 434ms, environment 449ms, prepare 92ms)
+
