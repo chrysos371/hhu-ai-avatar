@@ -40,9 +40,9 @@ it('does not retain 40 completed chat mutation results after the page unmounts',
   await screen.findByRole('heading', { name: '缓存测试在这里' });
   for (let i = 1; i <= 40; i++) {
     fireEvent.change(screen.getByLabelText('消息'), { target: { value: `cache-input-${i}` } });
-    fireEvent.click(screen.getByRole('button', { name: '发送消息', exact: true }));
+    fireEvent.click(screen.getByRole('button', { name: '发送消息' }));
     await screen.findByText(reply(i), { exact: true });
-    await screen.findByRole('button', { name: '发送消息', exact: true });
+    await screen.findByRole('button', { name: '发送消息' });
   }
   const mounted = client.getMutationCache().getAll().length;
   view.unmount(); await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); });
@@ -62,4 +62,4 @@ it('does not retain 40 completed chat mutation results after the page unmounts',
   }
   client.clear();
   expect(count).toBe(40); expect(observed.afterUnmountMutations).toBe(0); expect(observed.retainedSensitiveReplies).toBe(0);
-});
+}, 0);

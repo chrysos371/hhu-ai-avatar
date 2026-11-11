@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageSquare, Send, Volume2, Square } from "lucide-react";
 import { streamTurn, cancelTurn, type TurnInput } from "../../lib/turns";
-import { apiRequest } from "../../lib/api";
+import { apiRequest, formatTime } from "../../lib/api";
 import type { PersonaVersion } from "../../lib/types";
-import type { ChatResult } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
 import { SpeechAvatarStage } from "./SpeechAvatarStage";
 import { VoiceInput } from "./VoiceInput";
 import { ChatTrace } from "./ChatTrace";
+import { useChatHistory } from "./useChatHistory";
 export function ChatPage() {
   const speech = useSpeechPlayer();
   const persona = useQuery({ queryKey: ["persona"], queryFn: () => apiRequest<PersonaVersion>("/persona"), retry: false });
@@ -19,53 +19,69 @@ export function ChatPage() {
   const [voiceBusy, setVoiceBusy] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const activeTurn = useRef<{ id: string; controller: AbortController } | null>(null);
+  const resetMutation = useRef<() => void>(() => {});
+  const interrupt = useCallback(() => {
+    speech.stop();
+    const active = activeTurn.current;
+    active?.controller.abort();
+    if (active) void cancelTurn(active.id).catch(() => {});
+  }, [speech.stop]);
+  const isBusy = useCallback(() => activeTurn.current !== null, []);
+  const onPrivacyChange = useCallback(() => {
+    const pending = activeTurn.current !== null;
+    interrupt(); setText("");
+    if (!pending) resetMutation.current();
+  }, [interrupt]);
+  const history = useChatHistory({ isBusy, onInvalidate: onPrivacyChange });
+  const messages = history.rows, setMessages = history.setRows;
   useEffect(() => () => {
     const active = activeTurn.current;
     active?.controller.abort();
     if (active) void cancelTurn(active.id).catch(() => {});
   }, []);
-  const [messages, setMessages] = useState<
-    { role: "user" | "assistant"; text: string; result?: ChatResult; pending?: boolean; cancelled?: boolean }[]
-  >([]);
   const client = useQueryClient();
   const send = useMutation({
-    mutationFn: (input: TurnInput & { index: number }) => {
+    gcTime: 0,
+    mutationFn: (input: TurnInput & { index: number; epoch: number }) => {
       const controller = new AbortController();
       activeTurn.current = { id: input.request_id, controller };
       return streamTurn({ request_id: input.request_id, text: input.text, use_web: input.use_web }, controller.signal,
-        piece => setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, text: row.text + piece } : row)));
+        piece => { if (history.isCurrent(input.epoch)) setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, text: row.text + piece } : row)); });
     },
     onSuccess: (result, input) => {
-      setMessages(rows => rows.map((row, i) => i === input.index ? { role: "assistant", text: result.reply, result } : row));
-      if (autoSpeak) void speech.play(input.index, result, true);
+      if (!history.isCurrent(input.epoch, result)) return;
+      const source = result.conversation;
+      setMessages(rows => rows.map((row, i) => i === input.index
+        ? { role: "assistant", text: result.reply, result, id: source?.assistant_message_id, session_id: source?.session_id }
+        : i === input.index - 1 ? { ...row, id: source?.user_message_id, session_id: source?.session_id } : row));
+      if (autoSpeak) void speech.play(source?.assistant_message_id ?? -(input.index + 1), result, true);
     },
     onError: (error, input) => {
+      if (!history.isCurrent(input.epoch)) return;
       const cancelled = error.name === "AbortError";
       setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, pending: false, cancelled,
         text: row.text || (cancelled ? "本轮已停止。" : "本轮未完成。") } : row));
     },
-    onSettled: () => {
-      activeTurn.current = null;
+    onSettled: (_, error, input) => {
+      if (activeTurn.current?.id === input.request_id) activeTurn.current = null;
       setUseWeb(false);
+      const invalidated = !history.isCurrent(input.epoch);
+      if (invalidated) resetMutation.current();
+      if (error?.name !== 'AbortError' || invalidated) void history.refresh();
       void client.invalidateQueries({ queryKey: ["dashboard"] });
       void client.invalidateQueries({ queryKey: ["memories"] });
       void client.invalidateQueries({ queryKey: ["emotion"] });
     },
   });
+  resetMutation.current = send.reset;
   function submit() {
-    if (!text.trim() || send.isPending || voiceBusy) return;
+    if (!text.trim() || send.isPending || voiceBusy || !history.ready) return;
     speech.stop();
     const value = text.trim();
     const index = messages.length + 1;
     setMessages((m) => [...m, { role: "user", text: value }, { role: "assistant", text: "", pending: true }]);
     setText("");
-    send.mutate({ request_id: crypto.randomUUID(), text: value, use_web: useWeb, index });
-  }
-  function interrupt() {
-    speech.stop();
-    const active = activeTurn.current;
-    active?.controller.abort();
-    if (active) void cancelTurn(active.id).catch(() => {});
+    send.mutate({ request_id: crypto.randomUUID(), text: value, use_web: useWeb, index, epoch: history.epoch.current });
   }
   return (
     <section>
@@ -76,8 +92,8 @@ export function ChatPage() {
       <div className="speech-panel panel">
         <SpeechAvatarStage name={name} frameSource={speech.mouthFrames} busy={send.isPending}
           speaking={speech.status === "playing"}
-          valence={messages.find((_, i) => i === speech.active)?.result?.valence ?? messages.at(-1)?.result?.valence}
-          arousal={messages.find((_, i) => i === speech.active)?.result?.arousal ?? messages.at(-1)?.result?.arousal} />
+          valence={messages.find((m, i) => (m.id ?? -(i + 1)) === speech.active)?.result?.valence ?? messages.at(-1)?.result?.valence}
+          arousal={messages.find((m, i) => (m.id ?? -(i + 1)) === speech.active)?.result?.arousal ?? messages.at(-1)?.result?.arousal} />
         <div className="speech-controls">
           <h2>{name}在这里</h2>
           <p className="muted">朗读会把这段文字交给在线语音服务。默认不自动播放。</p>
@@ -96,8 +112,16 @@ export function ChatPage() {
         </div>
       </div>
       <div className="panel">
-        <div className="chat-history" aria-live="polite">
-          {messages.length === 0 && (
+        <div className="section-top">
+          <button type="button" className="button secondary" disabled={history.loading || send.isPending}
+            onClick={() => void history.refresh()}>刷新对话记录</button>
+          {history.hasMore && <button type="button" className="button secondary" disabled={history.loading || send.isPending}
+            onClick={() => { speech.stop(); void history.refresh(true); }}>加载更早的对话</button>}
+        </div>
+        <ErrorMessage error={history.error} />
+        {history.loading && <p role="status">正在读取对话记录…</p>}
+        <div className="chat-history" aria-live="polite" data-history-ready={String(history.ready && !history.loading)}>
+          {messages.length === 0 && history.ready && (
             <div className="empty">
               <MessageSquare size={28} style={{ margin: "0 auto 12px" }} />
               <h2>开始一段对话</h2>
@@ -107,18 +131,20 @@ export function ChatPage() {
             </div>
           )}
           {messages.map((m, i) => (
-            <article key={i} className={"chat-message " + m.role}>
+            <article key={m.id ?? 'local-' + i} className={"chat-message " + m.role} data-message-id={m.id}>
               <small>{m.role === "user" ? "你" : name}</small>
+              {m.created_at !== undefined && <small className="timestamp"> · {formatTime(m.created_at)}</small>}
               <div>{m.text}</div>
               {m.pending && <small>正在生成；最终回复会完成检查后替换此草稿。</small>}
               {m.cancelled && <small>已停止，未完成的助手内容不存入记忆。</small>}
-              {m.result && <button type="button" className="button secondary speech-read"
-                disabled={voiceBusy || speech.active === i && speech.status === "loading" || m.text.length > 2000}
+              {m.role === 'assistant' && !m.pending && !m.cancelled && !m.redacted && (m.result || m.id !== undefined) && <button type="button" className="button secondary speech-read"
+                disabled={voiceBusy || speech.active === (m.id ?? -(i + 1)) && speech.status === "loading" || m.text.length > 2000}
                 title={m.text.length > 2000 ? "这段回复超过 2000 字，请选择较短内容朗读" : undefined}
-                onClick={() => void speech.play(i, m.result!)}>
-                <Volume2 size={14} />{speech.active === i && speech.status === "loading" ? "准备语音…" : "朗读回复"}
+                onClick={() => void speech.play(m.id ?? -(i + 1), m.result ?? { reply: m.text })}>
+                <Volume2 size={14} />{speech.active === (m.id ?? -(i + 1)) && speech.status === "loading" ? "准备语音…" : "朗读回复"}
               </button>}
               {m.result?.trace && <ChatTrace trace={m.result.trace} />}
+              {m.id !== undefined && m.role === 'assistant' && !m.result && !m.redacted && <p className="muted">这条历史回复未保留可用的决策记录。</p>}
             </article>
           ))}
           {send.isPending && (
@@ -159,7 +185,7 @@ export function ChatPage() {
             </label>
             <button
               className="button"
-              disabled={send.isPending || voiceBusy || !text.trim()}
+              disabled={send.isPending || voiceBusy || !text.trim() || !history.ready}
             >
               <Send size={14} />
               {send.isPending ? "等待回复…" : "发送消息"}

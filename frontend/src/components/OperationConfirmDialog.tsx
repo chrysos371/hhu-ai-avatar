@@ -4,6 +4,7 @@ import { AlertTriangle, ShieldCheck } from "lucide-react";
 import { ApiError, apiRequest, formatTime } from "../lib/api";
 import type { Draft } from "../lib/types";
 import { PersonaDiff } from "../features/persona/PersonaDiff";
+import { notifyConversationPrivacyChanged } from "../lib/conversation";
 export function OperationConfirmDialog({
   draft,
   onClose,
@@ -52,6 +53,7 @@ export function OperationConfirmDialog({
         },
       ),
     onSuccess: async (result) => {
+      if (draft.operation_type === 'memory.batch') notifyConversationPrivacyChanged();
       await Promise.all(
         keys.map((k) => client.invalidateQueries({ queryKey: [k] })),
       );
@@ -63,6 +65,7 @@ export function OperationConfirmDialog({
         error instanceof ApiError &&
         (error.status === 409 || error.status === 410)
       ) {
+        if (draft.operation_type === 'memory.batch') notifyConversationPrivacyChanged();
         setBlocked(true);
         keys.forEach((k) => {
           void client.invalidateQueries({ queryKey: [k] });

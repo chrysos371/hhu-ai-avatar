@@ -1,0 +1,22 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/ChatHistory.test.tsx src/features/chat/ChatPage.test.tsx src/features/chat/ChatCache.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+stderr | src/features/chat/ChatHistory.test.tsx > does not duplicate a persisted pending user or replace a local draft on unchanged reads
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `Harness`. It was passed a child from Harness. See https://react.dev/link/warning-keys for more information.
+
+ ✓ src/features/chat/ChatHistory.test.tsx (6 tests) 118ms
+ ✓ src/features/chat/ChatPage.test.tsx (1 test) 256ms
+ ✓ src/features/chat/ChatCache.test.tsx (1 test) 4725ms
+   ✓ does not retain 40 completed chat mutation results after the page unmounts  4722ms
+
+ Test Files  3 passed (3)
+      Tests  8 passed (8)
+   Start at  17:38:31
+   Duration  6.19s (transform 356ms, setup 377ms, collect 900ms, tests 5.10s, environment 1.11s, prepare 223ms)
+

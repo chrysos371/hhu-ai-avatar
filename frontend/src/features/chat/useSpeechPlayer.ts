@@ -4,6 +4,8 @@ import type { ChatResult, LipFrame, SpeechResult } from "../../lib/types";
 import { splitSpeechText } from "./segmentation";
 import { createSpeechFrameChannel, type SpeechFrameSource } from "./speechFrames";
 
+export type SpeechInput = Pick<ChatResult, 'reply' | 'speech_rate' | 'speech_pitch' | 'mouth_intensity'>;
+
 export function frameAt(frames: LipFrame[], time: number): LipFrame | null {
   let lo = 0, hi = frames.length - 1, found = -1;
   while (lo <= hi) {
@@ -81,7 +83,7 @@ export function useSpeechPlayer() {
     return () => cancelAnimationFrame(raf);
   }, [status, mouthFrames]);
 
-  async function play(index: number, result: ChatResult, segmented = false) {
+  async function play(index: number, result: SpeechInput, segmented = false) {
     stop();
     const current = generation.current;
     const controller = new AbortController();

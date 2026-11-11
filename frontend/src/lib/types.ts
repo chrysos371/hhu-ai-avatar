@@ -132,6 +132,7 @@ export interface KnowledgeDraft {
   draft: Draft;
 }
 export interface ChatResult {
+  conversation?: { session_id: string; revision: number; user_message_id: number; assistant_message_id: number };
   reply: string;
   emotion: string;
   strategy: string;

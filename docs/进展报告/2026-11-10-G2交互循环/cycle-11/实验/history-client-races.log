@@ -1,0 +1,41 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/ChatHistory.test.tsx src/features/chat/ChatPage.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+stderr | src/features/chat/ChatHistory.test.tsx > does not duplicate a persisted pending user or replace a local draft on unchanged reads
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `Harness`. It was passed a child from Harness. See https://react.dev/link/warning-keys for more information.
+
+ ✓ src/features/chat/ChatHistory.test.tsx (6 tests) 126ms
+ ✓ src/features/chat/ChatPage.test.tsx (1 test) 255ms
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: The "event" argument must be an instance of Event. Received an instance of MessageEvent
+ ❯ BroadcastChannel.dispatchEvent node:internal/event_target:757:13
+ ❯ BroadcastChannel.onMessageEvent node:internal/worker/io:348:8
+ ❯ MessagePort.[nodejs.internal.kHybridDispatch] node:internal/event_target:827:20
+ ❯ MessagePort.<anonymous> node:internal/per_context/messageport:23:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'ERR_INVALID_ARG_TYPE' }
+This error originated in "src/features/chat/ChatHistory.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "discards a held old snapshot even when the fetch mock ignores abort". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+     Errors  1 error
+   Start at  17:37:37
+   Duration  1.73s (transform 357ms, setup 248ms, collect 557ms, tests 381ms, environment 751ms, prepare 166ms)
+

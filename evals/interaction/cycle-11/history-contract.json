@@ -3,7 +3,12 @@
   "date": "2026-11-11",
   "baseline": "5dd6d65",
   "objective": "Restore privacy-valid persisted conversations across SPA navigation and refresh, retain inspectable new-turn provenance and speech, avoid stale cache or cancelled-draft resurrection",
-  "cacheExperiment": {"turns": 40, "method": "Actual ChatPage with controlled fetch/SSE and a real QueryClient; inspect mutation cache after unmount and a next task", "expectedRetainedChatMutations": 0, "expectedRetainedSensitiveReplies": 0},
+  "cacheExperiment": {
+    "turns": 40,
+    "method": "Actual ChatPage with controlled fetch/SSE and a real QueryClient; inspect mutation cache after unmount and a next task",
+    "expectedRetainedChatMutations": 0,
+    "expectedRetainedSensitiveReplies": 0
+  },
   "readApi": {
     "path": "/api/v1/conversation",
     "authentication": "existing token requirement, read only, no model or tool replay",
@@ -28,8 +33,20 @@
     "original playback and cancellation tests remain valid",
     "finite long-history browser run and resource observations with explicit duration"
   ],
-  "experimentCounts": {"cacheBaseline": 1, "cacheAfter": 1, "newBrowserBefore": 1, "newBrowserAfterFrozenImplementation": 3},
+  "experimentCounts": {
+    "cacheBaseline": 1,
+    "cacheAfter": 1,
+    "newBrowserBefore": 1,
+    "newBrowserAfterFrozenImplementation": 3
+  },
   "gates": "Exact content/source/trace checks, no cancelled assistant restore, no erased marker in current UI or returned trace, no duplicate rows or model/tool re-execution from reads, all required regressions pass",
   "limitations": "Finite fixtures and HTTP/SSE tests do not approve general semantics, human ASR/vowels, physical AV or multi-day stability. Cache entry counts do not alone explain all heap growth.",
-  "wallClockExperimentDeadline": null
+  "wallClockExperimentDeadline": null,
+  "browserWorkload": {
+    "completedTurns": 54,
+    "cancelledTurn": 1,
+    "partialDraftRequired": "Wait actual streamed 云并不是 before cancel",
+    "pagination": "108 completed messages; navigate newest100, load older8; unique IDs; after cancel user only",
+    "erase": "Selected summary source must be visible in primary tab before secondary-tab confirmation; hold one genuine pre-delete history response and release after notification"
+  }
 }

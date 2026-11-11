@@ -21,6 +21,7 @@ test('restores paginated source history and blocks cancelled and erased content 
     elapsedSeconds: 0, turns: [] as any[], steps: [] as any[], errors: [] as string[],
     completed: false, failure: null as string | null };
   const started = Date.now(); const save = () => { report.elapsedSeconds = (Date.now() - started) / 1000; writeFileSync(file, JSON.stringify(report, null, 2) + '\n'); };
+  let releaseHeld = () => {};
   page.on('pageerror', error => report.errors.push(error.message));
   const submitted: string[] = [];
   page.on('request', request => { if (new URL(request.url()).pathname === '/api/v1/turns' && request.method() === 'POST') submitted.push(request.postDataJSON().request_id); });
@@ -68,6 +69,7 @@ test('restores paginated source history and blocks cancelled and erased content 
     await page.getByLabel('消息', { exact: true }).fill('请解释云为什么会移动，fixture-long');
     await page.getByRole('button', { name: '发送消息', exact: true }).click();
     await expect(page.getByText('正在生成；最终回复会完成检查后替换此草稿。', { exact: true })).toBeVisible();
+    await expect(page.locator('.chat-message.assistant').last().locator('div').first()).toContainText('云并不是');
     const draft = await page.locator('.chat-message.assistant').last().locator('div').first().textContent();
     await page.getByRole('button', { name: '停止生成', exact: true }).click();
     await expect.poll(async () => (await get('/turns/' + submitted.at(-1))).status).toBe('cancelled');
@@ -78,6 +80,7 @@ test('restores paginated source history and blocks cancelled and erased content 
     report.steps.push({ name: 'cancelled draft not restored', draft, snapshot: cancelledSnapshot }); save();
     // Hold one genuine old snapshot; the privacy event must invalidate this read.
     let release!: () => void; const held = new Promise<void>(resolve => { release = resolve; });
+    releaseHeld = release;
     let captured!: () => void; const capture = new Promise<void>(resolve => { captured = resolve; });
     let intercepted = false, fulfillmentError: string | null = null;
     await page.route('**/api/v1/conversation*', async route => {
@@ -89,6 +92,7 @@ test('restores paginated source history and blocks cancelled and erased content 
     const other = await context.newPage(); await other.goto('/memory#' + token);
     const summary = await get('/summary'); expect(summary.items.length).toBeGreaterThan(0);
     const selected = summary.items[0];
+    await expect(page.getByText(selected.text, { exact: true })).toBeVisible();
     const source = other.locator('.source-detail').filter({ hasText: `原话 #${selected.message_id} ·` });
     await source.getByRole('button', { name: '预览删除此原话', exact: true }).click();
     await other.getByRole('checkbox', { name: '我理解此操作不可撤销', exact: true }).check();
@@ -109,5 +113,5 @@ test('restores paginated source history and blocks cancelled and erased content 
       erasedText: selected.text, fulfillmentError, current, submitted: submitted.length });
     await other.close(); expect(report.errors).toEqual([]); report.completed = true;
   } catch (error) { report.failure = String(error); throw error; }
-  finally { save(); await page.screenshot({ path: join(folder, 'restore-final.png') }).catch(() => {}); }
+  finally { releaseHeld(); save(); await page.screenshot({ path: join(folder, 'restore-final.png') }).catch(() => {}); }
 });
