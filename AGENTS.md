@@ -15,6 +15,8 @@ cdbbf04先登记lab_capability_prompt_v1设计；现src/avatar/lab/capability_pr
 
 c8b448c已实现evaluate_capability_pair及runner --stage capability_pair --partition，两臂每场景新DB、交替先后、实际HTTP/SSE/native trace/可见/最终/存储/提醒正反控。冻结9+候选14共23通过（1.84s）。candidate-development-freeze-v1.json冻结98源/协议/原数据/证据SHA，仅development授权，实际prospective拒绝；即将先4B再14B开发配对。运行期间严禁改98输入/运行源，仅追加日志/进展；前瞻另需冻结。候选仍生产关闭，当前尚无真实候选效果数据。
 
+581c481冻结下4B开发配对24臂/40应用回合、20对（53.471488s），78提供方stop，GPU1 PID2840579退出0/GPU消失。基线20/20与既有原生完全一致，两臂20/20 profile及提醒投影相同，raw/visible/final/stored一致；20对手工span已存。已知6无依据完成/承诺/提议候选未复现，但短信状态仍含糊“无法确认”、续改连续原文仍改，不给通用语义批准。新增summarize_capability_pair脚本不在98运行输入中，只做事后机械对齐/自有SHA。同期完整1253/1（85.26s）通过，前端未改/未重跑。下一步归档4B后跑14B开发配对，冻结98输入不得改、前瞻未授权、生产候选仍关。
+
 ## 2026-11-12 第十八轮归档（优先）
 
 当前cycle-18/计划.md、进展.md，协议explicit-context-protocol.json。fe0eda3已封17报告（104证据/85源），当前1184/1与默认15/11是17最终快照。18先实测HTTP speaker404、1440/390角色/本人按钮及面板均0，fixture2687895退出0，基线已提交。已实现只读SpeakerContextStore.read与GET /conversation/speaker，同SQLite快照验证scope/revision/user cursor，metadata无原文、不写控制或重放；相关28及快照10项通过。初两测试器错误日志保留，不作产品缺陷。
