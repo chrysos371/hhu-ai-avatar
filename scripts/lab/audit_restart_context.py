@@ -17,6 +17,14 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def source_hashes():
+    paths = ['src/avatar/web.py', 'src/avatar/main.py', 'src/avatar/brain/speaker_scope.py',
+             'src/avatar/brain/speaker_context.py', 'src/avatar/brain/memory.py',
+             'src/avatar/brain/reminders.py', 'src/avatar/turns.py',
+             'evals/interaction/cycle-13/restart-protocol.json', str(Path(__file__).resolve().relative_to(ROOT))]
+    return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
+
+
 def serve(db, state):
     from avatar.config import config
     from avatar.web import create_server
@@ -26,7 +34,7 @@ def serve(db, state):
     def snapshot():
         return {'pid': os.getpid(), 'instance': server.session_id,
                 'short_term': server.short_term, 'context_revision': server.context_revision,
-                'speaker': server.speaker_scope.data()}
+                'speaker': server.speaker_scope.data(), 'sourceSha256': source_hashes()}
     stopping = threading.Event()
     def stop(_signum, _frame):
         if not stopping.is_set():
@@ -95,12 +103,9 @@ def database(db):
 def audit(output):
     output.mkdir(parents=True, exist_ok=False)
     protocol = ROOT/'evals/interaction/cycle-13/restart-protocol.json'
-    sources = ['src/avatar/web.py', 'src/avatar/main.py', 'src/avatar/brain/speaker_scope.py',
-               'src/avatar/brain/memory.py', 'src/avatar/brain/reminders.py', 'src/avatar/turns.py',
-               str(protocol.relative_to(ROOT)), str(Path(__file__).resolve().relative_to(ROOT))]
     report = {'scope': 'Actual separate OS processes, deterministic offline rules, synthetic disposable databases only',
               'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-              'sourceSha256': {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in sources},
+              'sourceSha256': source_hashes(),
               'cases': [], 'completed': False}
     started = time.monotonic()
     def save():
@@ -113,6 +118,8 @@ def audit(output):
         folder = output/case['id']; folder.mkdir()
         current = None
         try:
+            if source_hashes() != report['sourceSha256']:
+                raise RuntimeError('experiment sources changed after freeze')
             with tempfile.TemporaryDirectory(prefix='restart-audit-', dir=ROOT.parent/'runtime/tmp') as temporary:
                 db = Path(temporary)/'owned.db'
                 current = OwnedServer(db, folder, 'first')
@@ -148,6 +155,10 @@ def audit(output):
                         row['after'].append({'input': text, 'result': current.data('/chat', {'text': text})})
                 row['databaseAfter'] = database(db)
                 row['secondFinal'] = current.close(); current = None
+                row['checks']['process_sources_frozen'] = all(
+                    row[key]['sourceSha256'] == report['sourceSha256']
+                    for key in ['firstInitial', 'firstFinal', 'secondInitial', 'secondFinal'])
+                row['checks']['parent_sources_frozen'] = source_hashes() == report['sourceSha256']
                 after = row['databaseAfter']
                 if case['id'] == 'durable_request_id':
                     row['checks']['messages_unchanged'] = after['messages'] == row['databaseBefore']['messages']

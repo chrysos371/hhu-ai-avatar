@@ -109,3 +109,15 @@ def test_source_identity_and_current_version_are_checked_before_persistence(tmp_
             ident = memory.add_message('user', '我叫陈宁。', 'test')
             with pytest.raises(ValueError): SpeakerContextStore(memory).observe('different', 0, ident)
             with pytest.raises(Cancelled): SpeakerContextStore(memory).observe('我叫陈宁。', 1, ident)
+
+
+def test_control_root_and_real_reference_window_stay_bounded_across_reopens(tmp_path):
+    path = str(tmp_path/'context.db')
+    with closing(MemoryStore(path)) as memory:
+        root = observe(memory, '回到现实。').source_ids[0]
+        for index in range(40): scope = observe(memory, f'这是现实聊天第{index}条。')
+        assert len(scope.source_ids) == 4 and scope.source_ids[0] == root
+    with closing(MemoryStore(path)) as memory:
+        scope = observe(memory, '下一条现实消息。')
+        assert len(scope.context) == 3 and len(scope.source_ids) == 4
+        assert scope.context == [f'这是现实聊天第{index}条。' for index in [37,38,39]]
