@@ -1,0 +1,114 @@
+{
+  "head": "3e7396989ea29c75503268f276ae09aa60c97893",
+  "createdUtc": "2026-11-11T13:35:51.898544+00:00",
+  "sourceSha256": {
+    "src/avatar/main.py": "9598eeb40c4ece3a4d302b7c021117e238996dba46eab5ffd9fd089a055dd1c3",
+    "src/avatar/web.py": "718677654baa419901205d9dff3e5b227f0dca8ae9de4c1a77d7bf19b02362da",
+    "src/avatar/web_api.py": "cb155b65a83abdc09c65b4dee4f3534383bf68be267a8b6099103a133d59b37a",
+    "src/avatar/brain/memory.py": "f2537c14a10f4909f1969067b806b84043218d6682264131378c4adc09f51f01",
+    "src/avatar/brain/boundaries.py": "ee67dcb2fc177dac7e83552fae3b1ce21912b622418af8b09d857a05dbde44ef",
+    "scripts/serve_local_model_eval.py": "8aa6e3685b7070145851012c6bec7e6450dddc8642d3eac01b9c259a65e2f011",
+    "scripts/evaluate_native_output_audit.py": "ef6c739e266cec7c9831d6f3b97237076ca18e53e4c8f53a904e0965b1c05490",
+    "scripts/run_native_output_models.py": "9703c2ab4c9af25e4327c834fe45ea009a0cd48297423f739877a8d2b3cc3f93",
+    "evals/interaction/cycle-15/native-output-protocol.json": "be818b30ff9e03d02f48e0d9471e345b5924224d8863c624476defe569e6584e",
+    "src/avatar/lab/body_review.py": "f61bc3a7390e1fc3fc0b2b35b9c30d8d6860fc56ff0c47a955154c0150fea5fd",
+    "src/avatar/lab/body_review_avatar.py": "fae1433408ee1e3b363e98e2ddbde51b4eac4bc33a26fb51b715d62351624844",
+    "src/avatar/brain/tasks.py": "e7bc21ccd1b03fc3639b94522c224adf1f7fa7288a892b8fba228442897a6825",
+    "scripts/evaluate_body_review_pair.py": "1f475856a0e1fc8c02092628e61975b6729f6a277ca5f12aac0545b8356cd191",
+    "evals/interaction/cycle-15/prospective-paired-protocol.json": "c139d45036fa8156b98ef3e0398ec774379a5f1aefa85a035e0b9d2d2408f830",
+    "evals/interaction/cycle-16/prospective-output-protocol.json": "fef22bbef95bc659d6fe5d8013dcb7b12a9c18287091dd9a0d0d78f83effbf94",
+    "evals/interaction/cycle-16/prospective-paired-protocol.json": "2470eb73ace9c72ae6eba2a2dae08fc0b2ba5c465037ebad93c4774b744230b6",
+    "src/avatar/lab/composition_sources.py": "dcb7821b21a9000225d34c1cde80f948fc6f81c591b68f71c254075f7a929409",
+    "src/avatar/lab/source_bound_body_review.py": "1513eabd37151da7ddd2b096f5f7e35f955c7195fd5f7ff7e2a3d291ec9ebc3f"
+  },
+  "stage": "prospective",
+  "candidate": "source_bound_v2",
+  "requested_models": [
+    "qwen3-4b-q4_k_m"
+  ],
+  "candidateFreezeSha256": "1517102d57286bdc855d64545661ff6a4874afac190da7688aeb115824a1a9b4",
+  "models": [
+    {
+      "model_id": "qwen3-4b-q4_k_m",
+      "provider_command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+        "--model",
+        "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf",
+        "--model-key",
+        "qwen3-4b-q4_k_m",
+        "--metadata",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-02/gguf-metadata.json",
+        "--ready",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-16/prospective-4b-v2/qwen3-4b-q4_k_m/provider-ready.json",
+        "--trace",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-16/prospective-4b-v2/qwen3-4b-q4_k_m/provider-trace.jsonl"
+      ],
+      "provider_pid": 2644961,
+      "gpu_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 2692, 9\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 2252, 58\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 2692, 99\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 2272, 1\n",
+      "processes_before": "2360713, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 37740\n2360713, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 38180\n2360714, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 37740\n2360714, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 38160\n",
+      "provider_ready": {
+        "url": "http://127.0.0.1:36131/v1",
+        "model_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+        "model_revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+        "model_id": "qwen3-4b-q4_k_m",
+        "registry_sha256": "9ab8575f5019ff2bb27fff51786af1c06f51353e9d2721fb2e9972dd9bd0ea87",
+        "gguf_general_name": "Qwen3 4B Instruct Awq",
+        "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+        "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 2692, 75\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 2252, 1\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 2692, 86\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 2272, 12\n",
+        "chosen_gpu": {
+          "index": 0,
+          "uuid": "GPU-81550800-367d-1855-0f35-c61c274edfdf",
+          "free_mib": 40441,
+          "utilization_percent": 0
+        },
+        "requested_visible_devices": null,
+        "resource_selector_sha256": "e3d241073b19a42b67af9cd73ebb452ead8b78560c45be7849ea6be92cdeeb9d",
+        "configuration": {
+          "n_gpu_layers": -1,
+          "n_ctx": 8192,
+          "n_batch_prompt_tokens": 256,
+          "concurrent_sequences": 1,
+          "temperature": 0,
+          "seed": 42,
+          "max_tokens_cap": 512,
+          "thinking": false,
+          "flash_attention": true
+        },
+        "llama_cpp_python": "0.3.19",
+        "load_seconds": 1.3389336880063638,
+        "provider_source_sha256": "8aa6e3685b7070145851012c6bec7e6450dddc8642d3eac01b9c259a65e2f011",
+        "process_gpu_mib_after_load": [
+          4096
+        ],
+        "pid": 2644961
+      },
+      "sampler_exit": 0,
+      "provider_exit": 0,
+      "cleanup_passed": true,
+      "sampler_command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/evaluate_body_review_pair.py",
+        "--provider",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-16/prospective-4b-v2/qwen3-4b-q4_k_m/provider-ready.json",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-16/prospective-4b-v2/qwen3-4b-q4_k_m/sample",
+        "--trace",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-16/prospective-4b-v2/qwen3-4b-q4_k_m/provider-trace.jsonl",
+        "--candidate-freeze",
+        "evals/interaction/cycle-16/candidate-freeze-v2.json",
+        "--candidate",
+        "source_bound_v2",
+        "--protocol",
+        "evals/interaction/cycle-16/prospective-output-protocol.json",
+        "--pair-protocol",
+        "evals/interaction/cycle-16/prospective-paired-protocol.json"
+      ],
+      "processes_after": "2360713, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 37740\n2360713, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 38180\n2360714, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 37740\n2360714, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 38160\n",
+      "gpu_after": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 40441, 49\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 40441, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 2692, 22\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 2252, 71\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 2692, 35\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 2272, 16\n"
+    }
+  ],
+  "completed": true,
+  "failure": null,
+  "scope": "Sequential pinned real CUDA providers; no other process terminated; one provider at a time"
+}
