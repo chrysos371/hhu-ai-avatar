@@ -52,21 +52,25 @@ async function queued() {
 
 it('does not post a queued request whose epoch expired before mutationFn starts', async () => {
   const control = await queued();
-  await act(async () => control.release());
-  await waitFor(() => expect(control.client.getMutationCache().getAll().every(m => m.state.status !== 'pending')).toBe(true));
-  expect(control.fetcher.mock.calls.filter(([url]) => url.endsWith('/turns'))).toHaveLength(0);
-  control.client.clear();
+  try {
+    await act(async () => control.release());
+    await waitFor(() => expect(control.client.getMutationCache().getAll().every(m => m.state.status !== 'pending')).toBe(true));
+    expect(control.fetcher.mock.calls.filter(([url]) => url.endsWith('/turns'))).toHaveLength(0);
+  } finally { control.release(); control.client.clear(); }
 });
 
 it('an old queued settlement cannot reset a newer running mutation', async () => {
   const control = await queued();
-  fireEvent.change(screen.getByLabelText('消息'), { target: { value: 'new-running' } });
-  fireEvent.click(screen.getByRole('button', { name: '发送消息' }));
-  await waitFor(() => expect(control.newReady()).toBe(true));
-  await act(async () => control.release());
-  await waitFor(() => expect(control.client.getMutationCache().getAll().filter(m => m.state.status === 'pending')).toHaveLength(1));
-  expect(screen.getByRole('button', { name: '等待回复…' })).toBeDisabled();
-  expect(screen.getByRole('button', { name: '停止生成' })).toBeEnabled();
-  await act(async () => control.finishNew());
-  control.client.clear();
+  try {
+    fireEvent.change(screen.getByLabelText('消息'), { target: { value: 'new-running' } });
+    fireEvent.click(screen.getByRole('button', { name: '发送消息' }));
+    await waitFor(() => expect(control.newReady()).toBe(true));
+    await act(async () => control.release());
+    await waitFor(() => expect(control.client.getMutationCache().getAll().filter(m => m.state.status === 'pending')).toHaveLength(1));
+    expect(screen.getByRole('button', { name: '等待回复…' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '停止生成' })).toBeEnabled();
+  } finally {
+    control.release(); if (control.newReady()) await act(async () => control.finishNew());
+    control.client.clear();
+  }
 });

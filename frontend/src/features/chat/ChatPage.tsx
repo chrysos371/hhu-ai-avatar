@@ -19,6 +19,7 @@ export function ChatPage() {
   const [voiceBusy, setVoiceBusy] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const activeTurn = useRef<{ id: string; controller: AbortController } | null>(null);
+  const submittedTurn = useRef<string | null>(null);
   const resetMutation = useRef<() => void>(() => {});
   const interrupt = useCallback(() => {
     speech.stop();
@@ -30,7 +31,7 @@ export function ChatPage() {
   const onPrivacyChange = useCallback(() => {
     const pending = activeTurn.current !== null;
     interrupt(); setText("");
-    if (!pending) resetMutation.current();
+    if (!pending) { submittedTurn.current = null; resetMutation.current(); }
   }, [interrupt]);
   const history = useChatHistory({ isBusy, onInvalidate: onPrivacyChange });
   const messages = history.rows, setMessages = history.setRows;
@@ -43,6 +44,7 @@ export function ChatPage() {
   const send = useMutation({
     gcTime: 0,
     mutationFn: (input: TurnInput & { index: number; epoch: number }) => {
+      if (!history.isCurrent(input.epoch)) throw new DOMException('本轮提交语境已失效。', 'AbortError');
       const controller = new AbortController();
       activeTurn.current = { id: input.request_id, controller };
       return streamTurn({ request_id: input.request_id, text: input.text, use_web: input.use_web }, controller.signal,
@@ -63,10 +65,12 @@ export function ChatPage() {
         text: row.text || (cancelled ? "本轮已停止。" : "本轮未完成。") } : row));
     },
     onSettled: (_, error, input) => {
+      const owns = submittedTurn.current === input.request_id;
+      if (owns) submittedTurn.current = null;
       if (activeTurn.current?.id === input.request_id) activeTurn.current = null;
-      setUseWeb(false);
+      if (owns) setUseWeb(false);
       const invalidated = !history.isCurrent(input.epoch);
-      if (invalidated) resetMutation.current();
+      if (invalidated && owns) resetMutation.current();
       if (error?.name !== 'AbortError' || invalidated) void history.refresh();
       void client.invalidateQueries({ queryKey: ["dashboard"] });
       void client.invalidateQueries({ queryKey: ["memories"] });
@@ -75,13 +79,14 @@ export function ChatPage() {
   });
   resetMutation.current = send.reset;
   function submit() {
-    if (!text.trim() || send.isPending || voiceBusy || !history.ready) return;
+    if (!text.trim() || send.isPending || submittedTurn.current !== null || voiceBusy || !history.ready) return;
     speech.stop();
     const value = text.trim();
     const index = messages.length + 1;
+    const id = crypto.randomUUID(); submittedTurn.current = id;
     setMessages((m) => [...m, { role: "user", text: value }, { role: "assistant", text: "", pending: true }]);
     setText("");
-    send.mutate({ request_id: crypto.randomUUID(), text: value, use_web: useWeb, index, epoch: history.epoch.current });
+    send.mutate({ request_id: id, text: value, use_web: useWeb, index, epoch: history.epoch.current });
   }
   return (
     <section>
