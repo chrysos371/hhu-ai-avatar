@@ -9,6 +9,10 @@
 
 采证器evaluate_native_output_audit新增--protocol及固定每轮expected_reminders正反控，默认旧C15仍0；runner开发传该路径；source指纹扩全部avatar py/注册表并记录真实REGISTRY及未知三工具拒绝。py_compile/帮助/24场景输入计数检查通过，接着先4B开发、归档小步提交并清自建GPU，再14B；不跑前瞻直到独立候选冻结。启动按实际余量/UUID选卡、同组最多4且当前只1自建provider，不设实验墙钟截止，保留token/固定回合/必要网络等待。Goal active，作者spinner-bot及指定SSH及时提交推送。
 
+cdad53f原生开发4B/14B各12场景20回合（26.765014/39.009360s）、各40提供方stop；每模型18 llm+2规则，原生/可见/最终/存储机械对齐。GPU2自建2821867/2823483均退出0且GPU PID消失。248d536/1ea7d80已归档：001/P1无短信/电话能力却宣称执行，亦承诺/提议并索要号码（无真实号码提供/发送）；002/P2 14B角色提醒DB0、切现实又语言承诺旧提醒，未实际重放。全20回合手工来源span逐模型归档，不把引用/草稿当执行，4B另有连续原文变化和提醒运行/轮询前提缺失，不宣称全交付通过。
+
+cdbbf04先登记lab_capability_prompt_v1设计；现src/avatar/lab/capability_prompt.py仅普通回复system追加真实注册名/本轮无调用元数据和证据约束，默认factory不安装、无后处理/额外模型或工具调用、无原文/联系人复制。32相关受控通过（候选14+入场18，5.60s）；首隐私夹具前提不成立1失败/31通过保留后改为先实际发送待删名再遗忘核验，不能当产品缺陷。下一步新配对采证器+固定交替臂顺序+仅开发授权源码冻结，先开发12；尚未做真实候选质量实验，也未授权前瞻。旧C18报告89证据保持原样。
+
 ## 2026-11-12 第十八轮归档（优先）
 
 当前cycle-18/计划.md、进展.md，协议explicit-context-protocol.json。fe0eda3已封17报告（104证据/85源），当前1184/1与默认15/11是17最终快照。18先实测HTTP speaker404、1440/390角色/本人按钮及面板均0，fixture2687895退出0，基线已提交。已实现只读SpeakerContextStore.read与GET /conversation/speaker，同SQLite快照验证scope/revision/user cursor，metadata无原文、不写控制或重放；相关28及快照10项通过。初两测试器错误日志保留，不作产品缺陷。

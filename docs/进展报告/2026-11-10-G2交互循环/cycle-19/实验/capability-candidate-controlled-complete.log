@@ -1,0 +1,16 @@
+............F...................                                         [100%]
+=================================== FAILURES ===================================
+__ test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata __
+
+    def test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata():
+        engine = Recorder('普通回复。'); bot = CapabilityPromptAvatar(db_path=':memory:', llm=engine)
+        try:
+            ident = bot.memory.remember_user('名字', '待删实验名')
+            bot.respond('聊点日常。', cancel=CancellationToken())
+>           assert '待删实验名' in engine.native[-1][0]['content']
+E           assert '待删实验名' in '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arousal=0.00；回应策略：answer；直接、清晰地回应当前问题...l_user_rule_path_only", "semantic_verifier": false, "unsupported_actions": ["send_sms", "send_email", "place_call"]}\n'
+
+tests/test_capability_prompt_lab.py:101: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_capability_prompt_lab.py::test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata
+1 failed, 31 passed in 5.66s
