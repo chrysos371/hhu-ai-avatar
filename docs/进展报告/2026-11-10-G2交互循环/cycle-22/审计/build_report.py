@@ -47,6 +47,7 @@ def render():
     assert not table
     donor = BASE.parent / 'cycle-21/审计/系统审计与推进报告.html'
     style = re.search(r'<style>.*?</style>', donor.read_text()).group()
+    style = style.replace('</style>', 'table{table-layout:fixed}td,th{overflow-wrap:anywhere}td:first-child,th:first-child{width:24%}</style>')
     (HERE / (NAME + '.html')).write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第二十二轮系统审计与推进报告</title>' + style + '<main>' + '\n'.join(body) + '</main></html>')
     print('Rendered, local links checked:', len(links))
 
