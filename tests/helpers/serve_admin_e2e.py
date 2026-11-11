@@ -29,7 +29,7 @@ else:
     playback_overrides = None
     if os.getenv('AVATAR_E2E_PLAYBACK_AUDIT') == '1':
         playback_overrides = {'fixture-playback-audit':
-            (root / 'evals/interaction/cycle-08/final-three-segments.txt').read_text().strip()}
+            (Path(__file__).resolve().parents[2] / 'evals/interaction/cycle-08/final-three-segments.txt').read_text().strip()}
     _, provider_url = provider_context.enter_context(controlled_provider(delay=0.02, reply_overrides=playback_overrides))
     config.llm.api_key = 'local-browser-fixture'
     config.llm.model = 'fixture'
