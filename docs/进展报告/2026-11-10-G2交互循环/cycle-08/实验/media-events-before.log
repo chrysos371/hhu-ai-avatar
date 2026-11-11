@@ -1,0 +1,49 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/PlaybackEvents.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/features/chat/PlaybackEvents.test.tsx (7 tests | 7 failed) 21ms
+   × does not let a queued old play event revive stopped playback 12ms
+     → error does not exist
+   × does not pause a healthy current source when an old pause event arrives 1ms
+     → error does not exist
+   × does not advance the current queue when an old ended event arrives mid-play 1ms
+     → error does not exist
+   × does not release a healthy new source on an old error event 1ms
+     → error does not exist
+   × still handles genuine pause and resume state 1ms
+     → error does not exist
+   × still advances on a genuine ended state 1ms
+     → error does not exist
+   × still reports a current decoder error 1ms
+     → error does not exist
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > does not let a queued old play event revive stopped playback
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > does not pause a healthy current source when an old pause event arrives
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > does not advance the current queue when an old ended event arrives mid-play
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > does not release a healthy new source on an old error event
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > still handles genuine pause and resume state
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > still advances on a genuine ended state
+ FAIL  src/features/chat/PlaybackEvents.test.tsx > still reports a current decoder error
+Error: error does not exist
+ ❯ src/features/chat/PlaybackEvents.test.tsx:21:6
+     19|   vi.spyOn(HTMLMediaElement.prototype, 'paused', 'get').mockImplementa…
+     20|   vi.spyOn(HTMLMediaElement.prototype, 'ended', 'get').mockImplementat…
+     21|   vi.spyOn(HTMLMediaElement.prototype, 'error', 'get').mockImplementat…
+       |      ^
+     22|   vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(func…
+     23|     media.paused = false; media.ended = false; this.dispatchEvent(new …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed (7)
+   Start at  15:58:28
+   Duration  1.24s (transform 123ms, setup 152ms, collect 98ms, tests 21ms, environment 381ms, prepare 64ms)
+
