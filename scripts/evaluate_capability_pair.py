@@ -18,7 +18,7 @@ import avatar.main as main_module
 from avatar.brain.llm import LLMEngine
 from avatar.brain.memory import MemoryStore
 from avatar.config import config
-from avatar.lab.capability_prompt import CapabilityPromptAvatar
+from avatar.lab.capability_prompt import CapabilityPromptAvatar, capability_evidence
 from avatar.lab.source_capability_prompt import SourceCapabilityPromptAvatar
 from avatar.web import create_server
 from evaluate_native_output_audit import events
@@ -65,6 +65,20 @@ def verify_freeze(path, partition, candidate=CANDIDATE):
     return frozen
 
 
+def validate_source_metadata(native, result):
+    """Bind the actual transmitted prompt to the actual completed turn."""
+    data = json.loads(native['messages'][0]['content'].rsplit('可信元数据如下：\n', 1)[1])
+    context = result['conversation']
+    assert data['capability_evidence_version'] == 2
+    assert data['current_user_source'] == {'message_id': context['user_message_id'],
+                                         'revision': context['revision'], 'verified': True}
+    assert data['runtime_attribution'] == {**result['speaker_attribution'], 'origin': 'web_source_store'}
+    assert data['declared_model_tool_names'] == capability_evidence()['declared_model_tool_names']
+    assert data['current_turn_execution_receipts'] == []
+    assert data['registry_readiness_verified'] is data['historical_execution_verified'] is data['semantic_verifier'] is False
+    return data
+
+
 def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE):
     candidate = arm == CANDIDATE_ARM
     row = {'id': case['id'], 'frame': case['frame'], 'arm': arm, 'turns': [], 'completed': False, 'error': None}
@@ -101,6 +115,8 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE):
                     assert turn['visible'] == result['reply'] == native['response']
                     marked = 'capability_evidence_version' in native['messages'][0]['content']
                     assert marked == candidate
+                    if candidate and candidate_id == 'lab_source_capability_v2':
+                        turn['validated_source_capability'] = validate_source_metadata(native, result)
                 assert result.get('response_review') is None and result['trace']['verifier']['available'] is False
                 assert not result['tool_calls']
                 turn['conversation'] = query('/conversation')

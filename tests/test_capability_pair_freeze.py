@@ -73,3 +73,20 @@ def test_v2_freeze_requires_explicit_candidate_and_its_own_protocols(tmp_path):
 
 def test_unknown_candidate_cannot_generate_a_complete_source_list():
     with pytest.raises(ValueError): audit.required_sources('unknown')
+
+
+@pytest.mark.parametrize('bad_field', [None, 'current_user_source', 'runtime_attribution',
+    'current_turn_execution_receipts', 'declared_model_tool_names', 'registry_readiness_verified'])
+def test_transmitted_source_metadata_must_match_completed_turn(bad_field):
+    result = {'conversation': {'user_message_id': 7, 'revision': 2},
+              'speaker_attribution': {'scope': 'fictional_character', 'turn_tools_allowed': False}}
+    data = {**audit.capability_evidence(), 'capability_evidence_version': 2,
+        'current_user_source': {'message_id': 7, 'revision': 2, 'verified': True},
+        'runtime_attribution': {**result['speaker_attribution'], 'origin': 'web_source_store'},
+        'registry_readiness_verified': False, 'historical_execution_verified': False}
+    if bad_field: data[bad_field] = 'corrupt'
+    native = {'messages': [{'content': 'trusted contract\n可信元数据如下：\n'+json.dumps(data)}]}
+    if bad_field:
+        with pytest.raises(AssertionError): audit.validate_source_metadata(native, result)
+    else:
+        assert audit.validate_source_metadata(native, result) == data
