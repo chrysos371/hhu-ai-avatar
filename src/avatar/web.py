@@ -313,7 +313,8 @@ class Handler(BaseHTTPRequestHandler):
 
         query = parse_qs(parsed.query, keep_blank_values=True)
         try:
-            if set(query) != {'instance_id', 'revision'} or any(len(values) != 1 for values in query.values()):
+            if (set(query) not in ({'instance_id', 'revision'}, {'instance_id', 'revision', 'context_cursor'})
+                    or any(len(values) != 1 for values in query.values())):
                 raise ValueError()
             instance = query['instance_id'][0]
             raw = query['revision'][0]
@@ -322,6 +323,12 @@ class Handler(BaseHTTPRequestHandler):
             revision = int(raw)
             if revision > 2**63-1:
                 raise ValueError()
+            cursor = None
+            if 'context_cursor' in query:
+                raw_cursor = query['context_cursor'][0]
+                if not re.fullmatch(r'[0-9]{1,19}', raw_cursor): raise ValueError()
+                cursor = int(raw_cursor)
+                if cursor > 2**63-1: raise ValueError()
         except ValueError:
             raise OperationError(422, 'invalid_watch_cursor', '版本等待参数无效。') from None
 
@@ -332,7 +339,7 @@ class Handler(BaseHTTPRequestHandler):
             except OSError:
                 return True
         try:
-            result = self.server.conversation_changes.wait(instance, revision, disconnected=disconnected)
+            result = self.server.conversation_changes.wait(instance, revision, context_cursor=cursor, disconnected=disconnected)
             return self._send(200, result)
         except WatchDisconnected:
             return
