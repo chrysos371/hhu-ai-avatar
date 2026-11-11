@@ -52,7 +52,8 @@ def test_cancelled_empty_analysis_does_not_apply_late_emotion(tmp_path):
     finally:bot.memory.close()
 
 
-def test_cancel_between_facts_rolls_back_whole_fact_batch(tmp_path):
+@pytest.mark.parametrize('text',['我叫小岚。','我叫小岚，我喜欢游泳。'])
+def test_cancel_before_fact_batch_commit_rolls_back_all_facts(tmp_path,text):
     bot=Avatar(db_path=str(tmp_path/'db'),llm=Engine());token=CancellationToken()
     bot.memory.remember_user('名字','旧名');original=bot.memory.remember_user
     def stored(key,*args,**kwargs):
@@ -61,7 +62,7 @@ def test_cancel_between_facts_rolls_back_whole_fact_batch(tmp_path):
         return result
     bot.memory.remember_user=stored
     try:
-        with pytest.raises(Cancelled):bot.respond('我叫小岚，喜欢游泳。',cancel=token)
+        with pytest.raises(Cancelled):bot.respond(text,cancel=token)
         assert bot.memory.get_user_profile()=={'名字':'旧名'}
         assert bot.memory._conn.execute('SELECT count(*) FROM memory_sources').fetchone()[0]==0
     finally:bot.memory.close()

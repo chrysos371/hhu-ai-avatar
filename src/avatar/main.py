@@ -220,6 +220,7 @@ class Avatar:
             self._check_fact_context()
             for fact in rule_facts(self.speaker_scope.fact_text, context=context):
                 self._store_fact(fact)
+            self._check_fact_context()
 
     def _check_fact_context(self):
         self._checkpoint()
@@ -456,6 +457,7 @@ class Avatar:
                     self._check_fact_context()
                     for f in facts:
                         self._store_fact(f)
+                    self._check_fact_context()
                 self.emotion.observe(dv, da, text=user_text)
                 self.analysis_mode = 'llm'
                 return
