@@ -13,12 +13,14 @@ function Harness() {
 }
 let media: { paused: boolean; ended: boolean; error: MediaError | null };
 let prepared: number;
+const originalError = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'error');
 beforeEach(() => {
   media = { paused: true, ended: false, error: null }; prepared = 0;
   sessionStorage.setItem('avatar-token', 'queued-media-event-unit-token');
   vi.spyOn(HTMLMediaElement.prototype, 'paused', 'get').mockImplementation(() => media.paused);
   vi.spyOn(HTMLMediaElement.prototype, 'ended', 'get').mockImplementation(() => media.ended);
-  vi.spyOn(HTMLMediaElement.prototype, 'error', 'get').mockImplementation(() => media.error);
+  // This JSDOM version omits MediaError; model its browser getter explicitly.
+  Object.defineProperty(HTMLMediaElement.prototype, 'error', { configurable: true, get: () => media.error });
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(function (this: HTMLMediaElement) {
     media.paused = false; media.ended = false; this.dispatchEvent(new Event('play')); return Promise.resolve();
   });
@@ -32,7 +34,11 @@ beforeEach(() => {
     : url.endsWith('/cancel') ? { ok: true, json: async () => ({ data: { cancelled: true } }) }
       : { ok: true, blob: async () => new Blob(['controlled-unit-audio']) })));
 });
-afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+afterEach(() => {
+  vi.restoreAllMocks(); vi.unstubAllGlobals();
+  if (originalError) Object.defineProperty(HTMLMediaElement.prototype, 'error', originalError);
+  else Reflect.deleteProperty(HTMLMediaElement.prototype, 'error');
+});
 async function begin() {
   render(<Harness />); fireEvent.click(screen.getByText('开始'));
   await waitFor(() => expect(screen.getByTestId('status')).toHaveTextContent('playing'));
