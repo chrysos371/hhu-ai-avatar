@@ -97,6 +97,7 @@ class Avatar:
         self.web_agent = web_agent
         self.boundaries = BoundaryPolicy()
         self.speaker_scope = SpeakerScope()
+        self.speaker_context_store = None
         self.tasks = TaskTracker()
         self._task_context_revision = self.memory.context_revision
         self.task_contract_enabled = task_contract_enabled
@@ -487,8 +488,17 @@ class Avatar:
                 on_delta(piece)
         # 1. 短期记忆记下用户输入
         self.memory.add_short_term("user", user_text)
-        self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
-        self.speaker_scope.observe(user_text, turn_context_revision)
+        # Source and durable control state commit together before any model,
+        # fact extraction or tool. Cancellation cannot leave a committed role
+        # declaration without its attribution state across a process restart.
+        with self.memory.transaction():
+            checkpoint_context()
+            self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
+            if self.speaker_context_store is not None:
+                self.speaker_scope = self.speaker_context_store.observe(
+                    user_text, turn_context_revision, self._current_message_id)
+            else:
+                self.speaker_scope.observe(user_text, turn_context_revision, source_id=self._current_message_id)
         boundary = self.boundaries.assess(user_text)
         if self.task_contract_enabled:
             self.tasks.update(user_text)
@@ -551,6 +561,8 @@ class Avatar:
         response_source_ids = {row['id'] for row in self.memory._conn.execute(
             'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
             (self.session_id, self.memory.short_term_limit))}
+        response_source_ids.update(self.speaker_scope.source_ids)
+        response_source_ids.update(self.speaker_scope.context_source_ids)
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
         # 4. LLM 回复（无 key 与调用故障分别标记）
         generation_mode = 'rules'
@@ -566,6 +578,10 @@ class Avatar:
             profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
         if boundary.reply is not None:
             reply = boundary.reply
+        elif self.speaker_scope.scope == 'unverified':
+            reply = ('此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。'
+                     '请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。')
+            generation_mode = 'rules_speaker_scope'
         elif speaker_tool_blocked:
             reply = ('这条消息未被识别为独立的真人操作请求，没有执行真实提醒或联网工具。'
                      '请先明确退出角色，再单独提出真实请求。')

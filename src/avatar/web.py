@@ -525,6 +525,8 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         avatar.speaker_scope = server.speaker_scope
+        from .brain.speaker_context import SpeakerContextStore
+        avatar.speaker_context_store = SpeakerContextStore(memory)
         if server.context_revision != memory.context_revision:
             server.short_term = []
         for message in server.short_term:
@@ -541,6 +543,7 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         return result
     finally:
         if avatar:
+            server.speaker_scope = avatar.speaker_scope
             server.short_term = avatar.memory.get_short_term()
             server.context_revision = avatar.memory.context_revision
             avatar.memory.close()
