@@ -1,0 +1,57 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>认知事实事务来源修复报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border:1px solid #dee7ee;text-align:left;vertical-align:top}th{background:#e4edf7}.table-wrap{overflow:auto}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}table{font-size:14px}}</style><main><h1>认知事实事务来源修复报告</h1>
+<p>日期2026-11-12，作者spinner-bot。独立fix/fact-context-cycle21，基于回执阶段b090960；尚未合主树，主树254冻结CPU研究继续。本报告限定C21-010，不覆盖旧回执阶段，也不宣告全轮或代际跃迁完成。</p>
+<h2>已证实问题与改动</h2>
+<p>默认认知分析完成、事实已验证之后，公共forget/correct会推进可变speaker_scope版本并清空当前source ID。只核对可变scope会重新授权旧facts：已遗忘姓名重新入库，刚纠正的姓名被旧值覆盖，新增来源甚至没有消息ID。末端Cancelled/assistant0没有撤销这些写入。取消也可在事实或来源已经写入后才被末端检测。</p>
+<p>054249b在规则/LLM事实事务开始、各条事实写入前以及完整批次提交前检查原_turn_context_revision与token。可变scope更新不授权旧结果；批次末尾取消使尚未提交的事实整体回滚。空事实批次同样先检查，避免继续应用迟到情绪。保留已有scope/原文证据验证，不修改模型输出。</p>
+<div class="table-wrap"><table>
+<tr><th>实际分析HTTP受控时序</th><th>修前真实SQL</th><th>修后相同输入</th></tr>
+<tr><td>正常</td><td>2 HTTP/result，姓名与源ID有效</td><td>相同正常功能</td></tr>
+<tr><td>token取消</td><td>1 HTTP后Cancelled，仍新增源关联</td><td>无新增源；新旧姓名不同的单测也不覆盖原资料</td></tr>
+<tr><td>同实例forget</td><td>空资料被旧小岚恢复，source ID=None</td><td>保持空，Cancelled</td></tr>
+<tr><td>同实例correct</td><td>阿澄被旧小岚覆盖，旧fact新源ID=None</td><td>保持阿澄，Cancelled</td></tr>
+<tr><td>独立连接forget/correct</td><td>已有scope版本检查，保持空/阿澄</td><td>保持，Cancelled</td></tr>
+</table></div>
+<p>修前/修后各6例，均真实OpenAI兼容分析HTTP与SQLite；提供方返回受控JSON，姓名由实际用户原文规则支持。各5失效反例只有1次分析HTTP、assistant0；正常2次HTTP。取消原始HTTP例初始同名，证实新增来源，不能称该例姓名值变化；不同旧名的关联单测另外验证资料不应变。所有临时库均清理。不把夹具当原生模型语义或自然发生率。</p>
+<div class="table-wrap"><table>
+<tr><th>验证阶段</th><th>结果</th><th>含义</th></tr>
+<tr><td>初始红测</td><td>6失败/3通过，1.00s</td><td>公共修订、取消、批次与规则路径均可达</td></tr>
+<tr><td>首关联命令</td><td>0测试，exit4</td><td>错误测试文件名，原日志保留，不计通过</td></tr>
+<tr><td>首修关联</td><td>106通过/1失败，3.06s</td><td>最后一条事实内取消仍越过提交</td></tr>
+<tr><td>完整批次补检后关联</td><td>108通过，2.70s</td><td>新单/双事实提交前取消覆盖</td></tr>
+<tr><td>完整Python</td><td>1436通过/1跳过，98.36s</td><td>054249b逐源/测试/日志绑定</td></tr>
+<tr><td>后加锁等待</td><td>4新增，含10已有共14通过1.04s</td><td>不称1440完整，不与108相加</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>边界实证</th><th>结果</th></tr>
+<tr><td>等待其他连接BEGIN写锁</td><td>LLM/规则准备后取消或forget，取得锁后4/4在事务内拒绝</td></tr>
+<tr><td>多事实批次</td><td>取消使该批尚未提交变更/来源整体回滚</td></tr>
+<tr><td>空分析</td><td>已取消时不继续应用该迟到分析的情绪</td></tr>
+<tr><td>真浏览器来源</td><td>本事实树四模块路径及独有复制DHh6-woO包SHA核验，15通过/12跳过37.2s</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>范围限制</th><th>本阶段结论</th></tr>
+<tr><td>已经合法提交的既往事实</td><td>不承诺取消会回滚此前独立合法提交事务</td></tr>
+<tr><td>并发与重入</td><td>本项验证事务前修订、token/批次末尾、独立写锁等待；不外推所有嵌套扩展/回调行为</td></tr>
+<tr><td>设备/语义</td><td>无真实模型质量、物理音频、多日或独立人评</td></tr>
+<tr><td>前端</td><td>源码未改，复制已验DHh6-woO；未重建或重跑143前端单测</td></tr>
+<tr><td>后续</td><td>CPU队列完成后统一合并与全轮审计；旧阶段封存文件不回写</td></tr>
+</table></div>
+<h2>原始资料</h2>
+<p><a href="issues/010-P1-旧认知事实越过公共遗忘纠正写回.md">010当前单项</a>可随合并更新，本阶段快照与以下原始证据封存。</p>
+<p><a href="工作目录/010-认知事实事务来源/browser-facts-bound.log">browser-facts-bound.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/browser-runtime.json">browser-runtime.json</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-after.json">facts-after.json</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-after.log">facts-after.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-batch-final-related.log">facts-batch-final-related.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-before.json">facts-before.json</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-before.log">facts-before.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-fixed-first.log">facts-fixed-first.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-fixed-related.log">facts-fixed-related.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-lock-wait.log">facts-lock-wait.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/facts-red.log">facts-red.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/full-facts-binding.json">full-facts-binding.json</a></p>
+<p><a href="工作目录/010-认知事实事务来源/python-full-facts-final.log">python-full-facts-final.log</a></p>
+<p><a href="工作目录/010-认知事实事务来源/单项归档快照.md">单项归档快照.md</a></p>
+<p><a href="工作目录/010-认知事实事务来源/来源核验.json">来源核验.json</a></p>
+<p><a href="工作目录/010-认知事实事务来源/计划.md">计划.md</a></p>
+<p><a href="工作目录/010-认知事实事务来源/进展.md">进展.md</a></p></main></html>

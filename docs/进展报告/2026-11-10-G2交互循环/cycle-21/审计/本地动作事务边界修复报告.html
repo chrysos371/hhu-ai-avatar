@@ -1,0 +1,50 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>本地动作事务边界修复报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border:1px solid #dee7ee;text-align:left;vertical-align:top}th{background:#e4edf7}.table-wrap{overflow:auto}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}table{font-size:14px}}</style><main><h1>本地动作事务边界修复报告</h1>
+<p>日期2026-11-12，作者spinner-bot。fix/reminder-transaction-cycle21独立分支阶段，尚未合入主树；主树CPU254冻结开发继续。合并后以新进展为准，本报告不回写历史。</p>
+<h2>已证实问题与修复</h2>
+<p>C21-007/P1：本轮检查通过后、实际提醒事务开始前，取消或独立forget仍允许创建/取消/到期认领写SQL；末端Cancelled与assistant0并不等于业务零副作用。真实SQLite受控调度6/6可达，不估计随机发生率。</p>
+<p>bc5d750让内置Avatar把原回合revision/token闭包传入ReminderStore，在BEGIN IMMEDIATE取得写锁后、SQL业务变更前复核；Cancelled冒泡并回滚，旧独立Store API保留。该提交建立本地动作提交边界，不能逆转此前已经合法提交的动作。</p>
+<div class="table-wrap"><table>
+<tr><th>本地操作</th><th>修前失效反例</th><th>修后相同反例</th><th>正常正控</th></tr>
+<tr><td>创建</td><td>取消/forget后均新建</td><td>2/2零新增</td><td>成功创建</td></tr>
+<tr><td>取消</td><td>取消/forget后均active→cancelled</td><td>2/2状态保持</td><td>成功取消</td></tr>
+<tr><td>到期认领</td><td>取消/forget后均写notified_at</td><td>2/2标记保持空</td><td>成功认领</td></tr>
+</table></div>
+<p>到期认领只更新本地标记，实验没有实际发送外部通知。三组的失效终端均Cancelled、assistant0；forget实际revision0→1，独立于token取消。</p>
+<div class="table-wrap"><table>
+<tr><th>验证层</th><th>结果</th><th>证据范围</th></tr>
+<tr><td>初始红测</td><td>6失败/3通过，0.99s</td><td>原断言保留，不放宽</td></tr>
+<tr><td>SDK独立重放</td><td>9例，6失效零业务/3正常成功</td><td>真Avatar/SQLite，模型关闭</td></tr>
+<tr><td>鉴权HTTP/SSE</td><td>9例，6失效零业务/3正常成功</td><td>实际/turns、/cancel与SSE，forget独立SQL</td></tr>
+<tr><td>锁与等待</td><td>新增12项，相关总102通过/1.54s</td><td>写锁内检查、回滚、另一连接等待BEGIN期间失效</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>回归</th><th>结果</th><th>源码绑定</th></tr>
+<tr><td>完整Python</td><td>1394通过/1跳过，87.93s</td><td>56ca7cb，产品bc5d750</td></tr>
+<tr><td>默认浏览器</td><td>15通过/11跳过，36.9s</td><td>56ca7cb与独有复制C18 dist</td></tr>
+<tr><td>较早相关阶段</td><td>90通过/1.34s</td><td>bc5d750实现首验，不能与102相加</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>边界</th><th>本阶段结论</th></tr>
+<tr><td>取消时间</td><td>取得事务锁后的检查阻止此前已失效请求；合法提交后的取消不撤销动作</td></tr>
+<tr><td>API兼容</td><td>Store checkpoint为可选；自定义store内部策略不自动获得本检查</td></tr>
+<tr><td>语义/设备</td><td>无模型质量、真实Edge、通知送达、物理设备或多日验收</td></tr>
+<tr><td>主树/前端</td><td>尚未合并；无前端源码变化/构建/单测、百轮或PCM本轮重跑</td></tr>
+</table></div>
+<h2>原始资料与复核</h2>
+<p><a href="issues/007-P1-本地提醒失效请求仍提交事务.md">当前单项</a>可随合并更新。阶段单项快照、源/测试逐版本哈希和以下原始日志封存；完整与相关数量不重复累加，HTTP采证器后于全回归新增，不冒称参与1394测试。</p>
+<p><a href="工作目录/007-本地动作事务边界/browser-default-transaction.log">browser-default-transaction.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/python-full-transaction.log">python-full-transaction.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/reminder-after.json">reminder-after.json</a></p>
+<p><a href="工作目录/007-本地动作事务边界/reminder-after.log">reminder-after.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/reminder-before.json">reminder-before.json</a></p>
+<p><a href="工作目录/007-本地动作事务边界/reminder-before.log">reminder-before.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/reminder-http-after.json">reminder-http-after.json</a></p>
+<p><a href="工作目录/007-本地动作事务边界/reminder-http-after.log">reminder-http-after.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/transaction-fixed-related.log">transaction-fixed-related.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/transaction-lock-related.log">transaction-lock-related.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/transaction-red.log">transaction-red.log</a></p>
+<p><a href="工作目录/007-本地动作事务边界/verification-binding.json">verification-binding.json</a></p>
+<p><a href="工作目录/007-本地动作事务边界/单项归档快照.md">单项归档快照.md</a></p>
+<p><a href="工作目录/007-本地动作事务边界/来源核验.json">来源核验.json</a></p>
+<p><a href="工作目录/007-本地动作事务边界/计划.md">计划.md</a></p>
+<p><a href="工作目录/007-本地动作事务边界/进展.md">进展.md</a></p></main></html>

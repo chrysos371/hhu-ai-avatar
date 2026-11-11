@@ -9,6 +9,7 @@ export NPM_CONFIG_CACHE="$workspace_root/npm-cache"
 export TMPDIR="$workspace_root/runtime/tmp"
 mkdir -p "$TMPDIR"
 if [[ "${1:-}" == "run" && "${2:-}" == "e2e" ]]; then
+  export PYTHONPATH="$project_root/src${PYTHONPATH:+:$PYTHONPATH}"
   export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-$workspace_root/runtime/playwright}"
   browser_libs="$workspace_root/runtime/browser-libs"
   if [[ -d "$browser_libs/extracted/usr/lib/x86_64-linux-gnu" ]]; then export LD_LIBRARY_PATH="$browser_libs/extracted/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"; fi

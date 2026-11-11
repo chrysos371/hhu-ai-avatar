@@ -1,0 +1,390 @@
+FFFFFFFFFFFF..                                                           [100%]
+=================================== FAILURES ===================================
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[error-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d884d930>
+existing = False, failure = 'error'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+        with pytest.raises(expected):
+            EdgeTTSEngine(timeout=.01).synthesize_cancellable('受控文本', str(target), cancel=token)
+        if existing: assert target.read_bytes() == OLD
+>       else: assert not target.exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_0/output.mp3').exists
+
+tests/test_tts_file_publication.py:36: AssertionError
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[error-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d8454100>
+existing = True, failure = 'error'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+        with pytest.raises(expected):
+            EdgeTTSEngine(timeout=.01).synthesize_cancellable('受控文本', str(target), cancel=token)
+>       if existing: assert target.read_bytes() == OLD
+E       AssertionError: assert b'partial-output' == b'previous-output'
+E         
+E         At index 1 diff: b'a' != b'r'
+E         Use -v to get more diff
+
+tests/test_tts_file_publication.py:35: AssertionError
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_partial-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d8457370>
+existing = False, failure = 'cancel_partial'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+        with pytest.raises(expected):
+            EdgeTTSEngine(timeout=.01).synthesize_cancellable('受控文本', str(target), cancel=token)
+        if existing: assert target.read_bytes() == OLD
+>       else: assert not target.exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_2/output.mp3').exists
+
+tests/test_tts_file_publication.py:36: AssertionError
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_partial-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d84509d0>
+existing = True, failure = 'cancel_partial'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+        with pytest.raises(expected):
+            EdgeTTSEngine(timeout=.01).synthesize_cancellable('受控文本', str(target), cancel=token)
+>       if existing: assert target.read_bytes() == OLD
+E       AssertionError: assert b'partial-output' == b'previous-output'
+E         
+E         At index 1 diff: b'a' != b'r'
+E         Use -v to get more diff
+
+tests/test_tts_file_publication.py:35: AssertionError
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_complete-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d884f610>
+existing = False, failure = 'cancel_complete'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+>       with pytest.raises(expected):
+E       Failed: DID NOT RAISE Cancelled
+
+tests/test_tts_file_publication.py:33: Failed
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_complete-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d8451540>
+existing = True, failure = 'cancel_complete'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+>       with pytest.raises(expected):
+E       Failed: DID NOT RAISE Cancelled
+
+tests/test_tts_file_publication.py:33: Failed
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[empty-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d884ebc0>
+existing = False, failure = 'empty'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+>       with pytest.raises(expected):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_tts_file_publication.py:33: Failed
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[empty-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d8450d60>
+existing = True, failure = 'empty'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+>       with pytest.raises(expected):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_tts_file_publication.py:33: Failed
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[timeout-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d884ee60>
+existing = False, failure = 'timeout'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+        with pytest.raises(expected):
+            EdgeTTSEngine(timeout=.01).synthesize_cancellable('受控文本', str(target), cancel=token)
+        if existing: assert target.read_bytes() == OLD
+>       else: assert not target.exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_8/output.mp3').exists
+
+tests/test_tts_file_publication.py:36: AssertionError
+_ test_failed_tts_preserves_old_target_or_leaves_new_target_absent[timeout-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_failed_tts_preserves_old_9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d884dde0>
+existing = True, failure = 'timeout'
+
+    @pytest.mark.parametrize('existing', [False, True])
+    @pytest.mark.parametrize('failure', ['error', 'cancel_partial', 'cancel_complete', 'empty', 'timeout'])
+    def test_failed_tts_preserves_old_target_or_leaves_new_target_absent(tmp_path, monkeypatch, existing, failure):
+        target = tmp_path/'output.mp3'; token = CancellationToken(); during = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, path):
+                if failure == 'empty': return
+                Path(path).write_bytes(PARTIAL)
+                during.append(target.read_bytes() if target.exists() else None)
+                if failure == 'error': raise OSError('fixture interrupted write')
+                if failure == 'timeout': await asyncio.sleep(1)
+                if failure == 'cancel_complete': Path(path).write_bytes(NEW)
+                token.cancel()
+                if failure == 'cancel_partial': await asyncio.sleep(.001)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        expected = {'error': OSError, 'cancel_partial': Cancelled, 'cancel_complete': Cancelled,
+                    'empty': ValueError, 'timeout': TimeoutError}[failure]
+        with pytest.raises(expected):
+            EdgeTTSEngine(timeout=.01).synthesize_cancellable('受控文本', str(target), cancel=token)
+>       if existing: assert target.read_bytes() == OLD
+E       AssertionError: assert b'partial-output' == b'previous-output'
+E         
+E         At index 1 diff: b'a' != b'r'
+E         Use -v to get more diff
+
+tests/test_tts_file_publication.py:35: AssertionError
+_ test_success_is_published_only_when_complete_with_original_api_parameters[False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_success_is_published_only0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d849ab30>
+existing = False
+
+    @pytest.mark.parametrize('existing', [False, True])
+    def test_success_is_published_only_when_complete_with_original_api_parameters(tmp_path, monkeypatch, existing):
+        target = tmp_path/'output.mp3'; observed = []; calls = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, text, voice, **kwargs): calls.append((text, voice, kwargs))
+            async def save(self, path):
+                Path(path).write_bytes(PARTIAL)
+                observed.append(target.read_bytes() if target.exists() else None)
+                await asyncio.sleep(.001)
+                Path(path).write_bytes(NEW)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        result = EdgeTTSEngine(voice='fixture-voice').synthesize('受控文本', str(target), '+4%', '-1Hz')
+        assert result == str(target) and target.read_bytes() == NEW
+>       assert observed == [OLD if existing else None]
+E       AssertionError: assert [b'partial-output'] == [None]
+E         
+E         At index 0 diff: b'partial-output' != None
+E         Use -v to get more diff
+
+tests/test_tts_file_publication.py:55: AssertionError
+_ test_success_is_published_only_when_complete_with_original_api_parameters[True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-239/test_success_is_published_only1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f01d847f070>
+existing = True
+
+    @pytest.mark.parametrize('existing', [False, True])
+    def test_success_is_published_only_when_complete_with_original_api_parameters(tmp_path, monkeypatch, existing):
+        target = tmp_path/'output.mp3'; observed = []; calls = []
+        if existing: target.write_bytes(OLD)
+        class Communicate:
+            def __init__(self, text, voice, **kwargs): calls.append((text, voice, kwargs))
+            async def save(self, path):
+                Path(path).write_bytes(PARTIAL)
+                observed.append(target.read_bytes() if target.exists() else None)
+                await asyncio.sleep(.001)
+                Path(path).write_bytes(NEW)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        result = EdgeTTSEngine(voice='fixture-voice').synthesize('受控文本', str(target), '+4%', '-1Hz')
+        assert result == str(target) and target.read_bytes() == NEW
+>       assert observed == [OLD if existing else None]
+E       AssertionError: assert [b'partial-output'] == [b'previous-output']
+E         
+E         At index 0 diff: b'partial-output' != b'previous-output'
+E         Use -v to get more diff
+
+tests/test_tts_file_publication.py:55: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[error-False]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[error-True]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_partial-False]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_partial-True]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_complete-False]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[cancel_complete-True]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[empty-False]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[empty-True]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[timeout-False]
+FAILED tests/test_tts_file_publication.py::test_failed_tts_preserves_old_target_or_leaves_new_target_absent[timeout-True]
+FAILED tests/test_tts_file_publication.py::test_success_is_published_only_when_complete_with_original_api_parameters[False]
+FAILED tests/test_tts_file_publication.py::test_success_is_published_only_when_complete_with_original_api_parameters[True]
+12 failed, 2 passed in 0.28s

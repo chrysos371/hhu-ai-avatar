@@ -1,0 +1,274 @@
+...FFFFFF                                                                [100%]
+=================================== FAILURES ===================================
+_________ test_avatar_revalidates_inside_reminder_write[cancel-create] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-247/test_avatar_revalidates_inside3')
+operation = 'create', change = 'cancel'
+
+    @pytest.mark.parametrize('operation', ['create', 'set_status', 'claim_due'])
+    @pytest.mark.parametrize('change', ['normal', 'cancel', 'forget'])
+    def test_avatar_revalidates_inside_reminder_write(tmp_path, operation, change):
+        class Engine:
+            available = False
+        path = str(tmp_path/'memory.db'); token = CancellationToken()
+        bot = Avatar(db_path=path, llm=Engine())
+        fragment = bot.memory.remember_user('名字', '事务测试名')
+        if operation != 'create':
+            seeded = bot.reminders.create('提醒我明天下午3点事务正控')
+            if operation == 'claim_due':
+                with bot.memory.transaction():
+                    bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?',
+                                             (time.time()-10, seeded['id']))
+        before = bot.reminders.list(); original = getattr(bot.reminders, operation)
+        called = []
+        def scheduled(*args, **kwargs):
+            assert not bot.memory._conn.in_transaction
+            if change == 'cancel': token.cancel()
+            elif change == 'forget':
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            called.append(True)
+            return original(*args, **kwargs)
+        setattr(bot.reminders, operation, scheduled)
+        text = ('提醒我明天下午3点事务正控' if operation == 'create' else
+                '取消提醒'+str(seeded['id']) if operation == 'set_status' else '你好')
+        try:
+            if change == 'normal':
+                assert bot.respond(text, cancel=token)['reply']
+                assert bot.reminders.list() != before
+            else:
+                with pytest.raises(Cancelled): bot.respond(text, cancel=token)
+>               assert bot.reminders.list() == before
+E               AssertionError: assert [{'id': 1, 't...1573148, ...}] == []
+E                 
+E                 Left contains one more item: {'id': 1, 'title': '事务正控', 'due_at': 1794553200.0, 'created_at': 1794430256.1573148, ...}
+E                 Use -v to get more diff
+
+tests/test_reminder_transaction_boundary.py:44: AssertionError
+_______ test_avatar_revalidates_inside_reminder_write[cancel-set_status] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-247/test_avatar_revalidates_inside4')
+operation = 'set_status', change = 'cancel'
+
+    @pytest.mark.parametrize('operation', ['create', 'set_status', 'claim_due'])
+    @pytest.mark.parametrize('change', ['normal', 'cancel', 'forget'])
+    def test_avatar_revalidates_inside_reminder_write(tmp_path, operation, change):
+        class Engine:
+            available = False
+        path = str(tmp_path/'memory.db'); token = CancellationToken()
+        bot = Avatar(db_path=path, llm=Engine())
+        fragment = bot.memory.remember_user('名字', '事务测试名')
+        if operation != 'create':
+            seeded = bot.reminders.create('提醒我明天下午3点事务正控')
+            if operation == 'claim_due':
+                with bot.memory.transaction():
+                    bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?',
+                                             (time.time()-10, seeded['id']))
+        before = bot.reminders.list(); original = getattr(bot.reminders, operation)
+        called = []
+        def scheduled(*args, **kwargs):
+            assert not bot.memory._conn.in_transaction
+            if change == 'cancel': token.cancel()
+            elif change == 'forget':
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            called.append(True)
+            return original(*args, **kwargs)
+        setattr(bot.reminders, operation, scheduled)
+        text = ('提醒我明天下午3点事务正控' if operation == 'create' else
+                '取消提醒'+str(seeded['id']) if operation == 'set_status' else '你好')
+        try:
+            if change == 'normal':
+                assert bot.respond(text, cancel=token)['reply']
+                assert bot.reminders.list() != before
+            else:
+                with pytest.raises(Cancelled): bot.respond(text, cancel=token)
+>               assert bot.reminders.list() == before
+E               AssertionError: assert [{'id': 1, 't...2288325, ...}] == [{'id': 1, 't...2288325, ...}]
+E                 
+E                 At index 0 diff: {'id': 1, 'title': '事务正控', 'due_at': 1794553200.0, 'created_at': 1794430256.2288325, 'status': 'cancelled', 'notified_at': None} != {'id': 1, 'title': '事务正控', 'due_at': 1794553200.0, 'created_at': 1794430256.2288325, 'status': 'active', 'notified_at': None}
+E                 Use -v to get more diff
+
+tests/test_reminder_transaction_boundary.py:44: AssertionError
+_______ test_avatar_revalidates_inside_reminder_write[cancel-claim_due] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-247/test_avatar_revalidates_inside5')
+operation = 'claim_due', change = 'cancel'
+
+    @pytest.mark.parametrize('operation', ['create', 'set_status', 'claim_due'])
+    @pytest.mark.parametrize('change', ['normal', 'cancel', 'forget'])
+    def test_avatar_revalidates_inside_reminder_write(tmp_path, operation, change):
+        class Engine:
+            available = False
+        path = str(tmp_path/'memory.db'); token = CancellationToken()
+        bot = Avatar(db_path=path, llm=Engine())
+        fragment = bot.memory.remember_user('名字', '事务测试名')
+        if operation != 'create':
+            seeded = bot.reminders.create('提醒我明天下午3点事务正控')
+            if operation == 'claim_due':
+                with bot.memory.transaction():
+                    bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?',
+                                             (time.time()-10, seeded['id']))
+        before = bot.reminders.list(); original = getattr(bot.reminders, operation)
+        called = []
+        def scheduled(*args, **kwargs):
+            assert not bot.memory._conn.in_transaction
+            if change == 'cancel': token.cancel()
+            elif change == 'forget':
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            called.append(True)
+            return original(*args, **kwargs)
+        setattr(bot.reminders, operation, scheduled)
+        text = ('提醒我明天下午3点事务正控' if operation == 'create' else
+                '取消提醒'+str(seeded['id']) if operation == 'set_status' else '你好')
+        try:
+            if change == 'normal':
+                assert bot.respond(text, cancel=token)['reply']
+                assert bot.reminders.list() != before
+            else:
+                with pytest.raises(Cancelled): bot.respond(text, cancel=token)
+>               assert bot.reminders.list() == before
+E               AssertionError: assert [{'id': 1, 't...2510548, ...}] == [{'id': 1, 't...2510548, ...}]
+E                 
+E                 At index 0 diff: {'id': 1, 'title': '事务正控', 'due_at': 1794430246.2515774, 'created_at': 1794430256.2510548, 'status': 'active', 'notified_at': 1794430256.25315} != {'id': 1, 'title': '事务正控', 'due_at': 1794430246.2515774, 'created_at': 1794430256.2510548, 'status': 'active', 'notified_at': None}
+E                 Use -v to get more diff
+
+tests/test_reminder_transaction_boundary.py:44: AssertionError
+_________ test_avatar_revalidates_inside_reminder_write[forget-create] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-247/test_avatar_revalidates_inside6')
+operation = 'create', change = 'forget'
+
+    @pytest.mark.parametrize('operation', ['create', 'set_status', 'claim_due'])
+    @pytest.mark.parametrize('change', ['normal', 'cancel', 'forget'])
+    def test_avatar_revalidates_inside_reminder_write(tmp_path, operation, change):
+        class Engine:
+            available = False
+        path = str(tmp_path/'memory.db'); token = CancellationToken()
+        bot = Avatar(db_path=path, llm=Engine())
+        fragment = bot.memory.remember_user('名字', '事务测试名')
+        if operation != 'create':
+            seeded = bot.reminders.create('提醒我明天下午3点事务正控')
+            if operation == 'claim_due':
+                with bot.memory.transaction():
+                    bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?',
+                                             (time.time()-10, seeded['id']))
+        before = bot.reminders.list(); original = getattr(bot.reminders, operation)
+        called = []
+        def scheduled(*args, **kwargs):
+            assert not bot.memory._conn.in_transaction
+            if change == 'cancel': token.cancel()
+            elif change == 'forget':
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            called.append(True)
+            return original(*args, **kwargs)
+        setattr(bot.reminders, operation, scheduled)
+        text = ('提醒我明天下午3点事务正控' if operation == 'create' else
+                '取消提醒'+str(seeded['id']) if operation == 'set_status' else '你好')
+        try:
+            if change == 'normal':
+                assert bot.respond(text, cancel=token)['reply']
+                assert bot.reminders.list() != before
+            else:
+                with pytest.raises(Cancelled): bot.respond(text, cancel=token)
+>               assert bot.reminders.list() == before
+E               AssertionError: assert [{'id': 1, 't...2758358, ...}] == []
+E                 
+E                 Left contains one more item: {'id': 1, 'title': '事务正控', 'due_at': 1794553200.0, 'created_at': 1794430256.2758358, ...}
+E                 Use -v to get more diff
+
+tests/test_reminder_transaction_boundary.py:44: AssertionError
+_______ test_avatar_revalidates_inside_reminder_write[forget-set_status] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-247/test_avatar_revalidates_inside7')
+operation = 'set_status', change = 'forget'
+
+    @pytest.mark.parametrize('operation', ['create', 'set_status', 'claim_due'])
+    @pytest.mark.parametrize('change', ['normal', 'cancel', 'forget'])
+    def test_avatar_revalidates_inside_reminder_write(tmp_path, operation, change):
+        class Engine:
+            available = False
+        path = str(tmp_path/'memory.db'); token = CancellationToken()
+        bot = Avatar(db_path=path, llm=Engine())
+        fragment = bot.memory.remember_user('名字', '事务测试名')
+        if operation != 'create':
+            seeded = bot.reminders.create('提醒我明天下午3点事务正控')
+            if operation == 'claim_due':
+                with bot.memory.transaction():
+                    bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?',
+                                             (time.time()-10, seeded['id']))
+        before = bot.reminders.list(); original = getattr(bot.reminders, operation)
+        called = []
+        def scheduled(*args, **kwargs):
+            assert not bot.memory._conn.in_transaction
+            if change == 'cancel': token.cancel()
+            elif change == 'forget':
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            called.append(True)
+            return original(*args, **kwargs)
+        setattr(bot.reminders, operation, scheduled)
+        text = ('提醒我明天下午3点事务正控' if operation == 'create' else
+                '取消提醒'+str(seeded['id']) if operation == 'set_status' else '你好')
+        try:
+            if change == 'normal':
+                assert bot.respond(text, cancel=token)['reply']
+                assert bot.reminders.list() != before
+            else:
+                with pytest.raises(Cancelled): bot.respond(text, cancel=token)
+>               assert bot.reminders.list() == before
+E               AssertionError: assert [{'id': 1, 't...2960124, ...}] == [{'id': 1, 't...2960124, ...}]
+E                 
+E                 At index 0 diff: {'id': 1, 'title': '事务正控', 'due_at': 1794553200.0, 'created_at': 1794430256.2960124, 'status': 'cancelled', 'notified_at': None} != {'id': 1, 'title': '事务正控', 'due_at': 1794553200.0, 'created_at': 1794430256.2960124, 'status': 'active', 'notified_at': None}
+E                 Use -v to get more diff
+
+tests/test_reminder_transaction_boundary.py:44: AssertionError
+_______ test_avatar_revalidates_inside_reminder_write[forget-claim_due] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-247/test_avatar_revalidates_inside8')
+operation = 'claim_due', change = 'forget'
+
+    @pytest.mark.parametrize('operation', ['create', 'set_status', 'claim_due'])
+    @pytest.mark.parametrize('change', ['normal', 'cancel', 'forget'])
+    def test_avatar_revalidates_inside_reminder_write(tmp_path, operation, change):
+        class Engine:
+            available = False
+        path = str(tmp_path/'memory.db'); token = CancellationToken()
+        bot = Avatar(db_path=path, llm=Engine())
+        fragment = bot.memory.remember_user('名字', '事务测试名')
+        if operation != 'create':
+            seeded = bot.reminders.create('提醒我明天下午3点事务正控')
+            if operation == 'claim_due':
+                with bot.memory.transaction():
+                    bot.memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?',
+                                             (time.time()-10, seeded['id']))
+        before = bot.reminders.list(); original = getattr(bot.reminders, operation)
+        called = []
+        def scheduled(*args, **kwargs):
+            assert not bot.memory._conn.in_transaction
+            if change == 'cancel': token.cancel()
+            elif change == 'forget':
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+            called.append(True)
+            return original(*args, **kwargs)
+        setattr(bot.reminders, operation, scheduled)
+        text = ('提醒我明天下午3点事务正控' if operation == 'create' else
+                '取消提醒'+str(seeded['id']) if operation == 'set_status' else '你好')
+        try:
+            if change == 'normal':
+                assert bot.respond(text, cancel=token)['reply']
+                assert bot.reminders.list() != before
+            else:
+                with pytest.raises(Cancelled): bot.respond(text, cancel=token)
+>               assert bot.reminders.list() == before
+E               AssertionError: assert [{'id': 1, 't...3195155, ...}] == [{'id': 1, 't...3195155, ...}]
+E                 
+E                 At index 0 diff: {'id': 1, 'title': '事务正控', 'due_at': 1794430246.3200278, 'created_at': 1794430256.3195155, 'status': 'active', 'notified_at': 1794430256.3231475} != {'id': 1, 'title': '事务正控', 'due_at': 1794430246.3200278, 'created_at': 1794430256.3195155, 'status': 'active', 'notified_at': None}
+E                 Use -v to get more diff
+
+tests/test_reminder_transaction_boundary.py:44: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_transaction_boundary.py::test_avatar_revalidates_inside_reminder_write[cancel-create]
+FAILED tests/test_reminder_transaction_boundary.py::test_avatar_revalidates_inside_reminder_write[cancel-set_status]
+FAILED tests/test_reminder_transaction_boundary.py::test_avatar_revalidates_inside_reminder_write[cancel-claim_due]
+FAILED tests/test_reminder_transaction_boundary.py::test_avatar_revalidates_inside_reminder_write[forget-create]
+FAILED tests/test_reminder_transaction_boundary.py::test_avatar_revalidates_inside_reminder_write[forget-set_status]
+FAILED tests/test_reminder_transaction_boundary.py::test_avatar_revalidates_inside_reminder_write[forget-claim_due]
+6 failed, 3 passed in 0.99s
