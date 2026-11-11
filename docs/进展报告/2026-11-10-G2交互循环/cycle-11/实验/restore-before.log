@@ -1,0 +1,49 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test history-restore.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:2436675) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2436675) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/history-restore.spec.ts:9:1 › restores paginated source history and blocks cancelled and erased content across tabs (8.2s)
+
+
+  1) e2e/history-restore.spec.ts:9:1 › restores paginated source history and blocks cancelled and erased content across tabs 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('项目代号恢复审计第001号，继续规划。', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('项目代号恢复审计第001号，继续规划。', { exact: true })[22m
+
+
+      46 |     await page.getByRole('link', { name: '对话观测', exact: true }).click();
+      47 |     report.steps.push({ name: 'SPA restore', before, observed: await page.locator('.chat-message > div').allTextContents() }); save();
+    > 48 |     await expect(page.getByText(first, { exact: true })).toBeVisible();
+         |                                                          ^
+      49 |     await expect(page.locator('.chat-message')).toHaveCount(4);
+      50 |     await page.reload(); await expect(page.getByText(first, { exact: true })).toBeVisible();
+      51 |     const latestTrace = page.locator('.chat-message.assistant details').last();
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/history-restore.spec.ts:48:58
+
+    Error Context: test-results/history-restore-restores-p-2ccae--erased-content-across-tabs/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/history-restore-restores-p-2ccae--erased-content-across-tabs/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/history-restore-restores-p-2ccae--erased-content-across-tabs/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/history-restore.spec.ts:9:1 › restores paginated source history and blocks cancelled and erased content across tabs 
