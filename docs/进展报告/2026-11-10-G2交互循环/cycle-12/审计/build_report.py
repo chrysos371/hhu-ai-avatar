@@ -78,7 +78,7 @@ def build():
       '本轮审计未在所列冻结门槛中发现遗留失败；这不等于无隐藏问题。下一轮优先测服务重启后的短期、角色语境和防重放，必须在独立临时库留存前后证据，再决定是否重建有来源上下文；不得直接把所有历史原文注入模型或执行旧命令。随后继续真实模型开放项与独立音素/设备证据。远期目标保持active，小步提交/指定密钥推送继续。', '',
       '## 过程与证据', '',
       f"源/服务包核对{snapshot['checked']}项通过，含开发工作区与固定提交分别绑定，见[核对记录](../实验/snapshot-check.json)。三轮服务包与CSS在frozen-source中明确归档，嵌套dist原被生成目录规则忽略，已专门force-add这些自有证据，不改变.gitignore或日常构建策略。归档SHA不把回忆或当前字节冒当旧观察。",
-      '完整失败保留：API新增前404；后端测试误用MemoryStore上下文管理器；Hook中断刷新复活与鉴权提示错误；.test.ts首次未被既有.test.tsx配置选中，改名后才算12项传输；JSDOM首项既有1个启动timer，诊断3个watch自有timer均清理后按ID精确断言；新探针误期待cancelled；lint未用Page导入。没有提高12帧/媒体时钟阈值或选取最好轮次。',
+      '完整失败保留：API新增前404；后端测试误用MemoryStore上下文管理器；Hook中断刷新复活与鉴权提示错误；.test.ts首次未被既有.test.tsx配置选中，改名后才算12项传输；JSDOM测试环境首项执行前已有1个timer（来源未继续归因），诊断3个watch自有timer均清理后按ID精确断言；新探针误期待cancelled；lint未用Page导入。没有提高12帧/媒体时钟阈值或选取最好轮次。',
       '[计划](../计划.md)、[进展](../进展.md)、[冻结协议](../../../../../evals/interaction/cycle-12/notification-protocol.json)、[前轮失败报告](../../cycle-11/审计/系统审计与推进报告.md)、[远期路线](../../远期目标与验收路线.md)。', '']
     # HERE is five path components below repository.
     for p in sorted(EV.rglob('*')):
@@ -101,7 +101,7 @@ def build():
     for href in re.findall(r'href="([^"]+)"',html):
         if not href.startswith('https://'):assert (HERE/href).exists(),href
     (HERE/'系统审计与推进报告.html').write_text(html)
-    inputs=list(EV.rglob('*'))+list((HERE/'issues').glob('*.md'))+[CYCLE/'计划.md',CYCLE/'进展.md',HERE/'build_report.py',HERE/'check_snapshots.py',HERE/'系统审计与推进报告.md',HERE/'系统审计与推进报告.html']
+    inputs=list(HERE.glob('*.mjs'))+list(HERE.glob('*.png'))+list(EV.rglob('*'))+list((HERE/'issues').glob('*.md'))+[CYCLE/'计划.md',CYCLE/'进展.md',HERE/'build_report.py',HERE/'check_snapshots.py',HERE/'系统审计与推进报告.md',HERE/'系统审计与推进报告.html']
     manifest={p.relative_to(CYCLE).as_posix():sha256(p.read_bytes()).hexdigest() for p in sorted(inputs) if p.is_file()}
     (HERE/'证据清单.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
     print(len(manifest),'evidence hashes; fixed gates and links verified')
