@@ -19,6 +19,10 @@ it('does not retain 40 completed chat mutation results after the page unmounts',
   vi.stubGlobal('fetch', vi.fn((url: string) => {
     if (url.endsWith('/persona')) return Promise.resolve({ ok: true, json: async () => ({ data: { data: { name: '缓存测试' } } }) });
     if (url.endsWith('/capabilities')) return Promise.resolve({ ok: true, json: async () => ({ data: { asr_enabled: false } }) });
+    if (url.endsWith('/conversation/speaker')) return Promise.resolve({ ok: true, json: async () => ({ data: {
+      instance_id: 'cache-audit-instance', revision: 0, context_cursor: Math.max(0, 2 * count - 1), scope: 'current_user',
+      profile_writes_for_new_turn: true, real_actions_for_new_turn: true, general_coreference_verified: false, version: 1,
+    } }) });
     if (url.includes('/conversation')) return Promise.resolve({ ok: true, json: async () => ({ data: {
       instance_id: 'cache-audit-instance', revision: 0, items: [...messages], has_more: false, next_before_id: null,
     } }) });

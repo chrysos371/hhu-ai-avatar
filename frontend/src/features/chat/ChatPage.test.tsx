@@ -16,6 +16,10 @@ it("streams a reviewed draft then replaces it with the final traced reply", asyn
   vi.stubGlobal("fetch", vi.fn((url: string) => {
     if (url.endsWith("/persona")) return Promise.resolve({ ok: true, json: async () => ({ data: { data: { name: "星澜" } } }) });
     if (url.endsWith("/capabilities")) return Promise.resolve({ ok: true, json: async () => ({ data: { asr_enabled: false } }) });
+    if (url.endsWith('/conversation/speaker')) return Promise.resolve({ ok: true, json: async () => ({ data: {
+      instance_id: 'unit-server', revision: 0, context_cursor: completed ? 1 : 0, scope: 'current_user',
+      profile_writes_for_new_turn: true, real_actions_for_new_turn: true, general_coreference_verified: false, version: 1,
+    } }) });
     if (url.includes('/conversation?')) return Promise.resolve({ ok: true, json: async () => ({ data: {
       instance_id: 'unit-server', revision: 0, has_more: false, next_before_id: null,
       items: completed ? [{ id: 1, role: 'user', text: '你好', session_id: 'unit', created_at: 1, redacted: false },
@@ -52,6 +56,10 @@ it('reads a legacy reply without inventing a trace and preserves it when speech 
   const fetch = vi.fn<(url: string, options?: RequestInit) => Promise<unknown>>((url: string) => {
     if (url.endsWith('/persona')) return Promise.resolve({ ok: true, json: async () => ({ data: { data: { name: '历史测试' } } }) });
     if (url.endsWith('/capabilities')) return Promise.resolve({ ok: true, json: async () => ({ data: { asr_enabled: false } }) });
+    if (url.endsWith('/conversation/speaker')) return Promise.resolve({ ok: true, json: async () => ({ data: {
+      instance_id: 'legacy-instance', revision: 0, context_cursor: 0, scope: 'current_user',
+      profile_writes_for_new_turn: true, real_actions_for_new_turn: true, general_coreference_verified: false, version: 1,
+    } }) });
     if (url.includes('/conversation?')) return Promise.resolve({ ok: true, json: async () => ({ data: {
       instance_id: 'legacy-instance', revision: 0, has_more: false, next_before_id: null,
       items: [{ id: 2, role: 'assistant', text: 'legacy-original-reply', session_id: 'legacy', created_at: 1, redacted: false }],

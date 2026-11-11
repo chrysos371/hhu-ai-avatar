@@ -26,6 +26,11 @@ async function setup(hold: boolean) {
   const fetch = vi.fn((url: string) => {
     if (url.endsWith('/persona')) return Promise.resolve({ ok: true, json: async () => ({ data: { data: { name: '屏障测试' } } }) });
     if (url.endsWith('/capabilities')) return Promise.resolve({ ok: true, json: async () => ({ data: { asr_enabled: false } }) });
+    if (url.endsWith('/conversation/speaker')) return Promise.resolve({ ok: true, json: async () => ({ data: {
+      instance_id: 'privacy-server', revision: snapshot.revision, context_cursor: Math.max(0, ...snapshot.items.filter(r => r.role === 'user').map(r => r.id)),
+      scope: 'current_user', profile_writes_for_new_turn: true, real_actions_for_new_turn: true,
+      general_coreference_verified: false, version: 1,
+    } }) });
     if (url.includes('/conversation?')) { const data = snapshot; return Promise.resolve({ ok: true, json: async () => ({ data }) }); }
     if (url.endsWith('/cancel')) return Promise.resolve({ ok: true, json: async () => ({ data: { cancelled: true } }) });
     if (url.endsWith('/turns')) return Promise.resolve({ ok: true, json: async () => ({ data: { job_id: 'privacy_unit_job_identifier' } }) });

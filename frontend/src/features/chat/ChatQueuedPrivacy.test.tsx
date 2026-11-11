@@ -7,7 +7,7 @@ import { notifyConversationPrivacyChanged } from '../../lib/conversation';
 const response = (data: unknown) => ({ ok: true, json: async () => ({ data }) });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
-async function queued() {
+async function queued(erase = true) {
   sessionStorage.setItem('avatar-token', 'queued-privacy-disposable-token');
   let revision = 0, release!: () => void, entered = false;
   const gate = new Promise<void>(resolve => { release = resolve; });
@@ -45,7 +45,7 @@ async function queued() {
   fireEvent.change(screen.getByLabelText('消息'), { target: { value: 'old-queued-private' } });
   fireEvent.click(screen.getByRole('button', { name: '发送消息' }));
   await waitFor(() => expect(entered).toBe(true));
-  await act(async () => { revision = 1; notifyConversationPrivacyChanged(); });
+  if (erase) await act(async () => { revision = 1; notifyConversationPrivacyChanged(); });
   await waitFor(() => expect(document.querySelector('.chat-history')).toHaveAttribute('data-history-ready', 'true'));
   return { client, fetcher, release, finishNew: () => finishNew(), newReady: () => finishNew !== undefined };
 }
@@ -53,6 +53,28 @@ async function queued() {
 it('does not post a queued request whose epoch expired before mutationFn starts', async () => {
   const control = await queued();
   try {
+    await act(async () => control.release());
+    await waitFor(() => expect(control.client.getMutationCache().getAll().every(m => m.state.status !== 'pending')).toBe(true));
+    expect(control.fetcher.mock.calls.filter(([url]) => url.endsWith('/turns'))).toHaveLength(0);
+  } finally { control.release(); control.client.clear(); }
+});
+
+it('focus reads do not drop a logical submission waiting before network start', async () => {
+  const control = await queued(false);
+  try {
+    expect(screen.getByText('old-queued-private')).toBeInTheDocument();
+    await act(async () => window.dispatchEvent(new Event('focus')));
+    await waitFor(() => expect(document.querySelector('.chat-history')).toHaveAttribute('data-history-ready', 'true'));
+    expect(screen.getByText('old-queued-private')).toBeInTheDocument();
+  } finally { await act(async () => control.release()); control.client.clear(); }
+});
+
+it('stops a pre-network queued submission without posting after its gate releases', async () => {
+  const control = await queued(false);
+  try {
+    fireEvent.click(screen.getByRole('button', { name: '停止生成' }));
+    expect(screen.queryByRole('button', { name: '等待回复…' })).not.toBeInTheDocument();
+    expect(screen.getByText('本轮已停止。')).toBeInTheDocument();
     await act(async () => control.release());
     await waitFor(() => expect(control.client.getMutationCache().getAll().every(m => m.state.status !== 'pending')).toBe(true));
     expect(control.fetcher.mock.calls.filter(([url]) => url.endsWith('/turns'))).toHaveLength(0);
