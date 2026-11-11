@@ -40,7 +40,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             raise ValueError('Select a registered capability candidate')
         candidate_id = CLI_CANDIDATES[candidate]
         frozen = verify_freeze(candidate_freeze, partition, candidate_id)
-    elif candidate in ('source_capability_v2', 'source_capability_v3'):
+    elif candidate in ('source_capability_v2', 'source_capability_v3', 'source_capability_v4'):
         raise ValueError('Source capability candidates require capability_pair stage')
     if stage == 'capability_pair':
         for path in (protocol, pair_protocol):
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     parser.add_argument('--candidate-freeze', type=Path)
     parser.add_argument('--protocol', type=Path)
     parser.add_argument('--pair-protocol', type=Path)
-    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2', 'source_capability_v3'], default='v1')
+    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2', 'source_capability_v3', 'source_capability_v4'], default='v1')
     parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
     options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.
