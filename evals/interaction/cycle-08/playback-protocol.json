@@ -1,15 +1,61 @@
 {
-  "version":1,
-  "baseline_revision":"74eac2b",
-  "scope":"Actual Chromium PCM playback and rendered control state against media currentTime; no acoustic/physical hardware or model-quality approval",
-  "controlled_pcm":{"sample_rate":16000,"duration_seconds":8,"frequency_hz":220,"frames":800,"frame_hop_seconds":0.01,"mouth":"(index+1)/801; rounded3decimals must remain unique"},
-  "clock_cases":["rate1","rate0.5","rate2","seek_forward","seek_backward"],
-  "sampling":{"raf_samples_per_case":48,"warmup_samples_excluded":2,"active_samples_minimum":30,"exclude":"paused, ended or seeking samples, all exclusions retained"},
-  "clock_gates":{"p95_absolute_media_lag_ms":50,"max_absolute_media_lag_ms":100,"media_clock_progress":true},
-  "control_cases":["pause_resume","stop","ended","segment_full_order","stop_during_prefetch","queued_stale_media_events"],
-  "closure_gate":{"sample_rounds":6,"closed_by_raf":2,"max_observed_wall_ms":100},
-  "segment_fixture":{"segments":3,"duration_seconds_each":1,"oracle_frame_hop_seconds":0.01,"all_final_text_only":true},
-  "media_events":"Callbacks must agree with current audio src/paused/ended/error state; delayed events from released media must not revive or advance current playback",
-  "evidence":"Save raw RAF currentTime/displayed code/paused/ended/seeking/status and requests/play events, source hashes and failure partials under fresh paths",
-  "limits":["Intercepted speech oracle isolates frontend clock; existing actual SpeechService browser tests remain separate","Headless timing reflects this host, not physical AV latency","No experiment wall-clock deadline; fixed RAF rounds and test.setTimeout(0)"]
+  "version": 1,
+  "baseline_revision": "74eac2b",
+  "scope": "Actual Chromium PCM playback and rendered control state against media currentTime; no acoustic/physical hardware or model-quality approval",
+  "controlled_pcm": {
+    "sample_rate": 16000,
+    "duration_seconds": 8,
+    "frequency_hz": 220,
+    "frames": 800,
+    "frame_hop_seconds": 0.01,
+    "mouth": "(index+1)/801; rounded3decimals must remain unique"
+  },
+  "clock_cases": [
+    "rate1",
+    "rate0.5",
+    "rate2",
+    "seek_forward",
+    "seek_backward"
+  ],
+  "sampling": {
+    "raf_samples_per_case": 48,
+    "warmup_samples_excluded": 2,
+    "active_samples_minimum": 30,
+    "exclude": "paused, ended or seeking samples, all exclusions retained"
+  },
+  "clock_gates": {
+    "p95_absolute_media_lag_ms": 50,
+    "max_absolute_media_lag_ms": 100,
+    "media_clock_progress": true
+  },
+  "control_cases": [
+    "pause_resume",
+    "stop",
+    "ended",
+    "segment_full_order",
+    "stop_during_prefetch",
+    "queued_stale_media_events"
+  ],
+  "closure_gate": {
+    "sample_rounds": 6,
+    "closed_by_raf": 2,
+    "max_observed_wall_ms": 100
+  },
+  "segment_fixture": {
+    "segments": 3,
+    "duration_seconds_each": 1,
+    "oracle_frame_hop_seconds": 0.01,
+    "all_final_text_only": true,
+    "fixed_raf_samples": 480,
+    "final_text_path": "evals/interaction/cycle-08/final-three-segments.txt"
+  },
+  "media_events": "Callbacks must agree with current audio src/paused/ended/error state; delayed events from released media must not revive or advance current playback",
+  "evidence": "Save raw RAF currentTime/displayed code/paused/ended/seeking/status and requests/play events, source hashes and failure partials under fresh paths",
+  "limits": [
+    "Intercepted speech oracle isolates frontend clock; existing actual SpeechService browser tests remain separate",
+    "Headless timing reflects this host, not physical AV latency",
+    "No experiment wall-clock deadline; fixed RAF rounds and test.setTimeout(0)"
+  ],
+  "stop_prefetch_samples": 60,
+  "controlled_stale_event_note": "In browser stop trial explicitly dispatch one queued play event after release; labelled injected, not natural incidence"
 }

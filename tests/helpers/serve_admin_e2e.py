@@ -26,7 +26,11 @@ if os.getenv('AVATAR_E2E_LLM_PROVIDER'):
     config.llm.api_key = 'local-eval-only'
     config.llm.model = evidence.get('model_id', 'qwen3-4b-q4_k_m')
 else:
-    _, provider_url = provider_context.enter_context(controlled_provider(delay=0.02))
+    playback_overrides = None
+    if os.getenv('AVATAR_E2E_PLAYBACK_AUDIT') == '1':
+        playback_overrides = {'fixture-playback-audit':
+            (root / 'evals/interaction/cycle-08/final-three-segments.txt').read_text().strip()}
+    _, provider_url = provider_context.enter_context(controlled_provider(delay=0.02, reply_overrides=playback_overrides))
     config.llm.api_key = 'local-browser-fixture'
     config.llm.model = 'fixture'
 config.llm.base_url = provider_url

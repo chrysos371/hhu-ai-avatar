@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 @contextmanager
-def controlled_provider(delay=0.04):
+def controlled_provider(delay=0.04, reply_overrides=None):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
             pass
@@ -29,6 +29,11 @@ def controlled_provider(delay=0.04):
                     if data.get('response_format') else '第一句已经生成。第二句继续说明。第三句完成交付。')
             if not data.get('response_format') and 'fixture-long' in data['messages'][-1]['content']:
                 text = (Path(__file__).resolve().parents[3] / 'evals/interaction/long-reply-v1.txt').read_text()
+            if not data.get('response_format'):
+                for trigger, reply in (reply_overrides or {}).items():
+                    if trigger in data['messages'][-1]['content']:
+                        text = reply
+                        break
             pieces = [text[i:i+4] for i in range(0, len(text), 4)]
             if not data.get('stream'):
                 time.sleep(delay * len(pieces))
