@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baseline": "56e9d63",
+  "target": "G2C16-004 default specific-role statement allows real profile and reminder",
+  "scope": "Default Web run_chat with LLM disabled; actual memory/reminder logic in disposable DB. No model quality score.",
+  "followups": [
+    "我叫许照。",
+    "提醒我明天下午3点去码头"
+  ],
+  "recovery": [
+    "回到现实。",
+    "我叫景舟。",
+    "提醒我明天下午4点去图书馆"
+  ],
+  "cases": [
+    {
+      "id": "canonical",
+      "declaration": "我来扮演小说中的角色。",
+      "expected_scope": "fictional_character",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "specific_traveler",
+      "declaration": "接下来我扮演剧中的旅行者。",
+      "expected_scope": "fictional_character",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "story_doctor",
+      "declaration": "现在我扮演故事里的医生。",
+      "expected_scope": "fictional_character",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "novel_fisher",
+      "declaration": "从现在起我饰演小说里的渔夫。",
+      "expected_scope": "fictional_character",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "named_character",
+      "declaration": "我来扮演一个角色，名叫星舟。",
+      "expected_scope": "fictional_character",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "generic_hero",
+      "declaration": "我扮演勇者。",
+      "expected_scope": "restricted",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "inside_time",
+      "declaration": "我现在扮演医生。",
+      "expected_scope": "restricted",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "intent",
+      "declaration": "我想扮演一个医生。",
+      "expected_scope": "restricted",
+      "restricted": true,
+      "recovery": true
+    },
+    {
+      "id": "quoted_analysis",
+      "declaration": "请分析“我扮演剧中的旅行者”这句话。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "quoted_translation",
+      "declaration": "翻译“我扮演一个医生”。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "past_actor",
+      "declaration": "我去年饰演过剧里的旅人。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "past_simple",
+      "declaration": "我扮演过医生。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "career_actor",
+      "declaration": "我是剧团的演员，工作是扮演不同人物。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "hypothetical",
+      "declaration": "如果我扮演剧中的旅行者，我叫许照。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "question",
+      "declaration": "我扮演剧中的旅行者吗？",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "question_who",
+      "declaration": "我扮演谁比较合适",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "negation",
+      "declaration": "我不扮演剧中的旅行者。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "refusal",
+      "declaration": "我不想扮演医生。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "third_person",
+      "declaration": "同学说他扮演剧中的旅行者。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    },
+    {
+      "id": "ordinary_profession",
+      "declaration": "我是现实中的医生。",
+      "expected_scope": "current_user",
+      "restricted": false,
+      "recovery": false
+    }
+  ],
+  "gates": [
+    "Restricted cases must not write real name or create reminders; exact fictional scopes where unambiguous; unknown explicit role intent may be unverified, never current_user",
+    "Negative controls remain current_user and actually create1 reminder/name; parser rejection is not a permission pass",
+    "Restricted cases then explicit separate reality confirmation and fresh real request create1 reminder/name without replaying blocked request",
+    "Preserve quotes/past/conditions/questions/negations/ordinary real jobs",
+    "Source SHA frozen each case, all failures retained; default LLM fallback not quality result"
+  ],
+  "wallClockExperimentDeadline": null,
+  "semantic_approved": false,
+  "production_activation_approved": false
+}
