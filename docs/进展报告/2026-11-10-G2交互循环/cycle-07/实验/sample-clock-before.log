@@ -1,0 +1,210 @@
+.F.F....F.F.F.FFFFFFF....F                                               [100%]
+=================================== FAILURES ===================================
+_____________ test_frame_start_tracks_integer_pcm_offset[10-11025] _____________
+
+sr = 11025, hop = 10
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 49.25 <= 1e-06
+E        +  where 49.25 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eab0bf530>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+_____________ test_frame_start_tracks_integer_pcm_offset[10-22050] _____________
+
+sr = 22050, hop = 10
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 98.5 <= 1e-06
+E        +  where 98.5 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae30ba0>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[7.5-11025] _____________
+
+sr = 11025, hop = 7.5
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 182.1875 <= 1e-06
+E        +  where 182.1875 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae30a50>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[7.5-22050] _____________
+
+sr = 22050, hop = 7.5
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 98.625 <= 1e-06
+E        +  where 98.625 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae31150>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[7.5-44100] _____________
+
+sr = 44100, hop = 7.5
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 197.25 <= 1e-06
+E        +  where 197.25 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae31620>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-8000] _____________
+
+sr = 8000, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 64.40000000000146 <= 1e-06
+E        +  where 64.40000000000146 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae31af0>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-11025] ____________
+
+sr = 11025, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 97.80750000000262 <= 1e-06
+E        +  where 97.80750000000262 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae31fc0>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-16000] ____________
+
+sr = 16000, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 128.8000000000029 <= 1e-06
+E        +  where 128.8000000000029 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae32490>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-22050] ____________
+
+sr = 22050, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 34.400000000001455 <= 1e-06
+E        +  where 34.400000000001455 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae325e0>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-24000] ____________
+
+sr = 24000, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 32.0 <= 1e-06
+E        +  where 32.0 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae31c40>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-44100] ____________
+
+sr = 44100, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 68.80000000000291 <= 1e-06
+E        +  where 68.80000000000291 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae318c0>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+____________ test_frame_start_tracks_integer_pcm_offset[12.3-48000] ____________
+
+sr = 48000, hop = 12.3
+
+    @pytest.mark.parametrize('sr',SPEC['sample_rates'])
+    @pytest.mark.parametrize('hop',SPEC['hop_ms'])
+    def test_frame_start_tracks_integer_pcm_offset(sr,hop):
+        frames=LipSyncEngine(hop_ms=hop).analyze(np.zeros(sr*2,dtype=np.float32),sr)
+        sample_hop=int(sr*hop/1000)
+>       assert max(abs(frame.time*sr-index*sample_hop) for index,frame in enumerate(frames))<=1e-6
+E       assert 64.0 <= 1e-06
+E        +  where 64.0 = max(<generator object test_frame_start_tracks_integer_pcm_offset.<locals>.<genexpr> at 0x7f7eaae31150>)
+
+tests/test_lipsync_sample_clock.py:21: AssertionError
+_______ test_actual_avatar_local_wave_tts_uses_sample_accurate_timeline ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-157/test_actual_avatar_local_wave_0')
+
+    def test_actual_avatar_local_wave_tts_uses_sample_accurate_timeline(tmp_path):
+        class Offline:available=False
+        class LocalWave:
+            def synthesize(self,text,path,rate,pitch):
+                sr=22050
+                samples=.1*np.sin(2*np.pi*300*np.arange(sr*2)/sr)
+                with wave.open(path,'wb') as target:
+                    target.setparams((1,2,sr,0,'NONE','not compressed'))
+                    target.writeframes((samples*32767).astype('<i2').tobytes())
+                return path
+        memory=MemoryStore(':memory:')
+        bot=Avatar(memory=memory,llm=Offline(),tts=LocalWave())
+        try:
+            result=bot.respond('读一段测试。',use_tts=True,tts_path=str(tmp_path/'clock.wav'))
+            assert result['lipsync_error'] is None
+            frames=result['lip_sync_frames'];assert frames
+>           assert max(abs(row['time']*22050-index*220) for index,row in enumerate(frames))<=1e-6
+E           assert 98.5 <= 1e-06
+E            +  where 98.5 = max(<generator object test_actual_avatar_local_wave_tts_uses_sample_accurate_timeline.<locals>.<genexpr> at 0x7f7eaae30b30>)
+
+tests/test_lipsync_sample_clock.py:52: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[10-11025]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[10-22050]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[7.5-11025]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[7.5-22050]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[7.5-44100]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-8000]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-11025]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-16000]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-22050]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-24000]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-44100]
+FAILED tests/test_lipsync_sample_clock.py::test_frame_start_tracks_integer_pcm_offset[12.3-48000]
+FAILED tests/test_lipsync_sample_clock.py::test_actual_avatar_local_wave_tts_uses_sample_accurate_timeline
+13 failed, 13 passed in 1.17s
