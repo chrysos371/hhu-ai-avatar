@@ -30,7 +30,7 @@ const prior=new Set(readdirSync(tempRoot).filter(name=>name.startsWith('admin-e2
 const log=openSync(join(ev,'browser-context-controls-fixture.log'),'wx');
 const fixture=spawn(join(root,'../envs/hhu-ai-avatar/bin/python'),['tests/helpers/serve_admin_e2e.py'],
   {cwd:root,env:{...process.env,AVATAR_E2E_EMPTY_PROFILE:'1'},stdio:['ignore',log,log]});
-report.fixturePid=fixture.pid;const exited=once(fixture,'exit');let browser, page, held, releaseHeld;
+report.fixturePid=fixture.pid;const exited=once(fixture,'exit');let browser, page, held, releaseHeld, routeDone;
 const api=async(path,data)=>{
   const response=await fetch(base+'/api/v1'+path,{method:data===undefined?'GET':'POST',
     headers:{'X-Avatar-Token':token,'Content-Type':'application/json'},...(data===undefined?{}:{body:JSON.stringify(data)})});
@@ -78,8 +78,15 @@ try{
   assert.equal(await page.locator('.chat-message').count(),before);
   record('external-context-event-keeps-local-history-and-draft',{before,after:await page.locator('.chat-message').count()});
   await controls(other,'进入角色','fictional_character');await mode(page,'fictional_character');
-  let observed=false;let release;const gate=new Promise(resolve=>{release=resolve;releaseHeld=resolve;});
-  const intercept=async route=>{observed=true;held=route;await gate;await route.continue();held=null;};
+  let observed=false;let release, finishRoute;
+  const gate=new Promise(resolve=>{release=resolve;releaseHeld=resolve;});
+  routeDone=new Promise(resolve=>{finishRoute=resolve;});
+  const intercept=async route=>{
+    observed=true;held=route;
+    try{await gate;await route.continue();}
+    catch(error){record('route-release-error',{message:String(error)});}
+    finally{held=null;finishRoute();}
+  };
   await page.route('**/api/v1/turns',intercept);
   await page.getByLabel('消息',{exact:true}).fill('我叫角色许照。');
   await page.getByRole('button',{name:'发送消息',exact:true}).click();
@@ -90,7 +97,7 @@ try{
   await mode(page,'current_user');
   // Ordinary source notification must not abort or erase the pending submission.
   assert(held);await expect(page.getByRole('button',{name:'停止生成',exact:true})).toBeVisible();
-  release();await page.unroute('**/api/v1/turns',intercept);await settled(page);
+  release();await routeDone;await page.unroute('**/api/v1/turns',intercept);await settled(page);
   await expect(page.getByLabel('消息',{exact:true})).toHaveValue('我叫角色许照。');
   await expect(page.getByText('语境已变化，请确认当前模式后重新发送。',{exact:true})).toBeVisible();
   const rejected=report.posts.at(-1);const job=await api('/turns/'+rejected.request_id);
@@ -117,7 +124,8 @@ try{
 }catch(error){report.failure=String(error);if(page)await page.screenshot({path:join(ev,'browser-context-controls-failure.png'),fullPage:true}).catch(()=>{});}
 finally{
   releaseHeld?.();
-  if(held)await held.abort().catch(()=>{});if(browser)await browser.close();
+  if(routeDone)await routeDone;
+  if(browser)await browser.close();
   if(fixture.exitCode===null)fixture.kill('SIGTERM');const[code]=await exited;report.fixtureExit=code;closeSync(log);save();
 }
 assert(report.completed,report.failure);assert.equal(report.fixtureExit,0);
