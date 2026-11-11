@@ -85,6 +85,7 @@ it.each([1, 25, 100])('isolates 60 mouth frames from the parent and %i history r
   if (folder) {
     mkdirSync(folder, { recursive: true });
     const paths = ['src/features/chat/useSpeechPlayer.ts', 'src/features/chat/AvatarStage.tsx',
+      'src/features/chat/SpeechAvatarStage.tsx', 'src/features/chat/speechFrames.ts',
       'src/features/chat/FrameRendering.test.tsx', '../evals/interaction/cycle-09/render-protocol.json'];
     writeFileSync(join(folder, `history-${count}.json`), JSON.stringify({
       scope: 'JSDOM/React structural counts with deterministic media/RAF, not CPU or physical timing',
