@@ -26,7 +26,11 @@ def has_pid(raw, pid):
     return any(line.split(',')[0].strip() == str(pid) for line in raw.splitlines())
 
 
-def main(output, provider_python):
+def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None):
+    if stage == 'prospective':
+        if candidate_freeze is None: raise ValueError('Prospective runs require --candidate-freeze')
+        from evaluate_body_review_pair import verify_freeze
+        verify_freeze(candidate_freeze)
     output.mkdir(parents=True, exist_ok=False)
     registry_path = ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
     registry = json.loads(registry_path.read_text())
@@ -35,11 +39,19 @@ def main(output, provider_python):
              'scripts/serve_local_model_eval.py', 'scripts/evaluate_native_output_audit.py',
              str(Path(__file__).resolve().relative_to(ROOT)),
              'evals/interaction/cycle-15/native-output-protocol.json']
+    if stage == 'prospective':
+        paths += ['src/avatar/lab/body_review.py', 'src/avatar/lab/body_review_avatar.py',
+                  'src/avatar/brain/tasks.py', 'scripts/evaluate_body_review_pair.py',
+                  'evals/interaction/cycle-15/prospective-paired-protocol.json']
     def fingerprint(): return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
     metadata_paths = {'qwen3-4b-q4_k_m': ROOT/'data/g2-cycle-02/gguf-metadata.json',
                       'qwen3-14b-q4_k_m': ROOT/'data/g2-cycle-02/qwen14b-gguf-metadata.json'}
+    specifications = [m for m in registry['models'] if model_key is None or m['model_id'] == model_key]
+    if not specifications: raise ValueError('Unknown model key: '+str(model_key))
     report = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': fingerprint(),
+              'stage': stage, 'requested_models': [m['model_id'] for m in specifications],
+              'candidateFreezeSha256': sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None,
               'models': [], 'completed': False, 'failure': None,
               'scope': 'Sequential pinned real CUDA providers; no other process terminated; one provider at a time'}
     def save():
@@ -54,7 +66,7 @@ def main(output, provider_python):
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = ':'.join([str(p) for p in libraries]+([env['LD_LIBRARY_PATH']] if env.get('LD_LIBRARY_PATH') else []))
     try:
-        for specification in registry['models']:
+        for specification in specifications:
             assert fingerprint() == report['sourceSha256'], 'Sources changed during model audit'
             key = specification['model_id']; folder = output/key; folder.mkdir()
             model_path = ROOT/'models'/key.replace('-q4_k_m', '-gguf')/specification['file']
@@ -80,8 +92,13 @@ def main(output, provider_python):
                     row['provider_ready'] = metadata; save()
                     print(key, 'ready GPU', metadata['chosen_gpu']['index'], 'pid', process.pid, flush=True)
                     with (folder/'sampler.log').open('x') as sampler_log:
-                        result = subprocess.run([sys.executable, str(ROOT/'scripts/evaluate_native_output_audit.py'),
-                            '--provider', str(ready), '--output', str(folder/'sample')], cwd=ROOT,
+                        sampler = 'evaluate_body_review_pair.py' if stage == 'prospective' else 'evaluate_native_output_audit.py'
+                        sampler_command = [sys.executable, str(ROOT/'scripts'/sampler),
+                            '--provider', str(ready), '--output', str(folder/'sample')]
+                        if stage == 'prospective':
+                            sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze)]
+                        row['sampler_command'] = sampler_command; save()
+                        result = subprocess.run(sampler_command, cwd=ROOT,
                             stdout=sampler_log, stderr=subprocess.STDOUT)
                     row['sampler_exit'] = result.returncode; save()
                     if result.returncode: raise RuntimeError(f'{key} sampler failed; retained partial data')
@@ -110,7 +127,12 @@ def main(output, provider_python):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--provider-python', type=Path, required=True); options = parser.parse_args()
+    parser.add_argument('--provider-python', type=Path, required=True)
+    parser.add_argument('--stage', choices=['development', 'prospective'], default='development')
+    parser.add_argument('--model-key', choices=['qwen3-4b-q4_k_m', 'qwen3-14b-q4_k_m'])
+    parser.add_argument('--candidate-freeze', type=Path)
+    options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.
     # Make it absolute while preserving the requested venv entry point.
-    main(options.output.resolve(), options.provider_python.expanduser().absolute())
+    main(options.output.resolve(), options.provider_python.expanduser().absolute(),
+         options.stage, options.model_key, options.candidate_freeze)
