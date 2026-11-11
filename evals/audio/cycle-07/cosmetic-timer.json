@@ -1,0 +1,11 @@
+{
+  "version":1,
+  "baseline_revision":"db62c71",
+  "scope":"Explicit cosmetic closure timer only, default remains disabled; synthetic steady source, no naturalness claim",
+  "cases":[{"sample_rate":22050,"period_seconds":0.3,"duration_seconds":4},{"sample_rate":16000,"period_seconds":0.035,"duration_seconds":2}],
+  "source":"Cycle05 a-anchor periodic source, f0=100Hz, RMS0.12, seed11",
+  "expected":"For every absolute target k*period inside frame-start span, nearest real sample-clock frame; deduplicate, do not close frame0; modify only where unscheduled mouth>0.3",
+  "gates":{"exact_scheduled_frame_indices":true,"bounded_error_half_hop":true,"no_unbounded_period_array":true,"tiny_period_uses_at_most_one_event_per_frame":true},
+  "reason":"Quantizing period once then repeating quantized interval can accumulate phase error even after frame timestamps are sample accurate",
+  "no_global_wall_clock_cutoff":true
+}
