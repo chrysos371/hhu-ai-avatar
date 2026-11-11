@@ -1,0 +1,98 @@
+{
+  "head": "248d5367d3f4f66e3b2432939f442e8a96598e86",
+  "createdUtc": "2026-11-11T16:19:01.050587+00:00",
+  "sourceSha256": {
+    "src/avatar/main.py": "aebd48c74182f7edb0d3e7c07b42ef277e20d1d8e8da02b698a9be8d402545c0",
+    "src/avatar/web.py": "ac2f70a236552c936f6e8dff217aede748fba28a3c58ba996fb3a91b83d2bc96",
+    "src/avatar/web_api.py": "9ebc37e1f318a1ef35192fb9e2a929b296fb5e6310d3243a51a0db3d2bc2c58e",
+    "src/avatar/brain/memory.py": "f2537c14a10f4909f1969067b806b84043218d6682264131378c4adc09f51f01",
+    "src/avatar/brain/boundaries.py": "ee67dcb2fc177dac7e83552fae3b1ce21912b622418af8b09d857a05dbde44ef",
+    "scripts/serve_local_model_eval.py": "8aa6e3685b7070145851012c6bec7e6450dddc8642d3eac01b9c259a65e2f011",
+    "scripts/evaluate_native_output_audit.py": "fd3c90e5664d050188ce44734a88d7f64896dee1b95277f2ba20f15f2d8f20a0",
+    "scripts/run_native_output_models.py": "b1caf17725f4d0f852096dd5b4b2269c3fb7daf82bbe5761e0c12c3db83d3590",
+    "evals/interaction/cycle-15/native-output-protocol.json": "be818b30ff9e03d02f48e0d9471e345b5924224d8863c624476defe569e6584e",
+    "evals/interaction/cycle-19/capability-output-protocol.json": "232194ff20d2bb787fcfd9cc46ef7d4cebd4979227f4131e8d4b32e2ac11d8de"
+  },
+  "stage": "development",
+  "candidate": "v1",
+  "requested_models": [
+    "qwen3-14b-q4_k_m"
+  ],
+  "candidateFreezeSha256": null,
+  "models": [
+    {
+      "model_id": "qwen3-14b-q4_k_m",
+      "provider_command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+        "--model",
+        "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-14b-gguf/Qwen3-14B-Q4_K_M.gguf",
+        "--model-key",
+        "qwen3-14b-q4_k_m",
+        "--metadata",
+        "/data/Users/zrh/repo/hhu-ai-avatar/data/g2-cycle-02/qwen14b-gguf-metadata.json",
+        "--ready",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-19/实验/development-14b/qwen3-14b-q4_k_m/provider-ready.json",
+        "--trace",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-19/实验/development-14b/qwen3-14b-q4_k_m/provider-trace.jsonl"
+      ],
+      "provider_pid": 2823483,
+      "gpu_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 39690, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 25280, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 39690, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 5436, 38\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 4976, 42\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 5512, 32\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 5052, 36\n",
+      "processes_before": "2820776, GPU-81550800-367d-1855-0f35-c61c274edfdf, 742\n2775741, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 15152\n2820777, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 742\n2711870, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 34996\n2711870, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 35456\n2770382, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 34920\n2770382, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 35380\n",
+      "provider_ready": {
+        "url": "http://127.0.0.1:34257/v1",
+        "model_sha256": "500a8806e85ee9c83f3ae08420295592451379b4f8cf2d0f41c15dffeb6b81f0",
+        "model_revision": "530227a7d994db8eca5ab5ced2fb692b614357fd",
+        "model_id": "qwen3-14b-q4_k_m",
+        "registry_sha256": "9ab8575f5019ff2bb27fff51786af1c06f51353e9d2721fb2e9972dd9bd0ea87",
+        "gguf_general_name": "Qwen3 14B Awq Compatible Instruct",
+        "template_sha256": "57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361",
+        "gpu_snapshot_before": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 39690, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 25280, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 39690, 7\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 5436, 99\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 4976, 1\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 5512, 38\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 5052, 39\n",
+        "chosen_gpu": {
+          "index": 2,
+          "uuid": "GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e",
+          "free_mib": 40441,
+          "utilization_percent": 0
+        },
+        "requested_visible_devices": null,
+        "resource_selector_sha256": "e3d241073b19a42b67af9cd73ebb452ead8b78560c45be7849ea6be92cdeeb9d",
+        "configuration": {
+          "n_gpu_layers": -1,
+          "n_ctx": 8192,
+          "n_batch_prompt_tokens": 256,
+          "concurrent_sequences": 1,
+          "temperature": 0,
+          "seed": 42,
+          "max_tokens_cap": 512,
+          "thinking": false,
+          "flash_attention": true
+        },
+        "llama_cpp_python": "0.3.19",
+        "load_seconds": 3.135682731983252,
+        "provider_source_sha256": "8aa6e3685b7070145851012c6bec7e6450dddc8642d3eac01b9c259a65e2f011",
+        "process_gpu_mib_after_load": [
+          10012
+        ],
+        "pid": 2823483
+      },
+      "sampler_exit": 0,
+      "provider_exit": 0,
+      "cleanup_passed": true,
+      "sampler_command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/evaluate_native_output_audit.py",
+        "--provider",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-19/实验/development-14b/qwen3-14b-q4_k_m/provider-ready.json",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-19/实验/development-14b/qwen3-14b-q4_k_m/sample",
+        "--protocol",
+        "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-19/capability-output-protocol.json"
+      ],
+      "processes_after": "2820776, GPU-81550800-367d-1855-0f35-c61c274edfdf, 742\n2775741, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 15152\n2820777, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 742\n2711870, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 34996\n2711870, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 35456\n2770382, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 34920\n2770382, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 35380\n",
+      "gpu_after": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 39690, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 25280, 0\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 79\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 39690, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 5436, 28\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 4976, 78\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 5512, 30\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 5052, 32\n"
+    }
+  ],
+  "completed": true,
+  "failure": null,
+  "scope": "Sequential pinned real CUDA providers; no other process terminated; one provider at a time"
+}
