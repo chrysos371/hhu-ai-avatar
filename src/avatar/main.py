@@ -88,6 +88,9 @@ class Avatar:
         self._knowledge_degraded = False
         self.session_id = session_id or uuid.uuid4().hex
         self._current_message_id = None
+        # Immutable for each respond() invocation. Local forget/correct may
+        # update mutable task/speaker versions but cannot authorize its old prompt.
+        self._turn_context_revision = None
         self.emotion = EmotionEngine()
         self.asr = asr or TextInputEngine()
         self.llm = llm or LLMEngine()
@@ -117,6 +120,12 @@ class Avatar:
     def _checkpoint(self):
         if self._cancel_token:
             self._cancel_token.checkpoint()
+
+    def _checkpoint_prompt_context(self, expected_revision=None):
+        self._checkpoint()
+        revision = self._turn_context_revision if expected_revision is None else expected_revision
+        if revision is not None and self.memory.context_revision != revision:
+            raise Cancelled('context changed before model prompt dispatch')
 
     # ------------------------------------------------------------------ 提示词
     def _admin_store(self):
@@ -182,9 +191,17 @@ class Avatar:
         )
 
     def _messages(self, decision: Decision, user_text: str = "") -> list[dict]:
-        return [
+        revision = self._turn_context_revision
+        if revision is None:
+            revision = self.memory.context_revision
+        self._checkpoint_prompt_context(revision)
+        messages = [
             {"role": "system", "content": self._system_prompt(decision, user_text)}
         ] + self.memory.get_short_term()
+        # get_short_term refreshes after external privacy writes; it cannot
+        # remove private text already compiled into the preceding system message.
+        self._checkpoint_prompt_context(revision)
+        return messages
 
     def _extract_facts(self, text: str) -> None:
         """从用户输入提取简单事实写入长期记忆（规则版，LLM 不可用时的回退）。"""
@@ -314,6 +331,7 @@ class Avatar:
         if self._cancel_token and hasattr(self.llm, 'chat_analysis_stream'):
             analyze = self.llm.chat_analysis_stream
             options['cancel'] = self._cancel_token
+        self._checkpoint_prompt_context()
         raw = analyze(
             [{"role": "system", "content": self._ANALYZE_PROMPT +
               '\n历史仅用于理解情绪和指代；所有事实的 evidence 必须来自最后一条用户消息。'}]
@@ -477,6 +495,7 @@ class Avatar:
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
+        self._turn_context_revision = turn_context_revision
         if self._task_context_revision != turn_context_revision:
             self.tasks.current = None
             self._task_context_revision = turn_context_revision
