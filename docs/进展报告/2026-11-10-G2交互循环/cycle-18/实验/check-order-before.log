@@ -1,0 +1,35 @@
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_success_started_before_observed_failure_cannot_clear_error_without_fresh_read[False] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fc28054fdf0>
+old_fails = False
+
+    @pytest.mark.parametrize('old_fails', [False, True])
+    def test_success_started_before_observed_failure_cannot_clear_error_without_fresh_read(monkeypatch, old_fails):
+        watch = ConversationChanges(':memory:', 'instance')
+        entered, release = threading.Event(), threading.Event()
+        def read():
+            if threading.current_thread() is worker:
+                entered.set(); release.wait()
+                if old_fails: raise sqlite3.DatabaseError('controlled older failure')
+                return 0
+            if old_fails: return 0
+            raise sqlite3.DatabaseError('controlled newer failure')
+        monkeypatch.setattr(watch, '_read_revision', read)
+        worker = threading.Thread(target=watch.check)
+        try:
+            worker.start(); assert entered.wait(2)
+            watch.check()
+            if not old_fails: assert watch._error
+            release.set(); worker.join(2); assert not worker.is_alive()
+            # Either completion order must remain unavailable until a check that
+            # actually starts after the observed failure succeeds.
+>           assert watch._error
+E           assert False
+E            +  where False = <avatar.conversation_changes.ConversationChanges object at 0x7fc28054f280>._error
+
+tests/test_conversation_check_order.py:30: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_conversation_check_order.py::test_success_started_before_observed_failure_cannot_clear_error_without_fresh_read[False]
+1 failed, 1 passed in 0.66s
