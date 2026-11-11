@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type SetStat
 import { ApiError, apiRequest } from '../../lib/api';
 import { subscribeConversationPrivacy, type ChatRow, type ConversationSnapshot } from '../../lib/conversation';
 import type { ChatResult } from '../../lib/types';
+import { watchConversationChanges } from '../../lib/conversationWatch';
 
 type Version = Pick<ConversationSnapshot, 'instance_id' | 'revision'>;
 type View = { rows: ChatRow[]; ready: boolean; loading: boolean; error: Error | null;
@@ -12,6 +13,7 @@ export function useChatHistory({ isBusy, onInvalidate }: { isBusy: () => boolean
   const current = useRef(view);
   useLayoutEffect(() => { current.current = view; }, [view]);
   const version = useRef<Version | null>(null);
+  const syncAvailable = useRef(true);
   const request = useRef<AbortController | null>(null), generation = useRef(0), epoch = useRef(0), mounted = useRef(false);
   const setRows = useCallback((update: SetStateAction<ChatRow[]>) => {
     setView(old => ({ ...old, rows: typeof update === 'function' ? update(old.rows) : update }));
@@ -22,7 +24,7 @@ export function useChatHistory({ isBusy, onInvalidate }: { isBusy: () => boolean
     setView(old => ({ ...old, rows: [], ready: false, hasMore: false, before: null, error: null }));
   }, [onInvalidate]);
   const load = useCallback(async function load(older = false): Promise<void> {
-    if (!mounted.current) return;
+    if (!mounted.current || !syncAvailable.current) return;
     const cursor = current.current;
     if (older && (!cursor.hasMore || cursor.before === null || !version.current)) return;
     const ticket = ++generation.current;
@@ -32,7 +34,7 @@ export function useChatHistory({ isBusy, onInvalidate }: { isBusy: () => boolean
     if (older) { query.set('before_id', String(cursor.before)); query.set('revision', String(version.current!.revision)); }
     try {
       const data = await apiRequest<ConversationSnapshot>('/conversation?' + query, { signal: controller.signal });
-      if (!mounted.current || ticket !== generation.current) return;
+      if (!mounted.current || ticket !== generation.current || !syncAvailable.current) return;
       const prior = version.current;
       if (prior && prior.instance_id === data.instance_id && data.revision < prior.revision) return;
       const changed = prior !== null && (prior.instance_id !== data.instance_id || prior.revision !== data.revision);
@@ -76,8 +78,38 @@ export function useChatHistory({ isBusy, onInvalidate }: { isBusy: () => boolean
       unsubscribe(); window.removeEventListener('focus', focus); document.removeEventListener('visibilitychange', visible);
     };
   }, [clearForPrivacy, load]);
+  const watchInstance = view.version?.instance_id;
+  useEffect(() => {
+    if (!watchInstance || !version.current) return;
+    const controller = new AbortController();
+    let recovering = false;
+    void watchConversationChanges(version.current, controller.signal, {
+      onVersion: value => {
+        if (!mounted.current || controller.signal.aborted) return;
+        const prior = version.current;
+        if (prior?.instance_id === value.instance_id && value.revision < prior.revision) return;
+        const changed = prior?.instance_id !== value.instance_id || prior.revision !== value.revision;
+        syncAvailable.current = true;
+        if (changed || recovering) {
+          if (!recovering) clearForPrivacy();
+          version.current = value; recovering = false;
+          void load();
+        }
+      },
+      onUnavailable: error => {
+        if (!mounted.current || controller.signal.aborted) return;
+        syncAvailable.current = false;
+        if (!recovering) { recovering = true; clearForPrivacy(); }
+        const terminal = error instanceof ApiError && (error.status === 401 || error.status === 403);
+        setView(old => ({ ...old, loading: false, error: new Error(terminal
+          ? '版本同步鉴权失败，已暂停旧内容；请使用启动链接重新打开。' + error.message
+          : '版本同步暂不可用，已暂停旧内容；正在重新连接。' + error.message) }));
+      },
+    });
+    return () => controller.abort();
+  }, [watchInstance, clearForPrivacy, load]);
   const isCurrent = useCallback((submittedEpoch: number, result?: ChatResult) => {
-    if (!mounted.current || submittedEpoch !== epoch.current) return false;
+    if (!mounted.current || !syncAvailable.current || submittedEpoch !== epoch.current) return false;
     const revision = result?.conversation?.revision, known = version.current;
     if (known && revision !== undefined && revision !== known.revision) {
       if (revision > known.revision) { clearForPrivacy(); void load(); }

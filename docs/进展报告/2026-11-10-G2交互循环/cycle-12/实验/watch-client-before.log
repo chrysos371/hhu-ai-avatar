@@ -1,0 +1,65 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/lib/conversationWatch.test.ts src/features/chat/ChatWatch.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/features/chat/ChatWatch.test.tsx (4 tests | 2 failed) 85ms
+   ✓ clears on an external version and rejects callbacks from the previous submission epoch 48ms
+   × keeps stale content paused on focus and manual refresh until metadata reconnects 21ms
+     → expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <p>
+  private-old
+</p> instead
+   × reports terminal authorization honestly and aborts its held connection on unmount 8ms
+     → expect(element).not.toHaveTextContent()
+
+Expected element not to have text content:
+  正在重新连接
+Received:
+  版本同步暂不可用，已暂停旧内容；正在重新连接。token rejected
+   ✓ aborts a pending watch on unmount and ignores a late response even if fetch ignores abort 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/ChatWatch.test.tsx > keeps stale content paused on focus and manual refresh until metadata reconnects
+Error: expect(element).not.toBeInTheDocument()
+
+expected document not to contain element, found <p>
+  private-old
+</p> instead
+ ❯ src/features/chat/ChatWatch.test.tsx:42:49
+     40|   act(() => window.dispatchEvent(new Event('focus'))); fireEvent.click…
+     41|   await act(async () => {});
+     42|   expect(screen.queryByText('private-old')).not.toBeInTheDocument(); e…
+       |                                                 ^
+     43|   expect(current.isCurrent(epoch)).toBe(false);
+     44|   await waitFor(() => expect(held).toHaveLength(2)); snapshotText = 'v…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/chat/ChatWatch.test.tsx > reports terminal authorization honestly and aborts its held connection on unmount
+Error: expect(element).not.toHaveTextContent()
+
+Expected element not to have text content:
+  正在重新连接
+Received:
+  版本同步暂不可用，已暂停旧内容；正在重新连接。token rejected
+ ❯ src/features/chat/ChatWatch.test.tsx:52:50
+     50|   const view = render(<Harness />); await ready();
+     51|   await act(async () => held[0].resolve(response(null, 403)));
+     52|   expect(screen.getByText(/token rejected/)).not.toHaveTextContent('正在…
+       |                                                  ^
+     53|   expect(current.ready).toBe(false); view.unmount(); expect(held[0].si…
+     54| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  18:37:11
+   Duration  1.30s (transform 132ms, setup 144ms, collect 109ms, tests 85ms, environment 374ms, prepare 79ms)
+

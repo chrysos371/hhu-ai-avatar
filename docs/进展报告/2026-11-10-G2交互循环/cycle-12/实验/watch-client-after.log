@@ -1,0 +1,50 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/lib/conversationWatch.test.tsx src/features/chat/ChatWatch.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/lib/conversationWatch.test.tsx (12 tests | 1 failed) 36ms
+   × holds exactly one authenticated metadata request and advances its cursor without transcript reads 19ms
+     → expected 1 to be +0 // Object.is equality
+   ✓ backs off with the frozen cap, reports one outage, and resets after a successful heartbeat 6ms
+   ✓ times out a stalled request at 15 seconds and aborts its retry timer on unmount 1ms
+   ✓ stops retries for terminal authorization status 401 1ms
+   ✓ stops retries for terminal authorization status 403 1ms
+   ✓ fails closed for invalid or regressing metadata 0 1ms
+   ✓ fails closed for invalid or regressing metadata 1 1ms
+   ✓ fails closed for invalid or regressing metadata 2 1ms
+   ✓ fails closed for invalid or regressing metadata 3 1ms
+   ✓ fails closed for invalid or regressing metadata 4 1ms
+   ✓ fails closed for invalid or regressing metadata 5 1ms
+   ✓ accepts revision zero in a different server namespace 1ms
+ ✓ src/features/chat/ChatWatch.test.tsx (4 tests) 343ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/conversationWatch.test.tsx > holds exactly one authenticated metadata request and advances its cursor without transcript reads
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/lib/conversationWatch.test.tsx:29:30
+     27|   controller.abort(); release(response(initial)); await running;
+     28|   expect(signal.aborted).toBe(true); expect(onVersion).toHaveBeenCalle…
+     29|   expect(vi.getTimerCount()).toBe(0);
+       |                              ^
+     30| });
+     31| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 15 passed (16)
+   Start at  18:37:36
+   Duration  1.55s (transform 168ms, setup 292ms, collect 170ms, tests 379ms, environment 730ms, prepare 163ms)
+

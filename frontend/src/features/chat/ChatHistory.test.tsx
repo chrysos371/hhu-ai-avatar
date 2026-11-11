@@ -1,3 +1,5 @@
+// Snapshot/turn ordering is isolated here; transport has dedicated and Chromium tests.
+vi.mock('../../lib/conversationWatch', () => ({ watchConversationChanges: vi.fn(async () => {}) }));
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useCallback, useRef } from 'react';
 import { notifyConversationPrivacyChanged, type ConversationItem, type ConversationSnapshot } from '../../lib/conversation';
