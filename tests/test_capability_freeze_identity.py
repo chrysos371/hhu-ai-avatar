@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import subprocess
 
 import pytest
 
@@ -105,3 +106,29 @@ def test_supervisor_handoff_pins_expected_descriptor_sha():
         print('FREEZE_HANDOFF_OBSERVATION ' + json.dumps({'expected_sha_in_command': expected,
               'context_sha': context['freeze_sha256'], 'actual_sha': actual, 'model_launched': False}))
         assert expected == context['freeze_sha256'] == actual
+
+
+@pytest.mark.parametrize('entry', ['runner', 'sampler'])
+def test_real_child_entry_rejects_parent_sha_before_output_or_model(tmp_path, entry):
+    freeze = tmp_path / 'freeze.json'
+    descriptor = frozen(freeze)
+    original = sha256(freeze.read_bytes()).hexdigest()
+    descriptor['scope'] = 'Changed between parent and child'
+    freeze.write_text(json.dumps(descriptor))
+    output = tmp_path / 'must-not-exist'
+    command = [sys.executable, str(ROOT / 'scripts' / ('run_native_output_models.py' if entry == 'runner'
+                                                      else 'evaluate_capability_pair.py')),
+               '--candidate-freeze', str(freeze), '--protocol', str(PROTOCOL), '--pair-protocol', str(PAIR),
+               '--partition', 'development', '--output', str(output), '--expected-freeze-sha256', original]
+    if entry == 'runner':
+        command += ['--provider-python', sys.executable, '--stage', 'capability_pair',
+                    '--candidate', 'source_capability_v4', '--backend', 'cuda', '--model-key', 'qwen3-4b-q4_k_m']
+    else:
+        command += ['--provider', str(tmp_path / 'nonexistent-provider.json'),
+                    '--trace', str(tmp_path / 'unused-trace'), '--candidate', CANDIDATE]
+    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+    print('FREEZE_CHILD_OBSERVATION ' + json.dumps({'entry': entry, 'returncode': result.returncode,
+          'identity_rejected': 'Frozen descriptor identity changed' in result.stderr,
+          'output_exists': output.exists(), 'model_started': False}))
+    assert result.returncode != 0 and 'Frozen descriptor identity changed' in result.stderr
+    assert not output.exists()

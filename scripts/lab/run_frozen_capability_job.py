@@ -70,7 +70,8 @@ def prepare(spec):
         if not path.is_relative_to(ROOT): raise ValueError('Experiment path outside project')
         return path
     freeze, protocol, pair, output = (local(name) for name in ('candidate_freeze', 'protocol', 'pair_protocol', 'output'))
-    frozen = verify_freeze(freeze, spec['partition'], choices[spec['candidate']])
+    frozen_sha = digest(freeze)
+    frozen = verify_freeze(freeze, spec['partition'], choices[spec['candidate']], expected_sha256=frozen_sha)
     data = json.loads(protocol.read_text()); validate_backend(frozen, data, spec['backend'])
     for path in (protocol, pair):
         if str(path.relative_to(ROOT)) not in frozen['sha256']: raise ValueError('Selected protocol not frozen')
@@ -87,8 +88,9 @@ def prepare(spec):
     command = [sys.executable, str(ROOT/'scripts/run_native_output_models.py'), '--provider-python', str(provider),
         '--stage', 'capability_pair', '--backend', spec['backend'], '--candidate', spec['candidate'],
         '--partition', spec['partition'], '--model-key', spec['model_key'], '--candidate-freeze', str(freeze),
-        '--protocol', str(protocol), '--pair-protocol', str(pair), '--output', str(output)]
-    context = {'freeze': str(freeze.relative_to(ROOT)), 'freeze_sha256': digest(freeze),
+        '--protocol', str(protocol), '--pair-protocol', str(pair), '--output', str(output),
+        '--expected-freeze-sha256', frozen_sha]
+    context = {'freeze': str(freeze.relative_to(ROOT)), 'freeze_sha256': frozen_sha,
         'frozen_inputs': len(frozen['sha256']), 'protocol_sha256': digest(protocol), 'pair_protocol_sha256': digest(pair),
         'backend': spec['backend'], 'model_key': spec['model_key'], 'partition': spec['partition'],
         'output': str(output.relative_to(ROOT)), 'whole_experiment_deadline': None, 'selection': spec}

@@ -66,8 +66,11 @@ def required_sources(candidate=CANDIDATE):
     return sources
 
 
-def verify_freeze(path, partition, candidate=CANDIDATE):
-    frozen = json.loads(path.read_text())
+def verify_freeze(path, partition, candidate=CANDIDATE, *, expected_sha256=None):
+    raw = path.read_bytes()
+    if expected_sha256 is not None and sha256(raw).hexdigest() != expected_sha256:
+        raise ValueError('Frozen descriptor identity changed')
+    frozen = json.loads(raw)
     if (partition not in ('development', 'prospective')
             or candidate not in CANDIDATES or frozen.get('candidate') != candidate
             or frozen.get('execution_authorized') is not True
@@ -222,8 +225,10 @@ def execution_settings(protocol, provider):
 
 
 def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partition, output,
-             candidate=CANDIDATE):
-    frozen = verify_freeze(freeze_path, partition, candidate)
+             candidate=CANDIDATE, *, expected_freeze_sha256=None):
+    frozen_sha = (sha256(freeze_path.read_bytes()).hexdigest() if expected_freeze_sha256 is None
+                  else expected_freeze_sha256)
+    frozen = verify_freeze(freeze_path, partition, candidate, expected_sha256=frozen_sha)
     for path in (protocol_path, pair_path, Path(__file__).resolve()):
         if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']: raise ValueError('Input not frozen: '+str(path))
     protocol = json.loads(protocol_path.read_text()); pair = json.loads(pair_path.read_text())
@@ -247,7 +252,7 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
         'provider_backend': backend, 'http_timeout_seconds': request_timeout,
         'application_transport_timeout_seconds': engine_timeout if engine_timeout is not None else 30,
         'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': frozen['sha256'],
-        'candidateFreezeSha256': sha256(freeze_path.read_bytes()).hexdigest(),
+        'candidateFreezeSha256': frozen_sha,
         'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         'scope': 'Actual serial HTTP/SSE prompt-only pairs with fresh disposable DB per arm; agent span review separate, no semantic or physical release approval',
         'execution_complete': False, 'engineering_passed': False, 'failure': None,
@@ -267,12 +272,12 @@ def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partit
         finally: engine.close()
         for index, case in enumerate(cases):
             for arm in pair['arm_orders']['even' if index % 2 == 0 else 'odd']:
-                verify_freeze(freeze_path, partition, candidate)
+                verify_freeze(freeze_path, partition, candidate, expected_sha256=frozen_sha)
                 row = collect_arm(case, arm, opener, trace, candidate, request_timeout, engine_timeout)
                 report['cases'].append(row); save()
                 if not row['completed']: raise ValueError(row['error'])
                 print(case['id'], arm, len(row['turns']), flush=True)
-        verify_freeze(freeze_path, partition, candidate)
+        verify_freeze(freeze_path, partition, candidate, expected_sha256=frozen_sha)
         assert len(report['cases']) == len(cases)*2
         report['generation_modes'] = dict(Counter(turn['result']['generation_mode'] for row in report['cases'] for turn in row['turns']))
         report['execution_complete'] = report['engineering_passed'] = True
@@ -287,6 +292,8 @@ if __name__ == '__main__':
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--partition', choices=['development', 'prospective'], required=True)
     parser.add_argument('--candidate', choices=sorted(CANDIDATES), default=CANDIDATE)
+    parser.add_argument('--expected-freeze-sha256')
     args = parser.parse_args()
     if not evaluate(args.provider, args.trace, args.candidate_freeze, args.protocol, args.pair_protocol,
-                    args.partition, args.output.resolve(), args.candidate)['engineering_passed']: raise SystemExit(1)
+                    args.partition, args.output.resolve(), args.candidate,
+                    expected_freeze_sha256=args.expected_freeze_sha256)['engineering_passed']: raise SystemExit(1)

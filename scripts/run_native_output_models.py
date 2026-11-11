@@ -27,9 +27,13 @@ def has_pid(raw, pid):
 
 
 def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None,
-         protocol=None, pair_protocol=None, candidate='v1', partition='development', backend='cuda'):
+         protocol=None, pair_protocol=None, candidate='v1', partition='development', backend='cuda',
+         expected_freeze_sha256=None):
     if backend not in ('cuda', 'cpu_explicit') or backend != 'cuda' and stage != 'capability_pair':
         raise ValueError('Explicit CPU requires separately registered capability pairs')
+    if expected_freeze_sha256 is not None and stage != 'capability_pair':
+        raise ValueError('Expected freeze identity currently applies to capability pairs only')
+    frozen_sha = None
     if stage == 'capability_pair':
         if candidate_freeze is None or protocol is None or pair_protocol is None:
             raise ValueError('Capability pairs require source freeze and both explicit protocols')
@@ -39,7 +43,11 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         if candidate not in CLI_CANDIDATES:
             raise ValueError('Select a registered capability candidate')
         candidate_id = CLI_CANDIDATES[candidate]
-        frozen = verify_freeze(candidate_freeze, partition, candidate_id)
+        frozen_sha = (sha256(candidate_freeze.read_bytes()).hexdigest() if expected_freeze_sha256 is None
+                      else expected_freeze_sha256)
+        def verify_capability_inputs():
+            return verify_freeze(candidate_freeze, partition, candidate_id, expected_sha256=frozen_sha)
+        frozen = verify_capability_inputs()
     elif candidate in ('source_capability_v2', 'source_capability_v3', 'source_capability_v4'):
         raise ValueError('Source capability candidates require capability_pair stage')
     if stage == 'capability_pair':
@@ -85,7 +93,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     report = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': fingerprint(),
               'stage': stage, 'candidate': candidate, 'backend': backend, 'requested_models': [m['model_id'] for m in specifications],
-              'candidateFreezeSha256': sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None,
+              'candidateFreezeSha256': (frozen_sha if stage == 'capability_pair' else
+                                       sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None),
               'models': [], 'completed': False, 'failure': None,
               'scope': 'Sequential pinned explicitly selected providers; no other process terminated; one provider at a time'}
     def save():
@@ -101,6 +110,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     env['LD_LIBRARY_PATH'] = ':'.join([str(p) for p in libraries]+([env['LD_LIBRARY_PATH']] if env.get('LD_LIBRARY_PATH') else []))
     try:
         for specification in specifications:
+            if stage == 'capability_pair': verify_capability_inputs()
             assert fingerprint() == report['sourceSha256'], 'Sources changed during model audit'
             key = specification['model_id']; folder = output/key; folder.mkdir()
             model_path = ROOT/'models'/key.replace('-q4_k_m', '-gguf')/specification['file']
@@ -114,6 +124,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             report['models'].append(row); save(); process = None
             with (folder/'provider.log').open('x') as provider_log:
                 try:
+                    if stage == 'capability_pair': verify_capability_inputs()
                     process = subprocess.Popen(command, cwd=ROOT, env=env, stdout=provider_log, stderr=subprocess.STDOUT)
                     row['provider_pid'] = process.pid; save()
                     while True:
@@ -137,7 +148,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                         if stage == 'capability_pair':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze),
                                 '--protocol', str(protocol), '--pair-protocol', str(pair_protocol), '--partition', partition,
-                                '--candidate', candidate_id]
+                                '--candidate', candidate_id, '--expected-freeze-sha256', frozen_sha]
                         if stage == 'prospective':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze), '--candidate', candidate]
                             if protocol is not None: sampler_command += ['--protocol', str(protocol)]
@@ -162,6 +173,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                         save()
             if not row['cleanup_passed']: raise RuntimeError(f'{key} owned resource cleanup did not pass')
             assert fingerprint() == report['sourceSha256'], 'Sources changed after model audit'
+            if stage == 'capability_pair': verify_capability_inputs()
             print(key, 'sample complete, provider exit', row['provider_exit'], 'GPU pid absent', flush=True)
         report['completed'] = True
     except Exception as error:
@@ -181,9 +193,10 @@ if __name__ == '__main__':
     parser.add_argument('--pair-protocol', type=Path)
     parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2', 'source_capability_v3', 'source_capability_v4'], default='v1')
     parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
+    parser.add_argument('--expected-freeze-sha256')
     options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.
     # Make it absolute while preserving the requested venv entry point.
     main(options.output.resolve(), options.provider_python.expanduser().absolute(),
          options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate,
-         options.partition, options.backend)
+         options.partition, options.backend, expected_freeze_sha256=options.expected_freeze_sha256)
