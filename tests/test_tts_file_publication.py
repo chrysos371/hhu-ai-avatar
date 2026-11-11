@@ -1,5 +1,7 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+import threading
 
 import pytest
 
@@ -68,3 +70,30 @@ def test_pre_cancel_preserves_output_without_starting_component(tmp_path, monkey
         EdgeTTSEngine().synthesize_cancellable('受控文本', str(target), cancel=token)
     assert set(tmp_path.iterdir()) == ({target} if existing else set())
     if existing: assert target.read_bytes() == OLD
+
+
+def test_late_cancelled_save_cannot_damage_another_calls_successful_output(tmp_path, monkeypatch):
+    target = tmp_path/'output.mp3'; started = threading.Event(); published = threading.Event()
+    token = CancellationToken()
+    class Communicate:
+        def __init__(self, text, *args, **kwargs): self.text = text
+        async def save(self, path):
+            if self.text == 'good':
+                Path(path).write_bytes(NEW); return
+            started.set()
+            assert await asyncio.to_thread(published.wait, 2)
+            Path(path).write_bytes(PARTIAL)
+            token.cancel(); await asyncio.sleep(.001)
+    monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+    engine = EdgeTTSEngine()
+    def cancelled_save():
+        with pytest.raises(Cancelled): engine.synthesize_cancellable('bad', str(target), cancel=token)
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(cancelled_save)
+        try:
+            assert started.wait(2)
+            assert engine.synthesize('good', str(target)) == str(target)
+            assert target.read_bytes() == NEW
+        finally: published.set()
+        future.result(timeout=3)
+    assert target.read_bytes() == NEW and set(tmp_path.iterdir()) == {target}
