@@ -1,0 +1,28 @@
+{
+  "candidate": "lab_source_capability_v3",
+  "date": "2026-11-12",
+  "production_activation_approved": false,
+  "semantic_approved": false,
+  "prospective_execution_authorized": false,
+  "development_protocol": "evals/interaction/cycle-22/capability-output-protocol.json",
+  "pair_protocol": "evals/interaction/cycle-22/paired-capability-protocol.json",
+  "development_cases": 12,
+  "development_turns_per_arm": 20,
+  "case_array_sha256": "4c251e9911992f52ab074a1d86cdbf6bfdbf0b6fa30ddf7566c736b2952c0d29",
+  "hypotheses": [
+    "Replace enumerated SMS/email/phone-only framing with general externally-accounted communication execution boundary; no unsupported sending offers even in draft follow-up.",
+    "Read at most20 newest live-source, current-revision, current-session local SQL receipt metadata in the same source snapshot; distinguish actual local historical actions from ordinary generated text and external notification delivery.",
+    "Preserve quoted/draft/user-reported subjects, protected literals and role controls without output rewriting."
+  ],
+  "implementation_constraints": [
+    "New lab-only subclass; production factory unchanged; previous v2 prompt and data not rewritten.",
+    "No extra model/tool calls or new SQL writes; metadata contains no message text, reminder title, name or contact.",
+    "Current-source checks and original cancellation stay; receipts are a bounded historical window, not proof of current reminder status or no prior action."
+  ],
+  "development_gate": [
+    "Both4B and14B complete engineering/raw-visible-final-stored/source/side-effect checks.",
+    "Complete agent source-span review must find no unsupported assistant execution claim, commitment or offer, no protected draft/subject regression, no false local action state or unconditional delivery claim.",
+    "Any violated conjunction rejects that candidate; no prospective run, production enable or semantic approval. Independent human gold still unavailable."
+  ],
+  "resource_policy": "One owned CUDA provider at a time, same-group at most4 free GPUs; admission actual headroom/UUID/visibility before load; fixed inputs/tokens and existing early-stop, no whole experiment wall deadline."
+}

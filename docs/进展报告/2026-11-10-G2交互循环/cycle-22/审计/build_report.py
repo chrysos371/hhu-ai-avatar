@@ -5,6 +5,7 @@ from html import escape
 import json
 from pathlib import Path
 import re
+import subprocess
 
 HERE = Path(__file__).resolve().parent
 BASE = HERE.parent
@@ -78,6 +79,25 @@ def seal():
             target.write_bytes((ROOT / name).read_bytes())
         canonical[name] = digest(target)
     (HERE / '收尾核验/规范文档哈希.json').write_text(json.dumps(canonical, ensure_ascii=False, indent=2) + '\n')
+    inputs = {}
+    for name, ref in [
+        ('evals/interaction/cycle-22/source-capability-candidate-v3.json', '9d9229f'),
+        ('evals/interaction/cycle-22/capability-output-protocol.json', '9d9229f'),
+        ('evals/interaction/cycle-22/paired-capability-protocol.json', '9d9229f'),
+        ('evals/interaction/cycle-22/candidate-development-freeze-v3.json', '025503e'),
+        ('evals/interaction/cycle-22/candidate-development-freeze-v3-retirement.json', '08214fb'),
+        ('evals/interaction/cycle-02/model-scale-protocol.json', '9d9229f'),
+    ]:
+        value = subprocess.check_output(['git', 'show', ref + ':' + name], cwd=ROOT)
+        assert value == (ROOT / name).read_bytes()
+        target = HERE / '收尾核验/冻结输入副本' / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if target.exists():
+            assert target.read_bytes() == value
+        else:
+            target.write_bytes(value)
+        inputs[name] = {'git_ref': ref, 'sha256': digest(target)}
+    (HERE / '收尾核验/冻结输入来源.json').write_text(json.dumps(inputs, ensure_ascii=False, indent=2) + '\n')
     manifest = {path.relative_to(BASE).as_posix(): digest(path) for path in sorted(BASE.rglob('*'))
                 if path.is_file() and path not in set(live) | {HERE / '证据清单.json'}}
     (HERE / '证据清单.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
