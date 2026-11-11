@@ -1,0 +1,69 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/SpeechRouteCleanup.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar-cycle21-integration/frontend
+
+stderr | src/features/chat/SpeechRouteCleanup.test.tsx > keeps the owned audio during an ordinary rerender of the same chat
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /data/Users/zrh/repo/hhu-ai-avatar-cycle21-integration/frontend/src/features/chat/useSpeechPlayer.ts:71:47
+    at Object.react_stack_bottom_frame (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:23965:13)
+    at runWithFiberInDEV (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+    at commitHookEffectListUnmount (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:11996:17)
+    at commitHookPassiveUnmountEffects (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:12043:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:14269:13)
+    at recursivelyTraversePassiveUnmountEffects (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:14167:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.load
+    at module.exports (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.load (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:112:5)
+    at HTMLAudioElement.load (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:109:34)
+    at /data/Users/zrh/repo/hhu-ai-avatar-cycle21-integration/frontend/src/features/chat/useSpeechPlayer.ts:71:92
+    at Object.react_stack_bottom_frame (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:23965:13)
+    at runWithFiberInDEV (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+    at commitHookEffectListUnmount (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:11996:17)
+    at commitHookPassiveUnmountEffects (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:12043:11)
+    at commitPassiveUnmountEffectsInsideOfDeletedTree_begin (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:14269:13)
+    at recursivelyTraversePassiveUnmountEffects (/data/Users/zrh/repo/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:14167:13) undefined
+
+ ❯ src/features/chat/SpeechRouteCleanup.test.tsx (2 tests | 1 failed) 58ms
+   × releases the detached audio before the destination layout observes its committed route 44ms
+     → expected [ { paused: false, src: true } ] to deeply equal [ { paused: true, src: false } ]
+   ✓ keeps the owned audio during an ordinary rerender of the same chat 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/SpeechRouteCleanup.test.tsx > releases the detached audio before the destination layout observes its committed route
+AssertionError: expected [ { paused: false, src: true } ] to deeply equal [ { paused: true, src: false } ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "paused": true,
+-     "src": false,
++     "paused": false,
++     "src": true,
+    },
+  ]
+
+ ❯ src/features/chat/SpeechRouteCleanup.test.tsx:25:24
+     23|   }
+     24|   view.rerender(<Destination/>);
+     25|   expect(observations).toEqual([{paused:true,src:false}]);
+       |                        ^
+     26|   expect(audio.isConnected).toBe(false);
+     27| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  05:51:47
+   Duration  1.34s (transform 144ms, setup 149ms, collect 125ms, tests 58ms, environment 381ms, prepare 75ms)
+
