@@ -1,0 +1,56 @@
+{
+  "command": [
+    "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+    "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/scripts/run_native_output_models.py",
+    "--provider-python",
+    "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+    "--stage",
+    "capability_pair",
+    "--backend",
+    "cuda",
+    "--candidate",
+    "source_capability_v4",
+    "--partition",
+    "development",
+    "--model-key",
+    "qwen3-14b-q4_k_m",
+    "--candidate-freeze",
+    "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/evals/interaction/cycle-23/candidate-development-freeze-v4.json",
+    "--protocol",
+    "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/evals/interaction/cycle-23/capability-output-protocol.json",
+    "--pair-protocol",
+    "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/evals/interaction/cycle-23/paired-capability-protocol.json",
+    "--output",
+    "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research/docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/paired-cuda-development-14b"
+  ],
+  "cwd": "/data/Users/zrh/repo/hhu-ai-avatar-cycle23-research",
+  "context": {
+    "freeze": "evals/interaction/cycle-23/candidate-development-freeze-v4.json",
+    "freeze_sha256": "b767dae54d5273d25bc4185867adc5693770cc8c964a83353caca8f044529aa1",
+    "frozen_inputs": 235,
+    "protocol_sha256": "439407ec62db876f8690939c5eacc259cf2398d387ce1d8be91728e7a1d93cfe",
+    "pair_protocol_sha256": "9716a5c294e4665e1588cac06efc06df9771cd643379547a0e9e86efd55e8978",
+    "backend": "cuda",
+    "model_key": "qwen3-14b-q4_k_m",
+    "partition": "development",
+    "output": "docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/paired-cuda-development-14b",
+    "whole_experiment_deadline": null,
+    "selection": {
+      "candidate": "source_capability_v4",
+      "candidate_freeze": "evals/interaction/cycle-23/candidate-development-freeze-v4.json",
+      "protocol": "evals/interaction/cycle-23/capability-output-protocol.json",
+      "pair_protocol": "evals/interaction/cycle-23/paired-capability-protocol.json",
+      "output": "docs/进展报告/2026-11-10-G2交互循环/cycle-23/实验/paired-cuda-development-14b",
+      "backend": "cuda",
+      "partition": "development",
+      "model_key": "qwen3-14b-q4_k_m",
+      "provider_python": "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+    }
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "4",
+    "OPENBLAS_NUM_THREADS": "4"
+  },
+  "controller_sha256": "b43099156fae1a9cc9077b9881508b3f5f37933d2a12c88ac0fb81e3dab16c8f",
+  "created_utc": "2026-11-11T23:41:43.557338+00:00"
+}
