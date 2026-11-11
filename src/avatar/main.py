@@ -46,6 +46,15 @@ def _clamp(x: float, lo: float = -1.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, x))
 
 
+def _accepts_keyword(function, name):
+    try:
+        parameter = inspect.signature(function).parameters.get(name)
+    except (TypeError, ValueError):
+        return False
+    return parameter is not None and parameter.kind in (
+        inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY)
+
+
 class Avatar:
     """带记忆与情感的 AI 虚拟形象。"""
 
@@ -646,12 +655,7 @@ class Avatar:
             checkpoint_context()
             run = self.web_agent.run
             engine = self.llm if self._llm_available else None
-            try:
-                parameter = inspect.signature(run).parameters.get('checkpoint')
-            except (TypeError, ValueError):
-                parameter = None
-            if parameter is not None and parameter.kind in (
-                    inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
+            if _accepts_keyword(run, 'checkpoint'):
                 web_result = run(user_text, engine, checkpoint=checkpoint_context)
             else:
                 # Preserve the two-argument API of injected custom agents. Their
@@ -791,24 +795,35 @@ class Avatar:
             self.memory.add_short_term("assistant", reply)
             assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)
+        checkpoint_context()
         # 6. TTS（可选）
         audio_path = None
         lip_sync_frames = None
         lipsync_error = None
         if use_tts:
-            audio_path = self.tts.synthesize(
-                reply, tts_path, decision.speech_rate, decision.speech_pitch
-            )
+            synthesize = self.tts.synthesize
+            options = {}
+            cancellable = getattr(self.tts, 'synthesize_cancellable', None)
+            if cancel is not None and callable(cancellable) and _accepts_keyword(cancellable, 'cancel'):
+                synthesize = cancellable
+                options['cancel'] = cancel
+            checkpoint_context()
+            audio_path = synthesize(reply, tts_path, decision.speech_rate, decision.speech_pitch, **options)
+            checkpoint_context()
             try:
                 samples, sample_rate = load_audio(audio_path)
+                checkpoint_context()
                 lip_sync_frames = [
                     {'time': frame.time, 'mouth_open': frame.mouth_open,
                      'vowel': frame.vowel, 'energy': frame.energy}
                     for frame in self.lipsync.analyze(samples, sample_rate)
                 ]
+            except Cancelled:
+                raise
             except Exception as exc:
                 logger.warning('口型分析失败：%s', type(exc).__name__)
                 lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
+            checkpoint_context()
         result = {
             "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
                              "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
@@ -863,6 +878,7 @@ class Avatar:
             result['response_review'] = self._response_review
         if control is not None:
             result['speaker_control'] = control.data()
+        checkpoint_context()
         return result
 
     def respond_audio(
