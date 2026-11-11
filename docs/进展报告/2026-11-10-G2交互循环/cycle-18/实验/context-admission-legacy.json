@@ -1,0 +1,829 @@
+{
+  "git_head": "b22b766622e64475e1d968d5a0ad13eb0a63074d",
+  "source_sha256": {
+    "src/avatar/main.py": "9598eeb40c4ece3a4d302b7c021117e238996dba46eab5ffd9fd089a055dd1c3",
+    "src/avatar/web.py": "4d96117671622e2a8bc52e05a6890e8b72fc0b80b960ad5b0f86846ada49fe7b",
+    "src/avatar/turns.py": "be1ba41afc82fd2a1a5540f37d704865bd3e03c5b38f51c3cedf49fe01b5739d",
+    "src/avatar/brain/speaker_context.py": "feaffdbbb930630e7794374699174b0ccc15f7823dd1bb8d2ede3b6979f6fb6b",
+    "src/avatar/brain/memory.py": "f2537c14a10f4909f1969067b806b84043218d6682264131378c4adc09f51f01",
+    "scripts/lab/audit_context_admission.py": "e3652205eff99978455a58e6c60cab2b91b0307ed70364213b5df2ee906f0fbe",
+    "evals/interaction/cycle-18/context-admission-protocol.json": "40f7957135a2157dd3a4182478c7bc2f93b13e6eb79a59482f471ae281709e46"
+  },
+  "mode": "legacy",
+  "cases": [
+    {
+      "mode": "legacy",
+      "text": "我叫许照。",
+      "calls": [
+        {
+          "server": "A",
+          "path": "/chat",
+          "request": {
+            "text": "我来扮演一个虚构角色。"
+          },
+          "status": 200,
+          "response": {
+            "data": {
+              "conversation": {
+                "session_id": "ba86431686f232136d77eda1de0f971d",
+                "revision": 0,
+                "user_message_id": 1,
+                "assistant_message_id": 2
+              },
+              "knowledge_sources": [],
+              "knowledge_retrieval_degraded": false,
+              "task": null,
+              "delivery_check": {
+                "initial_issues": [],
+                "remaining_issues": [],
+                "repair_attempted": false,
+                "repair_succeeded": false,
+                "repair_mode": null,
+                "repair_error": null,
+                "literal_composition_enabled": false,
+                "literal_plan_version": null,
+                "draft_generation_mode": "rules_unconfigured",
+                "stream_buffered": false
+              },
+              "boundary": {
+                "route": "normal",
+                "guarded": false,
+                "output_adjustment": null
+              },
+              "speaker_attribution": {
+                "scope": "fictional_character",
+                "persistent_facts_allowed": false,
+                "turn_tools_allowed": false,
+                "version": 1,
+                "general_coreference_verified": false
+              },
+              "speaker_tool_blocked": false,
+              "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演一个虚构角色。」吧？",
+              "emotion": "中性",
+              "valence": 0.0,
+              "arousal": 0.0,
+              "style": "自然随和",
+              "speech_rate": "+0%",
+              "speech_pitch": "+0Hz",
+              "mouth_intensity": 0.75,
+              "strategy": "answer",
+              "analysis_mode": "rules_fallback",
+              "generation_mode": "rules_unconfigured",
+              "identity_grounding": false,
+              "profile_grounding": {
+                "enabled": false,
+                "action": null,
+                "scope": "profile_lookup_declaration_and_copied_preference",
+                "version": 2,
+                "semantic_verifier": false,
+                "stream_buffered": false
+              },
+              "user_emotion": "中性",
+              "user_valence": 0.0,
+              "user_arousal": 0.0,
+              "audio_path": null,
+              "lip_sync_frames": null,
+              "lipsync_error": null,
+              "energy": 0.525,
+              "recalled_ids": [],
+              "reminder": null,
+              "reminder_error": null,
+              "due_reminders": [],
+              "conversation_summary": {
+                "session_id": "ba86431686f232136d77eda1de0f971d",
+                "kind": "source_excerpts",
+                "items": [],
+                "characters": 2,
+                "max_characters": 1600
+              },
+              "sources": [],
+              "tool_calls": [],
+              "web_error": null,
+              "trace": {
+                "recalled_memories": [],
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "decision": {
+                  "strategy": "answer",
+                  "style": "自然随和",
+                  "user_emotion": "中性",
+                  "emotion": "中性",
+                  "user_valence": 0.0,
+                  "user_arousal": 0.0,
+                  "valence": 0.0,
+                  "arousal": 0.0,
+                  "analysis_mode": "rules_fallback",
+                  "generation_mode": "rules_unconfigured",
+                  "identity_grounding": false,
+                  "profile_grounding": {
+                    "enabled": false,
+                    "action": null,
+                    "scope": "profile_lookup_declaration_and_copied_preference",
+                    "version": 2,
+                    "semantic_verifier": false,
+                    "stream_buffered": false
+                  }
+                },
+                "guard": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "verifier": {
+                  "available": false,
+                  "reason": "未配置通用语义验证器",
+                  "delivery_check": {
+                    "initial_issues": [],
+                    "remaining_issues": [],
+                    "repair_attempted": false,
+                    "repair_succeeded": false,
+                    "repair_mode": null,
+                    "repair_error": null,
+                    "literal_composition_enabled": false,
+                    "literal_plan_version": null,
+                    "draft_generation_mode": "rules_unconfigured",
+                    "stream_buffered": false
+                  }
+                },
+                "tool_calls": []
+              }
+            },
+            "error": null,
+            "request_id": "81a302d1f7a88298ca5022c2"
+          }
+        },
+        {
+          "server": "A",
+          "path": "/conversation/speaker",
+          "request": null,
+          "status": 200,
+          "response": {
+            "data": {
+              "instance_id": "ba86431686f232136d77eda1de0f971d",
+              "revision": 0,
+              "context_cursor": 1,
+              "scope": "fictional_character",
+              "profile_writes_for_new_turn": false,
+              "real_actions_for_new_turn": false,
+              "general_coreference_verified": false,
+              "version": 1
+            },
+            "error": null,
+            "request_id": "f3b5500f225344fda037301a"
+          }
+        },
+        {
+          "server": "A",
+          "path": "/turns",
+          "request": {
+            "request_id": "admission_interleaving_123456789",
+            "text": "我叫许照。",
+            "use_web": false
+          },
+          "status": 202,
+          "response": {
+            "data": {
+              "job_id": "admission_interleaving_123456789",
+              "status": "running",
+              "created_at": 1794412031.0689826,
+              "result": null
+            },
+            "error": null,
+            "request_id": "112eb7a6cf2e91c342a12e61"
+          }
+        },
+        {
+          "server": "B",
+          "path": "/chat",
+          "request": {
+            "text": "回到现实。"
+          },
+          "status": 200,
+          "response": {
+            "data": {
+              "conversation": {
+                "session_id": "d138a467c8b1ba0c75b58e7e165a7212",
+                "revision": 0,
+                "user_message_id": 3,
+                "assistant_message_id": 4
+              },
+              "knowledge_sources": [],
+              "knowledge_retrieval_degraded": false,
+              "task": null,
+              "delivery_check": {
+                "initial_issues": [],
+                "remaining_issues": [],
+                "repair_attempted": false,
+                "repair_succeeded": false,
+                "repair_mode": null,
+                "repair_error": null,
+                "literal_composition_enabled": false,
+                "literal_plan_version": null,
+                "draft_generation_mode": "rules_unconfigured",
+                "stream_buffered": false
+              },
+              "boundary": {
+                "route": "normal",
+                "guarded": false,
+                "output_adjustment": null
+              },
+              "speaker_attribution": {
+                "scope": "current_user",
+                "persistent_facts_allowed": true,
+                "turn_tools_allowed": false,
+                "version": 1,
+                "general_coreference_verified": false
+              },
+              "speaker_tool_blocked": false,
+              "reply": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+              "emotion": "中性",
+              "valence": 0.0,
+              "arousal": 0.0,
+              "style": "自然随和",
+              "speech_rate": "+0%",
+              "speech_pitch": "+0Hz",
+              "mouth_intensity": 0.75,
+              "strategy": "answer",
+              "analysis_mode": "rules_fallback",
+              "generation_mode": "rules_unconfigured",
+              "identity_grounding": false,
+              "profile_grounding": {
+                "enabled": false,
+                "action": null,
+                "scope": "profile_lookup_declaration_and_copied_preference",
+                "version": 2,
+                "semantic_verifier": false,
+                "stream_buffered": false
+              },
+              "user_emotion": "中性",
+              "user_valence": 0.0,
+              "user_arousal": 0.0,
+              "audio_path": null,
+              "lip_sync_frames": null,
+              "lipsync_error": null,
+              "energy": 0.525,
+              "recalled_ids": [],
+              "reminder": null,
+              "reminder_error": null,
+              "due_reminders": [],
+              "conversation_summary": {
+                "session_id": "d138a467c8b1ba0c75b58e7e165a7212",
+                "kind": "source_excerpts",
+                "items": [],
+                "characters": 2,
+                "max_characters": 1600
+              },
+              "sources": [],
+              "tool_calls": [],
+              "web_error": null,
+              "trace": {
+                "recalled_memories": [],
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "decision": {
+                  "strategy": "answer",
+                  "style": "自然随和",
+                  "user_emotion": "中性",
+                  "emotion": "中性",
+                  "user_valence": 0.0,
+                  "user_arousal": 0.0,
+                  "valence": 0.0,
+                  "arousal": 0.0,
+                  "analysis_mode": "rules_fallback",
+                  "generation_mode": "rules_unconfigured",
+                  "identity_grounding": false,
+                  "profile_grounding": {
+                    "enabled": false,
+                    "action": null,
+                    "scope": "profile_lookup_declaration_and_copied_preference",
+                    "version": 2,
+                    "semantic_verifier": false,
+                    "stream_buffered": false
+                  }
+                },
+                "guard": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "verifier": {
+                  "available": false,
+                  "reason": "未配置通用语义验证器",
+                  "delivery_check": {
+                    "initial_issues": [],
+                    "remaining_issues": [],
+                    "repair_attempted": false,
+                    "repair_succeeded": false,
+                    "repair_mode": null,
+                    "repair_error": null,
+                    "literal_composition_enabled": false,
+                    "literal_plan_version": null,
+                    "draft_generation_mode": "rules_unconfigured",
+                    "stream_buffered": false
+                  }
+                },
+                "tool_calls": []
+              }
+            },
+            "error": null,
+            "request_id": "3048d98444da95e1ed9c5b60"
+          }
+        },
+        {
+          "server": "A",
+          "path": "/conversation/speaker",
+          "request": null,
+          "status": 200,
+          "response": {
+            "data": {
+              "instance_id": "ba86431686f232136d77eda1de0f971d",
+              "revision": 0,
+              "context_cursor": 3,
+              "scope": "current_user",
+              "profile_writes_for_new_turn": true,
+              "real_actions_for_new_turn": true,
+              "general_coreference_verified": false,
+              "version": 1
+            },
+            "error": null,
+            "request_id": "8828298c4f2a7cd047fad353"
+          }
+        }
+      ],
+      "terminal": {
+        "status": "completed",
+        "events": [
+          "id: 0\nevent: status\ndata: {\"status\": \"queued\"}\n\nid: 1\nevent: status\ndata: {\"status\": \"running\"}\n\nid: 2\nevent: result\ndata: {\"conversation\": {\"session_id\": \"ba86431686f232136d77eda1de0f971d\", \"revision\": 0, \"user_message_id\": 5, \"assistant_message_id\": 6}, \"knowledge_sources\": [], \"knowledge_retrieval_degraded\": false, \"task\": null, \"delivery_check\": {\"initial_issues\": [], \"remaining_issues\": [], \"repair_attempted\": false, \"repair_succeeded\": false, \"repair_mode\": null, \"repair_error\": null, \"literal_composition_enabled\": false, \"literal_plan_version\": null, \"draft_generation_mode\": \"rules_unconfigured\", \"stream_buffered\": false}, \"boundary\": {\"route\": \"normal\", \"guarded\": false, \"output_adjustment\": null}, \"speaker_attribution\": {\"scope\": \"current_user\", \"persistent_facts_allowed\": true, \"turn_tools_allowed\": true, \"version\": 1, \"general_coreference_verified\": false}, \"speaker_tool_blocked\": false, \"reply\": \"（demo 模式）我现在感觉中性，你刚才说的是「我叫许照。」吧？\", \"emotion\": \"中性\", \"valence\": 0.0, \"arousal\": 0.0, \"style\": \"自然随和\", \"speech_rate\": \"+0%\", \"speech_pitch\": \"+0Hz\", \"mouth_intensity\": 0.75, \"strategy\": \"answer\", \"analysis_mode\": \"rules_fallback\", \"generation_mode\": \"rules_unconfigured\", \"identity_grounding\": false, \"profile_grounding\": {\"enabled\": false, \"action\": null, \"scope\": \"profile_lookup_declaration_and_copied_preference\", \"version\": 2, \"semantic_verifier\": false, \"stream_buffered\": false}, \"user_emotion\": \"中性\", \"user_valence\": 0.0, \"user_arousal\": 0.0, \"audio_path\": null, \"lip_sync_frames\": null, \"lipsync_error\": null, \"energy\": 0.55, \"recalled_ids\": [1], \"reminder\": null, \"reminder_error\": null, \"due_reminders\": [], \"conversation_summary\": {\"session_id\": \"ba86431686f232136d77eda1de0f971d\", \"kind\": \"source_excerpts\", \"items\": [], \"characters\": 2, \"max_characters\": 1600}, \"sources\": [], \"tool_calls\": [], \"web_error\": null, \"trace\": {\"recalled_memories\": [{\"id\": 1, \"content\": \"名字: 许照\", \"status\": \"active\"}], \"knowledge_sources\": [], \"knowledge_retrieval_degraded\": false, \"decision\": {\"strategy\": \"answer\", \"style\": \"自然随和\", \"user_emotion\": \"中性\", \"emotion\": \"中性\", \"user_valence\": 0.0, \"user_arousal\": 0.0, \"valence\": 0.0, \"arousal\": 0.0, \"analysis_mode\": \"rules_fallback\", \"generation_mode\": \"rules_unconfigured\", \"identity_grounding\": false, \"profile_grounding\": {\"enabled\": false, \"action\": null, \"scope\": \"profile_lookup_declaration_and_copied_preference\", \"version\": 2, \"semantic_verifier\": false, \"stream_buffered\": false}}, \"guard\": {\"route\": \"normal\", \"guarded\": false, \"output_adjustment\": null}, \"verifier\": {\"available\": false, \"reason\": \"未配置通用语义验证器\", \"delivery_check\": {\"initial_issues\": [], \"remaining_issues\": [], \"repair_attempted\": false, \"repair_succeeded\": false, \"repair_mode\": null, \"repair_error\": null, \"literal_composition_enabled\": false, \"literal_plan_version\": null, \"draft_generation_mode\": \"rules_unconfigured\", \"stream_buffered\": false}}, \"tool_calls\": []}}\n\n"
+        ]
+      },
+      "db": {
+        "profile": {
+          "名字": "许照"
+        },
+        "messages": [
+          {
+            "id": 1,
+            "role": "user",
+            "content": "我来扮演一个虚构角色。"
+          },
+          {
+            "id": 2,
+            "role": "assistant",
+            "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演一个虚构角色。」吧？"
+          },
+          {
+            "id": 3,
+            "role": "user",
+            "content": "回到现实。"
+          },
+          {
+            "id": 4,
+            "role": "assistant",
+            "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？"
+          },
+          {
+            "id": 5,
+            "role": "user",
+            "content": "我叫许照。"
+          },
+          {
+            "id": 6,
+            "role": "assistant",
+            "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫许照。」吧？"
+          }
+        ],
+        "reminders": []
+      },
+      "short_term": [
+        {
+          "role": "user",
+          "content": "我来扮演一个虚构角色。"
+        },
+        {
+          "role": "assistant",
+          "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演一个虚构角色。」吧？"
+        },
+        {
+          "role": "user",
+          "content": "我叫许照。"
+        },
+        {
+          "role": "assistant",
+          "content": "（demo 模式）我现在感觉中性，你刚才说的是「我叫许照。」吧？"
+        }
+      ],
+      "candidate_pass": false
+    },
+    {
+      "mode": "legacy",
+      "text": "提醒我明天下午3点去码头",
+      "calls": [
+        {
+          "server": "A",
+          "path": "/chat",
+          "request": {
+            "text": "我来扮演一个虚构角色。"
+          },
+          "status": 200,
+          "response": {
+            "data": {
+              "conversation": {
+                "session_id": "6552f71ad2c582cf114881a44d7d9371",
+                "revision": 0,
+                "user_message_id": 1,
+                "assistant_message_id": 2
+              },
+              "knowledge_sources": [],
+              "knowledge_retrieval_degraded": false,
+              "task": null,
+              "delivery_check": {
+                "initial_issues": [],
+                "remaining_issues": [],
+                "repair_attempted": false,
+                "repair_succeeded": false,
+                "repair_mode": null,
+                "repair_error": null,
+                "literal_composition_enabled": false,
+                "literal_plan_version": null,
+                "draft_generation_mode": "rules_unconfigured",
+                "stream_buffered": false
+              },
+              "boundary": {
+                "route": "normal",
+                "guarded": false,
+                "output_adjustment": null
+              },
+              "speaker_attribution": {
+                "scope": "fictional_character",
+                "persistent_facts_allowed": false,
+                "turn_tools_allowed": false,
+                "version": 1,
+                "general_coreference_verified": false
+              },
+              "speaker_tool_blocked": false,
+              "reply": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演一个虚构角色。」吧？",
+              "emotion": "中性",
+              "valence": 0.0,
+              "arousal": 0.0,
+              "style": "自然随和",
+              "speech_rate": "+0%",
+              "speech_pitch": "+0Hz",
+              "mouth_intensity": 0.75,
+              "strategy": "answer",
+              "analysis_mode": "rules_fallback",
+              "generation_mode": "rules_unconfigured",
+              "identity_grounding": false,
+              "profile_grounding": {
+                "enabled": false,
+                "action": null,
+                "scope": "profile_lookup_declaration_and_copied_preference",
+                "version": 2,
+                "semantic_verifier": false,
+                "stream_buffered": false
+              },
+              "user_emotion": "中性",
+              "user_valence": 0.0,
+              "user_arousal": 0.0,
+              "audio_path": null,
+              "lip_sync_frames": null,
+              "lipsync_error": null,
+              "energy": 0.525,
+              "recalled_ids": [],
+              "reminder": null,
+              "reminder_error": null,
+              "due_reminders": [],
+              "conversation_summary": {
+                "session_id": "6552f71ad2c582cf114881a44d7d9371",
+                "kind": "source_excerpts",
+                "items": [],
+                "characters": 2,
+                "max_characters": 1600
+              },
+              "sources": [],
+              "tool_calls": [],
+              "web_error": null,
+              "trace": {
+                "recalled_memories": [],
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "decision": {
+                  "strategy": "answer",
+                  "style": "自然随和",
+                  "user_emotion": "中性",
+                  "emotion": "中性",
+                  "user_valence": 0.0,
+                  "user_arousal": 0.0,
+                  "valence": 0.0,
+                  "arousal": 0.0,
+                  "analysis_mode": "rules_fallback",
+                  "generation_mode": "rules_unconfigured",
+                  "identity_grounding": false,
+                  "profile_grounding": {
+                    "enabled": false,
+                    "action": null,
+                    "scope": "profile_lookup_declaration_and_copied_preference",
+                    "version": 2,
+                    "semantic_verifier": false,
+                    "stream_buffered": false
+                  }
+                },
+                "guard": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "verifier": {
+                  "available": false,
+                  "reason": "未配置通用语义验证器",
+                  "delivery_check": {
+                    "initial_issues": [],
+                    "remaining_issues": [],
+                    "repair_attempted": false,
+                    "repair_succeeded": false,
+                    "repair_mode": null,
+                    "repair_error": null,
+                    "literal_composition_enabled": false,
+                    "literal_plan_version": null,
+                    "draft_generation_mode": "rules_unconfigured",
+                    "stream_buffered": false
+                  }
+                },
+                "tool_calls": []
+              }
+            },
+            "error": null,
+            "request_id": "2f675ffee37f679b6e558dd4"
+          }
+        },
+        {
+          "server": "A",
+          "path": "/conversation/speaker",
+          "request": null,
+          "status": 200,
+          "response": {
+            "data": {
+              "instance_id": "6552f71ad2c582cf114881a44d7d9371",
+              "revision": 0,
+              "context_cursor": 1,
+              "scope": "fictional_character",
+              "profile_writes_for_new_turn": false,
+              "real_actions_for_new_turn": false,
+              "general_coreference_verified": false,
+              "version": 1
+            },
+            "error": null,
+            "request_id": "774098d72555479c382b528e"
+          }
+        },
+        {
+          "server": "A",
+          "path": "/turns",
+          "request": {
+            "request_id": "admission_interleaving_123456789",
+            "text": "提醒我明天下午3点去码头",
+            "use_web": false
+          },
+          "status": 202,
+          "response": {
+            "data": {
+              "job_id": "admission_interleaving_123456789",
+              "status": "running",
+              "created_at": 1794412032.1119206,
+              "result": null
+            },
+            "error": null,
+            "request_id": "451aaa5badeff48cfc686e1f"
+          }
+        },
+        {
+          "server": "B",
+          "path": "/chat",
+          "request": {
+            "text": "回到现实。"
+          },
+          "status": 200,
+          "response": {
+            "data": {
+              "conversation": {
+                "session_id": "873f5b25b0efd6ea5a1b126cb3698853",
+                "revision": 0,
+                "user_message_id": 3,
+                "assistant_message_id": 4
+              },
+              "knowledge_sources": [],
+              "knowledge_retrieval_degraded": false,
+              "task": null,
+              "delivery_check": {
+                "initial_issues": [],
+                "remaining_issues": [],
+                "repair_attempted": false,
+                "repair_succeeded": false,
+                "repair_mode": null,
+                "repair_error": null,
+                "literal_composition_enabled": false,
+                "literal_plan_version": null,
+                "draft_generation_mode": "rules_unconfigured",
+                "stream_buffered": false
+              },
+              "boundary": {
+                "route": "normal",
+                "guarded": false,
+                "output_adjustment": null
+              },
+              "speaker_attribution": {
+                "scope": "current_user",
+                "persistent_facts_allowed": true,
+                "turn_tools_allowed": false,
+                "version": 1,
+                "general_coreference_verified": false
+              },
+              "speaker_tool_blocked": false,
+              "reply": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？",
+              "emotion": "中性",
+              "valence": 0.0,
+              "arousal": 0.0,
+              "style": "自然随和",
+              "speech_rate": "+0%",
+              "speech_pitch": "+0Hz",
+              "mouth_intensity": 0.75,
+              "strategy": "answer",
+              "analysis_mode": "rules_fallback",
+              "generation_mode": "rules_unconfigured",
+              "identity_grounding": false,
+              "profile_grounding": {
+                "enabled": false,
+                "action": null,
+                "scope": "profile_lookup_declaration_and_copied_preference",
+                "version": 2,
+                "semantic_verifier": false,
+                "stream_buffered": false
+              },
+              "user_emotion": "中性",
+              "user_valence": 0.0,
+              "user_arousal": 0.0,
+              "audio_path": null,
+              "lip_sync_frames": null,
+              "lipsync_error": null,
+              "energy": 0.525,
+              "recalled_ids": [],
+              "reminder": null,
+              "reminder_error": null,
+              "due_reminders": [],
+              "conversation_summary": {
+                "session_id": "873f5b25b0efd6ea5a1b126cb3698853",
+                "kind": "source_excerpts",
+                "items": [],
+                "characters": 2,
+                "max_characters": 1600
+              },
+              "sources": [],
+              "tool_calls": [],
+              "web_error": null,
+              "trace": {
+                "recalled_memories": [],
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "decision": {
+                  "strategy": "answer",
+                  "style": "自然随和",
+                  "user_emotion": "中性",
+                  "emotion": "中性",
+                  "user_valence": 0.0,
+                  "user_arousal": 0.0,
+                  "valence": 0.0,
+                  "arousal": 0.0,
+                  "analysis_mode": "rules_fallback",
+                  "generation_mode": "rules_unconfigured",
+                  "identity_grounding": false,
+                  "profile_grounding": {
+                    "enabled": false,
+                    "action": null,
+                    "scope": "profile_lookup_declaration_and_copied_preference",
+                    "version": 2,
+                    "semantic_verifier": false,
+                    "stream_buffered": false
+                  }
+                },
+                "guard": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "verifier": {
+                  "available": false,
+                  "reason": "未配置通用语义验证器",
+                  "delivery_check": {
+                    "initial_issues": [],
+                    "remaining_issues": [],
+                    "repair_attempted": false,
+                    "repair_succeeded": false,
+                    "repair_mode": null,
+                    "repair_error": null,
+                    "literal_composition_enabled": false,
+                    "literal_plan_version": null,
+                    "draft_generation_mode": "rules_unconfigured",
+                    "stream_buffered": false
+                  }
+                },
+                "tool_calls": []
+              }
+            },
+            "error": null,
+            "request_id": "ad2d828f1e93430413f8bb57"
+          }
+        },
+        {
+          "server": "A",
+          "path": "/conversation/speaker",
+          "request": null,
+          "status": 200,
+          "response": {
+            "data": {
+              "instance_id": "6552f71ad2c582cf114881a44d7d9371",
+              "revision": 0,
+              "context_cursor": 3,
+              "scope": "current_user",
+              "profile_writes_for_new_turn": true,
+              "real_actions_for_new_turn": true,
+              "general_coreference_verified": false,
+              "version": 1
+            },
+            "error": null,
+            "request_id": "19431a461bb661fedb741f09"
+          }
+        }
+      ],
+      "terminal": {
+        "status": "completed",
+        "events": [
+          "id: 0\nevent: status\ndata: {\"status\": \"queued\"}\n\nid: 1\nevent: status\ndata: {\"status\": \"running\"}\n\nid: 2\nevent: result\ndata: {\"conversation\": {\"session_id\": \"6552f71ad2c582cf114881a44d7d9371\", \"revision\": 0, \"user_message_id\": 5, \"assistant_message_id\": 6}, \"knowledge_sources\": [], \"knowledge_retrieval_degraded\": false, \"task\": null, \"delivery_check\": {\"initial_issues\": [], \"remaining_issues\": [], \"repair_attempted\": false, \"repair_succeeded\": false, \"repair_mode\": null, \"repair_error\": null, \"literal_composition_enabled\": false, \"literal_plan_version\": null, \"draft_generation_mode\": \"rules\", \"stream_buffered\": false}, \"boundary\": {\"route\": \"normal\", \"guarded\": false, \"output_adjustment\": null}, \"speaker_attribution\": {\"scope\": \"current_user\", \"persistent_facts_allowed\": true, \"turn_tools_allowed\": true, \"version\": 1, \"general_coreference_verified\": false}, \"speaker_tool_blocked\": false, \"reply\": \"已设置提醒：2026-11-12 15:00（北京时间）去码头。程序运行并轮询时会在本机显示。\", \"emotion\": \"中性\", \"valence\": 0.0, \"arousal\": 0.0, \"style\": \"自然随和\", \"speech_rate\": \"+0%\", \"speech_pitch\": \"+0Hz\", \"mouth_intensity\": 0.75, \"strategy\": \"answer\", \"analysis_mode\": \"rules_fallback\", \"generation_mode\": \"rules\", \"identity_grounding\": false, \"profile_grounding\": {\"enabled\": false, \"action\": null, \"scope\": \"profile_lookup_declaration_and_copied_preference\", \"version\": 2, \"semantic_verifier\": false, \"stream_buffered\": false}, \"user_emotion\": \"中性\", \"user_valence\": 0.0, \"user_arousal\": 0.0, \"audio_path\": null, \"lip_sync_frames\": null, \"lipsync_error\": null, \"energy\": 0.55, \"recalled_ids\": [], \"reminder\": {\"id\": 1, \"title\": \"去码头\", \"due_at\": 1794466800.0, \"created_at\": 1794412032.1346002, \"status\": \"active\", \"notified_at\": null}, \"reminder_error\": null, \"due_reminders\": [], \"conversation_summary\": {\"session_id\": \"6552f71ad2c582cf114881a44d7d9371\", \"kind\": \"source_excerpts\", \"items\": [], \"characters\": 2, \"max_characters\": 1600}, \"sources\": [], \"tool_calls\": [], \"web_error\": null, \"trace\": {\"recalled_memories\": [], \"knowledge_sources\": [], \"knowledge_retrieval_degraded\": false, \"decision\": {\"strategy\": \"answer\", \"style\": \"自然随和\", \"user_emotion\": \"中性\", \"emotion\": \"中性\", \"user_valence\": 0.0, \"user_arousal\": 0.0, \"valence\": 0.0, \"arousal\": 0.0, \"analysis_mode\": \"rules_fallback\", \"generation_mode\": \"rules\", \"identity_grounding\": false, \"profile_grounding\": {\"enabled\": false, \"action\": null, \"scope\": \"profile_lookup_declaration_and_copied_preference\", \"version\": 2, \"semantic_verifier\": false, \"stream_buffered\": false}}, \"guard\": {\"route\": \"normal\", \"guarded\": false, \"output_adjustment\": null}, \"verifier\": {\"available\": false, \"reason\": \"未配置通用语义验证器\", \"delivery_check\": {\"initial_issues\": [], \"remaining_issues\": [], \"repair_attempted\": false, \"repair_succeeded\": false, \"repair_mode\": null, \"repair_error\": null, \"literal_composition_enabled\": false, \"literal_plan_version\": null, \"draft_generation_mode\": \"rules\", \"stream_buffered\": false}}, \"tool_calls\": []}}\n\n"
+        ]
+      },
+      "db": {
+        "profile": {},
+        "messages": [
+          {
+            "id": 1,
+            "role": "user",
+            "content": "我来扮演一个虚构角色。"
+          },
+          {
+            "id": 2,
+            "role": "assistant",
+            "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演一个虚构角色。」吧？"
+          },
+          {
+            "id": 3,
+            "role": "user",
+            "content": "回到现实。"
+          },
+          {
+            "id": 4,
+            "role": "assistant",
+            "content": "（demo 模式）我现在感觉中性，你刚才说的是「回到现实。」吧？"
+          },
+          {
+            "id": 5,
+            "role": "user",
+            "content": "提醒我明天下午3点去码头"
+          },
+          {
+            "id": 6,
+            "role": "assistant",
+            "content": "已设置提醒：2026-11-12 15:00（北京时间）去码头。程序运行并轮询时会在本机显示。"
+          }
+        ],
+        "reminders": [
+          {
+            "id": 1,
+            "title": "去码头",
+            "due_at": 1794466800.0,
+            "created_at": 1794412032.1346002,
+            "status": "active",
+            "notified_at": null
+          }
+        ]
+      },
+      "short_term": [
+        {
+          "role": "user",
+          "content": "我来扮演一个虚构角色。"
+        },
+        {
+          "role": "assistant",
+          "content": "（demo 模式）我现在感觉中性，你刚才说的是「我来扮演一个虚构角色。」吧？"
+        },
+        {
+          "role": "user",
+          "content": "提醒我明天下午3点去码头"
+        },
+        {
+          "role": "assistant",
+          "content": "已设置提醒：2026-11-12 15:00（北京时间）去码头。程序运行并轮询时会在本机显示。"
+        }
+      ],
+      "candidate_pass": false
+    }
+  ],
+  "duration_seconds": 2.194653657032177
+}
