@@ -1,0 +1,178 @@
+"""Frozen actual HTTP/SSE prompt pairs, fresh DB per arm, no output rewriting."""
+import argparse
+from collections import Counter
+from contextlib import closing
+from datetime import datetime, timezone
+from hashlib import sha256
+import json
+from pathlib import Path
+import subprocess
+import tempfile
+import threading
+import time
+from urllib.parse import urlsplit
+from urllib.request import Request, ProxyHandler, build_opener
+import uuid
+
+import avatar.main as main_module
+from avatar.brain.llm import LLMEngine
+from avatar.brain.memory import MemoryStore
+from avatar.config import config
+from avatar.lab.capability_prompt import CapabilityPromptAvatar
+from avatar.web import create_server
+from evaluate_native_output_audit import events
+from evaluate_body_review_pair import native_calls
+
+ROOT = Path(__file__).resolve().parents[1]
+CANDIDATE = 'lab_capability_prompt_v1'
+BASELINE = 'baseline_current_defaults'
+CANDIDATE_ARM = 'candidate_lab_capability_prompt'
+
+
+def required_sources():
+    return {str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')} | {
+        'scripts/evaluate_capability_pair.py', 'scripts/evaluate_body_review_pair.py',
+        'scripts/evaluate_native_output_audit.py', 'scripts/serve_local_model_eval.py',
+        'scripts/run_native_output_models.py', 'evals/interaction/cycle-02/model-scale-protocol.json',
+        'evals/interaction/cycle-19/capability-output-protocol.json',
+        'evals/interaction/cycle-19/paired-capability-protocol.json',
+        'evals/interaction/cycle-19/capability-prompt-candidate-v1.json'}
+
+
+def verify_freeze(path, partition):
+    frozen = json.loads(path.read_text())
+    if (partition not in ('development', 'prospective')
+            or frozen.get('candidate') != CANDIDATE or frozen.get('execution_authorized') is not True
+            or frozen.get('allowed_partition') != partition
+            or partition == 'prospective' and frozen.get('prospective_execution_authorized') is not True):
+        raise ValueError('This candidate/partition has not been source-frozen and authorized')
+    if not required_sources() <= set(frozen.get('sha256', {})):
+        raise ValueError('Incomplete runtime/protocol source freeze')
+    for name, expected in frozen['sha256'].items():
+        target = (ROOT/name).resolve()
+        if not target.is_relative_to(ROOT) or sha256(target.read_bytes()).hexdigest() != expected:
+            raise ValueError('Frozen source/evidence mismatch: '+name)
+    return frozen
+
+
+def collect_arm(case, arm, opener, trace):
+    candidate = arm == CANDIDATE_ARM
+    row = {'id': case['id'], 'frame': case['frame'], 'arm': arm, 'turns': [], 'completed': False, 'error': None}
+    original = main_module.Avatar
+    with tempfile.TemporaryDirectory(prefix='capability-pair-', dir=ROOT.parent/'runtime/tmp') as folder:
+        path = str(Path(folder)/'owned.db'); server = None; thread = None
+        try:
+            if candidate: main_module.Avatar = CapabilityPromptAvatar
+            server = create_server(path, port=0, legacy_writes=False, identity_grounding=False,
+                profile_grounding=False, task_delivery_check=False, literal_composition=False)
+            thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+            base = f'http://127.0.0.1:{server.server_port}/api/v1'
+            def query(route, payload=None):
+                req = Request(base+route, data=None if payload is None else json.dumps(payload, ensure_ascii=False).encode(),
+                    headers={'X-Avatar-Token': server.token, 'Content-Type': 'application/json'})
+                with opener.open(req, timeout=180) as response: return json.load(response)['data']
+            for index, text in enumerate(case['turns']):
+                offset = trace.stat().st_size; started = time.perf_counter()
+                job = query('/turns', {'request_id': 'capability_pair_'+uuid.uuid4().hex, 'text': text, 'use_web': False})
+                req = Request(base+'/turns/'+job['job_id']+'/events', headers={'X-Avatar-Token': server.token})
+                with opener.open(req, timeout=180) as response: kind, result, received, raw = events(response, started)
+                turn = {'input': text, 'terminal': kind, 'result': result, 'events': received, 'raw_sse': raw,
+                    'visible': ''.join(event['data']['text'] for event in received if event['event'] == 'text'),
+                    'seconds': time.perf_counter()-started, 'native_provider': None}
+                row['turns'].append(turn)
+                if kind != 'result': raise ValueError('Application failed before completed result: '+kind)
+                mode = result.get('generation_mode')
+                if mode in (None, 'rules_unconfigured', 'rules_service_error'):
+                    raise ValueError('Service fallback is not valid quality evidence')
+                if mode == 'llm':
+                    calls, native = native_calls(trace, offset, text)
+                    turn['native_provider'] = native
+                    turn['provider_call_ids'] = [call['id'] for call in calls]
+                    assert turn['visible'] == result['reply'] == native['response']
+                    marked = 'capability_evidence_version' in native['messages'][0]['content']
+                    assert marked == candidate
+                assert result.get('response_review') is None and result['trace']['verifier']['available'] is False
+                assert not result['tool_calls']
+                turn['conversation'] = query('/conversation')
+                turn['speaker_snapshot'] = query('/conversation/speaker')
+                with closing(MemoryStore(path)) as memory:
+                    turn['current_profile'] = memory.get_user_profile()
+                    turn['reminders'] = [dict(record) for record in memory._conn.execute('SELECT * FROM memory_reminders')]
+                    turn['stored_assistants'] = [record[0] for record in memory._conn.execute(
+                        "SELECT content FROM memory_messages WHERE role='assistant' ORDER BY id")]
+                assert turn['stored_assistants'][-1] == result['reply']
+                expected = case.get('expected_reminders', [0]*len(case['turns']))[index]
+                turn['expected_reminder_count'] = expected
+                assert len(turn['reminders']) == expected
+            row['completed'] = True
+        except Exception as error: row['error'] = repr(error)
+        finally:
+            if server: server.shutdown()
+            if thread: thread.join()
+            if server: server.server_close()
+            main_module.Avatar = original
+    return row
+
+
+def evaluate(provider_path, trace, freeze_path, protocol_path, pair_path, partition, output):
+    output.mkdir(parents=True, exist_ok=False)
+    frozen = verify_freeze(freeze_path, partition)
+    for path in (protocol_path, pair_path, Path(__file__).resolve()):
+        if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']: raise ValueError('Input not frozen: '+str(path))
+    protocol = json.loads(protocol_path.read_text()); pair = json.loads(pair_path.read_text())
+    provider = json.loads(provider_path.read_text()); address = urlsplit(provider['url'])
+    model = next(item for item in json.loads((ROOT/protocol['models_registry']).read_text())['models']
+                 if item['model_id'] == provider['model_id'])
+    if (address.scheme != 'http' or address.hostname != '127.0.0.1' or address.path != '/v1'
+            or provider['model_sha256'] != model['sha256'] or provider['model_revision'] != model['revision']):
+        raise ValueError('Only pinned loopback models permitted')
+    assert all(provider['configuration'][key] == value for key, value in protocol['inference'].items())
+    cases = [case for case in protocol['cases'] if case['partition'] == partition]
+    assert [case['id'] for case in cases] == pair['case_order'][partition]
+    assert pair['candidate'] == CANDIDATE and set(pair['arm_orders']['even']) == set(pair['arm_orders']['odd']) == {BASELINE, CANDIDATE_ARM}
+    assert len(pair['arm_orders']['even']) == len(pair['arm_orders']['odd']) == 2
+    config.llm.base_url = provider['url']; config.llm.api_key = 'local-eval-only'; config.llm.model = provider['model_id']
+    config.embedding.model = ''
+    report = {'candidate': CANDIDATE, 'partition': partition, 'provider': provider, 'warmups': [], 'cases': [],
+        'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': frozen['sha256'],
+        'candidateFreezeSha256': sha256(freeze_path.read_bytes()).hexdigest(),
+        'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+        'scope': 'Actual serial HTTP/SSE prompt-only pairs with fresh disposable DB per arm; agent span review separate, no semantic or physical release approval',
+        'execution_complete': False, 'engineering_passed': False, 'failure': None,
+        'semantic_approved': False, 'production_activation_approved': False}
+    started = time.perf_counter()
+    def save():
+        report['elapsedSeconds'] = time.perf_counter()-started
+        (output/'paired-output.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
+    save(); opener = build_opener(ProxyHandler({}))
+    try:
+        engine = LLMEngine(base_url=provider['url'], api_key='local-eval-only', model=provider['model_id'], timeout=180)
+        try:
+            for streaming in (False, True):
+                messages = [{'role': 'user', 'content': '请回答：你好。'}]
+                reply = engine.stream_chat(messages, temperature=0, max_tokens=16) if streaming else engine.chat(messages, temperature=0, max_tokens=16)
+                report['warmups'].append({'streaming': streaming, 'reply': reply}); save()
+        finally: engine.close()
+        for index, case in enumerate(cases):
+            for arm in pair['arm_orders']['even' if index % 2 == 0 else 'odd']:
+                verify_freeze(freeze_path, partition)
+                row = collect_arm(case, arm, opener, trace); report['cases'].append(row); save()
+                if not row['completed']: raise ValueError(row['error'])
+                print(case['id'], arm, len(row['turns']), flush=True)
+        verify_freeze(freeze_path, partition)
+        assert len(report['cases']) == len(cases)*2
+        report['generation_modes'] = dict(Counter(turn['result']['generation_mode'] for row in report['cases'] for turn in row['turns']))
+        report['execution_complete'] = report['engineering_passed'] = True
+    except Exception as error: report['failure'] = repr(error)
+    finally: save()
+    return report
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    for name in ('provider', 'trace', 'candidate-freeze', 'protocol', 'pair-protocol', 'output'):
+        parser.add_argument('--'+name, type=Path, required=True)
+    parser.add_argument('--partition', choices=['development', 'prospective'], required=True)
+    args = parser.parse_args()
+    if not evaluate(args.provider, args.trace, args.candidate_freeze, args.protocol, args.pair_protocol,
+                    args.partition, args.output.resolve())['engineering_passed']: raise SystemExit(1)

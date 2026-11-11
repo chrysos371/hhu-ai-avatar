@@ -27,7 +27,16 @@ def has_pid(raw, pid):
 
 
 def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None,
-         protocol=None, pair_protocol=None, candidate='v1'):
+         protocol=None, pair_protocol=None, candidate='v1', partition='development'):
+    if stage == 'capability_pair':
+        if candidate_freeze is None or protocol is None or pair_protocol is None:
+            raise ValueError('Capability pairs require source freeze and both explicit protocols')
+        from evaluate_capability_pair import verify_freeze
+        frozen = verify_freeze(candidate_freeze, partition)
+        candidate = 'capability_prompt_v1'
+        for path in (protocol, pair_protocol):
+            if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
+                raise ValueError('Selected capability protocol is not frozen')
     if stage == 'prospective':
         if candidate_freeze is None: raise ValueError('Prospective runs require --candidate-freeze')
         from evaluate_body_review_pair import verify_freeze
@@ -47,6 +56,10 @@ def main(output, provider_python, stage='development', model_key=None, candidate
              'evals/interaction/cycle-15/native-output-protocol.json']
     if stage == 'development' and protocol is not None:
         paths.append(str(protocol.resolve().relative_to(ROOT)))
+    if stage == 'capability_pair':
+        paths += [str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')]
+        paths += ['scripts/evaluate_capability_pair.py', 'scripts/evaluate_body_review_pair.py',
+                  str(protocol.resolve().relative_to(ROOT)), str(pair_protocol.resolve().relative_to(ROOT))]
     if stage == 'prospective':
         paths += ['src/avatar/lab/body_review.py', 'src/avatar/lab/body_review_avatar.py',
                   'src/avatar/brain/tasks.py', 'scripts/evaluate_body_review_pair.py',
@@ -103,11 +116,15 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                     row['provider_ready'] = metadata; save()
                     print(key, 'ready GPU', metadata['chosen_gpu']['index'], 'pid', process.pid, flush=True)
                     with (folder/'sampler.log').open('x') as sampler_log:
-                        sampler = 'evaluate_body_review_pair.py' if stage == 'prospective' else 'evaluate_native_output_audit.py'
+                        sampler = ('evaluate_capability_pair.py' if stage == 'capability_pair' else
+                            'evaluate_body_review_pair.py' if stage == 'prospective' else 'evaluate_native_output_audit.py')
                         sampler_command = [sys.executable, str(ROOT/'scripts'/sampler),
                             '--provider', str(ready), '--output', str(folder/'sample')]
                         if stage == 'development' and protocol is not None:
                             sampler_command += ['--protocol', str(protocol)]
+                        if stage == 'capability_pair':
+                            sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze),
+                                '--protocol', str(protocol), '--pair-protocol', str(pair_protocol), '--partition', partition]
                         if stage == 'prospective':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze), '--candidate', candidate]
                             if protocol is not None: sampler_command += ['--protocol', str(protocol)]
@@ -143,7 +160,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--provider-python', type=Path, required=True)
-    parser.add_argument('--stage', choices=['development', 'prospective'], default='development')
+    parser.add_argument('--stage', choices=['development', 'prospective', 'capability_pair'], default='development')
+    parser.add_argument('--partition', choices=['development', 'prospective'], default='development')
     parser.add_argument('--model-key', choices=['qwen3-4b-q4_k_m', 'qwen3-14b-q4_k_m'])
     parser.add_argument('--candidate-freeze', type=Path)
     parser.add_argument('--protocol', type=Path)
@@ -153,4 +171,5 @@ if __name__ == '__main__':
     # Resolving a venv's executable symlink changes Python's environment prefix.
     # Make it absolute while preserving the requested venv entry point.
     main(options.output.resolve(), options.provider_python.expanduser().absolute(),
-         options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate)
+         options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate,
+         options.partition)
