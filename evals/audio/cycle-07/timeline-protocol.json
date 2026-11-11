@@ -1,0 +1,16 @@
+{
+  "version":1,
+  "baseline_revision":"069d6ce",
+  "scope":"Sample-index versus emitted frame-start timestamps; software timeline only, not physical device synchrony",
+  "sample_rates":[8000,11025,16000,22050,24000,44100,48000],
+  "hop_ms":[10,7.5,12.3],
+  "frame_ms":25,
+  "duration_seconds":2,
+  "prolonged":{"sample_rate":22050,"hop_ms":10,"duration_seconds":120},
+  "waveform":"zero PCM to isolate frame geometry; no pitch/phoneme quality inference",
+  "expected":"frame i starts at i*int(sample_rate*hop_ms/1000) samples",
+  "gates":{"max_absolute_error_samples":0.000001,"last_frame_start_plus_frame_length_within_audio":true,"frame_count_unchanged":true,"vowel_mouth_energy_unchanged":true,"integral_hop_timestamps_unchanged":true},
+  "integration":"Injected local WAV TTS through actual Avatar.respond(use_tts=True); no remote LLM/TTS and no microphone",
+  "rounds":"All21 short configurations plus one fixed120second case, no experiment wall-clock cutoff",
+  "baseline_equality":"Legacy time equality is deliberately replaced where nominal hop differs from integer sample hop. Preserve spectral/mouth/energy fields and integral-hop time. Do not silently reinterpret cycle06 exact-output gate as absolute clock correctness."
+}
