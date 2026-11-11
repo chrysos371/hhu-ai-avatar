@@ -66,11 +66,13 @@ class ReminderStore:
         )''')
         self.memory._commit()
 
-    def create(self, text: str, *, now: float | None = None) -> dict:
+    def create(self, text: str, *, now: float | None = None, checkpoint=None) -> dict:
         data = parse_reminder(text, now=now)
         if data is None:
             raise ValueError('请用“提醒我……”明确创建提醒。')
         with self.memory.transaction():
+            if checkpoint is not None:
+                checkpoint()
             cur = self.conn.execute(
                 'INSERT INTO memory_reminders(title,due_at,created_at) VALUES (?,?,?)',
                 (data['title'], data['due_at'], time.time() if now is None else now))
@@ -79,10 +81,12 @@ class ReminderStore:
     def list(self) -> list[dict]:
         return [dict(row) for row in self.conn.execute('SELECT * FROM memory_reminders ORDER BY id')]
 
-    def set_status(self, reminder_id: int, status: str) -> None:
+    def set_status(self, reminder_id: int, status: str, *, checkpoint=None) -> None:
         if status not in ('completed', 'cancelled'):
             raise ValueError('status must be completed or cancelled')
         with self.memory.transaction():
+            if checkpoint is not None:
+                checkpoint()
             cur = self.conn.execute('UPDATE memory_reminders SET status=? WHERE id=?', (status, reminder_id))
             if not cur.rowcount:
                 raise ValueError('reminder does not exist')
@@ -91,7 +95,7 @@ class ReminderStore:
         with self.memory.transaction():
             self.conn.execute('DELETE FROM memory_reminders WHERE id=?', (reminder_id,))
 
-    def claim_due(self, *, now: float | None = None) -> list[dict]:
+    def claim_due(self, *, now: float | None = None, checkpoint=None) -> list[dict]:
         """Atomically claim once across connections; no external notification side effects.
 
         Delivery is at-most-once, not acknowledged delivery. Older than 24h stays
@@ -99,6 +103,8 @@ class ReminderStore:
         """
         now = time.time() if now is None else now
         with self.memory.transaction():
+            if checkpoint is not None:
+                checkpoint()
             # A write first acquires SQLite's writer lock before selecting.
             self.conn.execute('UPDATE memory_reminders SET notified_at=notified_at WHERE 0')
             rows = self.conn.execute(

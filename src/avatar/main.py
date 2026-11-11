@@ -572,14 +572,14 @@ class Avatar:
                                     and (use_web or reminder_request or cancel_match))
         if boundary.reply is None and reminder_request and not speaker_tool_blocked:
             try:
-                reminder = self.reminders.create(user_text)
+                reminder = self.reminders.create(user_text, checkpoint=checkpoint_context)
             except ValueError as exc:
                 reminder_error = str(exc)
         cancelled_reminder_id = None
         if boundary.reply is None and cancel_match and not speaker_tool_blocked:
             cancelled_reminder_id = int(cancel_match[1])
             try:
-                self.reminders.set_status(cancelled_reminder_id, 'cancelled')
+                self.reminders.set_status(cancelled_reminder_id, 'cancelled', checkpoint=checkpoint_context)
             except ValueError as exc:
                 reminder_error = str(exc)
                 cancelled_reminder_id = None
@@ -595,7 +595,7 @@ class Avatar:
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
         if self.summary_enabled and control is None:
             self.summaries.refresh(self.session_id)
-        self._due_reminders = (self.reminders.claim_due()
+        self._due_reminders = (self.reminders.claim_due(checkpoint=checkpoint_context)
                                if boundary.reply is None and control is None and self.speaker_scope.allows_actions else [])
         # 3. 行为决策
         store=self._admin_store()
