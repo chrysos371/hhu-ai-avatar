@@ -1,0 +1,1806 @@
+FFFFFFFFFFFFF..F                                                         [100%]
+=================================== FAILURES ===================================
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-commit-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb77ae60>
+when = 'commit', use_tts = False, change = 'cancel'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-commit-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb7d1d20>
+when = 'commit', use_tts = True, change = 'cancel'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-tts-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb667a00>
+when = 'tts', use_tts = True, change = 'cancel'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-metadata-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb7d25f0>
+when = 'metadata', use_tts = False, change = 'cancel'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-commit-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb63ee30>
+when = 'commit', use_tts = False, change = 'external_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-commit-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb7d3490>
+when = 'commit', use_tts = True, change = 'external_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-tts-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb63e050>
+when = 'tts', use_tts = True, change = 'external_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-metadata-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb665480>
+when = 'metadata', use_tts = False, change = 'external_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-commit-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb7dae00>
+when = 'commit', use_tts = False, change = 'same_instance_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+            with pytest.raises(Cancelled):
+>               bot.respond('我的名字是'+PRIVATE+'。', use_tts=use_tts,
+                            tts_path=str(tmp_path/'reply.wav'), cancel=token)
+
+tests/test_sdk_tts_privacy.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.main.Avatar object at 0x7f32cb7da260>
+user_text = '我的名字是待删语音实验名。', use_tts = False
+tts_path = '/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur8/reply.wav'
+use_web = False
+cancel = <avatar.cancellation.CancellationToken object at 0x7f32cb7d8250>
+on_delta = None, source_precondition = None
+
+    def respond(
+        self,
+        user_text: str,
+        use_tts: bool = False,
+        tts_path: str = "./data/reply.mp3",
+        use_web: bool = False,
+        cancel: Optional[CancellationToken] = None,
+        on_delta=None,
+        source_precondition=None,
+    ) -> dict:
+        """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
+        self._cancel_token = cancel
+        self._response_review = None
+        self.analysis_mode = 'boundary_or_tool_rules'
+        self._checkpoint()
+        self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
+        turn_context_revision = self.memory.context_revision
+        self._turn_context_revision = turn_context_revision
+        if self._task_context_revision != turn_context_revision:
+            self.tasks.current = None
+            self._task_context_revision = turn_context_revision
+        def checkpoint_context():
+            self._checkpoint()
+            revision = self.memory.context_revision
+            if revision != turn_context_revision:
+                self.tasks.current = None
+                self._task_context_revision = revision
+                raise Cancelled('context changed before response continuation')
+        def emit_checked(piece):
+            checkpoint_context()
+            if on_delta:
+                on_delta(piece)
+        # Source and durable control state commit together before any model,
+        # fact extraction or tool. Cancellation cannot leave a committed role
+        # declaration without its attribution state across a process restart.
+        with self.memory.transaction():
+            checkpoint_context()
+            if source_precondition is not None:
+                source_precondition()
+            # A rejected admission must leave neither a durable user source nor
+            # an in-memory phantom which run_chat would retain in its finally.
+            self.memory.add_short_term("user", user_text)
+            self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
+            if self.speaker_context_store is not None:
+                self.speaker_scope = self.speaker_context_store.observe(
+                    user_text, turn_context_revision, self._current_message_id)
+            else:
+                self.speaker_scope.observe(user_text, turn_context_revision, source_id=self._current_message_id)
+        boundary = self.boundaries.assess(user_text)
+        checkpoint_context()
+        from .brain.speaker_control import canonical_speaker_control
+        control = (canonical_speaker_control(user_text, self.speaker_scope,
+            turn_context_revision, self._current_message_id) if boundary.reply is None else None)
+        if control is not None:
+            source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?',
+                (self._current_message_id,)).fetchone()
+            if not source or source['role'] != 'user' or source['content'] != user_text:
+                raise Cancelled('canonical control source changed')
+        if self.task_contract_enabled:
+            self.tasks.update(user_text)
+        # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
+        if boundary.reply is not None:
+            self.emotion.update(user_text)
+        elif control is not None:
+            self.analysis_mode = 'rules_speaker_control'
+            self.emotion.update(user_text)
+        elif use_web:
+            # Tool outputs never enter fact extraction; web turns only admit
+            # explicit claims in the current user's original message.
+            self._extract_facts(user_text)
+            self.emotion.update(user_text)
+        else:
+            self._analyze(user_text)
+        checkpoint_context()
+        reminder = None
+        reminder_error = None
+        reminder_request = re.match(r'^(?:请)?提醒我', user_text.strip())
+        cancel_match = re.fullmatch(
+            r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
+            user_text)
+        speaker_tool_blocked = bool(not self.speaker_scope.allows_actions
+                                    and (use_web or reminder_request or cancel_match))
+        if boundary.reply is None and reminder_request and not speaker_tool_blocked:
+            try:
+                reminder = self.reminders.create(user_text)
+            except ValueError as exc:
+                reminder_error = str(exc)
+        cancelled_reminder_id = None
+        if boundary.reply is None and cancel_match and not speaker_tool_blocked:
+            cancelled_reminder_id = int(cancel_match[1])
+            try:
+                self.reminders.set_status(cancelled_reminder_id, 'cancelled')
+            except ValueError as exc:
+                reminder_error = str(exc)
+                cancelled_reminder_id = None
+        self._turn_facts = [] if control is not None else self.memory.recall(query=user_text, limit=5)
+        self._knowledge_context=[];self._knowledge_degraded=False
+        knowledge_store=self._admin_store()
+        if knowledge_store and boundary.reply is None and control is None:
+            try:
+                from .brain.knowledge import KnowledgeService
+                self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
+            except Exception:
+                self._knowledge_degraded=True
+                logger.warning('知识检索失败，继续使用对话与已确认记忆')
+        if self.summary_enabled and control is None:
+            self.summaries.refresh(self.session_id)
+        self._due_reminders = (self.reminders.claim_due()
+                               if boundary.reply is None and control is None and self.speaker_scope.allows_actions else [])
+        # 3. 行为决策
+        store=self._admin_store()
+        override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
+        decision = self.emotion.decide(user_text,expression_override=override['data']) if override else self.emotion.decide(user_text)
+        managed=store.current_persona()['data'] if store and store.current_persona() else {}
+        decision.temperature=_clamp(decision.temperature+managed.get('temperature_bias',0),0,1.5)
+        effective=override['data'] if override else {'valence':self.emotion.state.valence,'arousal':self.emotion.state.arousal}
+        web_result = {'sources': [], 'tool_calls': []}
+        response_context_ids = {row['id'] for row in self._turn_facts}
+        response_context_ids.update(row[0] for row in self.memory._conn.execute(
+            "SELECT id FROM memory_fragments WHERE memory_type='user_profile' AND status='active'"))
+        response_source_ids = {row['id'] for row in self.memory._conn.execute(
+            'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
+            (self.session_id, self.memory.short_term_limit))}
+        response_source_ids.update(self.speaker_scope.source_ids)
+        response_source_ids.update(self.speaker_scope.context_source_ids)
+        response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
+        # 4. LLM 回复（无 key 与调用故障分别标记）
+        generation_mode = 'rules'
+        delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
+            and boundary.reply is None and reminder is None and cancelled_reminder_id is None
+            and not reminder_error and not use_web and control is None)
+        buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
+                        or self.final_reply_reviewer is not None)
+        streamed_prefix = []
+        grounding_action = None
+        profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
+        real_profile_active = self.profile_grounding_enabled and self.speaker_scope.allows_facts
+        profile_reply, lookup_action = lookup_profile(user_text, profile) if real_profile_active else (None, None)
+        if real_profile_active and profile_reply is None:
+            profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
+        if boundary.reply is not None:
+            reply = boundary.reply
+        elif control is not None:
+            reply = control.reply
+            generation_mode = 'rules_speaker_control'
+        elif self.speaker_scope.scope == 'unverified':
+            reply = ('此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。'
+                     '请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。')
+            generation_mode = 'rules_speaker_scope'
+        elif speaker_tool_blocked:
+            reply = ('这条消息未被识别为独立的真人操作请求，没有执行真实提醒或联网工具。'
+                     '请先明确退出角色，再单独提出真实请求。')
+            generation_mode = 'rules_speaker_scope'
+        elif reminder is not None:
+            due = datetime.fromtimestamp(reminder['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
+            reply = f'已设置提醒：{due}（北京时间）{reminder["title"]}。程序运行并轮询时会在本机显示。'
+        elif cancelled_reminder_id is not None:
+            reply = f'已取消提醒 #{cancelled_reminder_id}。'
+        elif reminder_error:
+            reply = reminder_error
+        elif use_web:
+            from .tools.web_agent import WebAgent
+            if self.web_agent is None:
+                self.web_agent = WebAgent(memory_db_path=self.memory.db_path)
+            checkpoint_context()
+            run = self.web_agent.run
+            engine = self.llm if self._llm_available else None
+            try:
+                parameter = inspect.signature(run).parameters.get('checkpoint')
+            except (TypeError, ValueError):
+                parameter = None
+            if parameter is not None and parameter.kind in (
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
+                web_result = run(user_text, engine, checkpoint=checkpoint_context)
+            else:
+                # Preserve the two-argument API of injected custom agents. Their
+                # internal continuation policy is outside the built-in loop.
+                web_result = run(user_text, engine)
+            checkpoint_context()
+            reply = web_result['reply']
+        elif profile_reply is not None:
+            reply, grounding_action = profile_reply, lookup_action
+            generation_mode = 'profile_lookup' if lookup_action in {'name_lookup', 'preference_lookup'} else 'profile_grounded'
+        elif self._llm_available:
+            try:
+                if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                    pending = ''
+                    def checked_delta(piece):
+                        nonlocal pending
+                        pending += piece
+                        while (match := re.search(r'[。！？!?\n]', pending)):
+                            sentence, pending = pending[:match.end()], pending[match.end():]
+                            if on_delta and not buffer_reply:
+                                safe, _ = self.boundaries.review_output(sentence)
+                                emit_checked(safe)
+                                streamed_prefix.append(safe)
+                    reply = self.llm.stream_chat(self._messages(decision, user_text),
+                        temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
+                else:
+                    reply = self.llm.chat(
+                        self._messages(decision, user_text), temperature=decision.temperature
+                    )
+                if not isinstance(reply, str) or not reply.strip():
+                    raise ValueError("Empty LLM reply")
+                generation_mode = 'llm'
+            except Cancelled:
+                raise
+            except Exception:
+                logger.warning("模型回复失败，使用规则回复")
+                generation_mode = 'rules_service_error'
+                reply = self._fallback_reply(user_text, decision, model_failed=True)
+        else:
+            generation_mode = 'rules_unconfigured'
+            reply = self._fallback_reply(user_text, decision)
+        draft_generation_mode = generation_mode
+        checkpoint_context()
+        # One bounded retry only for a normal local writing response. Never
+        # replay tools, reminders, or replace a deterministic safety decision.
+        delivery_issues = []
+        repair_attempted = False
+        repair_succeeded = False
+        repair_mode = None
+        repair_error = None
+        if delivery_guard_active and generation_mode == 'llm':
+            delivery_issues = self.tasks.inspect(reply)
+            if delivery_issues and self._llm_available:
+                repair_attempted = True
+                try:
+                    checkpoint_context()
+                    repair_messages = self._messages(decision, user_text) + [
+                        {'role': 'assistant', 'content': reply},
+                        {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：'
+                         + json.dumps(delivery_issues, ensure_ascii=False)
+                         + '。仍须遵守原任务和安全边界，不得补造未知信息。'}
+                    ]
+                    contract = self.tasks.current
+                    if self.literal_composition_enabled and (contract.required_literals or contract.forbidden_literals):
+                        repair_mode = 'literal_slots' if self.literal_plan_version == 'v1' else 'literal_template'
+                        layout = (LiteralLayout(contract.required_literals, contract.forbidden_literals)
+                            if self.literal_plan_version == 'v1' else LiteralTemplate(
+                                contract.required_literals, contract.forbidden_literals, source=contract.source,
+                                perspective=contract.perspective, recipient=contract.recipient))
+                        composer = getattr(self.llm, 'compose_literal_plan', None) or getattr(self.llm, 'compose_literal_slots')
+                        corrected = layout.render(composer(repair_messages, layout, cancel=cancel))
+                    elif cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        repair_mode = 'freeform'
+                        corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
+                            cancel=cancel, on_delta=None)
+                    else:
+                        repair_mode = 'freeform'
+                        corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
+                    checkpoint_context()
+                    if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
+                        reply = corrected
+                        repair_succeeded = True
+                        if repair_mode in {'literal_slots', 'literal_template'}:
+                            generation_mode = 'llm_literal_composition'
+                except Cancelled:
+                    raise
+                except Exception as exc:
+                    repair_error = type(exc).__name__
+                    logger.warning('任务修正失败，保留原回复与检查记录')
+        output_adjustment = None
+        output_checker = getattr(self.boundaries, 'review_output', None)
+        if output_checker is not None:
+            reply, output_adjustment = output_checker(reply)
+        writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
+        if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
+            reply, grounding_action = review_profile_reply(user_text, reply, profile)
+        if self.final_reply_reviewer is not None and generation_mode == 'llm':
+            reviewed, metadata = self.final_reply_reviewer(user_text, reply)
+            if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
+                raise ValueError('final reply reviewer returned invalid data')
+            checkpoint_context()
+            review_sources = metadata.get('source_message_ids', [])
+            if (not isinstance(review_sources, list) or len(review_sources) > 4
+                    or any(type(ident) is not int or not 0 < ident <= self._current_message_id for ident in review_sources)):
+                raise ValueError('final reply reviewer returned invalid source IDs')
+            for ident in review_sources:
+                source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?', (ident,)).fetchone()
+                if not source or source['role'] != 'user' or source['content'] == '[redacted]':
+                    raise ValueError('final reply reviewer source is not a valid user message')
+            response_source_ids.update(review_sources)
+            self._response_review = {**metadata, 'stream_buffered': True}
+            if reviewed != reply:
+                generation_mode = 'reviewed_response'
+            reply = reviewed
+        # Profile or task guards buffer text until complete review/repair finishes.
+        # Lookup/rule responses retain their normal final-result delivery path.
+        if self._due_reminders:
+            reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
+        final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
+        repair_succeeded = repair_succeeded and not final_delivery_issues
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition'}
+                              or self._response_review is not None) and on_delta):
+            emit_checked(reply)
+        elif generation_mode == 'llm' and on_delta:
+            # Sentence checks leave closing quotes, emoji and unpunctuated
+            # text pending. Complete only an unchanged, checked final prefix;
+            # never append a stale tail after a whole-output replacement.
+            prefix = ''.join(streamed_prefix)
+            if reply.startswith(prefix) and len(reply) > len(prefix):
+                emit_checked(reply[len(prefix):])
+        self._checkpoint()
+        # 5. 短期记忆记下回复
+        with self.memory.transaction():
+            if self.memory.context_revision != turn_context_revision:
+                raise Cancelled('context changed before reply commit')
+            self._checkpoint()
+            self.memory.add_short_term("assistant", reply)
+            assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
+                context_ids=response_context_ids, source_message_ids=response_source_ids)
+        # 6. TTS（可选）
+        audio_path = None
+        lip_sync_frames = None
+        lipsync_error = None
+        if use_tts:
+            audio_path = self.tts.synthesize(
+                reply, tts_path, decision.speech_rate, decision.speech_pitch
+            )
+            try:
+                samples, sample_rate = load_audio(audio_path)
+                lip_sync_frames = [
+                    {'time': frame.time, 'mouth_open': frame.mouth_open,
+                     'vowel': frame.vowel, 'energy': frame.energy}
+                    for frame in self.lipsync.analyze(samples, sample_rate)
+                ]
+            except Exception as exc:
+                logger.warning('口型分析失败：%s', type(exc).__name__)
+                lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
+        result = {
+            "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
+                             "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
+            "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
+            "knowledge_retrieval_degraded":self._knowledge_degraded,
+            "task": self.tasks.current.data() if self.tasks.current else None,
+            "delivery_check": {"initial_issues": delivery_issues,
+                               "remaining_issues": final_delivery_issues,
+                               "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded,
+                               "repair_mode": repair_mode, "repair_error": repair_error,
+                               "literal_composition_enabled": self.literal_composition_enabled,
+                               "literal_plan_version": self.literal_plan_version if self.literal_composition_enabled else None,
+                               "draft_generation_mode": draft_generation_mode,
+                               "stream_buffered": delivery_guard_active and generation_mode in {"llm", "llm_literal_composition"}},
+            "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
+                         "output_adjustment": output_adjustment},
+            "speaker_attribution": self.speaker_scope.data(),
+            "speaker_tool_blocked": speaker_tool_blocked,
+            "reply": reply,
+            "emotion": ('手动表达覆盖' if override else self.emotion.state.label()),
+            "valence": round(effective['valence'], 2),
+            "arousal": round(effective['arousal'], 2),
+            "style": decision.style,
+            "speech_rate": decision.speech_rate,
+            "speech_pitch": decision.speech_pitch,
+            "mouth_intensity": decision.mouth_intensity,
+            "strategy": decision.strategy,
+            "analysis_mode": self.analysis_mode,
+            "generation_mode": generation_mode,
+            "identity_grounding": self.subject_prompt_enabled,
+            "profile_grounding": {"enabled": self.profile_grounding_enabled,
+                                  "action": grounding_action, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2,
+                                  "semantic_verifier": False,
+                                  "stream_buffered": self.profile_grounding_enabled and generation_mode in {"llm", "llm_literal_composition"}},
+            "user_emotion": self.emotion.user_state.label(),
+            "user_valence": round(self.emotion.user_state.valence, 2),
+            "user_arousal": round(self.emotion.user_state.arousal, 2),
+            "audio_path": audio_path,
+            "lip_sync_frames": lip_sync_frames,
+            "lipsync_error": lipsync_error,
+            "energy": round(self.emotion.energy, 3),
+>           "recalled_ids": [r['id'] for r in self._turn_facts],
+            "reminder": reminder,
+            "reminder_error": reminder_error,
+            "due_reminders": self._due_reminders,
+            "conversation_summary": self.conversation_summary(),
+            "sources": web_result['sources'],
+            "tool_calls": web_result['tool_calls'],
+            "web_error": web_result.get('web_error'),
+        }
+E       TypeError: 'NoneType' object is not iterable
+
+src/avatar/main.py:853: TypeError
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-commit-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb7d0910>
+when = 'commit', use_tts = True, change = 'same_instance_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+            with pytest.raises(Cancelled):
+>               bot.respond('我的名字是'+PRIVATE+'。', use_tts=use_tts,
+                            tts_path=str(tmp_path/'reply.wav'), cancel=token)
+
+tests/test_sdk_tts_privacy.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.main.Avatar object at 0x7f32cb7d1e70>
+user_text = '我的名字是待删语音实验名。', use_tts = True
+tts_path = '/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur9/reply.wav'
+use_web = False
+cancel = <avatar.cancellation.CancellationToken object at 0x7f32cb7d1720>
+on_delta = None, source_precondition = None
+
+    def respond(
+        self,
+        user_text: str,
+        use_tts: bool = False,
+        tts_path: str = "./data/reply.mp3",
+        use_web: bool = False,
+        cancel: Optional[CancellationToken] = None,
+        on_delta=None,
+        source_precondition=None,
+    ) -> dict:
+        """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
+        self._cancel_token = cancel
+        self._response_review = None
+        self.analysis_mode = 'boundary_or_tool_rules'
+        self._checkpoint()
+        self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
+        turn_context_revision = self.memory.context_revision
+        self._turn_context_revision = turn_context_revision
+        if self._task_context_revision != turn_context_revision:
+            self.tasks.current = None
+            self._task_context_revision = turn_context_revision
+        def checkpoint_context():
+            self._checkpoint()
+            revision = self.memory.context_revision
+            if revision != turn_context_revision:
+                self.tasks.current = None
+                self._task_context_revision = revision
+                raise Cancelled('context changed before response continuation')
+        def emit_checked(piece):
+            checkpoint_context()
+            if on_delta:
+                on_delta(piece)
+        # Source and durable control state commit together before any model,
+        # fact extraction or tool. Cancellation cannot leave a committed role
+        # declaration without its attribution state across a process restart.
+        with self.memory.transaction():
+            checkpoint_context()
+            if source_precondition is not None:
+                source_precondition()
+            # A rejected admission must leave neither a durable user source nor
+            # an in-memory phantom which run_chat would retain in its finally.
+            self.memory.add_short_term("user", user_text)
+            self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
+            if self.speaker_context_store is not None:
+                self.speaker_scope = self.speaker_context_store.observe(
+                    user_text, turn_context_revision, self._current_message_id)
+            else:
+                self.speaker_scope.observe(user_text, turn_context_revision, source_id=self._current_message_id)
+        boundary = self.boundaries.assess(user_text)
+        checkpoint_context()
+        from .brain.speaker_control import canonical_speaker_control
+        control = (canonical_speaker_control(user_text, self.speaker_scope,
+            turn_context_revision, self._current_message_id) if boundary.reply is None else None)
+        if control is not None:
+            source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?',
+                (self._current_message_id,)).fetchone()
+            if not source or source['role'] != 'user' or source['content'] != user_text:
+                raise Cancelled('canonical control source changed')
+        if self.task_contract_enabled:
+            self.tasks.update(user_text)
+        # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
+        if boundary.reply is not None:
+            self.emotion.update(user_text)
+        elif control is not None:
+            self.analysis_mode = 'rules_speaker_control'
+            self.emotion.update(user_text)
+        elif use_web:
+            # Tool outputs never enter fact extraction; web turns only admit
+            # explicit claims in the current user's original message.
+            self._extract_facts(user_text)
+            self.emotion.update(user_text)
+        else:
+            self._analyze(user_text)
+        checkpoint_context()
+        reminder = None
+        reminder_error = None
+        reminder_request = re.match(r'^(?:请)?提醒我', user_text.strip())
+        cancel_match = re.fullmatch(
+            r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
+            user_text)
+        speaker_tool_blocked = bool(not self.speaker_scope.allows_actions
+                                    and (use_web or reminder_request or cancel_match))
+        if boundary.reply is None and reminder_request and not speaker_tool_blocked:
+            try:
+                reminder = self.reminders.create(user_text)
+            except ValueError as exc:
+                reminder_error = str(exc)
+        cancelled_reminder_id = None
+        if boundary.reply is None and cancel_match and not speaker_tool_blocked:
+            cancelled_reminder_id = int(cancel_match[1])
+            try:
+                self.reminders.set_status(cancelled_reminder_id, 'cancelled')
+            except ValueError as exc:
+                reminder_error = str(exc)
+                cancelled_reminder_id = None
+        self._turn_facts = [] if control is not None else self.memory.recall(query=user_text, limit=5)
+        self._knowledge_context=[];self._knowledge_degraded=False
+        knowledge_store=self._admin_store()
+        if knowledge_store and boundary.reply is None and control is None:
+            try:
+                from .brain.knowledge import KnowledgeService
+                self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
+            except Exception:
+                self._knowledge_degraded=True
+                logger.warning('知识检索失败，继续使用对话与已确认记忆')
+        if self.summary_enabled and control is None:
+            self.summaries.refresh(self.session_id)
+        self._due_reminders = (self.reminders.claim_due()
+                               if boundary.reply is None and control is None and self.speaker_scope.allows_actions else [])
+        # 3. 行为决策
+        store=self._admin_store()
+        override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
+        decision = self.emotion.decide(user_text,expression_override=override['data']) if override else self.emotion.decide(user_text)
+        managed=store.current_persona()['data'] if store and store.current_persona() else {}
+        decision.temperature=_clamp(decision.temperature+managed.get('temperature_bias',0),0,1.5)
+        effective=override['data'] if override else {'valence':self.emotion.state.valence,'arousal':self.emotion.state.arousal}
+        web_result = {'sources': [], 'tool_calls': []}
+        response_context_ids = {row['id'] for row in self._turn_facts}
+        response_context_ids.update(row[0] for row in self.memory._conn.execute(
+            "SELECT id FROM memory_fragments WHERE memory_type='user_profile' AND status='active'"))
+        response_source_ids = {row['id'] for row in self.memory._conn.execute(
+            'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
+            (self.session_id, self.memory.short_term_limit))}
+        response_source_ids.update(self.speaker_scope.source_ids)
+        response_source_ids.update(self.speaker_scope.context_source_ids)
+        response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
+        # 4. LLM 回复（无 key 与调用故障分别标记）
+        generation_mode = 'rules'
+        delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
+            and boundary.reply is None and reminder is None and cancelled_reminder_id is None
+            and not reminder_error and not use_web and control is None)
+        buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
+                        or self.final_reply_reviewer is not None)
+        streamed_prefix = []
+        grounding_action = None
+        profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
+        real_profile_active = self.profile_grounding_enabled and self.speaker_scope.allows_facts
+        profile_reply, lookup_action = lookup_profile(user_text, profile) if real_profile_active else (None, None)
+        if real_profile_active and profile_reply is None:
+            profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
+        if boundary.reply is not None:
+            reply = boundary.reply
+        elif control is not None:
+            reply = control.reply
+            generation_mode = 'rules_speaker_control'
+        elif self.speaker_scope.scope == 'unverified':
+            reply = ('此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。'
+                     '请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。')
+            generation_mode = 'rules_speaker_scope'
+        elif speaker_tool_blocked:
+            reply = ('这条消息未被识别为独立的真人操作请求，没有执行真实提醒或联网工具。'
+                     '请先明确退出角色，再单独提出真实请求。')
+            generation_mode = 'rules_speaker_scope'
+        elif reminder is not None:
+            due = datetime.fromtimestamp(reminder['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
+            reply = f'已设置提醒：{due}（北京时间）{reminder["title"]}。程序运行并轮询时会在本机显示。'
+        elif cancelled_reminder_id is not None:
+            reply = f'已取消提醒 #{cancelled_reminder_id}。'
+        elif reminder_error:
+            reply = reminder_error
+        elif use_web:
+            from .tools.web_agent import WebAgent
+            if self.web_agent is None:
+                self.web_agent = WebAgent(memory_db_path=self.memory.db_path)
+            checkpoint_context()
+            run = self.web_agent.run
+            engine = self.llm if self._llm_available else None
+            try:
+                parameter = inspect.signature(run).parameters.get('checkpoint')
+            except (TypeError, ValueError):
+                parameter = None
+            if parameter is not None and parameter.kind in (
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
+                web_result = run(user_text, engine, checkpoint=checkpoint_context)
+            else:
+                # Preserve the two-argument API of injected custom agents. Their
+                # internal continuation policy is outside the built-in loop.
+                web_result = run(user_text, engine)
+            checkpoint_context()
+            reply = web_result['reply']
+        elif profile_reply is not None:
+            reply, grounding_action = profile_reply, lookup_action
+            generation_mode = 'profile_lookup' if lookup_action in {'name_lookup', 'preference_lookup'} else 'profile_grounded'
+        elif self._llm_available:
+            try:
+                if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                    pending = ''
+                    def checked_delta(piece):
+                        nonlocal pending
+                        pending += piece
+                        while (match := re.search(r'[。！？!?\n]', pending)):
+                            sentence, pending = pending[:match.end()], pending[match.end():]
+                            if on_delta and not buffer_reply:
+                                safe, _ = self.boundaries.review_output(sentence)
+                                emit_checked(safe)
+                                streamed_prefix.append(safe)
+                    reply = self.llm.stream_chat(self._messages(decision, user_text),
+                        temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
+                else:
+                    reply = self.llm.chat(
+                        self._messages(decision, user_text), temperature=decision.temperature
+                    )
+                if not isinstance(reply, str) or not reply.strip():
+                    raise ValueError("Empty LLM reply")
+                generation_mode = 'llm'
+            except Cancelled:
+                raise
+            except Exception:
+                logger.warning("模型回复失败，使用规则回复")
+                generation_mode = 'rules_service_error'
+                reply = self._fallback_reply(user_text, decision, model_failed=True)
+        else:
+            generation_mode = 'rules_unconfigured'
+            reply = self._fallback_reply(user_text, decision)
+        draft_generation_mode = generation_mode
+        checkpoint_context()
+        # One bounded retry only for a normal local writing response. Never
+        # replay tools, reminders, or replace a deterministic safety decision.
+        delivery_issues = []
+        repair_attempted = False
+        repair_succeeded = False
+        repair_mode = None
+        repair_error = None
+        if delivery_guard_active and generation_mode == 'llm':
+            delivery_issues = self.tasks.inspect(reply)
+            if delivery_issues and self._llm_available:
+                repair_attempted = True
+                try:
+                    checkpoint_context()
+                    repair_messages = self._messages(decision, user_text) + [
+                        {'role': 'assistant', 'content': reply},
+                        {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：'
+                         + json.dumps(delivery_issues, ensure_ascii=False)
+                         + '。仍须遵守原任务和安全边界，不得补造未知信息。'}
+                    ]
+                    contract = self.tasks.current
+                    if self.literal_composition_enabled and (contract.required_literals or contract.forbidden_literals):
+                        repair_mode = 'literal_slots' if self.literal_plan_version == 'v1' else 'literal_template'
+                        layout = (LiteralLayout(contract.required_literals, contract.forbidden_literals)
+                            if self.literal_plan_version == 'v1' else LiteralTemplate(
+                                contract.required_literals, contract.forbidden_literals, source=contract.source,
+                                perspective=contract.perspective, recipient=contract.recipient))
+                        composer = getattr(self.llm, 'compose_literal_plan', None) or getattr(self.llm, 'compose_literal_slots')
+                        corrected = layout.render(composer(repair_messages, layout, cancel=cancel))
+                    elif cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        repair_mode = 'freeform'
+                        corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
+                            cancel=cancel, on_delta=None)
+                    else:
+                        repair_mode = 'freeform'
+                        corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
+                    checkpoint_context()
+                    if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
+                        reply = corrected
+                        repair_succeeded = True
+                        if repair_mode in {'literal_slots', 'literal_template'}:
+                            generation_mode = 'llm_literal_composition'
+                except Cancelled:
+                    raise
+                except Exception as exc:
+                    repair_error = type(exc).__name__
+                    logger.warning('任务修正失败，保留原回复与检查记录')
+        output_adjustment = None
+        output_checker = getattr(self.boundaries, 'review_output', None)
+        if output_checker is not None:
+            reply, output_adjustment = output_checker(reply)
+        writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
+        if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
+            reply, grounding_action = review_profile_reply(user_text, reply, profile)
+        if self.final_reply_reviewer is not None and generation_mode == 'llm':
+            reviewed, metadata = self.final_reply_reviewer(user_text, reply)
+            if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
+                raise ValueError('final reply reviewer returned invalid data')
+            checkpoint_context()
+            review_sources = metadata.get('source_message_ids', [])
+            if (not isinstance(review_sources, list) or len(review_sources) > 4
+                    or any(type(ident) is not int or not 0 < ident <= self._current_message_id for ident in review_sources)):
+                raise ValueError('final reply reviewer returned invalid source IDs')
+            for ident in review_sources:
+                source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?', (ident,)).fetchone()
+                if not source or source['role'] != 'user' or source['content'] == '[redacted]':
+                    raise ValueError('final reply reviewer source is not a valid user message')
+            response_source_ids.update(review_sources)
+            self._response_review = {**metadata, 'stream_buffered': True}
+            if reviewed != reply:
+                generation_mode = 'reviewed_response'
+            reply = reviewed
+        # Profile or task guards buffer text until complete review/repair finishes.
+        # Lookup/rule responses retain their normal final-result delivery path.
+        if self._due_reminders:
+            reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
+        final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
+        repair_succeeded = repair_succeeded and not final_delivery_issues
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition'}
+                              or self._response_review is not None) and on_delta):
+            emit_checked(reply)
+        elif generation_mode == 'llm' and on_delta:
+            # Sentence checks leave closing quotes, emoji and unpunctuated
+            # text pending. Complete only an unchanged, checked final prefix;
+            # never append a stale tail after a whole-output replacement.
+            prefix = ''.join(streamed_prefix)
+            if reply.startswith(prefix) and len(reply) > len(prefix):
+                emit_checked(reply[len(prefix):])
+        self._checkpoint()
+        # 5. 短期记忆记下回复
+        with self.memory.transaction():
+            if self.memory.context_revision != turn_context_revision:
+                raise Cancelled('context changed before reply commit')
+            self._checkpoint()
+            self.memory.add_short_term("assistant", reply)
+            assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
+                context_ids=response_context_ids, source_message_ids=response_source_ids)
+        # 6. TTS（可选）
+        audio_path = None
+        lip_sync_frames = None
+        lipsync_error = None
+        if use_tts:
+            audio_path = self.tts.synthesize(
+                reply, tts_path, decision.speech_rate, decision.speech_pitch
+            )
+            try:
+                samples, sample_rate = load_audio(audio_path)
+                lip_sync_frames = [
+                    {'time': frame.time, 'mouth_open': frame.mouth_open,
+                     'vowel': frame.vowel, 'energy': frame.energy}
+                    for frame in self.lipsync.analyze(samples, sample_rate)
+                ]
+            except Exception as exc:
+                logger.warning('口型分析失败：%s', type(exc).__name__)
+                lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
+        result = {
+            "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
+                             "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
+            "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
+            "knowledge_retrieval_degraded":self._knowledge_degraded,
+            "task": self.tasks.current.data() if self.tasks.current else None,
+            "delivery_check": {"initial_issues": delivery_issues,
+                               "remaining_issues": final_delivery_issues,
+                               "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded,
+                               "repair_mode": repair_mode, "repair_error": repair_error,
+                               "literal_composition_enabled": self.literal_composition_enabled,
+                               "literal_plan_version": self.literal_plan_version if self.literal_composition_enabled else None,
+                               "draft_generation_mode": draft_generation_mode,
+                               "stream_buffered": delivery_guard_active and generation_mode in {"llm", "llm_literal_composition"}},
+            "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
+                         "output_adjustment": output_adjustment},
+            "speaker_attribution": self.speaker_scope.data(),
+            "speaker_tool_blocked": speaker_tool_blocked,
+            "reply": reply,
+            "emotion": ('手动表达覆盖' if override else self.emotion.state.label()),
+            "valence": round(effective['valence'], 2),
+            "arousal": round(effective['arousal'], 2),
+            "style": decision.style,
+            "speech_rate": decision.speech_rate,
+            "speech_pitch": decision.speech_pitch,
+            "mouth_intensity": decision.mouth_intensity,
+            "strategy": decision.strategy,
+            "analysis_mode": self.analysis_mode,
+            "generation_mode": generation_mode,
+            "identity_grounding": self.subject_prompt_enabled,
+            "profile_grounding": {"enabled": self.profile_grounding_enabled,
+                                  "action": grounding_action, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2,
+                                  "semantic_verifier": False,
+                                  "stream_buffered": self.profile_grounding_enabled and generation_mode in {"llm", "llm_literal_composition"}},
+            "user_emotion": self.emotion.user_state.label(),
+            "user_valence": round(self.emotion.user_state.valence, 2),
+            "user_arousal": round(self.emotion.user_state.arousal, 2),
+            "audio_path": audio_path,
+            "lip_sync_frames": lip_sync_frames,
+            "lipsync_error": lipsync_error,
+            "energy": round(self.emotion.energy, 3),
+>           "recalled_ids": [r['id'] for r in self._turn_facts],
+            "reminder": reminder,
+            "reminder_error": reminder_error,
+            "due_reminders": self._due_reminders,
+            "conversation_summary": self.conversation_summary(),
+            "sources": web_result['sources'],
+            "tool_calls": web_result['tool_calls'],
+            "web_error": web_result.get('web_error'),
+        }
+E       TypeError: 'NoneType' object is not iterable
+
+src/avatar/main.py:853: TypeError
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-tts-True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb66d9f0>
+when = 'tts', use_tts = True, change = 'same_instance_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+            with pytest.raises(Cancelled):
+>               bot.respond('我的名字是'+PRIVATE+'。', use_tts=use_tts,
+                            tts_path=str(tmp_path/'reply.wav'), cancel=token)
+
+tests/test_sdk_tts_privacy.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.main.Avatar object at 0x7f32cb66f670>
+user_text = '我的名字是待删语音实验名。', use_tts = True
+tts_path = '/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur10/reply.wav'
+use_web = False
+cancel = <avatar.cancellation.CancellationToken object at 0x7f32cb66ce50>
+on_delta = None, source_precondition = None
+
+    def respond(
+        self,
+        user_text: str,
+        use_tts: bool = False,
+        tts_path: str = "./data/reply.mp3",
+        use_web: bool = False,
+        cancel: Optional[CancellationToken] = None,
+        on_delta=None,
+        source_precondition=None,
+    ) -> dict:
+        """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
+        self._cancel_token = cancel
+        self._response_review = None
+        self.analysis_mode = 'boundary_or_tool_rules'
+        self._checkpoint()
+        self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
+        turn_context_revision = self.memory.context_revision
+        self._turn_context_revision = turn_context_revision
+        if self._task_context_revision != turn_context_revision:
+            self.tasks.current = None
+            self._task_context_revision = turn_context_revision
+        def checkpoint_context():
+            self._checkpoint()
+            revision = self.memory.context_revision
+            if revision != turn_context_revision:
+                self.tasks.current = None
+                self._task_context_revision = revision
+                raise Cancelled('context changed before response continuation')
+        def emit_checked(piece):
+            checkpoint_context()
+            if on_delta:
+                on_delta(piece)
+        # Source and durable control state commit together before any model,
+        # fact extraction or tool. Cancellation cannot leave a committed role
+        # declaration without its attribution state across a process restart.
+        with self.memory.transaction():
+            checkpoint_context()
+            if source_precondition is not None:
+                source_precondition()
+            # A rejected admission must leave neither a durable user source nor
+            # an in-memory phantom which run_chat would retain in its finally.
+            self.memory.add_short_term("user", user_text)
+            self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
+            if self.speaker_context_store is not None:
+                self.speaker_scope = self.speaker_context_store.observe(
+                    user_text, turn_context_revision, self._current_message_id)
+            else:
+                self.speaker_scope.observe(user_text, turn_context_revision, source_id=self._current_message_id)
+        boundary = self.boundaries.assess(user_text)
+        checkpoint_context()
+        from .brain.speaker_control import canonical_speaker_control
+        control = (canonical_speaker_control(user_text, self.speaker_scope,
+            turn_context_revision, self._current_message_id) if boundary.reply is None else None)
+        if control is not None:
+            source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?',
+                (self._current_message_id,)).fetchone()
+            if not source or source['role'] != 'user' or source['content'] != user_text:
+                raise Cancelled('canonical control source changed')
+        if self.task_contract_enabled:
+            self.tasks.update(user_text)
+        # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
+        if boundary.reply is not None:
+            self.emotion.update(user_text)
+        elif control is not None:
+            self.analysis_mode = 'rules_speaker_control'
+            self.emotion.update(user_text)
+        elif use_web:
+            # Tool outputs never enter fact extraction; web turns only admit
+            # explicit claims in the current user's original message.
+            self._extract_facts(user_text)
+            self.emotion.update(user_text)
+        else:
+            self._analyze(user_text)
+        checkpoint_context()
+        reminder = None
+        reminder_error = None
+        reminder_request = re.match(r'^(?:请)?提醒我', user_text.strip())
+        cancel_match = re.fullmatch(
+            r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
+            user_text)
+        speaker_tool_blocked = bool(not self.speaker_scope.allows_actions
+                                    and (use_web or reminder_request or cancel_match))
+        if boundary.reply is None and reminder_request and not speaker_tool_blocked:
+            try:
+                reminder = self.reminders.create(user_text)
+            except ValueError as exc:
+                reminder_error = str(exc)
+        cancelled_reminder_id = None
+        if boundary.reply is None and cancel_match and not speaker_tool_blocked:
+            cancelled_reminder_id = int(cancel_match[1])
+            try:
+                self.reminders.set_status(cancelled_reminder_id, 'cancelled')
+            except ValueError as exc:
+                reminder_error = str(exc)
+                cancelled_reminder_id = None
+        self._turn_facts = [] if control is not None else self.memory.recall(query=user_text, limit=5)
+        self._knowledge_context=[];self._knowledge_degraded=False
+        knowledge_store=self._admin_store()
+        if knowledge_store and boundary.reply is None and control is None:
+            try:
+                from .brain.knowledge import KnowledgeService
+                self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
+            except Exception:
+                self._knowledge_degraded=True
+                logger.warning('知识检索失败，继续使用对话与已确认记忆')
+        if self.summary_enabled and control is None:
+            self.summaries.refresh(self.session_id)
+        self._due_reminders = (self.reminders.claim_due()
+                               if boundary.reply is None and control is None and self.speaker_scope.allows_actions else [])
+        # 3. 行为决策
+        store=self._admin_store()
+        override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
+        decision = self.emotion.decide(user_text,expression_override=override['data']) if override else self.emotion.decide(user_text)
+        managed=store.current_persona()['data'] if store and store.current_persona() else {}
+        decision.temperature=_clamp(decision.temperature+managed.get('temperature_bias',0),0,1.5)
+        effective=override['data'] if override else {'valence':self.emotion.state.valence,'arousal':self.emotion.state.arousal}
+        web_result = {'sources': [], 'tool_calls': []}
+        response_context_ids = {row['id'] for row in self._turn_facts}
+        response_context_ids.update(row[0] for row in self.memory._conn.execute(
+            "SELECT id FROM memory_fragments WHERE memory_type='user_profile' AND status='active'"))
+        response_source_ids = {row['id'] for row in self.memory._conn.execute(
+            'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
+            (self.session_id, self.memory.short_term_limit))}
+        response_source_ids.update(self.speaker_scope.source_ids)
+        response_source_ids.update(self.speaker_scope.context_source_ids)
+        response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
+        # 4. LLM 回复（无 key 与调用故障分别标记）
+        generation_mode = 'rules'
+        delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
+            and boundary.reply is None and reminder is None and cancelled_reminder_id is None
+            and not reminder_error and not use_web and control is None)
+        buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
+                        or self.final_reply_reviewer is not None)
+        streamed_prefix = []
+        grounding_action = None
+        profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
+        real_profile_active = self.profile_grounding_enabled and self.speaker_scope.allows_facts
+        profile_reply, lookup_action = lookup_profile(user_text, profile) if real_profile_active else (None, None)
+        if real_profile_active and profile_reply is None:
+            profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
+        if boundary.reply is not None:
+            reply = boundary.reply
+        elif control is not None:
+            reply = control.reply
+            generation_mode = 'rules_speaker_control'
+        elif self.speaker_scope.scope == 'unverified':
+            reply = ('此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。'
+                     '请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。')
+            generation_mode = 'rules_speaker_scope'
+        elif speaker_tool_blocked:
+            reply = ('这条消息未被识别为独立的真人操作请求，没有执行真实提醒或联网工具。'
+                     '请先明确退出角色，再单独提出真实请求。')
+            generation_mode = 'rules_speaker_scope'
+        elif reminder is not None:
+            due = datetime.fromtimestamp(reminder['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
+            reply = f'已设置提醒：{due}（北京时间）{reminder["title"]}。程序运行并轮询时会在本机显示。'
+        elif cancelled_reminder_id is not None:
+            reply = f'已取消提醒 #{cancelled_reminder_id}。'
+        elif reminder_error:
+            reply = reminder_error
+        elif use_web:
+            from .tools.web_agent import WebAgent
+            if self.web_agent is None:
+                self.web_agent = WebAgent(memory_db_path=self.memory.db_path)
+            checkpoint_context()
+            run = self.web_agent.run
+            engine = self.llm if self._llm_available else None
+            try:
+                parameter = inspect.signature(run).parameters.get('checkpoint')
+            except (TypeError, ValueError):
+                parameter = None
+            if parameter is not None and parameter.kind in (
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
+                web_result = run(user_text, engine, checkpoint=checkpoint_context)
+            else:
+                # Preserve the two-argument API of injected custom agents. Their
+                # internal continuation policy is outside the built-in loop.
+                web_result = run(user_text, engine)
+            checkpoint_context()
+            reply = web_result['reply']
+        elif profile_reply is not None:
+            reply, grounding_action = profile_reply, lookup_action
+            generation_mode = 'profile_lookup' if lookup_action in {'name_lookup', 'preference_lookup'} else 'profile_grounded'
+        elif self._llm_available:
+            try:
+                if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                    pending = ''
+                    def checked_delta(piece):
+                        nonlocal pending
+                        pending += piece
+                        while (match := re.search(r'[。！？!?\n]', pending)):
+                            sentence, pending = pending[:match.end()], pending[match.end():]
+                            if on_delta and not buffer_reply:
+                                safe, _ = self.boundaries.review_output(sentence)
+                                emit_checked(safe)
+                                streamed_prefix.append(safe)
+                    reply = self.llm.stream_chat(self._messages(decision, user_text),
+                        temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
+                else:
+                    reply = self.llm.chat(
+                        self._messages(decision, user_text), temperature=decision.temperature
+                    )
+                if not isinstance(reply, str) or not reply.strip():
+                    raise ValueError("Empty LLM reply")
+                generation_mode = 'llm'
+            except Cancelled:
+                raise
+            except Exception:
+                logger.warning("模型回复失败，使用规则回复")
+                generation_mode = 'rules_service_error'
+                reply = self._fallback_reply(user_text, decision, model_failed=True)
+        else:
+            generation_mode = 'rules_unconfigured'
+            reply = self._fallback_reply(user_text, decision)
+        draft_generation_mode = generation_mode
+        checkpoint_context()
+        # One bounded retry only for a normal local writing response. Never
+        # replay tools, reminders, or replace a deterministic safety decision.
+        delivery_issues = []
+        repair_attempted = False
+        repair_succeeded = False
+        repair_mode = None
+        repair_error = None
+        if delivery_guard_active and generation_mode == 'llm':
+            delivery_issues = self.tasks.inspect(reply)
+            if delivery_issues and self._llm_available:
+                repair_attempted = True
+                try:
+                    checkpoint_context()
+                    repair_messages = self._messages(decision, user_text) + [
+                        {'role': 'assistant', 'content': reply},
+                        {'role': 'user', 'content': '请修正上一稿后直接交付正文；检查发现：'
+                         + json.dumps(delivery_issues, ensure_ascii=False)
+                         + '。仍须遵守原任务和安全边界，不得补造未知信息。'}
+                    ]
+                    contract = self.tasks.current
+                    if self.literal_composition_enabled and (contract.required_literals or contract.forbidden_literals):
+                        repair_mode = 'literal_slots' if self.literal_plan_version == 'v1' else 'literal_template'
+                        layout = (LiteralLayout(contract.required_literals, contract.forbidden_literals)
+                            if self.literal_plan_version == 'v1' else LiteralTemplate(
+                                contract.required_literals, contract.forbidden_literals, source=contract.source,
+                                perspective=contract.perspective, recipient=contract.recipient))
+                        composer = getattr(self.llm, 'compose_literal_plan', None) or getattr(self.llm, 'compose_literal_slots')
+                        corrected = layout.render(composer(repair_messages, layout, cancel=cancel))
+                    elif cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        repair_mode = 'freeform'
+                        corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
+                            cancel=cancel, on_delta=None)
+                    else:
+                        repair_mode = 'freeform'
+                        corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
+                    checkpoint_context()
+                    if isinstance(corrected, str) and corrected.strip() and not self.tasks.inspect(corrected):
+                        reply = corrected
+                        repair_succeeded = True
+                        if repair_mode in {'literal_slots', 'literal_template'}:
+                            generation_mode = 'llm_literal_composition'
+                except Cancelled:
+                    raise
+                except Exception as exc:
+                    repair_error = type(exc).__name__
+                    logger.warning('任务修正失败，保留原回复与检查记录')
+        output_adjustment = None
+        output_checker = getattr(self.boundaries, 'review_output', None)
+        if output_checker is not None:
+            reply, output_adjustment = output_checker(reply)
+        writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
+        if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
+            reply, grounding_action = review_profile_reply(user_text, reply, profile)
+        if self.final_reply_reviewer is not None and generation_mode == 'llm':
+            reviewed, metadata = self.final_reply_reviewer(user_text, reply)
+            if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
+                raise ValueError('final reply reviewer returned invalid data')
+            checkpoint_context()
+            review_sources = metadata.get('source_message_ids', [])
+            if (not isinstance(review_sources, list) or len(review_sources) > 4
+                    or any(type(ident) is not int or not 0 < ident <= self._current_message_id for ident in review_sources)):
+                raise ValueError('final reply reviewer returned invalid source IDs')
+            for ident in review_sources:
+                source = self.memory._conn.execute('SELECT role,content FROM memory_messages WHERE id=?', (ident,)).fetchone()
+                if not source or source['role'] != 'user' or source['content'] == '[redacted]':
+                    raise ValueError('final reply reviewer source is not a valid user message')
+            response_source_ids.update(review_sources)
+            self._response_review = {**metadata, 'stream_buffered': True}
+            if reviewed != reply:
+                generation_mode = 'reviewed_response'
+            reply = reviewed
+        # Profile or task guards buffer text until complete review/repair finishes.
+        # Lookup/rule responses retain their normal final-result delivery path.
+        if self._due_reminders:
+            reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
+        final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
+        repair_succeeded = repair_succeeded and not final_delivery_issues
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition'}
+                              or self._response_review is not None) and on_delta):
+            emit_checked(reply)
+        elif generation_mode == 'llm' and on_delta:
+            # Sentence checks leave closing quotes, emoji and unpunctuated
+            # text pending. Complete only an unchanged, checked final prefix;
+            # never append a stale tail after a whole-output replacement.
+            prefix = ''.join(streamed_prefix)
+            if reply.startswith(prefix) and len(reply) > len(prefix):
+                emit_checked(reply[len(prefix):])
+        self._checkpoint()
+        # 5. 短期记忆记下回复
+        with self.memory.transaction():
+            if self.memory.context_revision != turn_context_revision:
+                raise Cancelled('context changed before reply commit')
+            self._checkpoint()
+            self.memory.add_short_term("assistant", reply)
+            assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
+                context_ids=response_context_ids, source_message_ids=response_source_ids)
+        # 6. TTS（可选）
+        audio_path = None
+        lip_sync_frames = None
+        lipsync_error = None
+        if use_tts:
+            audio_path = self.tts.synthesize(
+                reply, tts_path, decision.speech_rate, decision.speech_pitch
+            )
+            try:
+                samples, sample_rate = load_audio(audio_path)
+                lip_sync_frames = [
+                    {'time': frame.time, 'mouth_open': frame.mouth_open,
+                     'vowel': frame.vowel, 'energy': frame.energy}
+                    for frame in self.lipsync.analyze(samples, sample_rate)
+                ]
+            except Exception as exc:
+                logger.warning('口型分析失败：%s', type(exc).__name__)
+                lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
+        result = {
+            "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
+                             "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
+            "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
+            "knowledge_retrieval_degraded":self._knowledge_degraded,
+            "task": self.tasks.current.data() if self.tasks.current else None,
+            "delivery_check": {"initial_issues": delivery_issues,
+                               "remaining_issues": final_delivery_issues,
+                               "repair_attempted": repair_attempted, "repair_succeeded": repair_succeeded,
+                               "repair_mode": repair_mode, "repair_error": repair_error,
+                               "literal_composition_enabled": self.literal_composition_enabled,
+                               "literal_plan_version": self.literal_plan_version if self.literal_composition_enabled else None,
+                               "draft_generation_mode": draft_generation_mode,
+                               "stream_buffered": delivery_guard_active and generation_mode in {"llm", "llm_literal_composition"}},
+            "boundary": {"route": boundary.route, "guarded": boundary.reply is not None,
+                         "output_adjustment": output_adjustment},
+            "speaker_attribution": self.speaker_scope.data(),
+            "speaker_tool_blocked": speaker_tool_blocked,
+            "reply": reply,
+            "emotion": ('手动表达覆盖' if override else self.emotion.state.label()),
+            "valence": round(effective['valence'], 2),
+            "arousal": round(effective['arousal'], 2),
+            "style": decision.style,
+            "speech_rate": decision.speech_rate,
+            "speech_pitch": decision.speech_pitch,
+            "mouth_intensity": decision.mouth_intensity,
+            "strategy": decision.strategy,
+            "analysis_mode": self.analysis_mode,
+            "generation_mode": generation_mode,
+            "identity_grounding": self.subject_prompt_enabled,
+            "profile_grounding": {"enabled": self.profile_grounding_enabled,
+                                  "action": grounding_action, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2,
+                                  "semantic_verifier": False,
+                                  "stream_buffered": self.profile_grounding_enabled and generation_mode in {"llm", "llm_literal_composition"}},
+            "user_emotion": self.emotion.user_state.label(),
+            "user_valence": round(self.emotion.user_state.valence, 2),
+            "user_arousal": round(self.emotion.user_state.arousal, 2),
+            "audio_path": audio_path,
+            "lip_sync_frames": lip_sync_frames,
+            "lipsync_error": lipsync_error,
+            "energy": round(self.emotion.energy, 3),
+>           "recalled_ids": [r['id'] for r in self._turn_facts],
+            "reminder": reminder,
+            "reminder_error": reminder_error,
+            "due_reminders": self._due_reminders,
+            "conversation_summary": self.conversation_summary(),
+            "sources": web_result['sources'],
+            "tool_calls": web_result['tool_calls'],
+            "web_error": web_result.get('web_error'),
+        }
+E       TypeError: 'NoneType' object is not iterable
+
+src/avatar/main.py:853: TypeError
+_ test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-metadata-False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_rechecks_original_tur11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb4c3a00>
+when = 'metadata', use_tts = False, change = 'same_instance_forget'
+
+    @pytest.mark.parametrize('when,use_tts', [('commit', False), ('commit', True),
+                                            ('tts', True), ('metadata', False)])
+    @pytest.mark.parametrize('change', ['cancel', 'external_forget', 'same_instance_forget'])
+    def test_sdk_rechecks_original_turn_after_commit_tts_and_metadata(tmp_path, monkeypatch, when, use_tts, change):
+        path = str(tmp_path/'sdk.db'); token = CancellationToken(); calls = []; decoded = []; changed = []
+        def alter():
+            if changed: return
+            changed.append(True)
+            if change == 'cancel': token.cancel()
+            elif change == 'same_instance_forget': bot.forget_memory(fragment)
+            else:
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        class TTS:
+            def synthesize(self, text, out_path, rate, pitch):
+                calls.append(text)
+                if when == 'tts': alter()
+                silence(out_path); return out_path
+        bot = Avatar(db_path=path, llm=Engine(), tts=TTS())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        original_transaction = bot.memory.transaction; original_summary = bot.conversation_summary
+        def assistant_committed():
+            return not bot.memory._conn.in_transaction and bot.memory._conn.execute(
+                "SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+        @contextmanager
+        def transaction():
+            with original_transaction(): yield
+            if when == 'commit' and assistant_committed(): alter()
+        def summary():
+            result = original_summary()
+            if when == 'metadata' and assistant_committed(): alter()
+            return result
+        def load_audio(*args, **kwargs):
+            decoded.append(True); return np.zeros(1600, dtype=np.float32), 16000
+        monkeypatch.setattr(bot.memory, 'transaction', transaction)
+        monkeypatch.setattr(bot, 'conversation_summary', summary)
+        monkeypatch.setattr('avatar.main.load_audio', load_audio)
+        try:
+>           with pytest.raises(Cancelled):
+E           Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:66: Failed
+___________ test_sdk_passes_original_token_to_native_cancellable_tts ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_passes_original_token0')
+
+    def test_sdk_passes_original_token_to_native_cancellable_tts(tmp_path):
+        token = CancellationToken(); calls = []
+        class TTS:
+            def synthesize(self, *args):
+                calls.append('plain'); silence(args[1]); return args[1]
+            def synthesize_cancellable(self, text, path, rate, pitch, *, cancel=None):
+                calls.append(cancel); silence(path); return path
+        bot = Avatar(db_path=':memory:', llm=Engine(), tts=TTS())
+        try:
+            result = bot.respond('普通话题。', use_tts=True, tts_path=str(tmp_path/'reply.wav'), cancel=token)
+>           assert calls == [token] and result['lip_sync_frames'] is not None
+E           AssertionError: assert (['plain'] == [<avatar.canc...7f32cb6bc130>]
+E             
+E             At index 0 diff: 'plain' != <avatar.cancellation.CancellationToken object at 0x7f32cb6bc130>
+E             Use -v to get more diff)
+
+tests/test_sdk_tts_privacy.py:88: AssertionError
+_____ test_sdk_edge_uses_turn_token_for_actual_async_save_lifecycle[True] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-236/test_sdk_edge_uses_turn_token_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f32cb4c1990>
+stop = True
+
+    @pytest.mark.parametrize('stop', [False, True])
+    def test_sdk_edge_uses_turn_token_for_actual_async_save_lifecycle(tmp_path, monkeypatch, stop):
+        token = CancellationToken(); started = []; finished = []; path = str(tmp_path/'reply.wav')
+        class Communicate:
+            def __init__(self, text, voice, **kwargs): assert text
+            async def save(self, out_path):
+                started.append(True)
+                if stop: token.cancel()
+                await asyncio.sleep(.01)
+                silence(out_path); finished.append(True)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        bot = Avatar(db_path=':memory:', llm=Engine(), tts=EdgeTTSEngine())
+        try:
+            if stop:
+>               with pytest.raises(Cancelled): bot.respond('普通话题。', use_tts=True, tts_path=path, cancel=token)
+E               Failed: DID NOT RAISE Cancelled
+
+tests/test_sdk_tts_privacy.py:121: Failed
+=========================== short test summary info ============================
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-commit-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-commit-True]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-tts-True]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[cancel-metadata-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-commit-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-commit-True]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-tts-True]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[external_forget-metadata-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-commit-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-commit-True]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-tts-True]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_rechecks_original_turn_after_commit_tts_and_metadata[same_instance_forget-metadata-False]
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_passes_original_token_to_native_cancellable_tts
+FAILED tests/test_sdk_tts_privacy.py::test_sdk_edge_uses_turn_token_for_actual_async_save_lifecycle[True]
+14 failed, 2 passed in 1.24s
