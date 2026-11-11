@@ -90,3 +90,38 @@ def test_stream_has_total_deadline_even_when_chunks_beat_read_timeout():
             assert server.disconnected.wait(2)
         finally:
             engine.close()
+
+
+@pytest.mark.parametrize('reply', ['"明天一起爬山。"', '没有句号的完整回复', '第一句。最后一段没有标点', '这句结束。🙂'])
+@pytest.mark.parametrize('buffered', [False, True], ids=['sentences', 'buffered'])
+def test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail(reply, buffered):
+    with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+        engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+        bot = Avatar(db_path=':memory:', llm=engine, profile_grounding_enabled=buffered)
+        pieces = []
+        try:
+            result = bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+            assert result['generation_mode'] == 'llm'
+            assert result['reply'] == ''.join(pieces) == reply
+            if buffered: assert pieces == [reply]
+            assert bot.memory.get_short_term()[-1] == {'role': 'assistant', 'content': reply}
+        finally:
+            bot.memory.close(); engine.close()
+
+
+def test_cancel_after_full_review_cannot_flush_a_late_quote_or_commit_assistant():
+    reply = '"明天一起爬山。"'
+    with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+        engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+        bot = Avatar(db_path=':memory:', llm=engine); token = CancellationToken(); pieces = []
+        review = bot.boundaries.review_output
+        def cancel_final(text):
+            if text == reply: token.cancel()
+            return review(text)
+        bot.boundaries.review_output = cancel_final
+        try:
+            with pytest.raises(Cancelled): bot.respond('fixture-tail', cancel=token, on_delta=pieces.append)
+            assert ''.join(pieces) == reply[:-1]
+            assert [r[0] for r in bot.memory._conn.execute('SELECT role FROM memory_messages')] == ['user']
+        finally:
+            bot.memory.close(); engine.close()

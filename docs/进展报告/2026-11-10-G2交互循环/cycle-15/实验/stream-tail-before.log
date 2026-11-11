@@ -1,0 +1,93 @@
+......FFFF.....                                                          [100%]
+=================================== FAILURES ===================================
+_ test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-"\u660e\u5929\u4e00\u8d77\u722c\u5c71\u3002"] _
+
+reply = '"明天一起爬山。"', buffered = False
+
+    @pytest.mark.parametrize('reply', ['"明天一起爬山。"', '没有句号的完整回复', '第一句。最后一段没有标点', '这句结束。🙂'])
+    @pytest.mark.parametrize('buffered', [False, True], ids=['sentences', 'buffered'])
+    def test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail(reply, buffered):
+        with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+            engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+            bot = Avatar(db_path=':memory:', llm=engine, profile_grounding_enabled=buffered)
+            pieces = []
+            try:
+                result = bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+                assert result['generation_mode'] == 'llm'
+>               assert result['reply'] == ''.join(pieces) == reply
+E               assert '"明天一起爬山。"' == '"明天一起爬山。'
+E                 
+E                 - "明天一起爬山。
+E                 + "明天一起爬山。"
+E                 ?         +
+
+tests/test_streaming.py:105: AssertionError
+_ test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-\u6ca1\u6709\u53e5\u53f7\u7684\u5b8c\u6574\u56de\u590d] _
+
+reply = '没有句号的完整回复', buffered = False
+
+    @pytest.mark.parametrize('reply', ['"明天一起爬山。"', '没有句号的完整回复', '第一句。最后一段没有标点', '这句结束。🙂'])
+    @pytest.mark.parametrize('buffered', [False, True], ids=['sentences', 'buffered'])
+    def test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail(reply, buffered):
+        with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+            engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+            bot = Avatar(db_path=':memory:', llm=engine, profile_grounding_enabled=buffered)
+            pieces = []
+            try:
+                result = bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+                assert result['generation_mode'] == 'llm'
+>               assert result['reply'] == ''.join(pieces) == reply
+E               AssertionError: assert '没有句号的完整回复' == ''
+E                 
+E                 + 没有句号的完整回复
+
+tests/test_streaming.py:105: AssertionError
+_ test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-\u7b2c\u4e00\u53e5\u3002\u6700\u540e\u4e00\u6bb5\u6ca1\u6709\u6807\u70b9] _
+
+reply = '第一句。最后一段没有标点', buffered = False
+
+    @pytest.mark.parametrize('reply', ['"明天一起爬山。"', '没有句号的完整回复', '第一句。最后一段没有标点', '这句结束。🙂'])
+    @pytest.mark.parametrize('buffered', [False, True], ids=['sentences', 'buffered'])
+    def test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail(reply, buffered):
+        with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+            engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+            bot = Avatar(db_path=':memory:', llm=engine, profile_grounding_enabled=buffered)
+            pieces = []
+            try:
+                result = bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+                assert result['generation_mode'] == 'llm'
+>               assert result['reply'] == ''.join(pieces) == reply
+E               AssertionError: assert '第一句。最后一段没有标点' == '第一句。'
+E                 
+E                 - 第一句。
+E                 + 第一句。最后一段没有标点
+
+tests/test_streaming.py:105: AssertionError
+_ test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-\u8fd9\u53e5\u7ed3\u675f\u3002\U0001f642] _
+
+reply = '这句结束。🙂', buffered = False
+
+    @pytest.mark.parametrize('reply', ['"明天一起爬山。"', '没有句号的完整回复', '第一句。最后一段没有标点', '这句结束。🙂'])
+    @pytest.mark.parametrize('buffered', [False, True], ids=['sentences', 'buffered'])
+    def test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail(reply, buffered):
+        with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+            engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+            bot = Avatar(db_path=':memory:', llm=engine, profile_grounding_enabled=buffered)
+            pieces = []
+            try:
+                result = bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+                assert result['generation_mode'] == 'llm'
+>               assert result['reply'] == ''.join(pieces) == reply
+E               AssertionError: assert '这句结束。🙂' == '这句结束。'
+E                 
+E                 - 这句结束。
+E                 + 这句结束。🙂
+E                 ?      +
+
+tests/test_streaming.py:105: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_streaming.py::test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-"\u660e\u5929\u4e00\u8d77\u722c\u5c71\u3002"]
+FAILED tests/test_streaming.py::test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-\u6ca1\u6709\u53e5\u53f7\u7684\u5b8c\u6574\u56de\u590d]
+FAILED tests/test_streaming.py::test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-\u7b2c\u4e00\u53e5\u3002\u6700\u540e\u4e00\u6bb5\u6ca1\u6709\u6807\u70b9]
+FAILED tests/test_streaming.py::test_completed_avatar_stream_retains_unpunctuated_or_quoted_tail[sentences-\u8fd9\u53e5\u7ed3\u675f\u3002\U0001f642]
+4 failed, 11 passed in 8.58s
