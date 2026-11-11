@@ -1,0 +1,18 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_conversation_changes_auth_metadata_and_invalid_parameters ________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7efd3825d360>, <avatar.web.AvatarHTTPServer object at 0x7efd3839f0a0>)
+
+    def test_conversation_changes_auth_metadata_and_invalid_parameters(api_v1):
+        request, server = api_v1
+        path = '/api/v1/conversation/changes?instance_id=unknown&revision=0'
+        assert request(path, token=False)[0] == 403
+        code, body = request(path)
+>       assert code == 200
+E       assert 404 == 200
+
+tests/test_web_api_v1.py:120: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_web_api_v1.py::test_conversation_changes_auth_metadata_and_invalid_parameters
+1 failed, 9 deselected in 1.18s

@@ -112,6 +112,19 @@ def test_conversation_restores_original_completed_result_without_chat_replay(api
     assert server.short_term == before
 
 
+def test_conversation_changes_auth_metadata_and_invalid_parameters(api_v1):
+    request, server = api_v1
+    path = '/api/v1/conversation/changes?instance_id=unknown&revision=0'
+    assert request(path, token=False)[0] == 403
+    code, body = request(path)
+    assert code == 200
+    assert body['data'] == {'instance_id': server.session_id, 'revision': 0}
+    for query in ['', 'instance_id=a', 'revision=0', 'instance_id=a&revision=-1',
+                  'instance_id=a&revision=0&revision=1', 'instance_id=a&revision=0&extra=1',
+                  'instance_id=&revision=0', 'instance_id=a&revision=1.1']:
+        assert request('/api/v1/conversation/changes?' + query)[0] == 422
+
+
 def test_knowledge_import_requires_confirmation(api_v1):
     r, _ = api_v1
     code, body = r(
