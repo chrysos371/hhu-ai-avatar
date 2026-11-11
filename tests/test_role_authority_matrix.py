@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('role_authority_audit', ROOT/'scripts/lab/audit_role_authority.py')
 AUDIT = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(AUDIT)
 CASES = json.loads((ROOT/'evals/interaction/cycle-17/role-authority-protocol.json').read_text())['cases']
+CASES += json.loads((ROOT/'evals/interaction/cycle-17/role-compound-protocol.json').read_text())['cases']
 
 
 @pytest.mark.parametrize('case', CASES, ids=lambda case: case['id'])

@@ -14,13 +14,13 @@ from .facts import _mask_quoted
 _ROLE_PREFIX = (
     r'^(?:(?:接下来|现在|从现在起)[，,\s]*)?'
     r'我(?:(?:现在|接下来|从现在起)[，,\s]*)?')
-_ENTRY = re.compile(_ROLE_PREFIX + r'(?:来|要|将|会)?(?:扮演|饰演)(?!过|了)'
+_ENTRY = re.compile(_ROLE_PREFIX + r'(?:来|要|将(?:会)?|会)?(?:扮演|饰演)(?!过|了)'
     r'(?:(?:[^。！？!?；;，,\n]{0,40})(?:角色|人物)|'
     r'(?:剧|剧本|小说|故事|童话|电影|游戏)(?:中|里)(?:的)?[^。！？!?；;，,\n]{1,40})\s*$')
 # Explicit but otherwise unsupported role intent cannot silently authorize real
 # profile writes/actions. Prefix-only recognition keeps long descriptions safe;
 # it does not invent a fictional identity or parse an arbitrary character name.
-_ROLE_INTENT = re.compile(_ROLE_PREFIX + r'(?:来|要|将|会|想|打算|准备|试着)?(?:扮演|饰演)(?!过|了)')
+_ROLE_INTENT = re.compile(_ROLE_PREFIX + r'(?:来|要|将(?:会)?|会|想(?:要)?|打算|准备(?:要)?|试着)?(?:扮演|饰演)(?!过|了)')
 _ROLE_QUERY = re.compile(r'(?:扮演|饰演)(?:谁|什么|哪个|哪位)')
 _ROLE_DISCUSSION = re.compile(r'(?:扮演|饰演)[^。！？!?；;，,\n]*(?:时|的时候)(?:会|总是|常常|通常|往往|很|容易)')
 _EXIT = re.compile(r'^(?:回到现实|停止扮演|退出角色|不演了|结束角色扮演)(?:吧)?\s*$')
