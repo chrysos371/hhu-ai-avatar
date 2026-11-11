@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageSquare, Send, Volume2, Square } from "lucide-react";
 import { streamTurn, cancelTurn, type TurnInput } from "../../lib/turns";
-import { apiRequest, formatTime } from "../../lib/api";
+import { ApiError, apiRequest, formatTime } from "../../lib/api";
 import type { PersonaVersion } from "../../lib/types";
 import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
@@ -53,7 +53,8 @@ export function ChatPage() {
         throw new DOMException('本轮提交语境已失效或已停止。', 'AbortError');
       const controller = new AbortController();
       activeTurn.current = { id: input.request_id, controller };
-      return streamTurn({ request_id: input.request_id, text: input.text, use_web: input.use_web }, controller.signal,
+      return streamTurn({ request_id: input.request_id, text: input.text, use_web: input.use_web,
+        ...(input.expected_context ? { expected_context: input.expected_context } : {}) }, controller.signal,
         piece => { if (history.isCurrent(input.epoch)) setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, text: row.text + piece } : row)); });
     },
     onSuccess: (result, input) => {
@@ -64,8 +65,16 @@ export function ChatPage() {
         : i === input.index - 1 ? { ...row, id: source?.user_message_id, session_id: source?.session_id } : row));
       if (autoSpeak && !input.controlChoice) void speech.play(source?.assistant_message_id ?? -(input.index + 1), result, true);
     },
-    onError: (error, input) => {
+    onError: async (error, input) => {
       if (input.cancelled || !history.isCurrent(input.epoch)) return;
+      if (error instanceof ApiError && error.code === 'speaker_context_changed') {
+        const context = await history.refreshContext();
+        if (input.cancelled || !history.isCurrent(input.epoch)) return;
+        // Restore only after an authoritative read confirms that privacy and
+        // server identity are unchanged. Never auto-replay this rejected turn.
+        if (context && input.expected_context?.instance_id === context.instance_id
+          && input.expected_context.revision === context.revision) setText(old => old || input.text);
+      }
       const cancelled = error.name === "AbortError";
       setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, pending: false, cancelled,
         text: row.text || (cancelled ? "本轮已停止。" : "本轮未完成。") } : row));
@@ -98,12 +107,18 @@ export function ChatPage() {
   };
   function enqueue(value: string, allowWeb: boolean, controlChoice?: SpeakerChoice) {
     if (!value.trim() || send.isPending || submittedTurn.current !== null || voiceBusy || !history.ready) return false;
+    const context = history.context;
+    if (!controlChoice && !context) return false;
+    const expected = !controlChoice && context ? {
+      instance_id: context.instance_id, revision: context.revision, context_cursor: context.context_cursor,
+    } : undefined;
     speech.stop();
     const index = messages.length + 1;
     const id = crypto.randomUUID(); submittedTurn.current = id;
     history.markContextPending();
     setMessages((m) => [...m, { role: "user", text: value }, { role: "assistant", text: "", pending: true }]);
-    const input = { request_id: id, text: value, use_web: allowWeb, index, epoch: history.epoch.current, controlChoice };
+    const input = { request_id: id, text: value, use_web: allowWeb, index, epoch: history.epoch.current, controlChoice,
+      ...(expected ? { expected_context: expected } : {}) };
     queuedInput.current = input; send.mutate(input);
     return true;
   }
@@ -216,7 +231,7 @@ export function ChatPage() {
             </label>
             <button
               className="button"
-              disabled={send.isPending || voiceBusy || !text.trim() || !history.ready}
+              disabled={send.isPending || voiceBusy || !text.trim() || !history.ready || !history.context}
             >
               <Send size={14} />
               {send.isPending ? "等待回复…" : "发送消息"}

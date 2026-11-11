@@ -53,6 +53,7 @@ export function useChatHistory({ isBusy, onInvalidate, includeContext = false }:
       const next = { instance_id: data.instance_id, revision: data.revision, context_cursor: data.context_cursor };
       version.current = next;
       setView(old => ({ ...old, version: next, context: data, contextLoading: false, contextError: null }));
+      return data;
     } catch (error) {
       if (!mounted.current || ticket !== contextGeneration.current || controller.signal.aborted) return;
       if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {

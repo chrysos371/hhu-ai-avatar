@@ -7,7 +7,9 @@
 
 当前cycle-18/计划.md、进展.md，协议explicit-context-protocol.json。fe0eda3已封17报告（104证据/85源），当前1184/1与默认15/11是17最终快照。18先实测HTTP speaker404、1440/390角色/本人按钮及面板均0，fixture2687895退出0，基线已提交。已实现只读SpeakerContextStore.read与GET /conversation/speaker，同SQLite快照验证scope/revision/user cursor，metadata无原文、不写控制或重放；相关28及快照10项通过。初两测试器错误日志保留，不作产品缺陷。
 
-下一步opt-in context_cursor扩现有单个等待，legacy仍严格2字段；一共享监测/容量，不为普通源变化清历史或取消当前回合，隐私/失联仍清旧状态。先审计迟到旧check是否可能清除新error，再实现。随后UI独立固定控制消息本人/角色，保留未发送草稿、无联网/自动朗读、快速连点守卫；状态须当前只读来源核验，不用旧trace/点击乐观确认。生产lab仍关，真实语义/设备/多日未批准。继续Goal active及spinner-bot及时小步提交/指定SSH推送。
+后端共享opt-in context_cursor已实现，legacy仍精确2字段；001迟到旧成功清新error红测后故障世代修复，42关联通过。前端传输38/Hook18通过；独立本人/角色控件只发规范源、不发草稿/联网/自动朗读、不乐观确认。002受控排队隐私2红测后同步提交归属/发送前epoch/取消标记修复，新控件/排队关联12通过。
+
+003双实际HTTP共库锁交错：角色下排队，另一方退现实后旧普通姓名/提醒被赋真人权限，2例原证据已提交。823908a后端可选expected_context(namespace/revision/latest user cursor)在用户源BEGIN IMMEDIATE事务核验，短期append在核验后，失配typed SSE且无来源/副作用；旧指纹不变，双HTTP绑定2/2、相关46通过。UI普通携带快照、固定控制无字段；冲突先核验再仅同隐私/namespace恢复草稿、不自动重发，5新审计+旧关联25通过，tsc通过。下一步实际Chromium/完整Python与前端单元lint/types/build、默认浏览器/外部删除/恢复/百轮/PCM及MD/HTML源证据封存。当前dist仍旧版，勿冒称已浏览器验收。生产lab仍关，真实语义/设备/多日未批准。继续Goal active及spinner-bot及时小步提交/指定SSH推送。
 
 ## 2026-11-11 第十七轮归档（优先）
 
