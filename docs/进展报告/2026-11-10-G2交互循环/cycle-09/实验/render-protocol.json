@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "date": "2026-11-11",
+  "baselineHead": "776777c",
+  "scope": "Real React hook and AvatarStage in JSDOM, deterministic RAF/media stubs; structural render counts, not physical playback or CPU speed",
+  "historyRows": [1, 25, 100],
+  "updatesPerCase": 60,
+  "mediaStepSeconds": 0.01,
+  "warmup": "Wait for playing and its initial frame before resetting counters",
+  "gates": {
+    "parentRendersDuringFrames": 0,
+    "historyRowVisitsDuringFrames": 0,
+    "allRenderedMouthValuesMatch": true,
+    "stopClosesMouthAndReleasesSource": true
+  },
+  "playbackRegression": {
+    "protocol": "evals/interaction/cycle-08/playback-protocol.json",
+    "fixedRunsAfterChange": 3,
+    "allThreeTestsEachRun": true,
+    "changeThresholds": false
+  },
+  "decision": "Only isolate frame subscriptions if baseline shows parent/history work. No flushSync on ChatPage. Preserve playback event guards and one-segment prefetch.",
+  "limitations": ["Artificial history mirrors rendering work but is not a full ChatPage workload", "No measured CPU speedup from counts", "Same-host browser repeats do not establish physical synchronization or causal cure of G2C8-002", "No GPU required"]
+}
