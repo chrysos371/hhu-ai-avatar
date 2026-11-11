@@ -39,7 +39,7 @@ function ReceiptPanel({ version, busy }: { version: ActionReceiptVersion; busy: 
         {localActionLabels[item.action]} · 提醒 #{item.reminder_id} · {formatTime(item.recorded_at)}
       </li>)}</ul>}
       {page.has_more && <button type="button" className="button secondary" disabled={busy || loading} onClick={() => void load(true)}>加载更多操作记录</button>}
-      <p className="muted">回执记录本地提交，不代表当前提醒状态或通知已经送达。可在记忆页查看当前提醒。</p>
+      <p className="muted">回执记录本地提交，不代表当前提醒状态或通知已经送达。可在提醒页查看当前提醒。</p>
     </>}
   </section>;
 }
