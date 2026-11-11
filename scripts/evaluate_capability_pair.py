@@ -21,6 +21,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.config import config
 from avatar.lab.capability_prompt import CapabilityPromptAvatar, capability_evidence
 from avatar.lab.source_capability_prompt import SourceCapabilityPromptAvatar
+from avatar.lab.receipt_capability_prompt import ReceiptCapabilityPromptAvatar
 from avatar.web import create_server
 from evaluate_native_output_audit import events
 from evaluate_body_review_pair import native_calls
@@ -30,7 +31,10 @@ CANDIDATE = 'lab_capability_prompt_v1'
 BASELINE = 'baseline_current_defaults'
 CANDIDATE_ARM = 'candidate_lab_capability_prompt'
 CANDIDATES = {CANDIDATE: CapabilityPromptAvatar,
-              'lab_source_capability_v2': SourceCapabilityPromptAvatar}
+              'lab_source_capability_v2': SourceCapabilityPromptAvatar,
+              'lab_source_capability_v3': ReceiptCapabilityPromptAvatar}
+CLI_CANDIDATES = {'v1': CANDIDATE, 'source_capability_v2': 'lab_source_capability_v2',
+                  'source_capability_v3': 'lab_source_capability_v3'}
 
 
 def required_sources(candidate=CANDIDATE):
@@ -43,9 +47,13 @@ def required_sources(candidate=CANDIDATE):
         'evals/interaction/cycle-19/capability-output-protocol.json',
         'evals/interaction/cycle-19/paired-capability-protocol.json',
         'evals/interaction/cycle-19/capability-prompt-candidate-v1.json'}
-    if candidate == 'lab_source_capability_v2':
+    if candidate in ('lab_source_capability_v2', 'lab_source_capability_v3'):
         sources |= {'evals/interaction/cycle-21/source-capability-candidate-v2.json',
                     'evals/interaction/cycle-21/paired-capability-protocol.json'}
+    if candidate == 'lab_source_capability_v3':
+        sources |= {'evals/interaction/cycle-22/source-capability-candidate-v3.json',
+                    'evals/interaction/cycle-22/capability-output-protocol.json',
+                    'evals/interaction/cycle-22/paired-capability-protocol.json'}
     return sources
 
 
@@ -66,7 +74,7 @@ def verify_freeze(path, partition, candidate=CANDIDATE):
     return frozen
 
 
-def validate_source_metadata(native, result):
+def validate_source_metadata(native, result, *, contract_version=2):
     """Bind the actual transmitted prompt to the actual completed turn."""
     data = json.loads(native['messages'][0]['content'].rsplit('可信元数据如下：\n', 1)[1])
     context = result['conversation']
@@ -77,6 +85,13 @@ def validate_source_metadata(native, result):
     assert data['declared_model_tool_names'] == capability_evidence()['declared_model_tool_names']
     assert data['current_turn_execution_receipts'] == []
     assert data['registry_readiness_verified'] is data['historical_execution_verified'] is data['semantic_verifier'] is False
+    if contract_version == 3:
+        assert data['response_contract_version'] == 3
+        receipts = data['local_execution_evidence']
+        assert receipts['scope'] == 'bounded_current_session_current_revision_sql_receipts'
+        assert receipts['verified'] is True and receipts['limit'] == 20
+        assert type(receipts['has_more']) is bool and len(receipts['items']) <= 20
+        assert receipts['current_reminder_state_verified'] is receipts['notification_delivery_verified'] is False
     return data
 
 
@@ -121,8 +136,9 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE, request_timeou
                     assert turn['visible'] == result['reply'] == native['response']
                     marked = 'capability_evidence_version' in native['messages'][0]['content']
                     assert marked == candidate
-                    if candidate and candidate_id == 'lab_source_capability_v2':
-                        turn['validated_source_capability'] = validate_source_metadata(native, result)
+                    if candidate and candidate_id in ('lab_source_capability_v2', 'lab_source_capability_v3'):
+                        turn['validated_source_capability'] = validate_source_metadata(native, result,
+                            contract_version=3 if candidate_id == 'lab_source_capability_v3' else 2)
                 assert result.get('response_review') is None and result['trace']['verifier']['available'] is False
                 assert not result['tool_calls']
                 turn['conversation'] = query('/conversation')
@@ -132,6 +148,19 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE, request_timeou
                     turn['reminders'] = [dict(record) for record in memory._conn.execute('SELECT * FROM memory_reminders')]
                     turn['stored_assistants'] = [record[0] for record in memory._conn.execute(
                         "SELECT content FROM memory_messages WHERE role='assistant' ORDER BY id")]
+                    if mode == 'llm' and candidate and candidate_id == 'lab_source_capability_v3':
+                        source_id = result['conversation']['user_message_id']
+                        session = memory._conn.execute('SELECT session_id FROM memory_messages WHERE id=?', (source_id,)).fetchone()[0]
+                        receipts = [dict(r) for r in memory._conn.execute('''SELECT r.* FROM memory_action_receipts r
+                            JOIN memory_messages m ON m.id=r.source_message_id AND m.role='user'
+                            AND m.session_id=r.session_id AND m.content!='[redacted]'
+                            WHERE r.session_id=? AND r.context_revision=? ORDER BY r.id''',
+                            (session, result['conversation']['revision']))]
+                        turn['actual_local_receipts'] = receipts
+                        evidence = turn['validated_source_capability']['local_execution_evidence']
+                        fields = ('id', 'source_message_id', 'action', 'reminder_id', 'recorded_at')
+                        assert evidence['items'] == [{k:r[k] for k in fields} for r in receipts[-20:]]
+                        assert evidence['has_more'] is (len(receipts) > 20)
                 assert turn['stored_assistants'][-1] == result['reply']
                 expected = case.get('expected_reminders', [0]*len(case['turns']))[index]
                 turn['expected_reminder_count'] = expected

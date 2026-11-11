@@ -58,12 +58,12 @@ def validate_backend(frozen, protocol, backend):
 
 
 def prepare(spec):
-    from evaluate_capability_pair import verify_freeze
+    from evaluate_capability_pair import verify_freeze, CLI_CANDIDATES
     required = {'candidate', 'candidate_freeze', 'protocol', 'pair_protocol', 'output',
                 'backend', 'partition', 'model_key', 'provider_python'}
     if set(spec) != required or any(not isinstance(value, str) or not value for value in spec.values()):
         raise ValueError('Use only the explicit frozen experiment selection fields')
-    choices = {'source_capability_v2': 'lab_source_capability_v2', 'v1': 'lab_capability_prompt_v1'}
+    choices = CLI_CANDIDATES
     if spec['candidate'] not in choices: raise ValueError('Unknown candidate')
     def local(name):
         path = (ROOT/spec[name]).resolve()

@@ -35,13 +35,13 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             raise ValueError('Capability pairs require source freeze and both explicit protocols')
         if json.loads(protocol.read_text()).get('provider_backend', 'cuda') != backend:
             raise ValueError('Selected backend differs from explicit frozen protocol')
-        from evaluate_capability_pair import verify_freeze, validate_execution_contract
-        if candidate not in ('v1', 'source_capability_v2'):
-            raise ValueError('Select v1 or source_capability_v2 for capability pairs')
-        candidate_id = 'lab_source_capability_v2' if candidate == 'source_capability_v2' else 'lab_capability_prompt_v1'
+        from evaluate_capability_pair import verify_freeze, validate_execution_contract, CLI_CANDIDATES
+        if candidate not in CLI_CANDIDATES:
+            raise ValueError('Select a registered capability candidate')
+        candidate_id = CLI_CANDIDATES[candidate]
         frozen = verify_freeze(candidate_freeze, partition, candidate_id)
-    elif candidate == 'source_capability_v2':
-        raise ValueError('source_capability_v2 requires capability_pair stage')
+    elif candidate in ('source_capability_v2', 'source_capability_v3'):
+        raise ValueError('Source capability candidates require capability_pair stage')
     if stage == 'capability_pair':
         for path in (protocol, pair_protocol):
             if str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     parser.add_argument('--candidate-freeze', type=Path)
     parser.add_argument('--protocol', type=Path)
     parser.add_argument('--pair-protocol', type=Path)
-    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2'], default='v1')
+    parser.add_argument('--candidate', choices=['v1', 'source_bound_v2', 'source_capability_v2', 'source_capability_v3'], default='v1')
     parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
     options = parser.parse_args()
     # Resolving a venv's executable symlink changes Python's environment prefix.

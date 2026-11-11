@@ -1,0 +1,89 @@
+FFF..................................................................... [ 82%]
+...............                                                          [100%]
+=================================== FAILURES ===================================
+_ test_draft_is_unmodified_and_no_extra_model_or_action_calls[\u5e2e\u6211\u5199\u5fae\u4fe1\uff1a\u5468\u516d\u6211\u966a\u4f60\u53bb\u6e38\u6cf3\u3002-\u5468\u516d\u6211\u966a\u4f60\u53bb\u6e38\u6cf3\u3002] _
+
+text = '帮我写微信：周六我陪你去游泳。', reply = '周六我陪你去游泳。'
+
+    @pytest.mark.parametrize('text,reply', [
+        ('帮我写微信：周六我陪你去游泳。', '周六我陪你去游泳。'),
+        ('改得客气点，原样保留“我已经把材料发给老师了”。', '您好，我已经把材料发给老师了。'),
+        ('写一句小说台词：“需要我帮你发送吗？”', '“需要我帮你发送吗？”'),
+    ])
+    def test_draft_is_unmodified_and_no_extra_model_or_action_calls(text, reply):
+        engine = Recorder(reply)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = ReceiptCapabilityPromptAvatar(memory=memory, llm=engine)
+            pieces = []
+            result = bot.respond(text, on_delta=pieces.append)
+            assert result['reply'] == ''.join(pieces) == memory.get_short_term()[-1]['content'] == reply
+            assert len(engine.analysis) == len(engine.native) == 1
+            data = evidence(engine)
+            assert data['response_contract_version'] == 3
+            assert data['current_user_source']['message_id'] == bot._current_message_id
+            assert data['current_turn_execution_receipts'] == []
+            assert data['local_execution_evidence']['items'] == []
+            assert result['action_receipts']['items'] == []
+>           assert result['trace']['verifier']['available'] is False
+E           KeyError: 'trace'
+
+tests/test_receipt_capability_prompt_lab.py:36: KeyError
+_ test_draft_is_unmodified_and_no_extra_model_or_action_calls[\u6539\u5f97\u5ba2\u6c14\u70b9\uff0c\u539f\u6837\u4fdd\u7559\u201c\u6211\u5df2\u7ecf\u628a\u6750\u6599\u53d1\u7ed9\u8001\u5e08\u4e86\u201d\u3002-\u60a8\u597d\uff0c\u6211\u5df2\u7ecf\u628a\u6750\u6599\u53d1\u7ed9\u8001\u5e08\u4e86\u3002] _
+
+text = '改得客气点，原样保留“我已经把材料发给老师了”。', reply = '您好，我已经把材料发给老师了。'
+
+    @pytest.mark.parametrize('text,reply', [
+        ('帮我写微信：周六我陪你去游泳。', '周六我陪你去游泳。'),
+        ('改得客气点，原样保留“我已经把材料发给老师了”。', '您好，我已经把材料发给老师了。'),
+        ('写一句小说台词：“需要我帮你发送吗？”', '“需要我帮你发送吗？”'),
+    ])
+    def test_draft_is_unmodified_and_no_extra_model_or_action_calls(text, reply):
+        engine = Recorder(reply)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = ReceiptCapabilityPromptAvatar(memory=memory, llm=engine)
+            pieces = []
+            result = bot.respond(text, on_delta=pieces.append)
+            assert result['reply'] == ''.join(pieces) == memory.get_short_term()[-1]['content'] == reply
+            assert len(engine.analysis) == len(engine.native) == 1
+            data = evidence(engine)
+            assert data['response_contract_version'] == 3
+            assert data['current_user_source']['message_id'] == bot._current_message_id
+            assert data['current_turn_execution_receipts'] == []
+            assert data['local_execution_evidence']['items'] == []
+            assert result['action_receipts']['items'] == []
+>           assert result['trace']['verifier']['available'] is False
+E           KeyError: 'trace'
+
+tests/test_receipt_capability_prompt_lab.py:36: KeyError
+_ test_draft_is_unmodified_and_no_extra_model_or_action_calls[\u5199\u4e00\u53e5\u5c0f\u8bf4\u53f0\u8bcd\uff1a\u201c\u9700\u8981\u6211\u5e2e\u4f60\u53d1\u9001\u5417\uff1f\u201d-\u201c\u9700\u8981\u6211\u5e2e\u4f60\u53d1\u9001\u5417\uff1f\u201d] _
+
+text = '写一句小说台词：“需要我帮你发送吗？”', reply = '“需要我帮你发送吗？”'
+
+    @pytest.mark.parametrize('text,reply', [
+        ('帮我写微信：周六我陪你去游泳。', '周六我陪你去游泳。'),
+        ('改得客气点，原样保留“我已经把材料发给老师了”。', '您好，我已经把材料发给老师了。'),
+        ('写一句小说台词：“需要我帮你发送吗？”', '“需要我帮你发送吗？”'),
+    ])
+    def test_draft_is_unmodified_and_no_extra_model_or_action_calls(text, reply):
+        engine = Recorder(reply)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = ReceiptCapabilityPromptAvatar(memory=memory, llm=engine)
+            pieces = []
+            result = bot.respond(text, on_delta=pieces.append)
+            assert result['reply'] == ''.join(pieces) == memory.get_short_term()[-1]['content'] == reply
+            assert len(engine.analysis) == len(engine.native) == 1
+            data = evidence(engine)
+            assert data['response_contract_version'] == 3
+            assert data['current_user_source']['message_id'] == bot._current_message_id
+            assert data['current_turn_execution_receipts'] == []
+            assert data['local_execution_evidence']['items'] == []
+            assert result['action_receipts']['items'] == []
+>           assert result['trace']['verifier']['available'] is False
+E           KeyError: 'trace'
+
+tests/test_receipt_capability_prompt_lab.py:36: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_receipt_capability_prompt_lab.py::test_draft_is_unmodified_and_no_extra_model_or_action_calls[\u5e2e\u6211\u5199\u5fae\u4fe1\uff1a\u5468\u516d\u6211\u966a\u4f60\u53bb\u6e38\u6cf3\u3002-\u5468\u516d\u6211\u966a\u4f60\u53bb\u6e38\u6cf3\u3002]
+FAILED tests/test_receipt_capability_prompt_lab.py::test_draft_is_unmodified_and_no_extra_model_or_action_calls[\u6539\u5f97\u5ba2\u6c14\u70b9\uff0c\u539f\u6837\u4fdd\u7559\u201c\u6211\u5df2\u7ecf\u628a\u6750\u6599\u53d1\u7ed9\u8001\u5e08\u4e86\u201d\u3002-\u60a8\u597d\uff0c\u6211\u5df2\u7ecf\u628a\u6750\u6599\u53d1\u7ed9\u8001\u5e08\u4e86\u3002]
+FAILED tests/test_receipt_capability_prompt_lab.py::test_draft_is_unmodified_and_no_extra_model_or_action_calls[\u5199\u4e00\u53e5\u5c0f\u8bf4\u53f0\u8bcd\uff1a\u201c\u9700\u8981\u6211\u5e2e\u4f60\u53d1\u9001\u5417\uff1f\u201d-\u201c\u9700\u8981\u6211\u5e2e\u4f60\u53d1\u9001\u5417\uff1f\u201d]
+3 failed, 84 passed in 5.40s
