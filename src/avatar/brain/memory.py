@@ -334,10 +334,16 @@ class MemoryStore:
 
     def _invalidate_context(self) -> None:
         self._conn.execute('UPDATE memory_context_revision SET revision=revision+1 WHERE id=1')
+        # Evaluate the old cursor before advancing the privacy fence. Untracked
+        # user speech must not disappear from the authority check merely because
+        # another connection erased a fact. Assistant rows grant no authority.
         self._conn.execute("UPDATE memory_web_speaker_state SET context_revision="
                            "(SELECT revision FROM memory_context_revision WHERE id=1), "
                            "cursor=(SELECT COALESCE(MAX(id),0) FROM memory_messages), "
-                           "scope=CASE WHEN scope='current_user' THEN 'current_user' ELSE 'unverified' END, "
+                           "scope=CASE WHEN scope='current_user' AND NOT EXISTS ("
+                           "SELECT 1 FROM memory_messages m WHERE m.role='user' "
+                           "AND m.id>memory_web_speaker_state.cursor) "
+                           "THEN 'current_user' ELSE 'unverified' END, "
                            "source_ids_json='[]' WHERE id=1")
         self._conn.execute('DELETE FROM memory_chat_results')
         self._conn.execute('DELETE FROM memory_summary_items')
