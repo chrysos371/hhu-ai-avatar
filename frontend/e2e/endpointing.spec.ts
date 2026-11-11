@@ -3,6 +3,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 const token = 'mission-control-disposable-e2e-token';
 async function microphone(page: Page, tone: boolean) {
   await page.goto('/chat#' + token);
+  await expect(page.locator('.chat-history')).toHaveAttribute('data-history-ready', 'true');
   await expect(page.getByLabel('上传 WAV 语音')).toBeEnabled();
   await expect(page.getByLabel('停顿后自动结束录音')).not.toBeChecked();
   await page.getByLabel('停顿后自动结束录音').check();
@@ -25,11 +26,15 @@ async function microphone(page: Page, tone: boolean) {
 }
 test('automatic pause fills only a draft and releases the real audio graph', async ({ page }) => {
   await microphone(page, true);
+  const before = await page.locator('.chat-message').count();
+  const submitted: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/v1/turns') submitted.push(request.url()); });
   const start = Date.now();
   await page.getByRole('button', { name: '麦克风输入' }).click();
   await expect(page.getByLabel('消息', { exact: true })).toHaveValue('浏览器识别草稿', { timeout: 7000 });
   await expect(page.getByText('检测到停顿，已结束录音；请检查识别草稿。')).toBeVisible();
-  await expect(page.locator('.chat-message')).toHaveCount(0);
+  await expect(page.locator('.chat-message')).toHaveCount(before);
+  expect(submitted).toEqual([]);
   expect(await page.evaluate(() => (window as unknown as { endpointTest: { stops: number } }).endpointTest.stops)).toBe(1);
   mkdirSync('../data/g2-cycle-02', { recursive: true });
   writeFileSync('../data/g2-cycle-02/endpoint-browser-pause.json', JSON.stringify({
