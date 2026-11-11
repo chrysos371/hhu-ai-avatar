@@ -100,7 +100,10 @@ def test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata()
         bot.respond('我的名字是待删实验名。', cancel=CancellationToken())
         assert '待删实验名' in json.dumps(engine.native[-1], ensure_ascii=False)
         bot.forget_memory(ident)
+        before = len(engine.native)
         bot.respond('回到现实。', cancel=CancellationToken())
+        assert len(engine.native) == before  # Canonical confirmation no longer calls a model.
+        bot.respond('现在聊聊新的话题。', cancel=CancellationToken())
         assert '待删实验名' not in json.dumps(engine.native[-1], ensure_ascii=False)
         assert 'capability_evidence_version' in engine.native[-1][0]['content']
     finally: bot.memory.close()

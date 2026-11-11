@@ -77,10 +77,12 @@ def test_untracked_external_user_and_privacy_are_not_hidden_by_server_memory(api
 def test_cancel_after_source_commit_keeps_actual_scope_without_assistant(api_v1, monkeypatch):
     request, server = api_v1
     entered, release = threading.Event(), threading.Event()
-    original = Avatar._analyze
-    def paused(self, text):
-        entered.set(); release.wait(); return original(self, text)
-    monkeypatch.setattr(Avatar, '_analyze', paused)
+    # Canonical controls intentionally skip analysis. Pause at the same actual
+    # lifecycle boundary: source committed, no assistant acknowledgement yet.
+    original = server.boundaries.assess
+    def paused(text):
+        entered.set(); release.wait(); return original(text)
+    monkeypatch.setattr(server.boundaries, 'assess', paused)
     ident = 'context_committed_cancel_12345'
     try:
         request('/api/v1/turns', {'request_id': ident, 'text': '我来扮演一个虚构角色。'})

@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from avatar.cancellation import CancellationToken
@@ -83,4 +81,52 @@ def test_control_use_web_true_cannot_run_agent():
         assert result['generation_mode'] == 'rules_speaker_control'
         assert engine.analysis_calls == engine.reply_calls == 0
         assert not result['tool_calls'] and not bot.reminders.list()
+    finally: bot.memory.close()
+
+
+def test_existing_boundary_reply_has_priority_over_control_acknowledgement(monkeypatch):
+    from avatar.brain.boundaries import BoundaryDecision
+    engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+    try:
+        monkeypatch.setattr(bot.boundaries, 'assess', lambda _: BoundaryDecision('controlled_guard', '受控边界回复。'))
+        result = bot.respond('回到现实。')
+        assert result['reply'] == '受控边界回复。' and result['boundary']['guarded']
+        assert 'speaker_control' not in result and result['generation_mode'] == 'rules'
+        assert engine.analysis_calls == engine.reply_calls == 0
+    finally: bot.memory.close()
+
+
+def test_canonical_control_skips_unrelated_retrieval_summary_and_delivery_checks(monkeypatch):
+    from avatar.brain.admin_store import AdminStore
+    from avatar.brain.knowledge import KnowledgeService
+    engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine, summary_enabled=True,
+        task_contract_enabled=True, delivery_check_enabled=True)
+    try:
+        AdminStore(bot.memory)
+        bot.tasks.update('帮我写一条短信，原样保留“待交付正文”。')
+        assert bot.tasks.current is not None
+        def forbidden(*args, **kwargs): pytest.fail('pure control must not run ordinary retrieval or writing delivery')
+        monkeypatch.setattr(bot.memory, 'recall', forbidden)
+        monkeypatch.setattr(bot.summaries, 'refresh', forbidden)
+        monkeypatch.setattr(KnowledgeService, 'search', forbidden)
+        monkeypatch.setattr(bot.tasks, 'inspect', forbidden)
+        result = bot.respond('回到现实。')
+        assert result['generation_mode'] == 'rules_speaker_control'
+        assert not result['delivery_check']['repair_attempted'] and not result['delivery_check']['remaining_issues']
+    finally: bot.memory.close()
+
+
+def test_privacy_change_after_control_source_prevents_ack_commit(monkeypatch):
+    from avatar.cancellation import Cancelled
+    engine = Spy(); bot = Avatar(db_path=':memory:', llm=engine)
+    try:
+        fact = bot.memory.remember_user('名字', '受控待删名')
+        original = bot.boundaries.assess
+        def erased(text):
+            bot.forget_memory(fact)
+            return original(text)
+        monkeypatch.setattr(bot.boundaries, 'assess', erased)
+        with pytest.raises(Cancelled): bot.respond('我来扮演一个虚构角色。', cancel=CancellationToken())
+        assert engine.analysis_calls == engine.reply_calls == 0
+        assert not bot.memory._conn.execute("SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
     finally: bot.memory.close()

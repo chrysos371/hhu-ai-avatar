@@ -1,0 +1,46 @@
+........................F...............................F.               [100%]
+=================================== FAILURES ===================================
+_____ test_cancel_after_source_commit_keeps_actual_scope_without_assistant _____
+
+api_v1 = (<function api_v1.<locals>.request at 0x7fdee47a0af0>, <avatar.web.AvatarHTTPServer object at 0x7fdee47a8580>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdee47a9630>
+
+    def test_cancel_after_source_commit_keeps_actual_scope_without_assistant(api_v1, monkeypatch):
+        request, server = api_v1
+        entered, release = threading.Event(), threading.Event()
+        original = Avatar._analyze
+        def paused(self, text):
+            entered.set(); release.wait(); return original(self, text)
+        monkeypatch.setattr(Avatar, '_analyze', paused)
+        ident = 'context_committed_cancel_12345'
+        try:
+            request('/api/v1/turns', {'request_id': ident, 'text': '我来扮演一个虚构角色。'})
+>           assert entered.wait(2)
+E           assert False
+E            +  where False = wait(2)
+E            +    where wait = <threading.Event object at 0x7fdee47a9540>.wait
+
+tests/test_speaker_snapshot.py:87: AssertionError
+__ test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata __
+
+    def test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata():
+        engine = Recorder('普通回复。'); bot = CapabilityPromptAvatar(db_path=':memory:', llm=engine)
+        try:
+            ident = bot.memory.remember_user('名字', '待删实验名')
+            bot.respond('我的名字是待删实验名。', cancel=CancellationToken())
+            assert '待删实验名' in json.dumps(engine.native[-1], ensure_ascii=False)
+            bot.forget_memory(ident)
+            bot.respond('回到现实。', cancel=CancellationToken())
+>           assert '待删实验名' not in json.dumps(engine.native[-1], ensure_ascii=False)
+E           assert '待删实验名' not in '[{"role": "...名字是待删实验名。"}]'
+E             
+E             '待删实验名' is contained here:
+E             ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ...
+E             
+E             ...Full output truncated, use '-vv' to show
+
+tests/test_capability_prompt_lab.py:104: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_speaker_snapshot.py::test_cancel_after_source_commit_keeps_actual_scope_without_assistant
+FAILED tests/test_capability_prompt_lab.py::test_privacy_forget_does_not_copy_deleted_context_into_capability_metadata
+2 failed, 56 passed in 10.45s
