@@ -1,0 +1,42 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test external-erase.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:2470595) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2470595) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/external-erase.spec.ts:8:1 › external API erasure invalidates an already visible old trace without a UI notification (2.4s)
+
+
+  1) e2e/external-erase.spec.ts:8:1 › external API erasure invalidates an already visible old trace without a UI notification 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      49 |     report.refreshControl = { traces: await page.locator('.trace pre').allTextContents(), oldTraceRemoved: await page.locator('.trace').count() === 0 }; save();
+      50 |     expect(report.refreshControl.oldTraceRemoved).toBe(true);
+    > 51 |     expect(report.rows.every((row: any) => !row.oldTraceVisible)).toBe(true); report.completed = true;
+         |                                                                   ^
+      52 |   } catch (error) { report.failure = String(error); throw error; }
+      53 |   finally { save(); await page.screenshot({ path: join(folder, 'external-erase-final.png') }).catch(() => {}); }
+      54 | });
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/external-erase.spec.ts:51:67
+
+    Error Context: test-results/external-erase-external-AP-5b3c4-e-without-a-UI-notification/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/external-erase-external-AP-5b3c4-e-without-a-UI-notification/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/external-erase-external-AP-5b3c4-e-without-a-UI-notification/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/external-erase.spec.ts:8:1 › external API erasure invalidates an already visible old trace without a UI notification 
