@@ -1,0 +1,148 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "跳转至内容" [ref=e4] [cursor=pointer]:
+    - /url: "#main"
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - img [ref=e8]
+      - generic [ref=e14]:
+        - strong [ref=e15]: 小海
+        - generic [ref=e16]: DIGITAL MIND
+    - generic [ref=e17]: MISSION CONTROL
+    - navigation "主导航" [ref=e18]:
+      - link "总览" [ref=e19] [cursor=pointer]:
+        - /url: /
+        - img [ref=e20]
+        - generic [ref=e23]: 总览
+      - link "对话观测" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - generic [ref=e27]: 对话观测
+      - link "人设管理" [ref=e28] [cursor=pointer]:
+        - /url: /persona
+        - img [ref=e29]
+        - generic [ref=e41]: 人设管理
+      - link "情绪干预" [ref=e42] [cursor=pointer]:
+        - /url: /emotion
+        - img [ref=e43]
+        - generic [ref=e45]: 情绪干预
+      - link "记忆中枢" [ref=e46] [cursor=pointer]:
+        - /url: /memory
+        - img [ref=e47]
+        - generic [ref=e52]: 记忆中枢
+      - link "知识与学习" [ref=e53] [cursor=pointer]:
+        - /url: /knowledge
+        - img [ref=e54]
+        - generic [ref=e56]: 知识与学习
+      - link "提醒" [ref=e57] [cursor=pointer]:
+        - /url: /reminders
+        - img [ref=e58]
+        - generic [ref=e61]: 提醒
+      - link "工具" [ref=e62] [cursor=pointer]:
+        - /url: /tools
+        - img [ref=e63]
+        - generic [ref=e65]: 工具
+      - link "操作审计" [ref=e66] [cursor=pointer]:
+        - /url: /audit
+        - img [ref=e67]
+        - generic [ref=e70]: 操作审计
+    - generic [ref=e71]:
+      - img [ref=e72]
+      - generic [ref=e73]: 认知管理 · v0.1
+  - generic [ref=e74]:
+    - banner [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: HHU / AVATAR
+        - generic [ref=e79]: 认知控制台
+      - generic [ref=e80]:
+        - status [ref=e81]: 后端已连接
+        - button "管理指令" [ref=e82] [cursor=pointer]:
+          - img [ref=e83]
+          - text: 管理指令
+        - generic [ref=e85]: 单用户 · 本机运行
+    - main [ref=e87]:
+      - generic [ref=e88]:
+        - generic [ref=e90]:
+          - paragraph [ref=e91]: MISSION CONTROL
+          - heading "对话观测" [level=1] [ref=e92]
+          - paragraph [ref=e93]: 与小海聊天，点击回复旁的朗读即可听见语音。可以随时停止，也可以只用文字交流。
+        - generic [ref=e94]:
+          - img "小海，正在聆听" [ref=e95]:
+            - img [ref=e96]
+            - generic [ref=e111]: 正在聆听
+          - generic [ref=e113]:
+            - heading "小海在这里" [level=2] [ref=e114]
+            - paragraph [ref=e115]: 朗读会把这段文字交给在线语音服务。默认不自动播放。
+            - generic [ref=e116]:
+              - checkbox "自动分段朗读新回复" [ref=e117]
+              - text: 自动分段朗读新回复
+        - generic [ref=e118]:
+          - button "刷新对话记录" [ref=e120] [cursor=pointer]
+          - generic [ref=e121]:
+            - article [ref=e122]:
+              - text: 你
+              - generic [ref=e123]: · 2026/11/11 18:41:17
+              - generic [ref=e124]: 此条内容已删除。
+            - article [ref=e125]:
+              - text: 小海
+              - generic [ref=e126]: · 2026/11/11 18:41:17
+              - generic [ref=e127]: 此条内容已删除。
+            - article [ref=e128]:
+              - text: 你
+              - generic [ref=e129]: · 2026/11/11 18:41:18
+              - generic [ref=e130]: 此条内容已删除。
+            - article [ref=e131]:
+              - text: 小海
+              - generic [ref=e132]: · 2026/11/11 18:41:18
+              - generic [ref=e133]: 此条内容已删除。
+            - article [ref=e134]:
+              - text: 你
+              - generic [ref=e135]: · 2026/11/11 18:41:20
+              - generic [ref=e136]: 此条内容已删除。
+            - article [ref=e137]:
+              - text: 小海
+              - generic [ref=e138]: · 2026/11/11 18:41:20
+              - generic [ref=e139]: 此条内容已删除。
+            - article [ref=e140]:
+              - text: 你
+              - generic [ref=e141]: · 2026/11/11 18:41:21
+              - generic [ref=e142]: 此条内容已删除。
+            - article [ref=e143]:
+              - text: 小海
+              - generic [ref=e144]: · 2026/11/11 18:41:22
+              - generic [ref=e145]: 此条内容已删除。
+            - article [ref=e146]:
+              - text: 你
+              - generic [ref=e147]: · 2026/11/11 18:41:22
+              - generic [ref=e148]: fixture-long 通知审计
+          - generic [ref=e149]:
+            - generic [ref=e150]:
+              - button "麦克风输入" [ref=e151] [cursor=pointer]:
+                - img [ref=e152]
+                - text: 麦克风输入
+              - generic [ref=e155]:
+                - img [ref=e156]
+                - text: 上传语音
+            - generic [ref=e159]:
+              - checkbox "停顿后自动结束录音" [ref=e160]
+              - text: 停顿后自动结束录音
+            - paragraph [ref=e161]: 默认手动结束录音。开启自动结束后，停顿约 1.2 秒就会识别，8 秒未检测到语音会释放麦克风；轻声或较长停顿可能提前截断，请检查草稿。
+            - status [ref=e162]: 语音在本机识别；结果填入消息框，检查后发送。支持 60 秒内的 PCM WAV。
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - generic [ref=e165]: 消息
+              - textbox "消息" [ref=e166]:
+                - /placeholder: 说说现在的想法，或交给小海一个具体任务…
+            - generic [ref=e167]:
+              - generic [ref=e168]:
+                - checkbox "本轮允许联网工具" [ref=e169]
+                - text: 本轮允许联网工具
+              - button "发送消息" [disabled] [ref=e170]:
+                - img [ref=e171]
+                - text: 发送消息
+    - contentinfo [ref=e174]:
+      - text: 所有管理变更均需预览与确认
+      - generic [ref=e175]: LOCAL FIRST · AUDITABLE
+```

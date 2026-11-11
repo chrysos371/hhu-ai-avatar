@@ -10,6 +10,7 @@ import pytest
 from avatar.brain.memory import MemoryStore
 from avatar.brain.operations import OperationError
 from avatar.conversation_changes import ConversationChanges, WatchDisconnected
+from avatar.web import create_server
 from test_web_api_v1 import api_v1
 
 
@@ -176,3 +177,27 @@ def test_metadata_disconnect_does_not_cancel_an_unrelated_running_turn(api_v1):
         job.token.checkpoint()
     finally:
         release.set(); conn.close()
+
+
+@pytest.mark.parametrize('connections,limit', [(1, 0), (2, 1), (32, 4)])
+def test_http_watch_capacity_reserves_an_ordinary_connection(tmp_path, connections, limit):
+    server = create_server(str(tmp_path/'capacity.db'), port=0, max_connections=connections)
+    thread = threading.Thread(target=server.serve_forever); thread.start()
+    sockets = []
+    try:
+        assert server.conversation_changes.limit == limit
+        path = '/api/v1/conversation/changes?instance_id=' + server.session_id + '&revision=0'
+        for _ in range(limit):
+            conn = http.client.HTTPConnection('127.0.0.1', server.server_port)
+            conn.request('GET', path, headers={'X-Avatar-Token': server.token}); sockets.append(conn)
+        active(server.conversation_changes, limit)
+        with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as regular:
+            regular.request('GET', '/api/v1/system', headers={'X-Avatar-Token': server.token})
+            response = regular.getresponse(); assert response.status == 200; response.read()
+        with closing(http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=2)) as excess:
+            excess.request('GET', path, headers={'X-Avatar-Token': server.token})
+            response = excess.getresponse(); assert response.status == 429; response.read()
+    finally:
+        for conn in sockets: conn.close()
+        active(server.conversation_changes, 0)
+        server.shutdown(); thread.join(); server.server_close()

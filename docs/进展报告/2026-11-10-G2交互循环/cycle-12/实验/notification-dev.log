@@ -1,0 +1,42 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test notification-audit.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:2509968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2509968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/notification-audit.spec.ts:9:1 › notification loss, reconnect, natural fact updates, playback and streaming erasure (7.9s)
+
+
+  1) e2e/notification-audit.spec.ts:9:1 › notification loss, reconnect, natural fact updates, playback and streaming erasure 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      109 |     const draft = await last.locator(':scope > div').textContent(); expect(await latestJob()).toMatchObject({ status: 'running' });
+      110 |     await erase(streamFact.id);
+    > 111 |     await expect.poll(async () => (await latestJob()).status).toBe('cancelled'); await ready();
+          |                                                               ^
+      112 |     const snapshot = await api('/conversation');
+      113 |     expect(snapshot.items.at(-1).role).toBe('user');
+      114 |     expect(snapshot.items.some((row: any) => row.role === 'assistant' && row.text === draft)).toBe(false);
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/notification-audit.spec.ts:111:63
+
+    Error Context: test-results/notification-audit-notific-2f218-yback-and-streaming-erasure/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/notification-audit-notific-2f218-yback-and-streaming-erasure/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/notification-audit-notific-2f218-yback-and-streaming-erasure/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/notification-audit.spec.ts:9:1 › notification loss, reconnect, natural fact updates, playback and streaming erasure 
