@@ -1,0 +1,89 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/ChatContextHistory.test.tsx src/features/chat/ChatHistory.test.tsx src/features/chat/ChatWatch.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ✓ src/features/chat/ChatHistory.test.tsx (6 tests) 116ms
+ ✓ src/features/chat/ChatWatch.test.tsx (4 tests) 362ms
+ ❯ src/features/chat/ChatContextHistory.test.tsx (6 tests | 1 failed) 1383ms
+   × ordinary context changes preserve pending rows and submission epoch without cancelling 1048ms
+     → Unable to find an element with the text: current_user, which matches selector '[data-testid=context]'. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33mdata-testid[39m=[32m"context"[39m
+    [36m>[39m
+      [0munknown[0m
+    [36m</output>[39m
+    [36m<output />[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33mdata-testid[39m=[32m"context"[39m
+    [36m>[39m
+      [0munknown[0m
+    [36m</output>[39m
+    [36m<output />[39m
+  [36m</div>[39m
+[36m</body>[39m
+   ✓ ignores a late metadata response even when its fetch ignores abort 20ms
+   ✓ keeps context paused during watch loss and rechecks on same-version recovery 270ms
+   ✓ rejects a previous-namespace context after server restart 19ms
+   ✓ can recheck after a cancelled uncommitted control without waiting for a new cursor 12ms
+   ✓ never publishes incoherent permission metadata or its private payload 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/ChatContextHistory.test.tsx > ordinary context changes preserve pending rows and submission epoch without cancelling
+TestingLibraryElementError: Unable to find an element with the text: current_user, which matches selector '[data-testid=context]'. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33mdata-testid[39m=[32m"context"[39m
+    [36m>[39m
+      [0munknown[0m
+    [36m</output>[39m
+    [36m<output />[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output[39m
+      [33mdata-testid[39m=[32m"context"[39m
+    [36m>[39m
+      [0munknown[0m
+    [36m</output>[39m
+    [36m<output />[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ ready src/features/chat/ChatContextHistory.test.tsx:47:16
+     45| afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
+     46| async function ready(scope = 'current_user') {
+     47|   await screen.findByText(scope, { selector: '[data-testid=context]' }…
+       |                ^
+     48|   await waitFor(() => expect(current.ready).toBe(true));
+     49|   await waitFor(() => expect(held.length).toBeGreaterThanOrEqual(1));
+ ❯ src/features/chat/ChatContextHistory.test.tsx:53:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 15 passed (16)
+   Start at  23:07:16
+   Duration  2.76s (transform 350ms, setup 439ms, collect 517ms, tests 1.86s, environment 1.17s, prepare 239ms)
+
