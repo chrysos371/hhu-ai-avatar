@@ -1,0 +1,38 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/ChatCache.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/features/chat/ChatCache.test.tsx (1 test | 1 failed) 3626ms
+   × does not retain 40 completed chat mutation results after the page unmounts 3623ms
+     → expected 40 to be +0 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/ChatCache.test.tsx > does not retain 40 completed chat mutation results after the page unmounts
+AssertionError: expected 40 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 40
+
+ ❯ src/features/chat/ChatCache.test.tsx:64:66
+     62|   }
+     63|   client.clear();
+     64|   expect(count).toBe(40); expect(observed.afterUnmountMutations).toBe(…
+       |                                                                  ^
+     65| });
+     66| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:18:20
+   Duration  5.16s (transform 276ms, setup 142ms, collect 402ms, tests 3.63s, environment 362ms, prepare 85ms)
+

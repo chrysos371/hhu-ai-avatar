@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_conversation_snapshot_is_authenticated_and_rejects_invalid_cursors ____
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f2e9e459120>, <avatar.web.AvatarHTTPServer object at 0x7f2e9e5a8b50>)
+
+    def test_conversation_snapshot_is_authenticated_and_rejects_invalid_cursors(api_v1):
+        request, server = api_v1
+        assert request('/api/v1/conversation', token=False)[0] == 403
+        code, body = request('/api/v1/conversation')
+>       assert code == 200
+E       assert 404 == 200
+
+tests/test_web_api_v1.py:96: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_web_api_v1.py::test_conversation_snapshot_is_authenticated_and_rejects_invalid_cursors
+1 failed, 7 deselected in 1.19s
