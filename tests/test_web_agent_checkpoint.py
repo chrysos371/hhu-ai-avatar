@@ -93,3 +93,63 @@ def test_direct_agent_checkpoint_cancel_is_not_swallowed_as_service_fallback():
     def stop(): raise Cancelled('explicit guard')
     with pytest.raises(Cancelled, match='explicit guard'):
         WebAgent(connect=must_not_connect).run('/search 实验', checkpoint=stop)
+
+
+def test_no_model_tool_cancellation_closes_session_without_data_fallback():
+    token = CancellationToken(); closed = []; calls = []
+    class Session:
+        async def list_tools(self):
+            return SimpleNamespace(tools=[SimpleNamespace(name=name) for name in ('web_search', 'read_webpage')])
+        async def call_tool(self, name, arguments):
+            calls.append(name); token.cancel()
+            return SimpleNamespace(isError=False, content=[], structuredContent={'results': []})
+    @asynccontextmanager
+    async def connect():
+        try: yield Session()
+        finally: closed.append(True)
+    with pytest.raises(Cancelled):
+        WebAgent(connect=connect).run('/search 实验', checkpoint=token.checkpoint)
+    assert calls == ['web_search'] and closed == [True]
+
+
+@pytest.mark.parametrize('stage', ['planner', 'tool', 'synthesis'])
+def test_typed_cancelled_from_backend_is_never_service_or_data_fallback(stage):
+    calls = []; closed = []
+    class Session:
+        async def list_tools(self):
+            return SimpleNamespace(tools=[SimpleNamespace(name=name) for name in ('web_search', 'read_webpage')])
+        async def call_tool(self, name, arguments):
+            calls.append('tool')
+            if stage == 'tool': raise Cancelled('backend stopped')
+            return SimpleNamespace(isError=False, content=[], structuredContent={'results': []})
+    @asynccontextmanager
+    async def connect():
+        try: yield Session()
+        finally: closed.append(True)
+    class Engine:
+        available = True
+        def chat_tools(self, *args, **kwargs):
+            calls.append('planner'); raise Cancelled('backend stopped')
+        def chat(self, *args, **kwargs):
+            calls.append('synthesis'); raise Cancelled('backend stopped')
+    text = '帮我搜索实验' if stage == 'planner' else '/search 实验'
+    with pytest.raises(Cancelled, match='backend stopped'):
+        WebAgent(connect=connect).run(text, Engine())
+    assert calls == ({'planner': ['planner'], 'tool': ['tool'], 'synthesis': ['tool', 'synthesis']}[stage])
+    assert closed == [True]
+
+
+def test_no_intent_early_return_checks_after_session_cleanup():
+    ended = []
+    class Session:
+        async def list_tools(self):
+            return SimpleNamespace(tools=[SimpleNamespace(name=name) for name in ('web_search', 'read_webpage')])
+    @asynccontextmanager
+    async def connect():
+        try: yield Session()
+        finally: ended.append(True)
+    def guard():
+        if ended: raise Cancelled('changed at cleanup')
+    with pytest.raises(Cancelled, match='changed at cleanup'):
+        WebAgent(connect=connect).run('普通闲聊', checkpoint=guard)
+    assert ended == [True]
