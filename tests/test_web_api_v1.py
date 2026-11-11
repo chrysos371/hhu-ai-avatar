@@ -89,6 +89,17 @@ def test_chat_trace_does_not_expose_prompts(api_v1):
     assert result["trace"]["verifier"]["available"] is False
 
 
+def test_conversation_snapshot_is_authenticated_and_rejects_invalid_cursors(api_v1):
+    request, server = api_v1
+    assert request('/api/v1/conversation', token=False)[0] == 403
+    code, body = request('/api/v1/conversation')
+    assert code == 200
+    assert body['data'] == {'instance_id': server.session_id, 'revision': 0, 'items': [],
+                            'has_more': False, 'next_before_id': None}
+    for query in ['limit=0', 'limit=201', 'before_id=0', 'before_id=x', 'revision=-1', 'unknown=1', 'limit=2&limit=3']:
+        assert request('/api/v1/conversation?' + query)[0] == 422
+
+
 def test_knowledge_import_requires_confirmation(api_v1):
     r, _ = api_v1
     code, body = r(
