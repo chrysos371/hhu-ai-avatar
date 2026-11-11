@@ -1,0 +1,1626 @@
+{
+  "source_head": "db62c71eba8df135284e27bbacc5045ce72d534a",
+  "created_utc": "2026-11-11T06:23:42.219896+00:00",
+  "spec": {
+    "version": 1,
+    "baseline_revision": "069d6ce",
+    "scope": "Sample-index versus emitted frame-start timestamps; software timeline only, not physical device synchrony",
+    "sample_rates": [
+      8000,
+      11025,
+      16000,
+      22050,
+      24000,
+      44100,
+      48000
+    ],
+    "hop_ms": [
+      10,
+      7.5,
+      12.3
+    ],
+    "frame_ms": 25,
+    "duration_seconds": 2,
+    "prolonged": {
+      "sample_rate": 22050,
+      "hop_ms": 10,
+      "duration_seconds": 120
+    },
+    "waveform": "zero PCM to isolate frame geometry; no pitch/phoneme quality inference",
+    "expected": "frame i starts at i*int(sample_rate*hop_ms/1000) samples",
+    "gates": {
+      "max_absolute_error_samples": 1e-06,
+      "last_frame_start_plus_frame_length_within_audio": true,
+      "frame_count_unchanged": true,
+      "vowel_mouth_energy_unchanged": true,
+      "integral_hop_timestamps_unchanged": true
+    },
+    "integration": "Injected local WAV TTS through actual Avatar.respond(use_tts=True); no remote LLM/TTS and no microphone",
+    "rounds": "All21 short configurations plus one fixed120second case, no experiment wall-clock cutoff",
+    "baseline_equality": "Legacy time equality is deliberately replaced where nominal hop differs from integer sample hop. Preserve spectral/mouth/energy fields and integral-hop time. Do not silently reinterpret cycle06 exact-output gate as absolute clock correctness."
+  },
+  "protocol_sha256": "a8f83f14f1ddce6df436081b4bf9d51d9fa681469ea54f27dd410b6a62aed52b",
+  "engine_sha256": "60026cce8ba4001c34c84e96765c28cc858caca5f166d87d45c030ff4d3e80e7",
+  "audio_utils_sha256": "b189749415d174edfc00449d189824957fb768f04cc4addec5216f937e7b6a86",
+  "script_sha256": "bb4bb3b7fa0b7cabf128f747fb8d244602dba69b7aa9ce99051a9d9ded689607",
+  "arm": "baseline",
+  "rows": [
+    {
+      "sample_rate": 8000,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 80,
+      "frame_samples": 200,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.97,
+      "max_error_samples": 0.0,
+      "max_error_ms": 0.0,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 8000,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 264,
+      "expected_count": 264,
+      "hop_samples": 60,
+      "frame_samples": 200,
+      "first_time": 0.0,
+      "last_time": 1.9725,
+      "expected_last_time": 1.9725,
+      "max_error_samples": 9.094947017729282e-13,
+      "max_error_ms": 1.1368683772161603e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 8000,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 162,
+      "expected_count": 162,
+      "hop_samples": 98,
+      "frame_samples": 200,
+      "first_time": 0.0,
+      "last_time": 1.9803000000000002,
+      "expected_last_time": 1.97225,
+      "max_error_samples": 64.40000000000146,
+      "max_error_ms": 8.050000000000182,
+      "last_window_within_audio": false,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 11025,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 110,
+      "frame_samples": 275,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.965532879818594,
+      "max_error_samples": 49.25,
+      "max_error_ms": 4.467120181405895,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 11025,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 266,
+      "expected_count": 266,
+      "hop_samples": 82,
+      "frame_samples": 275,
+      "first_time": 0.0,
+      "last_time": 1.9875,
+      "expected_last_time": 1.9709750566893425,
+      "max_error_samples": 182.1875,
+      "max_error_ms": 16.524943310657598,
+      "last_window_within_audio": false,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 11025,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 162,
+      "expected_count": 162,
+      "hop_samples": 135,
+      "frame_samples": 275,
+      "first_time": 0.0,
+      "last_time": 1.9803000000000002,
+      "expected_last_time": 1.9714285714285715,
+      "max_error_samples": 97.80750000000262,
+      "max_error_ms": 8.87142857142881,
+      "last_window_within_audio": false,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 16000,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 160,
+      "frame_samples": 400,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.97,
+      "max_error_samples": 0.0,
+      "max_error_ms": 0.0,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 16000,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 264,
+      "expected_count": 264,
+      "hop_samples": 120,
+      "frame_samples": 400,
+      "first_time": 0.0,
+      "last_time": 1.9725,
+      "expected_last_time": 1.9725,
+      "max_error_samples": 1.8189894035458565e-12,
+      "max_error_ms": 1.1368683772161603e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 16000,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 162,
+      "expected_count": 162,
+      "hop_samples": 196,
+      "frame_samples": 400,
+      "first_time": 0.0,
+      "last_time": 1.9803000000000002,
+      "expected_last_time": 1.97225,
+      "max_error_samples": 128.8000000000029,
+      "max_error_ms": 8.050000000000182,
+      "last_window_within_audio": false,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 22050,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 220,
+      "frame_samples": 551,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.965532879818594,
+      "max_error_samples": 98.5,
+      "max_error_ms": 4.467120181405895,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 22050,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 264,
+      "expected_count": 264,
+      "hop_samples": 165,
+      "frame_samples": 551,
+      "first_time": 0.0,
+      "last_time": 1.9725,
+      "expected_last_time": 1.9680272108843537,
+      "max_error_samples": 98.625,
+      "max_error_ms": 4.4727891156462585,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 22050,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 161,
+      "expected_count": 161,
+      "hop_samples": 271,
+      "frame_samples": 551,
+      "first_time": 0.0,
+      "last_time": 1.968,
+      "expected_last_time": 1.9664399092970521,
+      "max_error_samples": 34.400000000001455,
+      "max_error_ms": 1.5600907029479119,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 24000,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 240,
+      "frame_samples": 600,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.97,
+      "max_error_samples": 3.637978807091713e-12,
+      "max_error_ms": 1.5158245029548803e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 24000,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 264,
+      "expected_count": 264,
+      "hop_samples": 180,
+      "frame_samples": 600,
+      "first_time": 0.0,
+      "last_time": 1.9725,
+      "expected_last_time": 1.9725,
+      "max_error_samples": 3.637978807091713e-12,
+      "max_error_ms": 1.5158245029548803e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 24000,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 161,
+      "expected_count": 161,
+      "hop_samples": 295,
+      "frame_samples": 600,
+      "first_time": 0.0,
+      "last_time": 1.968,
+      "expected_last_time": 1.9666666666666666,
+      "max_error_samples": 32.0,
+      "max_error_ms": 1.3333333333333333,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 44100,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 441,
+      "frame_samples": 1102,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.97,
+      "max_error_samples": 7.275957614183426e-12,
+      "max_error_ms": 1.6498770100189174e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 44100,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 264,
+      "expected_count": 264,
+      "hop_samples": 330,
+      "frame_samples": 1102,
+      "first_time": 0.0,
+      "last_time": 1.9725,
+      "expected_last_time": 1.9680272108843537,
+      "max_error_samples": 197.25,
+      "max_error_ms": 4.4727891156462585,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 44100,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 161,
+      "expected_count": 161,
+      "hop_samples": 542,
+      "frame_samples": 1102,
+      "first_time": 0.0,
+      "last_time": 1.968,
+      "expected_last_time": 1.9664399092970521,
+      "max_error_samples": 68.80000000000291,
+      "max_error_ms": 1.5600907029479119,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 48000,
+      "hop_ms": 10,
+      "duration_seconds": 2,
+      "count": 198,
+      "expected_count": 198,
+      "hop_samples": 480,
+      "frame_samples": 1200,
+      "first_time": 0.0,
+      "last_time": 1.97,
+      "expected_last_time": 1.97,
+      "max_error_samples": 7.275957614183426e-12,
+      "max_error_ms": 1.5158245029548803e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 48000,
+      "hop_ms": 7.5,
+      "duration_seconds": 2,
+      "count": 264,
+      "expected_count": 264,
+      "hop_samples": 360,
+      "frame_samples": 1200,
+      "first_time": 0.0,
+      "last_time": 1.9725,
+      "expected_last_time": 1.9725,
+      "max_error_samples": 7.275957614183426e-12,
+      "max_error_ms": 1.5158245029548803e-13,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": true
+    },
+    {
+      "sample_rate": 48000,
+      "hop_ms": 12.3,
+      "duration_seconds": 2,
+      "count": 161,
+      "expected_count": 161,
+      "hop_samples": 590,
+      "frame_samples": 1200,
+      "first_time": 0.0,
+      "last_time": 1.968,
+      "expected_last_time": 1.9666666666666666,
+      "max_error_samples": 64.0,
+      "max_error_ms": 1.3333333333333333,
+      "last_window_within_audio": true,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    },
+    {
+      "sample_rate": 22050,
+      "hop_ms": 10,
+      "duration_seconds": 120,
+      "count": 12025,
+      "expected_count": 12025,
+      "hop_samples": 220,
+      "frame_samples": 551,
+      "first_time": 0.0,
+      "last_time": 120.24,
+      "expected_last_time": 119.9673469387755,
+      "max_error_samples": 6012.0,
+      "max_error_ms": 272.6530612244898,
+      "last_window_within_audio": false,
+      "all_zero_outputs": true,
+      "sample_clock_passed": false
+    }
+  ],
+  "execution_complete": true,
+  "sample_clock_gate_passed": false,
+  "physical_sync_approved": false,
+  "file_api": {
+    "scope": "Actual Avatar.respond with injected local WAV; no remote model/TTS",
+    "audio_sha256": "96c8648e8f1c2dea037a37c7e592d9fe0e96031577da64d44b6f2b02aa7e5e25",
+    "sample_rate": 22050,
+    "sample_count": 44100,
+    "frames": [
+      {
+        "time": 0.0,
+        "mouth_open": 0.13333332538604736,
+        "vowel": "",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.01,
+        "mouth_open": 0.2999999682108561,
+        "vowel": "",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.02,
+        "mouth_open": 0.3999999483426412,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 0.03,
+        "mouth_open": 0.4999999165534973,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 0.04,
+        "mouth_open": 0.49999989271163936,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 0.05,
+        "mouth_open": 0.499999850988388,
+        "vowel": "e",
+        "energy": 0.9999995231628418
+      },
+      {
+        "time": 0.06,
+        "mouth_open": 0.4999998211860656,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 0.07,
+        "mouth_open": 0.49999977946281426,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 0.08,
+        "mouth_open": 0.4999997377395629,
+        "vowel": "e",
+        "energy": 0.9999991059303284
+      },
+      {
+        "time": 0.09,
+        "mouth_open": 0.4999996781349182,
+        "vowel": "e",
+        "energy": 0.999998927116394
+      },
+      {
+        "time": 0.1,
+        "mouth_open": 0.49999962449073787,
+        "vowel": "e",
+        "energy": 0.9999987483024597
+      },
+      {
+        "time": 0.11,
+        "mouth_open": 0.4999995648860931,
+        "vowel": "e",
+        "energy": 0.9999985694885254
+      },
+      {
+        "time": 0.12,
+        "mouth_open": 0.4999995052814483,
+        "vowel": "e",
+        "energy": 0.9999983310699463
+      },
+      {
+        "time": 0.13,
+        "mouth_open": 0.4999994337558746,
+        "vowel": "e",
+        "energy": 0.999998152256012
+      },
+      {
+        "time": 0.14,
+        "mouth_open": 0.49999936819076535,
+        "vowel": "e",
+        "energy": 0.9999978542327881
+      },
+      {
+        "time": 0.15,
+        "mouth_open": 0.4999992847442627,
+        "vowel": "e",
+        "energy": 0.9999976754188538
+      },
+      {
+        "time": 0.16,
+        "mouth_open": 0.49999921321868895,
+        "vowel": "e",
+        "energy": 0.9999973177909851
+      },
+      {
+        "time": 0.17,
+        "mouth_open": 0.43333259304364524,
+        "vowel": "e",
+        "energy": 0.9999971389770508
+      },
+      {
+        "time": 0.18,
+        "mouth_open": 0.3333326427141825,
+        "vowel": "i",
+        "energy": 0.9999969005584717
+      },
+      {
+        "time": 0.19,
+        "mouth_open": 0.2333326824506124,
+        "vowel": "",
+        "energy": 0.9999967217445374
+      },
+      {
+        "time": 0.2,
+        "mouth_open": 0.19999928474426268,
+        "vowel": "",
+        "energy": 0.9999963045120239
+      },
+      {
+        "time": 0.21,
+        "mouth_open": 0.19999923706054687,
+        "vowel": "",
+        "energy": 0.9999962449073792
+      },
+      {
+        "time": 0.22,
+        "mouth_open": 0.19999919732411703,
+        "vowel": "",
+        "energy": 0.9999960064888
+      },
+      {
+        "time": 0.23,
+        "mouth_open": 0.1999991536140442,
+        "vowel": "",
+        "energy": 0.9999957084655762
+      },
+      {
+        "time": 0.24,
+        "mouth_open": 0.19999911387761432,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 0.25,
+        "mouth_open": 0.19999907811482745,
+        "vowel": "",
+        "energy": 0.9999954104423523
+      },
+      {
+        "time": 0.26,
+        "mouth_open": 0.19999904235204058,
+        "vowel": "",
+        "energy": 0.9999951720237732
+      },
+      {
+        "time": 0.27,
+        "mouth_open": 0.19999900261561074,
+        "vowel": "",
+        "energy": 0.9999950528144836
+      },
+      {
+        "time": 0.28,
+        "mouth_open": 0.19999897877375283,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 0.29,
+        "mouth_open": 0.19999895095825193,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 0.3,
+        "mouth_open": 0.19999893506368,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 0.31,
+        "mouth_open": 0.1999989072481791,
+        "vowel": "",
+        "energy": 0.9999945759773254
+      },
+      {
+        "time": 0.32,
+        "mouth_open": 0.19999889135360716,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 0.33,
+        "mouth_open": 0.19999887943267824,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 0.34,
+        "mouth_open": 0.19999887545903525,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 0.35,
+        "mouth_open": 0.19999887148539225,
+        "vowel": "",
+        "energy": 0.9999943375587463
+      },
+      {
+        "time": 0.36,
+        "mouth_open": 0.19999887148539225,
+        "vowel": "",
+        "energy": 0.9999943375587463
+      },
+      {
+        "time": 0.37,
+        "mouth_open": 0.19999887545903522,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 0.38,
+        "mouth_open": 0.19999887943267824,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 0.39,
+        "mouth_open": 0.19999889135360718,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 0.4,
+        "mouth_open": 0.1999989072481791,
+        "vowel": "",
+        "energy": 0.9999945759773254
+      },
+      {
+        "time": 0.41,
+        "mouth_open": 0.19999893506368,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 0.42,
+        "mouth_open": 0.19999895095825193,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 0.43,
+        "mouth_open": 0.19999897877375283,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 0.44,
+        "mouth_open": 0.19999900261561074,
+        "vowel": "",
+        "energy": 0.9999950528144836
+      },
+      {
+        "time": 0.45,
+        "mouth_open": 0.19999904235204058,
+        "vowel": "",
+        "energy": 0.9999951720237732
+      },
+      {
+        "time": 0.46,
+        "mouth_open": 0.19999907811482745,
+        "vowel": "",
+        "energy": 0.9999954104423523
+      },
+      {
+        "time": 0.47,
+        "mouth_open": 0.19999911387761432,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 0.48,
+        "mouth_open": 0.1999991536140442,
+        "vowel": "",
+        "energy": 0.9999957084655762
+      },
+      {
+        "time": 0.49,
+        "mouth_open": 0.19999919732411703,
+        "vowel": "",
+        "energy": 0.9999960064888
+      },
+      {
+        "time": 0.5,
+        "mouth_open": 0.19999924500783284,
+        "vowel": "",
+        "energy": 0.9999962449073792
+      },
+      {
+        "time": 0.51,
+        "mouth_open": 0.19999929269154867,
+        "vowel": "",
+        "energy": 0.9999964237213135
+      },
+      {
+        "time": 0.52,
+        "mouth_open": 0.23333269397417705,
+        "vowel": "",
+        "energy": 0.9999967217445374
+      },
+      {
+        "time": 0.53,
+        "mouth_open": 0.3333326462904612,
+        "vowel": "i",
+        "energy": 0.9999969601631165
+      },
+      {
+        "time": 0.54,
+        "mouth_open": 0.43333259661992385,
+        "vowel": "e",
+        "energy": 0.9999971389770508
+      },
+      {
+        "time": 0.55,
+        "mouth_open": 0.49999921321868895,
+        "vowel": "e",
+        "energy": 0.9999973177909851
+      },
+      {
+        "time": 0.56,
+        "mouth_open": 0.4999992847442627,
+        "vowel": "e",
+        "energy": 0.9999976754188538
+      },
+      {
+        "time": 0.57,
+        "mouth_open": 0.49999936819076535,
+        "vowel": "e",
+        "energy": 0.9999978542327881
+      },
+      {
+        "time": 0.58,
+        "mouth_open": 0.4999994277954101,
+        "vowel": "e",
+        "energy": 0.999998152256012
+      },
+      {
+        "time": 0.59,
+        "mouth_open": 0.49999949932098386,
+        "vowel": "e",
+        "energy": 0.9999982714653015
+      },
+      {
+        "time": 0.6,
+        "mouth_open": 0.49999955892562864,
+        "vowel": "e",
+        "energy": 0.9999985694885254
+      },
+      {
+        "time": 0.61,
+        "mouth_open": 0.49999962449073787,
+        "vowel": "e",
+        "energy": 0.9999987483024597
+      },
+      {
+        "time": 0.62,
+        "mouth_open": 0.4999996781349182,
+        "vowel": "e",
+        "energy": 0.999998927116394
+      },
+      {
+        "time": 0.63,
+        "mouth_open": 0.49999973773956297,
+        "vowel": "e",
+        "energy": 0.9999991059303284
+      },
+      {
+        "time": 0.64,
+        "mouth_open": 0.49999977946281426,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 0.65,
+        "mouth_open": 0.4999998211860656,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 0.66,
+        "mouth_open": 0.499999850988388,
+        "vowel": "e",
+        "energy": 0.9999995231628418
+      },
+      {
+        "time": 0.67,
+        "mouth_open": 0.49999989271163936,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 0.68,
+        "mouth_open": 0.4999999165534973,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 0.69,
+        "mouth_open": 0.4999999463558197,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 0.7,
+        "mouth_open": 0.43333329995473224,
+        "vowel": "e",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.71,
+        "mouth_open": 0.3666666535536448,
+        "vowel": "i",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.72,
+        "mouth_open": 0.2666666555404663,
+        "vowel": "i",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.73,
+        "mouth_open": 0.33333331982294717,
+        "vowel": "",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.74,
+        "mouth_open": 0.39999998410542803,
+        "vowel": "e",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.75,
+        "mouth_open": 0.49999997019767756,
+        "vowel": "e",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 0.76,
+        "mouth_open": 0.49999994039535517,
+        "vowel": "e",
+        "energy": 0.9999998211860657
+      },
+      {
+        "time": 0.77,
+        "mouth_open": 0.4999999105930328,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 0.78,
+        "mouth_open": 0.4999998688697814,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 0.79,
+        "mouth_open": 0.49999983906745904,
+        "vowel": "e",
+        "energy": 0.9999994039535522
+      },
+      {
+        "time": 0.8,
+        "mouth_open": 0.49999979138374323,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 0.81,
+        "mouth_open": 0.49999974966049193,
+        "vowel": "e",
+        "energy": 0.9999991655349731
+      },
+      {
+        "time": 0.82,
+        "mouth_open": 0.49999969005584716,
+        "vowel": "e",
+        "energy": 0.9999989867210388
+      },
+      {
+        "time": 0.83,
+        "mouth_open": 0.49999964237213135,
+        "vowel": "e",
+        "energy": 0.9999987483024597
+      },
+      {
+        "time": 0.84,
+        "mouth_open": 0.4999995946884155,
+        "vowel": "e",
+        "energy": 0.9999986886978149
+      },
+      {
+        "time": 0.85,
+        "mouth_open": 0.4999995470046997,
+        "vowel": "e",
+        "energy": 0.9999985098838806
+      },
+      {
+        "time": 0.86,
+        "mouth_open": 0.4999994695186615,
+        "vowel": "e",
+        "energy": 0.9999982714653015
+      },
+      {
+        "time": 0.87,
+        "mouth_open": 0.49999940395355225,
+        "vowel": "e",
+        "energy": 0.9999979138374329
+      },
+      {
+        "time": 0.88,
+        "mouth_open": 0.499999326467514,
+        "vowel": "e",
+        "energy": 0.9999978542327881
+      },
+      {
+        "time": 0.89,
+        "mouth_open": 0.4999992668628692,
+        "vowel": "e",
+        "energy": 0.9999974966049194
+      },
+      {
+        "time": 0.9,
+        "mouth_open": 0.4333326395352681,
+        "vowel": "e",
+        "energy": 0.9999973177909851
+      },
+      {
+        "time": 0.91,
+        "mouth_open": 0.3666660336653391,
+        "vowel": "i",
+        "energy": 0.999997079372406
+      },
+      {
+        "time": 0.92,
+        "mouth_open": 0.26666607141494747,
+        "vowel": "i",
+        "energy": 0.9999968409538269
+      },
+      {
+        "time": 0.93,
+        "mouth_open": 0.23333266695340477,
+        "vowel": "",
+        "energy": 0.999996542930603
+      },
+      {
+        "time": 0.94,
+        "mouth_open": 0.19999926090240477,
+        "vowel": "",
+        "energy": 0.9999963045120239
+      },
+      {
+        "time": 0.95,
+        "mouth_open": 0.1999992251396179,
+        "vowel": "",
+        "energy": 0.9999960660934448
+      },
+      {
+        "time": 0.96,
+        "mouth_open": 0.1999991774559021,
+        "vowel": "",
+        "energy": 0.9999960064888
+      },
+      {
+        "time": 0.97,
+        "mouth_open": 0.19999914566675822,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 0.98,
+        "mouth_open": 0.19999909798304238,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 0.99,
+        "mouth_open": 0.1999990701675415,
+        "vowel": "",
+        "energy": 0.9999952912330627
+      },
+      {
+        "time": 1.0,
+        "mouth_open": 0.19999903043111167,
+        "vowel": "",
+        "energy": 0.9999951720237732
+      },
+      {
+        "time": 1.01,
+        "mouth_open": 0.19999899864196777,
+        "vowel": "",
+        "energy": 0.9999949932098389
+      },
+      {
+        "time": 1.02,
+        "mouth_open": 0.1999989628791809,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 1.03,
+        "mouth_open": 0.19999893903732296,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 1.04,
+        "mouth_open": 0.1999989151954651,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 1.05,
+        "mouth_open": 0.19999890327453615,
+        "vowel": "",
+        "energy": 0.9999944567680359
+      },
+      {
+        "time": 1.06,
+        "mouth_open": 0.19999888340632122,
+        "vowel": "",
+        "energy": 0.9999944567680359
+      },
+      {
+        "time": 1.07,
+        "mouth_open": 0.19999887943267824,
+        "vowel": "",
+        "energy": 0.9999943375587463
+      },
+      {
+        "time": 1.08,
+        "mouth_open": 0.19999887148539225,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.09,
+        "mouth_open": 0.19999887545903522,
+        "vowel": "",
+        "energy": 0.9999943375587463
+      },
+      {
+        "time": 1.1,
+        "mouth_open": 0.19999887545903522,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.11,
+        "mouth_open": 0.19999888340632122,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.12,
+        "mouth_open": 0.19999888340632122,
+        "vowel": "",
+        "energy": 0.9999944567680359
+      },
+      {
+        "time": 1.13,
+        "mouth_open": 0.19999889930089315,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.14,
+        "mouth_open": 0.19999891122182212,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 1.15,
+        "mouth_open": 0.199998939037323,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 1.16,
+        "mouth_open": 0.1999989549318949,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 1.17,
+        "mouth_open": 0.19999899069468177,
+        "vowel": "",
+        "energy": 0.9999948740005493
+      },
+      {
+        "time": 1.18,
+        "mouth_open": 0.19999902248382567,
+        "vowel": "",
+        "energy": 0.9999951720237732
+      },
+      {
+        "time": 1.19,
+        "mouth_open": 0.1999990701675415,
+        "vowel": "",
+        "energy": 0.9999952912330627
+      },
+      {
+        "time": 1.2,
+        "mouth_open": 0.1999991019566854,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 1.21,
+        "mouth_open": 0.1999991496404012,
+        "vowel": "",
+        "energy": 0.9999956488609314
+      },
+      {
+        "time": 1.22,
+        "mouth_open": 0.19999918142954506,
+        "vowel": "",
+        "energy": 0.9999960064888
+      },
+      {
+        "time": 1.23,
+        "mouth_open": 0.19999922513961793,
+        "vowel": "",
+        "energy": 0.9999960660934448
+      },
+      {
+        "time": 1.24,
+        "mouth_open": 0.19999925692876178,
+        "vowel": "",
+        "energy": 0.9999963045120239
+      },
+      {
+        "time": 1.25,
+        "mouth_open": 0.23333266297976174,
+        "vowel": "",
+        "energy": 0.9999964833259583
+      },
+      {
+        "time": 1.26,
+        "mouth_open": 0.2666660674413045,
+        "vowel": "i",
+        "energy": 0.9999968409538269
+      },
+      {
+        "time": 1.27,
+        "mouth_open": 0.3666660336653391,
+        "vowel": "i",
+        "energy": 0.999997079372406
+      },
+      {
+        "time": 1.28,
+        "mouth_open": 0.4333326395352681,
+        "vowel": "e",
+        "energy": 0.9999973177909851
+      },
+      {
+        "time": 1.29,
+        "mouth_open": 0.4999992668628692,
+        "vowel": "e",
+        "energy": 0.9999974966049194
+      },
+      {
+        "time": 1.3,
+        "mouth_open": 0.499999326467514,
+        "vowel": "e",
+        "energy": 0.9999978542327881
+      },
+      {
+        "time": 1.31,
+        "mouth_open": 0.4999994039535522,
+        "vowel": "e",
+        "energy": 0.9999979138374329
+      },
+      {
+        "time": 1.32,
+        "mouth_open": 0.4999994695186615,
+        "vowel": "e",
+        "energy": 0.9999982714653015
+      },
+      {
+        "time": 1.33,
+        "mouth_open": 0.49999954700469973,
+        "vowel": "e",
+        "energy": 0.9999985098838806
+      },
+      {
+        "time": 1.34,
+        "mouth_open": 0.4999995946884155,
+        "vowel": "e",
+        "energy": 0.9999986886978149
+      },
+      {
+        "time": 1.35,
+        "mouth_open": 0.49999964237213135,
+        "vowel": "e",
+        "energy": 0.9999987483024597
+      },
+      {
+        "time": 1.36,
+        "mouth_open": 0.49999968409538265,
+        "vowel": "e",
+        "energy": 0.9999989867210388
+      },
+      {
+        "time": 1.37,
+        "mouth_open": 0.4999997437000274,
+        "vowel": "e",
+        "energy": 0.9999991059303284
+      },
+      {
+        "time": 1.38,
+        "mouth_open": 0.4999997854232787,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 1.39,
+        "mouth_open": 0.49999983906745904,
+        "vowel": "e",
+        "energy": 0.9999994039535522
+      },
+      {
+        "time": 1.4,
+        "mouth_open": 0.4999998688697814,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 1.41,
+        "mouth_open": 0.4999999046325683,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 1.42,
+        "mouth_open": 0.49999992251396175,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 1.43,
+        "mouth_open": 0.4333332880338033,
+        "vowel": "e",
+        "energy": 0.9999998211860657
+      },
+      {
+        "time": 1.44,
+        "mouth_open": 0.3333333079020182,
+        "vowel": "i",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 1.45,
+        "mouth_open": 0.23333332578341165,
+        "vowel": "",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 1.46,
+        "mouth_open": 0.19999999205271402,
+        "vowel": "",
+        "energy": 1.0
+      },
+      {
+        "time": 1.47,
+        "mouth_open": 0.19999999205271402,
+        "vowel": "",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 1.48,
+        "mouth_open": 0.2999999682108561,
+        "vowel": "",
+        "energy": 0.9999999403953552
+      },
+      {
+        "time": 1.49,
+        "mouth_open": 0.3999999483426412,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 1.5,
+        "mouth_open": 0.4999999165534973,
+        "vowel": "e",
+        "energy": 0.9999997615814209
+      },
+      {
+        "time": 1.51,
+        "mouth_open": 0.49999989271163936,
+        "vowel": "e",
+        "energy": 0.9999996423721313
+      },
+      {
+        "time": 1.52,
+        "mouth_open": 0.499999850988388,
+        "vowel": "e",
+        "energy": 0.9999995231628418
+      },
+      {
+        "time": 1.53,
+        "mouth_open": 0.4999998211860656,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 1.54,
+        "mouth_open": 0.49999977946281426,
+        "vowel": "e",
+        "energy": 0.9999993443489075
+      },
+      {
+        "time": 1.55,
+        "mouth_open": 0.4999997377395629,
+        "vowel": "e",
+        "energy": 0.9999991059303284
+      },
+      {
+        "time": 1.56,
+        "mouth_open": 0.4999996781349182,
+        "vowel": "e",
+        "energy": 0.999998927116394
+      },
+      {
+        "time": 1.57,
+        "mouth_open": 0.49999962449073787,
+        "vowel": "e",
+        "energy": 0.9999987483024597
+      },
+      {
+        "time": 1.58,
+        "mouth_open": 0.4999995648860931,
+        "vowel": "e",
+        "energy": 0.9999985694885254
+      },
+      {
+        "time": 1.59,
+        "mouth_open": 0.4999995052814483,
+        "vowel": "e",
+        "energy": 0.9999983310699463
+      },
+      {
+        "time": 1.6,
+        "mouth_open": 0.4999994337558746,
+        "vowel": "e",
+        "energy": 0.999998152256012
+      },
+      {
+        "time": 1.61,
+        "mouth_open": 0.49999936819076535,
+        "vowel": "e",
+        "energy": 0.9999978542327881
+      },
+      {
+        "time": 1.62,
+        "mouth_open": 0.4999992847442627,
+        "vowel": "e",
+        "energy": 0.9999976754188538
+      },
+      {
+        "time": 1.63,
+        "mouth_open": 0.49999921321868895,
+        "vowel": "e",
+        "energy": 0.9999973177909851
+      },
+      {
+        "time": 1.64,
+        "mouth_open": 0.43333259304364524,
+        "vowel": "e",
+        "energy": 0.9999971389770508
+      },
+      {
+        "time": 1.65,
+        "mouth_open": 0.3333326427141825,
+        "vowel": "i",
+        "energy": 0.9999969005584717
+      },
+      {
+        "time": 1.66,
+        "mouth_open": 0.2333326824506124,
+        "vowel": "",
+        "energy": 0.9999967217445374
+      },
+      {
+        "time": 1.67,
+        "mouth_open": 0.19999928474426268,
+        "vowel": "",
+        "energy": 0.9999963045120239
+      },
+      {
+        "time": 1.68,
+        "mouth_open": 0.19999923706054687,
+        "vowel": "",
+        "energy": 0.9999962449073792
+      },
+      {
+        "time": 1.69,
+        "mouth_open": 0.19999919732411703,
+        "vowel": "",
+        "energy": 0.9999960064888
+      },
+      {
+        "time": 1.7,
+        "mouth_open": 0.1999991536140442,
+        "vowel": "",
+        "energy": 0.9999957084655762
+      },
+      {
+        "time": 1.71,
+        "mouth_open": 0.19999911387761432,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 1.72,
+        "mouth_open": 0.19999907811482745,
+        "vowel": "",
+        "energy": 0.9999954104423523
+      },
+      {
+        "time": 1.73,
+        "mouth_open": 0.19999904235204058,
+        "vowel": "",
+        "energy": 0.9999951720237732
+      },
+      {
+        "time": 1.74,
+        "mouth_open": 0.19999900261561074,
+        "vowel": "",
+        "energy": 0.9999950528144836
+      },
+      {
+        "time": 1.75,
+        "mouth_open": 0.19999897877375283,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 1.76,
+        "mouth_open": 0.19999895095825193,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 1.77,
+        "mouth_open": 0.19999893506368,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 1.78,
+        "mouth_open": 0.1999989072481791,
+        "vowel": "",
+        "energy": 0.9999945759773254
+      },
+      {
+        "time": 1.79,
+        "mouth_open": 0.19999889135360716,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.8,
+        "mouth_open": 0.19999887943267824,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.81,
+        "mouth_open": 0.19999887545903525,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.82,
+        "mouth_open": 0.19999887148539225,
+        "vowel": "",
+        "energy": 0.9999943375587463
+      },
+      {
+        "time": 1.83,
+        "mouth_open": 0.19999887148539225,
+        "vowel": "",
+        "energy": 0.9999943375587463
+      },
+      {
+        "time": 1.84,
+        "mouth_open": 0.19999887545903522,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.85,
+        "mouth_open": 0.19999887943267824,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.86,
+        "mouth_open": 0.19999889135360718,
+        "vowel": "",
+        "energy": 0.9999943971633911
+      },
+      {
+        "time": 1.87,
+        "mouth_open": 0.1999989072481791,
+        "vowel": "",
+        "energy": 0.9999945759773254
+      },
+      {
+        "time": 1.88,
+        "mouth_open": 0.19999893506368,
+        "vowel": "",
+        "energy": 0.9999946355819702
+      },
+      {
+        "time": 1.89,
+        "mouth_open": 0.19999895095825193,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 1.9,
+        "mouth_open": 0.19999897877375283,
+        "vowel": "",
+        "energy": 0.9999948143959045
+      },
+      {
+        "time": 1.91,
+        "mouth_open": 0.19999900261561074,
+        "vowel": "",
+        "energy": 0.9999950528144836
+      },
+      {
+        "time": 1.92,
+        "mouth_open": 0.19999904235204058,
+        "vowel": "",
+        "energy": 0.9999951720237732
+      },
+      {
+        "time": 1.93,
+        "mouth_open": 0.19999907811482745,
+        "vowel": "",
+        "energy": 0.9999954104423523
+      },
+      {
+        "time": 1.94,
+        "mouth_open": 0.19999911387761432,
+        "vowel": "",
+        "energy": 0.9999955892562866
+      },
+      {
+        "time": 1.95,
+        "mouth_open": 0.1999991536140442,
+        "vowel": "",
+        "energy": 0.9999957084655762
+      },
+      {
+        "time": 1.96,
+        "mouth_open": 0.19999919732411703,
+        "vowel": "",
+        "energy": 0.9999960064888
+      },
+      {
+        "time": 1.97,
+        "mouth_open": 0.1333328167597453,
+        "vowel": "",
+        "energy": 0.9999962449073792
+      }
+    ],
+    "max_error_samples": 98.5,
+    "max_error_ms": 4.467120181405895,
+    "passed": false
+  },
+  "seconds": 0.24181834200862795
+}

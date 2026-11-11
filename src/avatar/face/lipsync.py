@@ -210,9 +210,17 @@ class LipSyncEngine:
             mouth = np.convolve(mouth, kernel, mode="same")
 
         # Optional cosmetic motion; no acoustic evidence of a pause is implied.
-        if self.close_every is not None and self.close_every < n * sample_hop / sr:
-            close_every_frames = max(1, int(self.close_every * sr / sample_hop))
-            for i in range(close_every_frames, n, close_every_frames):
+        if self.close_every is not None:
+            if self.close_every <= sample_hop / sr:
+                positions = range(1, n)
+            else:
+                # Quantize each absolute target independently. The event count
+                # is <= frame count, even for an extremely small input period.
+                count = int(np.floor(np.nextafter(times[-1] / self.close_every, np.inf)))
+                targets = np.arange(1, count + 1) * float(self.close_every)
+                positions = np.rint(targets * sr / sample_hop).astype(np.int64)
+                positions = positions[(positions > 0) & (positions < n)]
+            for i in positions:
                 if mouth[i] > 0.3:
                     mouth[i] = 0.05
 
