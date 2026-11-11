@@ -125,3 +125,42 @@ def test_cancel_after_full_review_cannot_flush_a_late_quote_or_commit_assistant(
             assert [r[0] for r in bot.memory._conn.execute('SELECT role FROM memory_messages')] == ['user']
         finally:
             bot.memory.close(); engine.close()
+
+
+def test_erasure_after_full_review_blocks_tail_and_assistant_commit(tmp_path):
+    from avatar.brain.memory import MemoryStore
+    reply = '"明天一起爬山。"'
+    with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+        engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+        path = str(tmp_path/'tail-erase.db'); bot = Avatar(db_path=path, llm=engine)
+        fact = bot.memory.remember_user('名字', '待删测试名'); writer = MemoryStore(path); pieces = []
+        review = bot.boundaries.review_output
+        def erase_final(text):
+            if text == reply: writer.forget(fact)
+            return review(text)
+        bot.boundaries.review_output = erase_final
+        try:
+            with pytest.raises(Cancelled): bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+            assert ''.join(pieces) == reply[:-1]
+            assert bot.memory.get_user_profile() == {}
+            assert [r[0] for r in bot.memory._conn.execute('SELECT role FROM memory_messages')] == ['user']
+        finally:
+            writer.close(); bot.memory.close(); engine.close()
+
+
+def test_whole_output_replacement_does_not_append_the_old_pending_tail():
+    reply = '旧句子。旧的末尾片段'
+    with controlled_provider(delay=.001, reply_overrides={'fixture-tail': reply}) as (_, url):
+        engine = LLMEngine(base_url=url, api_key='local-fixture', model='fixture')
+        bot = Avatar(db_path=':memory:', llm=engine); pieces = []
+        review = bot.boundaries.review_output
+        def replace_final(text):
+            return ('最终已替换的文字。', 'controlled_whole_review') if text == reply else review(text)
+        bot.boundaries.review_output = replace_final
+        try:
+            result = bot.respond('fixture-tail', cancel=CancellationToken(), on_delta=pieces.append)
+            assert result['reply'] == '最终已替换的文字。'
+            assert pieces == ['旧句子。']
+            assert bot.memory.get_short_term()[-1]['content'] == result['reply']
+        finally:
+            bot.memory.close(); engine.close()

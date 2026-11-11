@@ -114,7 +114,8 @@ def evaluate(provider_path, output):
                         if kind != 'result': raise RuntimeError('Application terminal event: '+kind)
                         if result.get('generation_mode') in (None, 'rules_service_error', 'rules_unconfigured'):
                             raise RuntimeError('Service fallback; not a valid native quality sample')
-                        if visible and visible != result['reply']: raise RuntimeError('Visible/final mismatch')
+                        if result['generation_mode'] == 'llm' and visible != result['reply']:
+                            raise RuntimeError('Visible/final mismatch, including empty native stream')
                         turn['profile'] = query('/memory')
                         turn['conversation'] = query('/conversation')
                         with closing(MemoryStore(path)) as memory:

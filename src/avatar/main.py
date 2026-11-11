@@ -571,6 +571,7 @@ class Avatar:
             and boundary.reply is None and reminder is None and cancelled_reminder_id is None
             and not reminder_error and not use_web)
         buffer_reply = self.profile_grounding_enabled or delivery_guard_active
+        streamed_prefix = []
         grounding_action = None
         profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
         real_profile_active = self.profile_grounding_enabled and self.speaker_scope.allows_facts
@@ -615,6 +616,7 @@ class Avatar:
                             if on_delta and not buffer_reply:
                                 safe, _ = self.boundaries.review_output(sentence)
                                 emit_checked(safe)
+                                streamed_prefix.append(safe)
                     reply = self.llm.stream_chat(self._messages(decision, user_text),
                         temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
                 else:
@@ -696,6 +698,13 @@ class Avatar:
         repair_succeeded = repair_succeeded and not final_delivery_issues
         if buffer_reply and generation_mode in {'llm', 'llm_literal_composition'} and on_delta:
             emit_checked(reply)
+        elif generation_mode == 'llm' and on_delta:
+            # Sentence checks leave closing quotes, emoji and unpunctuated
+            # text pending. Complete only an unchanged, checked final prefix;
+            # never append a stale tail after a whole-output replacement.
+            prefix = ''.join(streamed_prefix)
+            if reply.startswith(prefix) and len(reply) > len(prefix):
+                emit_checked(reply[len(prefix):])
         self._checkpoint()
         # 5. 短期记忆记下回复
         with self.memory.transaction():
