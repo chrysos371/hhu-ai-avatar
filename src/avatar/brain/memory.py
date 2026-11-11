@@ -104,6 +104,19 @@ CREATE TABLE IF NOT EXISTS memory_messages (
     created_at REAL NOT NULL,
     context_tracked INTEGER NOT NULL DEFAULT 0
 );
+-- Action evidence contains references only, never another private text copy.
+CREATE TABLE IF NOT EXISTS memory_action_receipts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_message_id INTEGER NOT NULL,
+    session_id TEXT NOT NULL,
+    context_revision INTEGER NOT NULL,
+    action TEXT NOT NULL CHECK(action IN
+        ('reminder.created','reminder.cancelled','reminder.completed','reminder.claimed_due')),
+    reminder_id INTEGER NOT NULL,
+    recorded_at REAL NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_action_receipts_context
+    ON memory_action_receipts(context_revision,source_message_id,id);
 CREATE TABLE IF NOT EXISTS memory_sources (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     fragment_id INTEGER NOT NULL,

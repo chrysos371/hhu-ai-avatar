@@ -1,0 +1,186 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_____ test_native_edge_publication_checks_context_after_save[False-False] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-243/test_native_edge_publication_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89f2200dc0>
+provide_cancel = False, existing = False
+
+    @pytest.mark.parametrize('provide_cancel', [False, True])
+    @pytest.mark.parametrize('existing', [False, True])
+    def test_native_edge_publication_checks_context_after_save(tmp_path, monkeypatch, provide_cancel, existing):
+        path = str(tmp_path/'sdk.db'); audio_dir = tmp_path/'audio'; audio_dir.mkdir()
+        target = audio_dir/'reply.mp3'; old = b'previous-user-output'; saved = []
+        if existing: target.write_bytes(old)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, out_path):
+                silence(out_path); saved.append(True)
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        bot = Avatar(db_path=path, llm=Engine(), tts=EdgeTTSEngine())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        try:
+            with pytest.raises(Cancelled):
+                bot.respond('我的名字是'+PRIVATE+'。', use_tts=True, tts_path=str(target),
+                            cancel=CancellationToken() if provide_cancel else None)
+            assert saved == [True] and bot.memory.context_revision == 1
+            if existing: assert target.read_bytes() == old
+>           else: assert not target.exists()
+E           AssertionError: assert not True
+E            +  where True = exists()
+E            +    where exists = PosixPath('/tmp/pytest-of-root/pytest-243/test_native_edge_publication_c0/audio/reply.mp3').exists
+
+tests/test_sdk_tts_privacy.py:150: AssertionError
+______ test_native_edge_publication_checks_context_after_save[False-True] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-243/test_native_edge_publication_c1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89f21be140>
+provide_cancel = True, existing = False
+
+    @pytest.mark.parametrize('provide_cancel', [False, True])
+    @pytest.mark.parametrize('existing', [False, True])
+    def test_native_edge_publication_checks_context_after_save(tmp_path, monkeypatch, provide_cancel, existing):
+        path = str(tmp_path/'sdk.db'); audio_dir = tmp_path/'audio'; audio_dir.mkdir()
+        target = audio_dir/'reply.mp3'; old = b'previous-user-output'; saved = []
+        if existing: target.write_bytes(old)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, out_path):
+                silence(out_path); saved.append(True)
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        bot = Avatar(db_path=path, llm=Engine(), tts=EdgeTTSEngine())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        try:
+            with pytest.raises(Cancelled):
+                bot.respond('我的名字是'+PRIVATE+'。', use_tts=True, tts_path=str(target),
+                            cancel=CancellationToken() if provide_cancel else None)
+            assert saved == [True] and bot.memory.context_revision == 1
+            if existing: assert target.read_bytes() == old
+>           else: assert not target.exists()
+E           AssertionError: assert not True
+E            +  where True = exists()
+E            +    where exists = PosixPath('/tmp/pytest-of-root/pytest-243/test_native_edge_publication_c1/audio/reply.mp3').exists
+
+tests/test_sdk_tts_privacy.py:150: AssertionError
+______ test_native_edge_publication_checks_context_after_save[True-False] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-243/test_native_edge_publication_c2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89f23331c0>
+provide_cancel = False, existing = True
+
+    @pytest.mark.parametrize('provide_cancel', [False, True])
+    @pytest.mark.parametrize('existing', [False, True])
+    def test_native_edge_publication_checks_context_after_save(tmp_path, monkeypatch, provide_cancel, existing):
+        path = str(tmp_path/'sdk.db'); audio_dir = tmp_path/'audio'; audio_dir.mkdir()
+        target = audio_dir/'reply.mp3'; old = b'previous-user-output'; saved = []
+        if existing: target.write_bytes(old)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, out_path):
+                silence(out_path); saved.append(True)
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        bot = Avatar(db_path=path, llm=Engine(), tts=EdgeTTSEngine())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        try:
+            with pytest.raises(Cancelled):
+                bot.respond('我的名字是'+PRIVATE+'。', use_tts=True, tts_path=str(target),
+                            cancel=CancellationToken() if provide_cancel else None)
+            assert saved == [True] and bot.memory.context_revision == 1
+>           if existing: assert target.read_bytes() == old
+E           AssertionError: assert b'RIFF\xa4\x0...0\x00\x00\x00' == b'previous-user-output'
+E             
+E             At index 0 diff: b'R' != b'p'
+E             Use -v to get more diff
+
+tests/test_sdk_tts_privacy.py:149: AssertionError
+______ test_native_edge_publication_checks_context_after_save[True-True] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-243/test_native_edge_publication_c3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89f22205e0>
+provide_cancel = True, existing = True
+
+    @pytest.mark.parametrize('provide_cancel', [False, True])
+    @pytest.mark.parametrize('existing', [False, True])
+    def test_native_edge_publication_checks_context_after_save(tmp_path, monkeypatch, provide_cancel, existing):
+        path = str(tmp_path/'sdk.db'); audio_dir = tmp_path/'audio'; audio_dir.mkdir()
+        target = audio_dir/'reply.mp3'; old = b'previous-user-output'; saved = []
+        if existing: target.write_bytes(old)
+        class Communicate:
+            def __init__(self, *args, **kwargs): pass
+            async def save(self, out_path):
+                silence(out_path); saved.append(True)
+                with closing(MemoryStore(path)) as writer: writer.forget(fragment)
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        bot = Avatar(db_path=path, llm=Engine(), tts=EdgeTTSEngine())
+        fragment = bot.memory.remember_user('名字', PRIVATE)
+        try:
+            with pytest.raises(Cancelled):
+                bot.respond('我的名字是'+PRIVATE+'。', use_tts=True, tts_path=str(target),
+                            cancel=CancellationToken() if provide_cancel else None)
+            assert saved == [True] and bot.memory.context_revision == 1
+>           if existing: assert target.read_bytes() == old
+E           AssertionError: assert b'RIFF\xa4\x0...0\x00\x00\x00' == b'previous-user-output'
+E             
+E             At index 0 diff: b'R' != b'p'
+E             Use -v to get more diff
+
+tests/test_sdk_tts_privacy.py:149: AssertionError
+_ test_checkpoint_runs_on_caller_thread_before_component_and_before_publish[before] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-243/test_checkpoint_runs_on_caller0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89f2201a50>
+phase = 'before'
+
+    @pytest.mark.parametrize('phase', ['before', 'after'])
+    def test_checkpoint_runs_on_caller_thread_before_component_and_before_publish(tmp_path, monkeypatch, phase):
+        target = tmp_path/'output.mp3'; target.write_bytes(OLD)
+        caller = threading.get_ident(); revoked = phase == 'before'; calls = []
+        class Communicate:
+            def __init__(self, *args, **kwargs): calls.append('component')
+            async def save(self, path):
+                nonlocal revoked
+                Path(path).write_bytes(NEW); revoked = True
+        def check():
+            assert threading.get_ident() == caller  # SQLite callbacks belong to this thread.
+            if revoked: raise Cancelled('source revoked')
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        with pytest.raises(Cancelled, match='source revoked'):
+>           EdgeTTSEngine().synthesize_cancellable('受控文本', str(target), checkpoint=check)
+E           TypeError: EdgeTTSEngine.synthesize_cancellable() got an unexpected keyword argument 'checkpoint'
+
+tests/test_tts_file_publication.py:116: TypeError
+_ test_checkpoint_runs_on_caller_thread_before_component_and_before_publish[after] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-243/test_checkpoint_runs_on_caller1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89f21bf910>
+phase = 'after'
+
+    @pytest.mark.parametrize('phase', ['before', 'after'])
+    def test_checkpoint_runs_on_caller_thread_before_component_and_before_publish(tmp_path, monkeypatch, phase):
+        target = tmp_path/'output.mp3'; target.write_bytes(OLD)
+        caller = threading.get_ident(); revoked = phase == 'before'; calls = []
+        class Communicate:
+            def __init__(self, *args, **kwargs): calls.append('component')
+            async def save(self, path):
+                nonlocal revoked
+                Path(path).write_bytes(NEW); revoked = True
+        def check():
+            assert threading.get_ident() == caller  # SQLite callbacks belong to this thread.
+            if revoked: raise Cancelled('source revoked')
+        monkeypatch.setattr('avatar.mouth.tts.edge_tts.Communicate', Communicate)
+        with pytest.raises(Cancelled, match='source revoked'):
+>           EdgeTTSEngine().synthesize_cancellable('受控文本', str(target), checkpoint=check)
+E           TypeError: EdgeTTSEngine.synthesize_cancellable() got an unexpected keyword argument 'checkpoint'
+
+tests/test_tts_file_publication.py:116: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_sdk_tts_privacy.py::test_native_edge_publication_checks_context_after_save[False-False]
+FAILED tests/test_sdk_tts_privacy.py::test_native_edge_publication_checks_context_after_save[False-True]
+FAILED tests/test_sdk_tts_privacy.py::test_native_edge_publication_checks_context_after_save[True-False]
+FAILED tests/test_sdk_tts_privacy.py::test_native_edge_publication_checks_context_after_save[True-True]
+FAILED tests/test_tts_file_publication.py::test_checkpoint_runs_on_caller_thread_before_component_and_before_publish[before]
+FAILED tests/test_tts_file_publication.py::test_checkpoint_runs_on_caller_thread_before_component_and_before_publish[after]
+6 failed, 31 deselected in 0.90s

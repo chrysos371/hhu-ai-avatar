@@ -1,0 +1,188 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - link "跳转至内容" [ref=e4] [cursor=pointer]:
+    - /url: "#main"
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - img [ref=e8]
+      - generic [ref=e14]:
+        - strong [ref=e15]: 小海
+        - generic [ref=e16]: DIGITAL MIND
+    - generic [ref=e17]: MISSION CONTROL
+    - navigation "主导航" [ref=e18]:
+      - link "总览" [active] [ref=e19] [cursor=pointer]:
+        - /url: /
+        - img [ref=e20]
+        - generic [ref=e23]: 总览
+      - link "对话观测" [ref=e24] [cursor=pointer]:
+        - /url: /chat
+        - img [ref=e25]
+        - generic [ref=e27]: 对话观测
+      - link "人设管理" [ref=e28] [cursor=pointer]:
+        - /url: /persona
+        - img [ref=e29]
+        - generic [ref=e41]: 人设管理
+      - link "情绪干预" [ref=e42] [cursor=pointer]:
+        - /url: /emotion
+        - img [ref=e43]
+        - generic [ref=e45]: 情绪干预
+      - link "记忆中枢" [ref=e46] [cursor=pointer]:
+        - /url: /memory
+        - img [ref=e47]
+        - generic [ref=e52]: 记忆中枢
+      - link "知识与学习" [ref=e53] [cursor=pointer]:
+        - /url: /knowledge
+        - img [ref=e54]
+        - generic [ref=e56]: 知识与学习
+      - link "提醒" [ref=e57] [cursor=pointer]:
+        - /url: /reminders
+        - img [ref=e58]
+        - generic [ref=e61]: 提醒
+      - link "工具" [ref=e62] [cursor=pointer]:
+        - /url: /tools
+        - img [ref=e63]
+        - generic [ref=e65]: 工具
+      - link "操作审计" [ref=e66] [cursor=pointer]:
+        - /url: /audit
+        - img [ref=e67]
+        - generic [ref=e70]: 操作审计
+    - generic [ref=e71]:
+      - img [ref=e72]
+      - generic [ref=e73]: 认知管理 · v0.1
+  - generic [ref=e74]:
+    - banner [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: HHU / AVATAR
+        - generic [ref=e79]: 认知控制台
+      - generic [ref=e80]:
+        - status [ref=e81]: 后端已连接
+        - button "管理指令" [ref=e82] [cursor=pointer]:
+          - img [ref=e83]
+          - text: 管理指令
+        - generic [ref=e85]: 单用户 · 本机运行
+    - main [ref=e87]:
+      - generic [ref=e88]:
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - paragraph [ref=e91]: MISSION CONTROL
+            - heading "数字人大脑总览" [level=1] [ref=e92]
+            - paragraph [ref=e93]: 观察当前状态、数据与最近事件。每一项指标都来自实际记录。
+          - generic [ref=e94]: 认知工作区
+        - generic [ref=e95]:
+          - article [ref=e96]:
+            - generic [ref=e97]:
+              - generic [ref=e98]: 当前记忆
+              - img [ref=e99]
+            - generic [ref=e103]: "1"
+            - text: 已持久化的当前版本
+          - article [ref=e104]:
+            - generic [ref=e105]:
+              - generic [ref=e106]: 知识来源
+              - img [ref=e107]
+            - generic [ref=e109]: "1"
+            - text: 与个人记忆分开存储
+          - article [ref=e110]:
+            - generic [ref=e111]:
+              - generic [ref=e112]: 人设版本
+              - img [ref=e113]
+            - generic [ref=e125]: "#4"
+            - text: 仅已确认版本生效
+          - article [ref=e126]:
+            - generic [ref=e127]:
+              - generic [ref=e128]: 语义验收
+              - img [ref=e129]
+            - generic [ref=e132]: —
+            - text: 尚无独立语义验收统计
+        - generic [ref=e133]:
+          - article [ref=e134]:
+            - generic [ref=e135]:
+              - heading "角色自动状态" [level=2] [ref=e136]
+              - link "查看干预" [ref=e137] [cursor=pointer]:
+                - /url: /emotion
+                - text: 查看干预
+                - img [ref=e138]
+            - generic [ref=e141]: 中性
+            - paragraph [ref=e142]: 愉悦度 0.00 · 唤醒度 0.00
+            - generic [ref=e143]:
+              - generic [ref=e144]: 角色活跃度
+              - generic [ref=e145]: "0.67"
+            - meter [ref=e146]
+            - text: 情绪与活跃度是角色状态，不代表模型准确率。
+          - article [ref=e147]:
+            - generic [ref=e148]:
+              - heading "最近对话事件" [level=2] [ref=e149]
+              - generic [ref=e150]: 本次服务
+            - table [ref=e152]:
+              - rowgroup [ref=e153]:
+                - row "时间 策略 路径" [ref=e154]:
+                  - cell "时间" [ref=e155]
+                  - cell "策略" [ref=e156]
+                  - cell "路径" [ref=e157]
+              - rowgroup [ref=e158]:
+                - row "2026/11/12 05:47:11 answer normal" [ref=e159]:
+                  - cell "2026/11/12 05:47:11" [ref=e160]
+                  - cell "answer" [ref=e161]
+                  - cell "normal" [ref=e162]
+                - row "2026/11/12 05:47:08 answer normal" [ref=e163]:
+                  - cell "2026/11/12 05:47:08" [ref=e164]
+                  - cell "answer" [ref=e165]
+                  - cell "normal" [ref=e166]
+                - row "2026/11/12 05:47:03 answer normal" [ref=e167]:
+                  - cell "2026/11/12 05:47:03" [ref=e168]
+                  - cell "answer" [ref=e169]
+                  - cell "normal" [ref=e170]
+                - row "2026/11/12 05:46:47 answer normal" [ref=e171]:
+                  - cell "2026/11/12 05:46:47" [ref=e172]
+                  - cell "answer" [ref=e173]
+                  - cell "normal" [ref=e174]
+        - article [ref=e175]:
+          - generic [ref=e176]:
+            - heading "最近管理操作" [level=2] [ref=e177]
+            - link "完整审计" [ref=e178] [cursor=pointer]:
+              - /url: /audit
+              - text: 完整审计
+              - img [ref=e179]
+          - table [ref=e183]:
+            - rowgroup [ref=e184]:
+              - row "操作 结果 时间 编号" [ref=e185]:
+                - cell "操作" [ref=e186]
+                - cell "结果" [ref=e187]
+                - cell "时间" [ref=e188]
+                - cell "编号" [ref=e189]
+            - rowgroup [ref=e190]:
+              - 'row "persona.update 已执行 2026/11/12 05:47:06 #6" [ref=e191]':
+                - cell "persona.update" [ref=e192]
+                - cell "已执行" [ref=e193]:
+                  - generic [ref=e194]: 已执行
+                - cell "2026/11/12 05:47:06" [ref=e195]
+                - cell "#6" [ref=e196]
+              - 'row "persona.update 已执行 2026/11/12 05:47:06 #5" [ref=e197]':
+                - cell "persona.update" [ref=e198]
+                - cell "已执行" [ref=e199]:
+                  - generic [ref=e200]: 已执行
+                - cell "2026/11/12 05:47:06" [ref=e201]
+                - cell "#5" [ref=e202]
+              - 'row "knowledge.import 已执行 2026/11/12 05:46:43 #4" [ref=e203]':
+                - cell "knowledge.import" [ref=e204]
+                - cell "已执行" [ref=e205]:
+                  - generic [ref=e206]: 已执行
+                - cell "2026/11/12 05:46:43" [ref=e207]
+                - cell "#4" [ref=e208]
+              - 'row "memory.batch 已执行 2026/11/12 05:46:41 #3" [ref=e209]':
+                - cell "memory.batch" [ref=e210]
+                - cell "已执行" [ref=e211]:
+                  - generic [ref=e212]: 已执行
+                - cell "2026/11/12 05:46:41" [ref=e213]
+                - cell "#3" [ref=e214]
+              - 'row "emotion.override 已执行 2026/11/12 05:46:40 #2" [ref=e215]':
+                - cell "emotion.override" [ref=e216]
+                - cell "已执行" [ref=e217]:
+                  - generic [ref=e218]: 已执行
+                - cell "2026/11/12 05:46:40" [ref=e219]
+                - cell "#2" [ref=e220]
+    - contentinfo [ref=e221]:
+      - text: 所有管理变更均需预览与确认
+      - generic [ref=e222]: LOCAL FIRST · AUDITABLE
+```

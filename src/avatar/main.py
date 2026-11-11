@@ -46,6 +46,15 @@ def _clamp(x: float, lo: float = -1.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, x))
 
 
+def _accepts_keyword(function, name):
+    try:
+        parameter = inspect.signature(function).parameters.get(name)
+    except (TypeError, ValueError):
+        return False
+    return parameter is not None and parameter.kind in (
+        inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY)
+
+
 class Avatar:
     """带记忆与情感的 AI 虚拟形象。"""
 
@@ -211,9 +220,15 @@ class Avatar:
             self._check_fact_context()
             for fact in rule_facts(self.speaker_scope.fact_text, context=context):
                 self._store_fact(fact)
+            self._check_fact_context()
 
     def _check_fact_context(self):
+        self._checkpoint()
         revision = self.memory.context_revision
+        # Public forget/correct can update the mutable scope and clear the
+        # current source. They cannot re-authorize already analysed old facts.
+        if self._turn_context_revision is not None and self._turn_context_revision != revision:
+            raise Cancelled('context changed before fact extraction or write')
         if self.speaker_scope.revision != revision:
             self.speaker_scope.invalidate(revision)
             raise Cancelled('source changed before fact extraction or write')
@@ -439,8 +454,10 @@ class Avatar:
             try:
                 dv, da, facts = self._analyze_with_llm(user_text)
                 with self.memory.transaction():
+                    self._check_fact_context()
                     for f in facts:
                         self._store_fact(f)
+                    self._check_fact_context()
                 self.emotion.observe(dv, da, text=user_text)
                 self.analysis_mode = 'llm'
                 return
@@ -555,6 +572,8 @@ class Avatar:
         checkpoint_context()
         reminder = None
         reminder_error = None
+        from .brain.action_receipts import ReceiptContext
+        receipt_context = ReceiptContext(self._current_message_id, self.session_id, turn_context_revision)
         reminder_request = re.match(r'^(?:请)?提醒我', user_text.strip())
         cancel_match = re.fullmatch(
             r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
@@ -563,14 +582,15 @@ class Avatar:
                                     and (use_web or reminder_request or cancel_match))
         if boundary.reply is None and reminder_request and not speaker_tool_blocked:
             try:
-                reminder = self.reminders.create(user_text)
+                reminder = self.reminders.create(user_text, checkpoint=checkpoint_context, receipt_context=receipt_context)
             except ValueError as exc:
                 reminder_error = str(exc)
         cancelled_reminder_id = None
         if boundary.reply is None and cancel_match and not speaker_tool_blocked:
             cancelled_reminder_id = int(cancel_match[1])
             try:
-                self.reminders.set_status(cancelled_reminder_id, 'cancelled')
+                self.reminders.set_status(cancelled_reminder_id, 'cancelled', checkpoint=checkpoint_context,
+                                          receipt_context=receipt_context)
             except ValueError as exc:
                 reminder_error = str(exc)
                 cancelled_reminder_id = None
@@ -586,7 +606,7 @@ class Avatar:
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
         if self.summary_enabled and control is None:
             self.summaries.refresh(self.session_id)
-        self._due_reminders = (self.reminders.claim_due()
+        self._due_reminders = (self.reminders.claim_due(checkpoint=checkpoint_context, receipt_context=receipt_context)
                                if boundary.reply is None and control is None and self.speaker_scope.allows_actions else [])
         # 3. 行为决策
         store=self._admin_store()
@@ -646,12 +666,7 @@ class Avatar:
             checkpoint_context()
             run = self.web_agent.run
             engine = self.llm if self._llm_available else None
-            try:
-                parameter = inspect.signature(run).parameters.get('checkpoint')
-            except (TypeError, ValueError):
-                parameter = None
-            if parameter is not None and parameter.kind in (
-                    inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY):
+            if _accepts_keyword(run, 'checkpoint'):
                 web_result = run(user_text, engine, checkpoint=checkpoint_context)
             else:
                 # Preserve the two-argument API of injected custom agents. Their
@@ -791,24 +806,39 @@ class Avatar:
             self.memory.add_short_term("assistant", reply)
             assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)
+        checkpoint_context()
         # 6. TTS（可选）
         audio_path = None
         lip_sync_frames = None
         lipsync_error = None
         if use_tts:
-            audio_path = self.tts.synthesize(
-                reply, tts_path, decision.speech_rate, decision.speech_pitch
-            )
+            synthesize = self.tts.synthesize
+            options = {}
+            cancellable = getattr(self.tts, 'synthesize_cancellable', None)
+            if callable(cancellable):
+                if cancel is not None and _accepts_keyword(cancellable, 'cancel'):
+                    options['cancel'] = cancel
+                if _accepts_keyword(cancellable, 'checkpoint'):
+                    options['checkpoint'] = checkpoint_context
+                if options:
+                    synthesize = cancellable
+            checkpoint_context()
+            audio_path = synthesize(reply, tts_path, decision.speech_rate, decision.speech_pitch, **options)
+            checkpoint_context()
             try:
                 samples, sample_rate = load_audio(audio_path)
+                checkpoint_context()
                 lip_sync_frames = [
                     {'time': frame.time, 'mouth_open': frame.mouth_open,
                      'vowel': frame.vowel, 'energy': frame.energy}
                     for frame in self.lipsync.analyze(samples, sample_rate)
                 ]
+            except Cancelled:
+                raise
             except Exception as exc:
                 logger.warning('口型分析失败：%s', type(exc).__name__)
                 lipsync_error = f'audio_decode_or_analysis_failed:{type(exc).__name__}'
+            checkpoint_context()
         result = {
             "conversation": {"session_id": self.session_id, "revision": turn_context_revision,
                              "user_message_id": self._current_message_id, "assistant_message_id": assistant_message_id},
@@ -863,6 +893,17 @@ class Avatar:
             result['response_review'] = self._response_review
         if control is not None:
             result['speaker_control'] = control.data()
+        from .brain.action_receipts import ActionReceiptStore
+        from .brain.operations import OperationError
+        checkpoint_context()
+        try:
+            result['action_receipts'] = ActionReceiptStore(self.memory).read(self.session_id,
+                revision=turn_context_revision, source_message_id=self._current_message_id)
+        except OperationError as error:
+            if error.code == 'action_receipts_changed':
+                raise Cancelled('context changed before action receipt snapshot') from error
+            raise
+        checkpoint_context()
         return result
 
     def respond_audio(

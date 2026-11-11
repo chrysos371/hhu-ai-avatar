@@ -1,0 +1,28 @@
+.......F................................................................ [ 67%]
+...................................                                      [100%]
+=================================== FAILURES ===================================
+____________ test_cancel_between_facts_rolls_back_whole_fact_batch _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-260/test_cancel_between_facts_roll0')
+
+    def test_cancel_between_facts_rolls_back_whole_fact_batch(tmp_path):
+        bot=Avatar(db_path=str(tmp_path/'db'),llm=Engine());token=CancellationToken()
+        bot.memory.remember_user('名字','旧名');original=bot.memory.remember_user
+        def stored(key,*args,**kwargs):
+            result=original(key,*args,**kwargs)
+            if key=='名字':token.cancel()
+            return result
+        bot.memory.remember_user=stored
+        try:
+            with pytest.raises(Cancelled):bot.respond('我叫小岚，喜欢游泳。',cancel=token)
+>           assert bot.memory.get_user_profile()=={'名字':'旧名'}
+E           AssertionError: assert {'名字': '小岚'} == {'名字': '旧名'}
+E             
+E             Differing items:
+E             {'名字': '小岚'} != {'名字': '旧名'}
+E             Use -v to get more diff
+
+tests/test_fact_transaction_boundary.py:65: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_fact_transaction_boundary.py::test_cancel_between_facts_rolls_back_whole_fact_batch
+1 failed, 106 passed in 3.06s

@@ -1,0 +1,67 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>导航音频同步释放修复报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border:1px solid #dee7ee;text-align:left;vertical-align:top}th{background:#e4edf7}.table-wrap{overflow:auto}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}table{font-size:14px}}</style><main><h1>导航音频同步释放修复报告</h1>
+<p>日期2026-11-12，作者spinner-bot。integration/cycle21-source-actions独立集成阶段；修复96c73ca，尚未合主树。主树固定14B研究继续，本报告不作模型质量/代际跃迁或全轮完成声明。</p>
+<h2>结论与可观测边界</h2>
+<p>C21-012/P2：旧聊天DOM已卸载、目标页heading已出现时，被动useEffect清理尚未运行，detached旧audio短时仍未暂停并保留src。资源清理改为同步layout effect，仍捕获原audio并释放请求、队列、对象URL和嘴型帧；原speech.spec.ts暂停且无src断言完全不变，没有新增宽限或重试筛选。</p>
+<div class="table-wrap"><table>
+<tr><th>固定20轮真实Chromium/PCM</th><th>修前DHh6-woO</th><th>修后BSMr8F_e</th></tr>
+<tr><td>点击返回即时观察已离页旧audio仍活动</td><td>2/20</td><td>0/20</td></tr>
+<tr><td>稍后目标heading等待观察仍活动</td><td>0/20</td><td>0/20</td></tr>
+<tr><td>离页rAF采样</td><td>526，均已停止</td><td>526，均已停止</td></tr>
+</table></div>
+<p>较晚rAF的零异常不能否定修前两次更早的有效观察：两次即时数据同时记录目标heading、chatPresent=false、connected=false、paused=false、src=true。记录中名为committed的字段是后续heading等待后的采样，不能解释成只有此时才提交DOM。这里证实短暂窗口，不是持续泄漏、物理扬声器出声测量或现场发生率估计。</p>
+<div class="table-wrap"><table>
+<tr><th>验证阶段</th><th>结果</th><th>证据含义</th></tr>
+<tr><td>首组合默认浏览器</td><td>14通过/1失败/12跳过，37.0s</td><td>原失败trace.zip/页面快照保留</td></tr>
+<tr><td>目的页布局红测</td><td>1失败/1正控通过，1.34s</td><td>在目标layout执行时旧audio仍活动；同页rerender不释放</td></tr>
+<tr><td>播放关联修后</td><td>14通过，1.44s</td><td>目的页同步清理及既有排队事件/分段正反控</td></tr>
+<tr><td>当前前端全量</td><td>145通过/34文件，7.54s</td><td>96c73ca源、类型/build/lint通过</td></tr>
+<tr><td>同20轮实际导航</td><td>修前28.0s、修后28.5s各1采证项</td><td>每轮保留即时/后续/rAF，不删失败观察</td></tr>
+<tr><td>新包默认浏览器</td><td>15通过/13跳过，36.9s</td><td>新增显式诊断默认跳过，不称与旧12跳过相同集合</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>新包补充PCM</th><th>结果</th></tr>
+<tr><td>媒体时钟</td><td>倍速、seek、暂停、结束和停止均核验</td></tr>
+<tr><td>全部分段</td><td>顺序及新时钟核验</td></tr>
+<tr><td>预取中停止</td><td>排队play和迟到完成没有复活旧播放</td></tr>
+<tr><td>总体</td><td>3项通过24.1s，实际本树runtime/BSMr8F_e SHA</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>适用范围</th><th>限制</th></tr>
+<tr><td>运行环境</td><td>实际浏览器媒体时钟、PCM和本地鉴权HTTP，受控模型/TTS夹具</td></tr>
+<tr><td>数据解释</td><td>20轮固定诊断不是现场概率；复制PCM证据不另计样本</td></tr>
+<tr><td>产品范围</td><td>页面卸载资源释放；不外推所有设备/浏览器、多日或真实声音自然度</td></tr>
+<tr><td>其他检查</td><td>Python代码未因该前端修复改变，组合1449是81b8dda快照，未无故重跑</td></tr>
+<tr><td>后续</td><td>更宽通知、跨标签恢复、百轮在011另留痕；主树研究结束后统一合并审计</td></tr>
+</table></div>
+<h2>原始资料</h2>
+<p><a href="issues/012-P2-导航提交后旧音频短时仍活动.md">012当前单项</a>可随合并更新；阶段快照、原失败轨迹和下列资料封存。</p>
+<p><a href="工作目录/011-集成与系统复核/browser-default-integration.log">工作目录/011-集成与系统复核/browser-default-integration.log</a></p>
+<p><a href="工作目录/011-集成与系统复核/browser-default-runtime.json">工作目录/011-集成与系统复核/browser-default-runtime.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/after/navigation-audio.json">工作目录/012-导航音频释放时序/after/navigation-audio.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/after-summary.json">工作目录/012-导航音频释放时序/after-summary.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/before/navigation-audio.json">工作目录/012-导航音频释放时序/before/navigation-audio.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/before-summary.json">工作目录/012-导航音频释放时序/before-summary.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/browser-default-fixed.log">工作目录/012-导航音频释放时序/browser-default-fixed.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/error-context.md">工作目录/012-导航音频释放时序/error-context.md</a></p>
+<p><a href="工作目录/012-导航音频释放时序/frontend-build-fixed.log">工作目录/012-导航音频释放时序/frontend-build-fixed.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/frontend-fixed-binding.json">工作目录/012-导航音频释放时序/frontend-fixed-binding.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/frontend-full-fixed.log">工作目录/012-导航音频释放时序/frontend-full-fixed.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/frontend-lint-fixed.log">工作目录/012-导航音频释放时序/frontend-lint-fixed.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/navigation-after.log">工作目录/012-导航音频释放时序/navigation-after.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/navigation-before.log">工作目录/012-导航音频释放时序/navigation-before.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/route-cleanup-fixed-related.log">工作目录/012-导航音频释放时序/route-cleanup-fixed-related.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/route-cleanup-red.log">工作目录/012-导航音频释放时序/route-cleanup-red.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/runtime-after.json">工作目录/012-导航音频释放时序/runtime-after.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/runtime-before.json">工作目录/012-导航音频释放时序/runtime-before.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/runtime-default-fixed.json">工作目录/012-导航音频释放时序/runtime-default-fixed.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/trace.zip">工作目录/012-导航音频释放时序/trace.zip</a></p>
+<p><a href="工作目录/012-导航音频释放时序/单项归档快照.md">工作目录/012-导航音频释放时序/单项归档快照.md</a></p>
+<p><a href="工作目录/012-导航音频释放时序/来源核验.json">工作目录/012-导航音频释放时序/来源核验.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/补充PCM/clock.json">工作目录/012-导航音频释放时序/补充PCM/clock.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/补充PCM/clock.png">工作目录/012-导航音频释放时序/补充PCM/clock.png</a></p>
+<p><a href="工作目录/012-导航音频释放时序/补充PCM/pcm-runtime.json">工作目录/012-导航音频释放时序/补充PCM/pcm-runtime.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/补充PCM/pcm.log">工作目录/012-导航音频释放时序/补充PCM/pcm.log</a></p>
+<p><a href="工作目录/012-导航音频释放时序/补充PCM/prefetch-stop.json">工作目录/012-导航音频释放时序/补充PCM/prefetch-stop.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/补充PCM/segments.json">工作目录/012-导航音频释放时序/补充PCM/segments.json</a></p>
+<p><a href="工作目录/012-导航音频释放时序/计划.md">工作目录/012-导航音频释放时序/计划.md</a></p>
+<p><a href="工作目录/012-导航音频释放时序/进展.md">工作目录/012-导航音频释放时序/进展.md</a></p></main></html>
