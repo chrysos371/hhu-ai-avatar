@@ -1,0 +1,126 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第十一轮系统审计与推进报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border:1px solid #dee7ee;text-align:left;vertical-align:top}th{background:#e4edf7}.table-wrap{overflow:auto}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}table{font-size:14px}}</style><main><h1>第十一轮系统审计与推进报告</h1>
+<p>日期：2026-11-11（上海时间）。作者：spinner-bot。起点5dd6d65，远期Goal继续active。</p>
+<h2>结论与仍未通过的P1</h2>
+<p>本轮实现数据库当前有效历史的鉴权恢复、翻页和原始新回合trace持久化，并将聊天mutation卸载后多余留存从40条降为0。导航/刷新、真实部分草稿取消、迟到快照/最终结果及界面跨tab删除，在所列有限协议中通过。</p>
+<p>追加系统审计发现<a href="issues/G2C11-003.md">G2C11-003</a>仍开放：直接通过API确认删除、没有前端通知时，后端已清除旧trace，活动页却在12/12个RAF仍显示旧trace；手动刷新才清除。原三轮成功不覆盖这条路径。不能据默认测试绿色宣布全路径隐私同步、整体稳定陪伴或远期目标完成。下一循环首先补服务端版本通知。</p>
+<h2>从基线到实现</h2>
+<div class="table-wrap"><table>
+<tr><th>项目</th><th>改动前证据</th><th>当前结果</th></tr>
+<tr><td>聊天mutation缓存</td><td>真实ChatPage/QueryClient固定40回合，卸载下一任务仍40个mutation/40条标记回复，gcTime=300000ms</td><td>同40回合挂载时仅当前1个，卸载后0个/0条</td></tr>
+<tr><td>历史入口</td><td>GET /conversation为404；两个完成回合导航后展示4→0，数据库仍在</td><td>鉴权分页、稳定消息ID、原文与当前版本；导航和刷新恢复</td></tr>
+<tr><td>旧诊断来源</td><td>旧记录未存原trace，不能伪造</td><td>旧文字可读/朗读，明确无可用决策记录；新完成回合保存原始trace</td></tr>
+<tr><td>删除同步</td><td>原来无恢复版本路径</td><td>界面/跨tab路径通过；直接API路径追加失败，保持P1</td></tr>
+</table></div>
+<p>缓存实验使用真实组件与QueryClient、控制fetch/SSE，计数只证明该缓存的对象留存，不解释全部JS堆增量。聊天mutation使用gcTime=0，当前可见结果仍由界面/数据库承担，未清其他管理缓存。参考<a href="https://tanstack.com/query/v5/docs/framework/react/reference/useMutation">官方useMutation文档</a>的gcTime选项；实际300000ms由已安装源码和本地计数核实，未升级依赖。</p>
+<h2>历史与隐私实现</h2>
+<p>只读GET /api/v1/conversation返回instance_id、revision、按稳定ID排序的消息、has_more和游标；默认100条，显式加载更早，limit允许1..200。当前加载范围不会因同版本新快照而悄然截断；隐私版本变化清除旧快照，再按当前记录重建。读取不重放模型、工具或提醒。</p>
+<p>MemoryStore新增memory_chat_results，只保存绑定assistant消息ID与context_revision的原始结果。主流程返回用户/助手来源ID；记录前在事务内重验版本、角色、session与当前正文。历史从当前memory_messages读文字，旧数据没有原trace时不补造；任何隐私失效事务同时清除旧结果JSON，递归受影响正文仍走既有删除链。</p>
+<p>客户端不将转录/trace写localStorage。请求世代和提交epoch拒绝迟到响应，流式期间相同版本读取不会重复已落库用户消息或替换本地草稿；隐私变化停止播放、取消旧回合并重置已完成mutation。界面管理确认通过本地事件与BroadcastChannel通知其他tab，焦点/可见性恢复会重读。播放关联稳定消息ID，翻页不会把正在说话的角色状态指向另一行。</p>
+<p>这些客户端通知尚未覆盖所有外部写入，见003。历史显示恢复也不代表跨服务重启后自动重建模型短期窗口/角色扮演状态；本轮没有把旧原文重新注入生成或重放动作，跨进程语义接续需另测。</p>
+<h2>冻结要求逐项检查</h2>
+<div class="table-wrap"><table>
+<tr><th>原协议项</th><th>证据与结果</th></tr>
+<tr><td>1 鉴权/游标</td><td>API测试：拒绝无token、非法/重复参数；正常空快照与实例版本</td></tr>
+<tr><td>2 旧记录不伪造trace</td><td>存储分页测试及完整ChatPage旧回复朗读/语音失败保留原文测试</td></tr>
+<tr><td>3 新完成回合原始来源</td><td>API/浏览器逐行文字与ID、重读原decision JSON吻合</td></tr>
+<tr><td>4 SPA/更早分页</td><td>每轮54完成回合，当前100→显式108，108个ID无重复</td></tr>
+<tr><td>5 刷新</td><td>两回合刷新恢复4条，原新回合五组trace可查</td></tr>
+<tr><td>6 读取不执行</td><td>浏览器总提交55=54完成+1取消，读取/翻页不增提交；API短期状态不变</td></tr>
+<tr><td>7 部分草稿取消</td><td>实际收到云并不是开头的SSE后取消；重读109条=54助手+55用户，无助手草稿</td></tr>
+<tr><td>8 忙碌读取去重</td><td>Hook控制读取与pending用户落库交错，不重复用户或覆盖草稿</td></tr>
+<tr><td>9 原话/依赖删除</td><td>后端递归正文清理、同事务清trace、外部连接阻断旧写入；浏览器原话删除</td></tr>
+<tr><td>10 迟到历史快照</td><td>忽略abort的控制fetch与实际持有旧HTTP快照，通知后释放仍不复活</td></tr>
+<tr><td>11 迟到最终结果</td><td>完整ChatPage受控流在隐私清理后释放，界面与mutation均不再填回</td></tr>
+<tr><td>12 跨tab/焦点</td><td>Chromium两tab通过真实确认界面删除；Hook焦点/新实例重读通过；外部API另有失败</td></tr>
+<tr><td>13 原播放/取消</td><td>默认15项、原实际PCM三项保持；时钟阈值未改</td></tr>
+<tr><td>14 有限负载/资源</td><td>固定三轮54+1及独立百轮v2；GC/DOM/实际时长保留，非多日证据</td></tr>
+</table></div>
+<p>后端专题18项通过，包括并发删除时读取快照内部一致性、连接重开、损坏trace JSON不回放、角色/session/正文不匹配拒绝写入。快照可线性化于删除前的读取点，客户端仍需通知/世代屏障；这不意味着网络中旧包自动消失。</p>
+<h2>实际浏览器重复与资源</h2>
+<p>开发浏览器先完整通过一轮（57.744秒），随后冻结相同生产实现，另跑预设三轮，不选最好一轮。每轮54个完成回合、1个实际部分草稿取消；独立临时数据库、同一宿主机与受控HTTP提供方。真实浏览器/HTTP/SSE执行，不是实际LLM质量或真实用户试验。</p>
+<div class="table-wrap"><table>
+<tr><th>固定轮次</th><th>观察秒数</th><th>全部加载消息</th><th>删除后当前页</th><th>初始堆MiB</th><th>108消息堆MiB</th><th>删除后堆MiB</th></tr>
+<tr><td>1</td><td>57.644</td><td>108</td><td>100</td><td>2.917</td><td>5.881</td><td>3.825</td></tr>
+<tr><td>2</td><td>57.724</td><td>108</td><td>100</td><td>2.890</td><td>5.853</td><td>3.815</td></tr>
+<tr><td>3</td><td>57.947</td><td>108</td><td>100</td><td>2.933</td><td>5.884</td><td>3.815</td></tr>
+</table></div>
+<p>资源观察前各三次强制GC，实际Chromium版本随每轮记录。空页、108消息与删除后100消息是不同状态，trace是否保留也不同；不能与第十轮返回空页面的堆直接作等条件“加速/无泄漏”对照。缓存对象清理已证明，其他堆来源、长期资源与跨设备仍未充分归因。</p>
+<p>独立百轮v2用115.894秒通过：1/25/100回复下闭合诊断决策序列化/pre仍均0，输入与正常/双速媒体时钟原门槛保持，导航后100条再加载至200条，没有重放提交。旧v1空视图结果仍绑定第十轮原代码。</p>
+<h2>追加外部删除探针：明确未通过</h2>
+<p>先另提交external-erase-probe.json，再在隔离seed事实上执行一次探针。确认旧trace确实包含该事实；通过APIRequestContext完成forget和确认，模拟不发布前端事件的写入方。后端revision增加且旧assistant result已移除，但活动页连续12个RAF仍见旧trace；手动刷新后trace消失。原始行、前后后端快照、失败日志和Playwright trace全部保留。</p>
+<p>这证明本机所测外部API路径缺少活动页通知，不是后端删除失败。未测自然发生频率或更长持续时间；不宣称重复用户原文也被删除——它与该seed事实没有那种来源关联。003保持开放，下一轮先做服务端版本通知/断开/重连，再跑原探针及全部既有隐私回归。</p>
+<h2>系统审计与单项结论</h2>
+<div class="table-wrap"><table>
+<tr><th>单项/方面</th><th>当前结论</th></tr>
+<tr><td><a href="issues/G2C11-001.md">G2C11-001</a> 缓存留存</td><td>已修，40→0；仅聊天mutation，非全部内存归因</td></tr>
+<tr><td><a href="issues/G2C11-002.md">G2C11-002</a> 历史恢复</td><td>当前数据库展示/翻页/原trace及所测通知路径已实现；全路径同步仍由003限制</td></tr>
+<tr><td><a href="issues/G2C11-003.md">G2C11-003</a> 外部写入</td><td>P1开放，12/12旧trace仍见，手动刷新对照清除</td></tr>
+<tr><td>记忆与实际操作</td><td>来源/版本/事务回归通过；未改变生成提示、默认模型或真实操作权限</td></tr>
+<tr><td>听/演</td><td>真实PCM/SVG工程回归保持，未验收真人音素/ü/声调、物理设备与正式渲染</td></tr>
+<tr><td>思/长期使用</td><td>一般生成归属/身体边界、模板充分性、跨进程上下文接续与多日稳定仍开放</td></tr>
+</table></div>
+<p>第十轮G2C10-002中展示历史重置和聊天缓存留存已得到具体修复/归因证据，不能因此把长期稳定、外部同步及所有旧质量开放项一起关闭。</p>
+<h2>完整回归、失败与版本</h2>
+<p>Python全量1017通过/1跳过（39.82秒）；前端60通过（24文件、6.42秒），构建3.97秒，最后类型/lint通过。默认最终15通过/10显式可选跳过（35.0秒），其中PCM/百轮/恢复另实跑，外部probe另实跑失败；四项真实模型/ASR可选服务本轮未重跑。没有使用GPU。</p>
+<p>保留的开发错误：RTL误用exact类型参数、Vitest默认5秒误截40回合（改timeout=0，轮数不变）、Node BroadcastChannel与JSDOM事件realm不兼容（仅unit隔离，真实跨tab由Chromium测）、测试Harness局部key告警、旧端点测试误认为总消息必须0。默认初跑14过/1败，迁移为历史不变且POST /turns=0后15过。npm exec tsc只打印帮助的一次未计类型通过，随后明确-p项目核查。</p>
+<p>109项源绑定和36项服务包记录已核对；历史bundle不在当前dist时与第十轮归档同哈希观察对比，不冒称当前字节。正式结果绑定已提交HEAD；初始缓存开发后测属于未提交工作区，5份源码仅在与原捕获SHA精确相符后重建归档，方法见development-source-check.json，不混作正式门槛。补充依赖提交树核对与原始独立捕获区分，见snapshot-check.json。</p>
+<h2>下一循环</h2>
+<p>P1首先修003服务端版本通知，验证直接API/其他连接、后台与重连、旧流与播放取消、长连接资源回收，保留当前失败作为修前对照。随后用真实模型验证历史/删除后的原生生成与角色归属、身体边界和交付；服务重启下的短期/角色上下文接续另设协议。P2继续独立真人音素和正式形象、真实设备与长期观测。</p>
+<p>目标不缩为局部测试通过，保持active；本轮未宣称整体代际跃迁或全部隐私同步完成。<a href="../../远期目标与验收路线.md">远期路线</a>。</p>
+<h2>资料入口</h2>
+<p><a href="../计划.md">计划</a>、<a href="../进展.md">全过程</a>、<a href="../实验/history-contract.json">原协议</a>、<a href="../实验/history-load-protocol.json">百轮v2</a>、<a href="../实验/external-erase-probe.json">追加探针</a>、<a href="../实验/snapshot-check.json">版本核对</a>。</p>
+<p><a href="../实验/api-after-initial.log">api-after-initial.log</a></p>
+<p><a href="../实验/api-before.log">api-before.log</a></p>
+<p><a href="../实验/backend-history.log">backend-history.log</a></p>
+<p><a href="../实验/before-restore.json">before-restore.json</a></p>
+<p><a href="../实验/browser-default-final.log">browser-default-final.log</a></p>
+<p><a href="../实验/browser-default-fixed.log">browser-default-fixed.log</a></p>
+<p><a href="../实验/browser-default.log">browser-default.log</a></p>
+<p><a href="../实验/build-client-tests.log">build-client-tests.log</a></p>
+<p><a href="../实验/build-client.log">build-client.log</a></p>
+<p><a href="../实验/build-final.log">build-final.log</a></p>
+<p><a href="../实验/build-initial.log">build-initial.log</a></p>
+<p><a href="../实验/cache-after-development.json">cache-after-development.json</a></p>
+<p><a href="../实验/cache-after-initial.log">cache-after-initial.log</a></p>
+<p><a href="../实验/cache-before.json">cache-before.json</a></p>
+<p><a href="../实验/cache-before.log">cache-before.log</a></p>
+<p><a href="../实验/cache-final.json">cache-final.json</a></p>
+<p><a href="../实验/client-initial.log">client-initial.log</a></p>
+<p><a href="../实验/client-races-fixed.log">client-races-fixed.log</a></p>
+<p><a href="../实验/development-restore.json">development-restore.json</a></p>
+<p><a href="../实验/development-source-check.json">development-source-check.json</a></p>
+<p><a href="../实验/environment.json">environment.json</a></p>
+<p><a href="../实验/external-erase-probe.json">external-erase-probe.json</a></p>
+<p><a href="../实验/external-erase.log">external-erase.log</a></p>
+<p><a href="../实验/external-external-erase.json">external-external-erase.json</a></p>
+<p><a href="../实验/frontend-final-legacy.log">frontend-final-legacy.log</a></p>
+<p><a href="../实验/frontend-full.log">frontend-full.log</a></p>
+<p><a href="../实验/history-client-races.log">history-client-races.log</a></p>
+<p><a href="../实验/history-contract.json">history-contract.json</a></p>
+<p><a href="../实验/history-load-protocol.json">history-load-protocol.json</a></p>
+<p><a href="../实验/lint-browser-final.log">lint-browser-final.log</a></p>
+<p><a href="../实验/lint-complete.log">lint-complete.log</a></p>
+<p><a href="../实验/lint-final.log">lint-final.log</a></p>
+<p><a href="../实验/load-final-history.json">load-final-history.json</a></p>
+<p><a href="../实验/load-final.log">load-final.log</a></p>
+<p><a href="../实验/playback-final-clock.json">playback-final-clock.json</a></p>
+<p><a href="../实验/playback-final-prefetch-stop.json">playback-final-prefetch-stop.json</a></p>
+<p><a href="../实验/playback-final-segments.json">playback-final-segments.json</a></p>
+<p><a href="../实验/playback-final.log">playback-final.log</a></p>
+<p><a href="../实验/privacy-client-final.log">privacy-client-final.log</a></p>
+<p><a href="../实验/privacy-client.log">privacy-client.log</a></p>
+<p><a href="../实验/python-full.log">python-full.log</a></p>
+<p><a href="../实验/repeat-1-restore.json">repeat-1-restore.json</a></p>
+<p><a href="../实验/repeat-2-restore.json">repeat-2-restore.json</a></p>
+<p><a href="../实验/repeat-3-restore.json">repeat-3-restore.json</a></p>
+<p><a href="../实验/report-browser.json">report-browser.json</a></p>
+<p><a href="../实验/restore-before.log">restore-before.log</a></p>
+<p><a href="../实验/restore-development.log">restore-development.log</a></p>
+<p><a href="../实验/restore-repeat-1.log">restore-repeat-1.log</a></p>
+<p><a href="../实验/restore-repeat-2.log">restore-repeat-2.log</a></p>
+<p><a href="../实验/restore-repeat-3.log">restore-repeat-3.log</a></p>
+<p><a href="../实验/snapshot-check.json">snapshot-check.json</a></p>
+<p><a href="../实验/types-browser-checked.log">types-browser-checked.log</a></p>
+<p><a href="../实验/types-browser-final.log">types-browser-final.log</a></p>
+<p><a href="../实验/types-external-checked.log">types-external-checked.log</a></p>
+<p><a href="../实验/types-final-legacy.log">types-final-legacy.log</a></p></main></html>

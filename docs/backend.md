@@ -92,3 +92,12 @@ python scripts/evaluate_backend.py --model qwen2.5:7b --embedding-model bge-m3 -
 评估脚本使用独立临时数据库，记录原始分析/回复、策略、当前记忆、检查结果和延迟。默认不启用TTS，不读取日常记忆；参数 `--base-url` 默认为本机Ollama，`--output` 显式指定结果。
 
 单元测试覆盖真实SQLite迁移、跨会话来源、偏好冲突、纠错删除、回滚、语义模型故障/维度变化、情绪策略，以及较长对话。真实对话检查是小样本系统回归，不是模型通用能力排行榜。
+
+
+## 对话历史快照（第十一轮）
+
+`GET /api/v1/conversation` 使用既有token鉴权，只读当前数据库消息，不重放模型/工具。可传 `limit`（1..200，默认100）、正数 `before_id` 与非负 `revision`；重复/未知/非法参数拒绝。响应含 `instance_id`、`revision`、按来源ID升序的 `items`、`has_more`、`next_before_id`。翻旧页版本已变化返回409 `conversation_changed`。
+
+消息含 `id/role/text/session_id/created_at/redacted`；新的隐私有效助手回合可附原 `result`。旧记录或已失效trace不伪造，已删除正文返回明确占位。新 `ChatResult.conversation` 含用户/助手消息ID、session与revision；原结果在事务内核验来源后保存，记忆失效同时清除旧结果。页面默认100条，可显式加载更早；已载入范围同版本合并不截断。
+
+客户端本地/跨tab通知和焦点重读已有有限验证，但直接API修改不会主动通知活动页；第十一轮追加探针12/12 RAF仍见旧trace，手动刷新后清除。G2C11-003为P1，下一循环补服务端版本通知，不能据此接口宣称所有外部写入已实时同步。历史显示恢复也不表示服务重启后的生成短期/角色状态自动重建。见[系统审计](进展报告/2026-11-10-G2交互循环/cycle-11/审计/系统审计与推进报告.md)。
