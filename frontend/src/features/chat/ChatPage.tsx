@@ -9,6 +9,7 @@ import { ErrorMessage, PageHeading } from "../../components/QueryState";
 import { useSpeechPlayer } from "./useSpeechPlayer";
 import { SpeechAvatarStage } from "./SpeechAvatarStage";
 import { VoiceInput } from "./VoiceInput";
+import { ChatTrace } from "./ChatTrace";
 export function ChatPage() {
   const speech = useSpeechPlayer();
   const persona = useQuery({ queryKey: ["persona"], queryFn: () => apiRequest<PersonaVersion>("/persona"), retry: false });
@@ -117,43 +118,7 @@ export function ChatPage() {
                 onClick={() => void speech.play(i, m.result!)}>
                 <Volume2 size={14} />{speech.active === i && speech.status === "loading" ? "准备语音…" : "朗读回复"}
               </button>}
-              {m.result?.trace && (
-                <details className="trace">
-                  <summary>本轮决策与来源</summary>
-                  {m.result.trace.guard?.guarded && (
-                    <p className="notice">本轮由安全或现实边界规则直接回应。</p>
-                  )}
-                  <h3>策略与状态</h3>
-                  <pre>{JSON.stringify(m.result.trace.decision, null, 2)}</pre>
-                  <h3>召回记忆</h3>
-                  <pre>
-                    {JSON.stringify(m.result.trace.recalled_memories, null, 2)}
-                  </pre>
-                  <h3>知识来源</h3>
-                  <pre>
-                    {JSON.stringify(
-                      m.result.trace.knowledge_sources ?? [],
-                      null,
-                      2,
-                    )}
-                  </pre>
-                  <h3>检查</h3>
-                  <pre>
-                    {JSON.stringify(
-                      {
-                        guard: m.result.trace.guard,
-                        verifier: m.result.trace.verifier,
-                      },
-                      null,
-                      2,
-                    )}
-                  </pre>
-                  <h3>工具调用</h3>
-                  <pre>
-                    {JSON.stringify(m.result.trace.tool_calls, null, 2)}
-                  </pre>
-                </details>
-              )}
+              {m.result?.trace && <ChatTrace trace={m.result.trace} />}
             </article>
           ))}
           {send.isPending && (
