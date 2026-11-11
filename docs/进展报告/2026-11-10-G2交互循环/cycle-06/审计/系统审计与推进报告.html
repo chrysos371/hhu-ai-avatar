@@ -1,0 +1,46 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第六轮系统审计与推进报告</title><style>body{margin:0;background:#f2f5fa;color:#192b40;font:16px/1.8 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px}h1{font-size:30px}h2{border-bottom:2px solid #c7d6e8;padding-top:24px}p{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border:1px solid #dee7ee;text-align:left;vertical-align:top}th{background:#e4edf7}.table-wrap{overflow:auto}a{color:#155aa7}@media(max-width:600px){main{padding:16px}h1{font-size:25px}table{font-size:14px}}</style><main><h1>第六轮系统审计与推进报告</h1>
+<p>日期：2026-11-11（上海时间）。作者：spinner-bot。基线45840bd。</p>
+<h2>已启用的推进</h2>
+<p>生产口型保留原提峰和标签规则，仅缓存重复使用的频率网格/复指数，保持原求和顺序。固定9轮、单逻辑CPU和单数值线程，14条路线记录的分析中位耗时1.232491→0.494367秒，加速2.493倍。所有完整输出哈希一致，冷遍历也已保存。</p>
+<p>输入为6条已知合成波形的两条路线（12条记录，部分波形重复）和两条已归档公开朗读音频，仅验证分析性能和输出一致性，没有真人音素标签。计时包含LipSyncEngine.analyze调用，不含加载/解码、TTS、模型生成、网络或页面播放，不能宣布整轮对话提速。</p>
+<p>缓存上限8项，最终实际2项；数组只读，键仅为频率网格尺寸和系数数量，未缓存音频、LPC系数或用户输出。已有并发、污染隔离、边界与逐位参考检查。默认240条已知路线的全部四字段（含mouth_open）与第五轮完全一致。</p>
+<h2>质量分支：失败就保留失败</h2>
+<p>先冻结roots400、dense10、fallback50三候选与逐项门槛。roots400组件/网页分别12/16场景退步；dense10为4/2；fallback50网页改善，组件把2个未知帧改成错误确定标签。全部未通过，原新参数集保持封存。</p>
+<p>依据已知失败另冻结F1决策区一致修订，不改标签/新输入：旧单峰和根估计F1在现有分类器三个F2区域上须同意，完整旧峰对直接保留。实际组件开发回放与重分析逐帧一致后，先提交选择，才首次运行新80波形/路径。</p>
+<div class="table-wrap"><table>
+<tr><th>数据</th><th>路径</th><th>标签帧：旧→候选</th><th>F2缺失：旧→候选</th><th>新增未知转错</th></tr>
+<tr><td>已知开发</td><td>组件原采样率</td><td>82.98%→84.79%</td><td>420→298</td><td>0</td></tr>
+<tr><td>已知开发</td><td>网页16k</td><td>91.90%→93.07%</td><td>78→0</td><td>0</td></tr>
+<tr><td>新参数首次</td><td>组件原采样率</td><td>68.12%→72.48%</td><td>387→191</td><td>1</td></tr>
+<tr><td>新参数首次</td><td>网页16k</td><td>73.71%→76.85%</td><td>141→0</td><td>0</td></tr>
+</table></div>
+<p>开发每路径120信号/6720中段帧，新参数每路径80信号/4480中段帧；新参数的采样率、共振点、带宽、基频、幅度与种子都在实验前冻结，波形与旧网格不同，仍同属解析合成家族。首次新参数组件出现1个未知转错，门槛失败；网页无此问题、总分提高、没有总分场景退步或突降增加，均不能抵销失败。</p>
+<p>失败后不再对这批新参数调阈值。候选已从生产LipSyncEngine参数移出，留在avatar.lab.ConservativeLipSyncExperiment供研究重放，Avatar、网页语音、CLI没有接入。生产仍用旧规则加缓存，没有修改默认采样率或宣称中文/真人精度通过。</p>
+<h2>单项审计</h2>
+<div class="table-wrap"><table>
+<tr><th>编号</th><th>状态</th></tr>
+<tr><td><a href="issues/G2C6-001.md">G2C6-001</a></td><td>首轮补峰候选将未知改成错误确定标签；原候选拒绝，开发修订不追认原通过</td></tr>
+<tr><td><a href="issues/G2C6-002.md">G2C6-002</a></td><td>修订在封存输入仍失败；隔离到lab，不开默认，不继续用此验证调参</td></tr>
+</table></div>
+<h2>全量与实际版本</h2>
+<p>973 passed, 1 skipped in 37.11s。最终语音相关浏览器9项通过。最终生产源码缓存/扩展点经过再次9轮性能、逐帧默认回归；旧性能记录和候选阶段973测试快照均另存。前端产品代码、LLM/记忆/动作、ASR及默认模型没有本轮新功能变更。</p>
+<p>最终性能源码HEAD：ba24a1ea5c606326165c9d25782baa7a5e4cc765；质量新参数源码HEAD：e6e45944da26f5997242d1d0adcf231c0845eb33。各报告均含源文件/协议/输入与输出哈希，不把不同阶段冒称单一HEAD。新提峰候选未通过，不等于性能优化未通过；两条门槛独立报告。</p>
+<h2>后续优先级与限制</h2>
+<p>P1：另开周期验证分帧样本索引与输出时钟的对应关系，重点检查22050Hz等非整数hop采样率；先用样本数定义可测误差，不把软件时钟检查当物理音画同步验收。P1：下一质量候选须重新冻结输入，并补有来源真人音素标注；本轮80波形已成为已知回归。P2：继续形象嘴型和设备端到端体验。</p>
+<p>第五轮003、第二轮一般归属/身体边界、模板充分性和多日运行、ü/声调/真人口型/正式渲染等限制继续开放；没有宣布项目远期目标或整体代际跃迁已完成。本轮CPU完成，没有新GPU进程。</p>
+<h2>方法参考</h2>
+<p>候选设计参考<a href="https://fon.hum.uva.nl/praat/manual/Sound__To_Formant__burg____.html">Praat官方Formant说明</a>对频率上限、重采样与预加重的讨论；本项目实验继续使用原LPC，未实现完整Praat分析。多项式系数/求根接口核对<a href="https://numpy.org/doc/stable/reference/generated/numpy.roots.html">NumPy官方roots文档</a>。固定带宽和一致性门槛为本项目受测启发式，没有引用外部资料代替本地实验。</p>
+<h2>证据入口</h2>
+<p><a href="../实验/formant-dev.json">formant-dev.json</a></p>
+<p><a href="../实验/fallback-refined-dev.json">fallback-refined-dev.json</a></p>
+<p><a href="../实验/conservative-component-dev.json">conservative-component-dev.json</a></p>
+<p><a href="../实验/conservative-prospective.json">conservative-prospective.json</a></p>
+<p><a href="../实验/cache-performance.json">cache-performance.json</a></p>
+<p><a href="../实验/cache-performance-final.json">cache-performance-final.json</a></p>
+<p><a href="../实验/default-final-exact-proof.json">default-final-exact-proof.json</a></p>
+<p><a href="../实验/default-final-regression.json">default-final-regression.json</a></p>
+<p><a href="../实验/python-full-final.log">python-full-final.log</a></p>
+<p><a href="../实验/browser-audio-final.log">browser-audio-final.log</a></p>
+<p><a href="../实验/cache-tests.log">cache-tests.log</a></p>
+<p><a href="../实验/lab-isolation-tests.log">lab-isolation-tests.log</a></p>
+<p><a href="../进展.md">全过程记录</a>；<a href="../计划.md">本轮计划</a>。</p></main></html>
