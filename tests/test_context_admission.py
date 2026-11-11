@@ -1,4 +1,7 @@
 from contextlib import closing
+import hashlib
+import json
+import sqlite3
 import threading
 
 import pytest
@@ -132,3 +135,38 @@ def test_two_connections_cannot_both_admit_same_cursor(tmp_path):
     assert sorted(results) == ['admitted', 'speaker_context_changed']
     with closing(MemoryStore(path)) as memory:
         assert memory._conn.execute('SELECT COUNT(*) FROM memory_messages').fetchone()[0] == 1
+
+
+def test_bound_durable_fingerprint_is_order_independent_and_never_replays_after_restart(tmp_path):
+    path = str(tmp_path/'bound-ledger.db')
+    expected = {'instance_id': 'a', 'revision': 0, 'context_cursor': 0}
+    data = {'request_id': 'durable_bound_admission_12345', 'text': 'hello', 'expected_context': expected}
+    original = TurnCoordinator(path, lambda job: {'reply': 'done'})
+    job = original.submit(data)
+    with job.changed: assert job.changed.wait_for(lambda: job.status == 'completed', timeout=3)
+    # Caller mutation cannot change the retained admission or dedup identity.
+    expected['revision'] = 99
+    assert job.expected_context['revision'] == 0
+    original.close()
+    restarted = TurnCoordinator(path, lambda job: pytest.fail('must not replay'))
+    try:
+        reordered = {'context_cursor': 0, 'revision': 0, 'instance_id': 'a'}
+        with pytest.raises(OperationError) as error: restarted.submit(data | {'expected_context': reordered})
+        assert error.value.code == 'turn_expired'
+        with pytest.raises(OperationError) as error: restarted.submit(data)
+        assert error.value.code == 'request_id_conflict'
+    finally: restarted.close()
+
+
+def test_preexisting_legacy_fingerprint_remains_compatible(tmp_path):
+    path = str(tmp_path/'legacy-ledger.db')
+    ident = 'preexisting_legacy_admission_12345'
+    fingerprint = hashlib.sha256(json.dumps(['你好', False], ensure_ascii=False).encode()).hexdigest()
+    with sqlite3.connect(path) as conn:
+        conn.execute('CREATE TABLE runtime_turn_ledger (request_id TEXT PRIMARY KEY, fingerprint TEXT, status TEXT, created_at REAL)')
+        conn.execute('INSERT INTO runtime_turn_ledger VALUES (?,?,?,?)', (ident, fingerprint, 'completed', 0))
+    coordinator = TurnCoordinator(path, lambda job: pytest.fail('legacy request must not replay'))
+    try:
+        with pytest.raises(OperationError) as error: coordinator.submit({'request_id': ident, 'text': '你好'})
+        assert error.value.code == 'turn_expired'
+    finally: coordinator.close()
