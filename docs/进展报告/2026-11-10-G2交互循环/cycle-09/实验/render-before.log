@@ -1,0 +1,44 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/chat/FrameRendering.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ❯ src/features/chat/FrameRendering.test.tsx (3 tests | 3 failed) 771ms
+   × isolates 60 mouth frames from the parent and 1 history rows 243ms
+     → expected 60 to be +0 // Object.is equality
+   × isolates 60 mouth frames from the parent and 25 history rows 238ms
+     → expected 60 to be +0 // Object.is equality
+   × isolates 60 mouth frames from the parent and 100 history rows 288ms
+     → expected 60 to be +0 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/chat/FrameRendering.test.tsx > isolates 60 mouth frames from the parent and 1 history rows
+ FAIL  src/features/chat/FrameRendering.test.tsx > isolates 60 mouth frames from the parent and 25 history rows
+ FAIL  src/features/chat/FrameRendering.test.tsx > isolates 60 mouth frames from the parent and 100 history rows
+AssertionError: expected 60 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 60
+
+ ❯ src/features/chat/FrameRendering.test.tsx:82:34
+     80|   expect(rows.every(row => row.rendered === row.expected)).toBe(true);
+     81|   expect(stopped).toEqual({ mouth: '0.000', src: null, pendingRaf: 0 }…
+     82|   expect(measured.parentRenders).toBe(0); expect(measured.rowVisits).t…
+       |                                  ^
+     83| });
+     84| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  16:33:44
+   Duration  2.02s (transform 146ms, setup 135ms, collect 139ms, tests 771ms, environment 365ms, prepare 75ms)
+
