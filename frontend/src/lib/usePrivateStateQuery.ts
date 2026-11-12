@@ -19,6 +19,11 @@ export function usePrivateStateQuery<T extends { context: StateContext }>(name: 
   useEffect(() => {
     let mounted = true, generation = 0;
     let controller: AbortController | null = null;
+    let bootstrapTimer: ReturnType<typeof setTimeout> | null = null;
+    const clearBootstrapTimer = () => {
+      if (bootstrapTimer !== null) clearTimeout(bootstrapTimer);
+      bootstrapTimer = null;
+    };
     const clear = (error: Error | null) => {
       if (!mounted) return;
       live.current = { ...live.current, epoch: live.current.epoch + 1, available: false, error };
@@ -49,12 +54,22 @@ export function usePrivateStateQuery<T extends { context: StateContext }>(name: 
     const restart = () => {
       const ticket = ++generation;
       controller?.abort();
-      controller = new AbortController();
-      const signal = controller.signal;
+      clearBootstrapTimer();
+      const owner = new AbortController();
+      controller = owner;
+      const signal = owner.signal;
       clear(null);
+      const timer = setTimeout(() => {
+        if (!mounted || ticket !== generation || signal.aborted) return;
+        owner.abort();
+        unavailable(new Error('版本同步超时，请重新读取。'));
+      }, 15000);
+      bootstrapTimer = timer;
       void (async () => {
         try {
           const initial = await readStateContext(signal);
+          clearTimeout(timer);
+          if (bootstrapTimer === timer) bootstrapTimer = null;
           if (!mounted || ticket !== generation || signal.aborted) return;
           adopt(initial);
           await watchConversationChanges(initial, signal, {
@@ -68,6 +83,9 @@ export function usePrivateStateQuery<T extends { context: StateContext }>(name: 
           });
         } catch (error) {
           if (mounted && ticket === generation && !signal.aborted) unavailable(error as Error);
+        } finally {
+          clearTimeout(timer);
+          if (bootstrapTimer === timer) bootstrapTimer = null;
         }
       })();
     };
@@ -81,6 +99,7 @@ export function usePrivateStateQuery<T extends { context: StateContext }>(name: 
       mounted = false;
       generation++;
       controller?.abort();
+      clearBootstrapTimer();
       unsubscribe();
       window.removeEventListener('focus', restart);
       document.removeEventListener('visibilitychange', visible);

@@ -1,0 +1,58 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/lib/statePrivacy.test.tsx src/lib/usePrivateStateQuery.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ✓ src/lib/statePrivacy.test.tsx (15 tests) 18ms
+ ❯ src/lib/usePrivateStateQuery.test.tsx (17 tests | 1 failed) 236ms
+   ✓ only reads emotion after metadata and supplies the fetch abort signal 51ms
+   ✓ only reads dashboard after metadata and supplies the fetch abort signal 9ms
+   ✓ hides old state at a higher revision and clears inactive derived cache too 13ms
+   ✓ rejects a late old payload even when its transport ignores cancellation 12ms
+   ✓ hides state on notification failure and waits for a successful same-revision recovery 10ms
+   ✓ keeps old state hidden on authentication failure until an explicit metadata retry succeeds 59ms
+   ✓ accepts a new instance with a lower revision and rejects same-instance rollback 10ms
+   ✓ leaves a normal same-revision heartbeat and legitimate state untouched 6ms
+   ✓ never displays a state payload with missing, malformed or mismatched context undefined 6ms
+   ✓ never displays a state payload with missing, malformed or mismatched context {"instance_id":"original","revision":true} 5ms
+   ✓ never displays a state payload with missing, malformed or mismatched context {"instance_id":"other","revision":0} 4ms
+   ✓ does not request state after an unavailable initial metadata check 4ms
+   × times out an unresponsive bootstrap, retries, and rejects its late uncancellable response 15ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  fresh
+Received:
+  empty
+   ✓ clears its bootstrap deadline and aborts the request when unmounted before metadata 2ms
+   ✓ rechecks same-window privacy notices and never adopts a stale bootstrap response 6ms
+   ✓ rechecks a cross-window privacy message with a separate sender 9ms
+   ✓ aborts version and state requests on route unmount and rechecks before reusing a cache 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/usePrivateStateQuery.test.tsx > times out an unresponsive bootstrap, retries, and rejects its late uncancellable response
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  fresh
+Received:
+  empty
+ ❯ src/lib/usePrivateStateQuery.test.tsx:168:39
+    166|   fireEvent.click(screen.getByRole('button', { name: 'retry' }));
+    167|   await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+    168|   expect(screen.getByTestId('value')).toHaveTextContent('fresh');
+       |                                       ^
+    169|   await act(async () => {
+    170|     held.resolve({ instance_id: 'original', revision: 0 });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 31 passed (32)
+   Start at  21:49:09
+   Duration  1.60s (transform 198ms, setup 284ms, collect 265ms, tests 254ms, environment 743ms, prepare 169ms)
+

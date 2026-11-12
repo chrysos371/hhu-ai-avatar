@@ -48,7 +48,7 @@ beforeEach(() => {
     if (!signal.aborted) await new Promise<void>(resolve => signal.addEventListener('abort', () => resolve(), { once: true }));
   });
 });
-afterEach(() => { client.clear(); vi.clearAllMocks(); vi.unstubAllGlobals(); });
+afterEach(() => { client.clear(); vi.clearAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 it.each(['emotion', 'dashboard'] as const)('only reads %s after metadata and supplies the fetch abort signal', async name => {
   const metadata = deferred<StateContext>();
@@ -64,8 +64,9 @@ it.each(['emotion', 'dashboard'] as const)('only reads %s after metadata and sup
 });
 
 it('hides old state at a higher revision and clears inactive derived cache too', async () => {
-  client.setQueryData(['dashboard', 'original', 0, 1], { context, value: 'inactive private state' });
   mount(); await screen.findByText('old');
+  client.setQueryData(['dashboard', 'original', 0, 1], { context, value: 'inactive private state' });
+  expect(client.getQueriesData({ queryKey: ['dashboard'] })).toHaveLength(1);
   context = { ...context, revision: 1 }; value = 'new';
   const held = deferred<Value>(); nextState = held.promise;
   act(() => callbacks.onVersion(context));
@@ -144,6 +145,48 @@ it('does not request state after an unavailable initial metadata check', async (
   vi.mocked(apiRequest).mockRejectedValueOnce(new Error('metadata unavailable'));
   mount();
   await waitFor(() => expect(screen.getByTestId('error')).toHaveTextContent('metadata unavailable'));
+  expect(apiRequest).toHaveBeenCalledTimes(1);
+  expect(watchConversationChanges).not.toHaveBeenCalled();
+});
+
+it('times out an unresponsive bootstrap, retries, and rejects its late uncancellable response', async () => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+  const held = deferred<StateContext>();
+  vi.mocked(apiRequest).mockImplementationOnce(() => held.promise as never);
+  mount();
+  const signal = vi.mocked(apiRequest).mock.calls[0][1]?.signal;
+  await act(async () => { await vi.advanceTimersByTimeAsync(14999); });
+  expect(screen.getByTestId('error')).toBeEmptyDOMElement();
+  expect(screen.getByTestId('value')).toHaveTextContent('empty');
+  await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+  expect(signal?.aborted).toBe(true);
+  expect(screen.getByTestId('error')).toHaveTextContent('版本同步超时');
+  expect(watchConversationChanges).not.toHaveBeenCalled();
+  context = { instance_id: 'newer', revision: 1 }; value = 'fresh';
+  fireEvent.click(screen.getByRole('button', { name: 'retry' }));
+  await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+  expect(screen.getByTestId('value')).toHaveTextContent('fresh');
+  await act(async () => {
+    held.resolve({ instance_id: 'original', revision: 0 });
+    await vi.advanceTimersByTimeAsync(15000);
+  });
+  expect(screen.getByTestId('value')).toHaveTextContent('fresh');
+  expect(screen.getByTestId('error')).toBeEmptyDOMElement();
+  expect(watchConversationChanges).toHaveBeenCalledTimes(1);
+});
+
+it('clears its bootstrap deadline and aborts the request when unmounted before metadata', async () => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+  const held = deferred<StateContext>();
+  vi.mocked(apiRequest).mockImplementationOnce(() => held.promise as never);
+  const mounted = mount();
+  const signal = vi.mocked(apiRequest).mock.calls[0][1]?.signal;
+  mounted.unmount();
+  expect(signal?.aborted).toBe(true);
+  await act(async () => {
+    held.resolve(context);
+    await vi.advanceTimersByTimeAsync(20000);
+  });
   expect(apiRequest).toHaveBeenCalledTimes(1);
   expect(watchConversationChanges).not.toHaveBeenCalled();
 });
