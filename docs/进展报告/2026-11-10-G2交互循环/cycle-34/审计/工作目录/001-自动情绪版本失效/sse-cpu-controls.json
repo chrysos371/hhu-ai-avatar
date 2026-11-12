@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "new_llm_or_gpu_calls": 0,
+  "new_app_or_http_calls": 0,
+  "retained_native_evidence_sha256": "4829679e61cea03a13414b3ca612fa261b55d5b29f8b0b017c2440789ba24fc0",
+  "controls": [
+    {
+      "control": "retained_native_turn_1",
+      "result": {
+        "text_event_count": 2,
+        "text_delivery": "text_and_result",
+        "generation_mode": "llm"
+      },
+      "passed": true
+    },
+    {
+      "control": "retained_native_turn_2",
+      "result": {
+        "text_event_count": 2,
+        "text_delivery": "text_and_result",
+        "generation_mode": "llm"
+      },
+      "passed": true
+    },
+    {
+      "control": "retained_native_turn_3",
+      "result": {
+        "text_event_count": 0,
+        "text_delivery": "canonical_result_only",
+        "generation_mode": "rules_speaker_control"
+      },
+      "passed": true
+    },
+    {
+      "control": "synthetic_canonical_text_and_result",
+      "result": {
+        "text_event_count": 1,
+        "text_delivery": "text_and_result",
+        "generation_mode": "rules_speaker_control"
+      },
+      "passed": true
+    },
+    {
+      "control": "llm_without_text",
+      "rejected": true,
+      "passed": true
+    },
+    {
+      "control": "partial_llm",
+      "rejected": true,
+      "passed": true
+    },
+    {
+      "control": "unregistered_mode",
+      "rejected": true,
+      "passed": true
+    },
+    {
+      "control": "malformed_text",
+      "rejected": true,
+      "passed": true
+    }
+  ]
+}
