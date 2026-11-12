@@ -540,12 +540,17 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         avatar.speaker_context_store = SpeakerContextStore(memory)
         if server.context_revision != memory.context_revision:
             server.short_term = []
-        for message in server.short_term:
-            memory.add_short_term(message['role'], message['content'])
-            # Reconstruct only from the current, privacy-valid short-term window.
-            # This is pure parsing: never replay tools, reminders or model calls.
-            if server.task_delivery_check and message['role'] == 'user':
-                avatar.tasks.update(message['content'])
+        if server.recover_context and not any((server.identity_grounding,
+                server.profile_grounding, server.task_delivery_check, server.literal_composition)):
+            from .brain.conversation_context import ConversationContextStore
+            avatar.conversation_context_store = ConversationContextStore(memory)
+        else:
+            for message in server.short_term:
+                memory.add_short_term(message['role'], message['content'])
+                # Experimental task reconstruction stays on its existing path.
+                # This is pure parsing: never replay tools, reminders or model calls.
+                if server.task_delivery_check and message['role'] == 'user':
+                    avatar.tasks.update(message['content'])
         result = avatar.respond(user_text, use_web=use_web, **(
             {'cancel': token, 'on_delta': lambda text: job.emit('text', {'text': text}),
              **({'source_precondition': lambda: avatar.speaker_context_store.require_context(
@@ -553,6 +558,11 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         if job:
             from .web_api import enrich_chat_result
             result = enrich_chat_result(server, memory, result)
+        else:
+            # Sync callers also need a completed source pair before a subsequent
+            # request. Public enrichment may replace this row with its full trace.
+            from .brain.conversations import ConversationStore
+            ConversationStore(memory).record_result(result)
         return result
     finally:
         if avatar:
@@ -625,7 +635,10 @@ def create_server(
     profile_grounding=False,
     task_delivery_check=False,
     literal_composition=False,
+    recover_context=True,
 ) -> ThreadingHTTPServer:
+    if type(recover_context) is not bool:
+        raise ValueError('recover_context must be a boolean')
     if literal_composition and not task_delivery_check:
         raise ValueError('Literal composition requires task delivery checks')
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,
@@ -641,6 +654,7 @@ def create_server(
     server.profile_grounding = profile_grounding
     server.task_delivery_check = task_delivery_check
     server.literal_composition = literal_composition
+    server.recover_context = recover_context
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []

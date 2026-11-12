@@ -111,6 +111,9 @@ class Avatar:
         self.boundaries = BoundaryPolicy()
         self.speaker_scope = SpeakerScope()
         self.speaker_context_store = None
+        # Installed by the standard Web path only, after current-source admission.
+        self.conversation_context_store = None
+        self._history_source_ids = set()
         # Trusted in-process experiment hook; defaults install no reviewer.
         self.final_reply_reviewer = None
         self._response_review = None
@@ -510,6 +513,7 @@ class Avatar:
         self._cancel_token = cancel
         self._response_review = None
         self.analysis_mode = 'boundary_or_tool_rules'
+        self._history_source_ids = set()
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
@@ -537,13 +541,24 @@ class Avatar:
                 source_precondition()
             # A rejected admission must leave neither a durable user source nor
             # an in-memory phantom which run_chat would retain in its finally.
-            self.memory.add_short_term("user", user_text)
             self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
             if self.speaker_context_store is not None:
                 self.speaker_scope = self.speaker_context_store.observe(
                     user_text, turn_context_revision, self._current_message_id)
             else:
                 self.speaker_scope.observe(user_text, turn_context_revision, source_id=self._current_message_id)
+            if self.conversation_context_store is not None:
+                window = self.conversation_context_store.read(
+                    current_user_id=self._current_message_id,
+                    scope=self.speaker_scope.scope,
+                    expected_revision=turn_context_revision,
+                    limit_messages=min(200, max(0, self.memory.short_term_limit - 2)),
+                )
+                self.memory.clear_short_term()
+                for message in window.messages:
+                    self.memory.add_short_term(message.role, message.content)
+                self._history_source_ids.update(window.source_ids)
+            self.memory.add_short_term("user", user_text)
         boundary = self.boundaries.assess(user_text)
         checkpoint_context()
         from .brain.speaker_control import canonical_speaker_control
@@ -624,6 +639,7 @@ class Avatar:
             (self.session_id, self.memory.short_term_limit))}
         response_source_ids.update(self.speaker_scope.source_ids)
         response_source_ids.update(self.speaker_scope.context_source_ids)
+        response_source_ids.update(self._history_source_ids)
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
         # 4. LLM 回复（无 key 与调用故障分别标记）
         generation_mode = 'rules'
