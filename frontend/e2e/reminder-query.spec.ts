@@ -26,7 +26,7 @@ test('explicit reminder reads deliver recorded state and conditions without chan
   try {
     report.sourceControl = await api('/chat', { text: '回到现实。' });
     expect(report.sourceControl.generation_mode).toBe('rules_speaker_control');
-    const draft = await api('/reminders', { text: '提醒我2099-01-01上午十点，C39浏览器只读查询控制。' });
+    const draft = await api('/reminders', { text: '提醒我2099年1月1日上午十点，C39浏览器只读查询控制。' });
     await api('/operations/' + draft.draft_id + '/confirm', { confirmation_token: draft.confirmation_token });
     const row = (await api('/reminders')).find((value: any) => value.title === 'C39浏览器只读查询控制');
     expect(row).toBeTruthy();
