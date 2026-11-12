@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
-import protocol from '../../evals/interaction/cycle-36/maintained-state-privacy-protocol.json';
+import { readFileSync, writeFileSync } from 'node:fs';
+const protocol = JSON.parse(readFileSync(new URL('../../evals/interaction/cycle-36/maintained-state-privacy-protocol.json', import.meta.url), 'utf8')) as {
+  scope: string; preparation: Record<'emotion' | 'dashboard', string>; fixed_observation_ms: number;
+};
 
 const token = 'mission-control-disposable-e2e-token';
 for (const which of ['emotion', 'dashboard'] as const) {
