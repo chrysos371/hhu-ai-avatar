@@ -1,0 +1,36 @@
+{
+  "scope": "revision_bound_automatic_state_browser_cache_engineering_regression",
+  "target_issue": "C34-004",
+  "source_cycle34_manifest_sha256": "ecb7e4b98dfab75a4d3b630c4409f6b5c2f4efb455c120a35a437e8c1eb90f87",
+  "phases": [
+    "before",
+    "after"
+  ],
+  "pages": [
+    "emotion",
+    "dashboard"
+  ],
+  "repetitions_per_page_phase": 3,
+  "provider": "offline_rules",
+  "actual_native_model_or_gpu": false,
+  "input": "我很难过",
+  "boundary": "independent_HTTP_client_legacy_forget_of_completed_user_source",
+  "fixed_observation_after_boundary_ms": 1000,
+  "eventual_readiness_timeout_ms": 20000,
+  "no_browser_reload_or_navigation_after_forget": true,
+  "after_expected_old_dom_visible_at_fixed_observation": false,
+  "positive_controls": [
+    "same privacy revision ordinary messages retain legitimate state",
+    "manual override remains separately configured",
+    "actually edited form values remain manual while automatic prefill is invalidated"
+  ],
+  "fault_controls": [
+    "late old query result after higher revision notification",
+    "notification unavailable or unauthorized",
+    "instance identity change",
+    "page navigation and cross-window privacy notification",
+    "malformed or mismatched API version metadata"
+  ],
+  "general_semantic_or_human_quality_approval": false,
+  "gpu_or_native_model_runs_required": false
+}
