@@ -22,6 +22,20 @@ def processes():
 def canonical(value):return json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':'))
 
 
+def collect_sdk_stream(client,*,model,messages,max_tokens):
+    """Use the same observed synchronous SDK client for SSE warmup only."""
+    events=[];parts=[]
+    with client.chat.completions.create(model=model,messages=messages,temperature=0,
+            max_tokens=max_tokens,stream=True) as stream:
+        for chunk in stream:
+            events.append(chunk.model_dump())
+            if chunk.choices and chunk.choices[0].delta.content:
+                parts.append(chunk.choices[0].delta.content)
+    reasons=[c['finish_reason'] for e in events for c in e['choices'] if c['finish_reason'] is not None]
+    if reasons!=['stop']:raise ValueError('SDK SSE warmup did not stop completely')
+    return {'role':'assistant','content':''.join(parts)},events
+
+
 def sample(args):
     frozen=verify_freeze(args.freeze,args.expected_freeze_sha256)
     args.output=args.output.resolve()
@@ -95,7 +109,7 @@ def sample(args):
                 row={'phase':phase,'repetition':rep,'case':case,'request_ordinal':first+1,'result':None,'error':None}
                 try:
                     if stream:
-                        row['result']={'role':'assistant','content':engine.stream_chat(messages,temperature=0,max_tokens=max_tokens)}
+                        row['result'],row['sdk_stream_events']=collect_sdk_stream(engine._client,model=spec['model_id'],messages=messages,max_tokens=max_tokens)
                     elif tools:
                         row['result']=engine.chat_tools(messages,tools=tools,temperature=0,max_tokens=max_tokens)
                     else:

@@ -56,7 +56,7 @@ def required_inputs():
         or n.startswith(str((BASE/'审计').relative_to(ROOT))+'/') and n.endswith('.py')}
     selected.update((str(REFERENCE.relative_to(ROOT)),str(RUNTIME.relative_to(ROOT))))
     selected.update(str(p.relative_to(ROOT)) for p in (BASE/'审计/工作目录/001-工具调用调查').glob('*') if p.name in ('gguf-template.json','embedded-chat-template.jinja','content-fixed-controls.log'))
-    selected.update(str((WORK/name).relative_to(ROOT)) for name in ('native-admission.json','handoff-admission.json'))
+    selected.update(str((WORK/name).relative_to(ROOT)) for name in ('native-admission-sse-fixed.json','handoff-admission-sse-fixed.json','sse-controlled.json'))
     selected.update(m['metadata'] for m in read(REGISTRY)['models'])
     regress=BASE/'审计/工作目录/004-当前软件与浏览器'
     selected.update(str(p.relative_to(ROOT)) for p in regress.glob('wire-python-final*'))
@@ -74,6 +74,7 @@ def historical(ref,names):
 
 
 def verify_freeze(path,expected):
+    if Path(path).with_name(Path(path).stem+'-retirement.json').exists():raise ValueError('C40 descriptor retired')
     if digest(path)!=expected:raise ValueError('C40 descriptor changed')
     frozen=read(path);protocol=read(PROTOCOL)
     if (frozen.get('scope')!='standalone_native_tool_wire_diagnostic_not_Avatar_or_business_execution'
@@ -84,6 +85,10 @@ def verify_freeze(path,expected):
             or frozen.get('protocol_sha256')!=digest(PROTOCOL)
             or protocol['models_registry_sha256']!=digest(REGISTRY)):
         raise ValueError('C40 execution contract changed')
+    admission=read(WORK/'native-admission-sse-fixed.json')
+    handoff=read(WORK/'handoff-admission-sse-fixed.json')
+    if not admission.get('verified') or not handoff.get('verified'):raise ValueError('C40 admission missing')
+    if any(digest(ROOT/n)!=sha for n,sha in handoff['source_sha256'].items()):raise ValueError('C40 controller handoff source changed')
     hashes=frozen['sha256']
     if not required_inputs()<=hashes.keys():raise ValueError('C40 required source incomplete')
     for name,sha in hashes.items():
