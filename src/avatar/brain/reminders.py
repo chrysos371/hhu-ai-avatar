@@ -8,7 +8,25 @@ import time
 
 CHINA = timezone(timedelta(hours=8))
 _DATE = r'(?:\d{4}年\d{1,2}月\d{1,2}[日号]|今天|明天|后天|(?:下周|这周|周|星期)[一二三四五六日天])'
-_TIME = r'(?P<period>早上|上午|下午|晚上|中午)?(?P<hour>\d{1,2})[点时](?:(?P<half>半)|(?P<minute>\d{1,2})分?)?'
+_CHINESE_CLOCK = r'[零〇一二两三四五六七八九十]+'
+_TIME = (rf'(?P<period>早上|上午|下午|晚上|中午)?(?P<hour>\d{{1,2}}|{_CHINESE_CLOCK})[点时]'
+         rf'(?:(?P<half>半)|(?P<minute>\d{{1,2}})分?|(?P<chinese_minute>{_CHINESE_CLOCK})分(?!钟))?')
+
+
+def _clock_number(value: str) -> int:
+    # Convert only parsed clock fields. Never translate the user's task title.
+    if value.isdecimal():
+        return int(value)
+    digits = {character: number for number, character in enumerate('零一二三四五六七八九')}
+    digits.update({'〇': 0, '两': 2})
+    if value in digits:
+        return digits[value]
+    if re.fullmatch(r'[零〇][一二三四五六七八九]', value):
+        return digits[value[-1]]
+    if re.fullmatch(r'(?:[二三四五六七八九]?十[一二三四五六七八九]?)', value):
+        tens, ones = value.split('十')
+        return (digits[tens] if tens else 1) * 10 + (digits[ones] if ones else 0)
+    raise ValueError('钟点无效。')
 
 
 def parse_reminder(text: str, *, now: float | None = None) -> dict | None:
@@ -38,8 +56,8 @@ def parse_reminder(text: str, *, now: float | None = None) -> dict | None:
         else:
             days = (weekday - current.weekday()) % 7
         target = current + timedelta(days=days)
-    hour = int(parsed['hour'])
-    minute = 30 if parsed['half'] else int(parsed['minute'] or 0)
+    hour = _clock_number(parsed['hour'])
+    minute = 30 if parsed['half'] else _clock_number(parsed['minute'] or parsed['chinese_minute'] or '0')
     period = parsed['period']
     if hour > 23 or minute > 59 or (period and not 1 <= hour <= 12):
         raise ValueError('钟点无效。')
