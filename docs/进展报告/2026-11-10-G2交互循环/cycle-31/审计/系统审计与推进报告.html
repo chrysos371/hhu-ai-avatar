@@ -1,0 +1,80 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第31轮系统审计与推进报告：只读分析成本与推广限制</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>第31轮系统审计与推进报告：只读分析成本与推广限制</h1><p class="meta">2026-11-12 · spinner-bot · 真实CUDA/HTTP/OS；8合成开发场景×3重复</p><p class="verdict">有局部延迟收益，未通过全部推广门槛；候选保持隔离。</p>
+<section><h2>结论与决策</h2>
+<p>审计隔离的只读分析候选，在8个新开发场景×两臂×固定3重复中减少18次认知调用/模型。4B与32B各144应用回合、96独立应用进程、272原生调用（含2预热）；合计288回合、192应用进程、544调用，应用和两个提供方均退出0/清理。所有生成仍是真实原生模型，两臂都默认恢复历史并在第三回合前实际OS重启。</p>
+<p>预登记18个只读重复问题对/模型的本机POST→SSE终态中位，4B为1.720284→0.374911秒、32B为2.582573→0.973284秒。但32B未通过预设逐字一致门槛，补审还发现含蓄情绪保护覆盖不足；候选继续留在审计目录，生产未接入。局部速度收益不能宣称整体代际跃迁或一般质量通过。</p>
+<p>4B的24个重复任务对probe原文全相同；32B为21/24相同，材料题3对为原路径93、候选37 + 46 = 83。候选此题数值对但额外公式，原路径数值错；两者strict都false。既不能只用严格分掩盖内容差别，也不能把原文不同自动称为退化，更不能事后改失败门槛。</p>
+</section>
+<section><h2>预登记只读端点（秒）</h2>
+<p>两臂顺序按任务/重复平衡。全部18预定只读对保留，没有按成功skip或耗时筛选；3轮各6对，不是18个独立任务。p95为排序后(n−1)×0.95位置线性插值，样本小，仅作本地描述，不是统计总体保证。</p>
+<p>4B三轮中位（当前/候选）为1.730062/0.307442、1.720284/0.392675、1.793160/0.404541；32B为2.568533/0.909955、2.597885/0.990311、2.579013/1.010639。32B只读时间观察虽下降62.31%，由于预设质量门槛false，不能声称合取验收通过。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>模型</th><th>分母</th><th>中位 当前→候选</th><th>p95 当前→候选</th><th>中位观察变化</th><th>原性能合取门槛</th></tr></thead><tbody>
+<tr><td>4b</td><td>6题×3重复=18对</td><td>1.720284 → 0.374911</td><td>4.813978 → 0.448052</td><td>78.21%</td><td>通过（限原测试）</td></tr>
+<tr><td>32b</td><td>6题×3重复=18对</td><td>2.582573 → 0.973284</td><td>4.847650 → 1.169132</td><td>62.31%</td><td>未过：原文不同</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>事后全工作负载（不是主终点）</h2>
+<p>把准备回合和姓名/情绪保护回合一起计入，每臂72回合的混合中位改善约为4B18.54%、32B3.97%；32B混合p95略升。不能把只读子集78%或62%写成整个系统、所有用户问题或多日使用的速度提升。</p>
+<p>4B实际GPU6/UUID b39d6e79…、32B实际GPU4/UUID aa1364f0…，均启动40441MiB/0%；加载后GPU分配4096/21042MiB。设备按当时余量选择，不固定6–7，两模型串行且只有一个自建提供方。总采证386.808539/677.524597秒含加载、应用启动、审计写盘与清理，不是单次推理延迟；模型间不是纯一变量硬件比较。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>模型</th><th>分母</th><th>混合中位</th><th>混合平均</th><th>混合p95</th><th>混合中位变化</th></tr></thead><tbody>
+<tr><td>4b</td><td>每臂72回合</td><td>1.162312 → 0.946838</td><td>1.455641 → 0.971846</td><td>3.001140 → 2.155380</td><td>18.54%</td></tr>
+<tr><td>32b</td><td>每臂72回合</td><td>2.665561 → 2.559663</td><td>3.247495 → 2.754802</td><td>5.237558 → 5.269302</td><td>3.97%</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>实现、保护与实验来源</h2>
+<p>当前产品Web已有保守科普fast_analysis，本轮候选只在显式审计worker委托Avatar._analyze。它限制现实scope/无进行中边界风险、单个显式资料问句、当前/最近六条词表情绪为0、无当前规则事实；不合格调用原方法，合格仍执行真实_extract_facts和取消/隐私检查，再用规则情绪更新。没有修改src/tests/scripts、用户提示、生成schema或默认产品开关。</p>
+<p>48预登记CPU shadow（12合格/36保护）首跑全过；进程内真实Web+明确假模型的8双臂控制保留姓名源5、最近非中性情绪和角色权限；另有独立MemoryStore遗忘交错在真实版本屏障取消，0额外模型调用/无新助手。它们不是实际LLM/GPU或独立OS数据。真实HTTP计时校准证明源指纹检查、终态后conversation读取及审计写盘在端点之外。</p>
+<p>两模型真实144回合/96OS/272原生数据分别独立绑定325历史Git与当前源、原始SDK字节/response schema/native trace、SQL/API稳定ID、SSE、实际模块、72候选路由决定和单调时钟整数；SQL全表导出重建一致。两保护的全部18个turn/模型用户情绪/策略/风格相同，姓名画像/事实一致。所有288回复做same-agent来源span审阅，不等于独立真人标注。</p>
+<p>每模型当前路径144诊断调用、候选126，预热另2；144次生成未减少，只读目标省18次认知。通用能力/回执P1没有因这批温和合成问题未观察外发/身体声称而关闭。当前产品完整1769/1@24f4529及552输入、默认Chromium15/16可选@d631302及190输入仍为C29已封回归；本轮产品未改，没有冒称重跑。前端153/CYNSx0Ec仍旧来源。</p>
+</section>
+<section><h2>系统补审与单项结论</h2>
+<p>补充白盒16个合成分类样本：12条含蓄情绪/不确定历史（如“心里堵得慌”）虽有保守保护期待，仍被词表0视为eligible，4中性源数据对照正常。标签由同一代理阅读实现后编写，既非独立真人情绪金标，也未证明这些输入已经造成真实模型退化；但规则零分不足以证明语义中性，因此不批准一般推广。</p>
+<p>32B材料题三轮的两臂原始SDK JSON逐字相同，request SHA和native prompt SHA也相同，固定temperature0/seed42配置相同，却稳定出现93与37 + 46 = 83。前序调用路径不同是观察事实；KV缓存、数值精度或库缺陷均未被本轮隔离证明。应先控制前序/状态重置再归因，不把相同prompt当作输出一致保证。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>编号</th><th>优先级/归属</th><th>发现</th><th>状态/下一步</th></tr></thead><tbody>
+<tr><td>C31-001</td><td>P2 / 评测</td><td>问箱子代号，strict乙箱而两模型答乙是合理简称</td><td>本轮口径已标记，原分保留；未来独立题明示完整标签/别名</td></tr>
+<tr><td>C31-002</td><td>P2 / 推广保障</td><td>补充12含蓄情绪线索被词表0放行</td><td>开放；只证明分类覆盖不足，需另登记实际影响</td></tr>
+<tr><td>C31-003</td><td>P2 / 可复现归因</td><td>三组同SDK wire/同native prompt回复不同</td><td>开放；新实验受控前序/状态策略，当前不假定根因</td></tr>
+<tr><td>C31-004</td><td>P2 / 数值内容</td><td>当前32B答93不符37+46，候选83公式仍不合格式</td><td>开放；内容/格式分列，保留错误与C30-002，不在本题调提示</td></tr>
+</tbody></table></div>
+<p><a href="问题/001-箱子代号题的严格目标存在歧义.md">001单项记录</a></p>
+<p><a href="问题/002-规则零分不能证明历史情绪语义中性.md">002单项记录</a></p>
+<p><a href="问题/003-同原始请求与原生提示回复仍不同.md">003单项记录</a></p>
+<p><a href="问题/004-原生数值任务回复93不符材料来源.md">004单项记录</a></p>
+</section>
+<section><h2>推进优先级</h2>
+<p>本轮325输入已完成退休并保留失败推广门槛，原8任务/提示不再调优，候选保持隔离。下一循环优先原生提供方相同请求的前序/状态隔离复现性；只有先建立比较契约，才继续含蓄情绪的模型影响及候选修订。不自动更换默认模型、不启旧v1–v4或C28固定计划机制。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>优先级</th><th>工作</th><th>完成证据</th></tr></thead><tbody>
+<tr><td>P1长期开放</td><td>一般能力/回执诚实性、归属/任务质量</td><td>真实来源与逐轮审查；既有失败不因局部性能改善关闭</td></tr>
+<tr><td>P2当前首要</td><td>原生同请求/不同前序的状态隔离</td><td>先登记受控前序/重置/重复、wire与实现身份，区分实测机制与推测</td></tr>
+<tr><td>P2</td><td>含蓄情绪与语义中性保护</td><td>独立源/实际模型反例，不能仅把词表0作为批准证据</td></tr>
+<tr><td>P2</td><td>数值推导与严格格式</td><td>新来源任务和只读计算证据，内容正确与输出形式分开</td></tr>
+<tr><td>P2</td><td>设备/真人/正式形象与多日</td><td>真实来源、目标设备和长期事件记录；合成与短测不替代</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>证据入口</h2>
+<p><a href="../进展.md">全过程进展</a></p>
+<p><a href="../计划.md">预登记计划</a></p>
+<p><a href="../实验/readonly-cost-4b/evaluation.json">4B完整原始数据</a></p>
+<p><a href="../实验/readonly-cost-32b/evaluation.json">32B完整原始数据</a></p>
+<p><a href="../实验/readonly-cost-4b/provider-trace.jsonl">4B原生trace</a></p>
+<p><a href="../实验/readonly-cost-32b/provider-trace.jsonl">32B原生trace</a></p>
+<p><a href="工作目录/001-只读分析路由保护/4b-independent-binding.json">4B独立核验</a></p>
+<p><a href="工作目录/001-只读分析路由保护/32b-independent-binding.json">32B独立核验</a></p>
+<p><a href="工作目录/001-只读分析路由保护/4b-source-aware-review.json">4B全部144来源审阅</a></p>
+<p><a href="工作目录/001-只读分析路由保护/32b-source-aware-review.json">32B全部144来源审阅</a></p>
+<p><a href="工作目录/001-只读分析路由保护/4b-all-turn-mix-and-protections.json">4B全回合混合/保护</a></p>
+<p><a href="工作目录/001-只读分析路由保护/32b-all-turn-mix-and-protections.json">32B全回合混合/保护</a></p>
+<p><a href="工作目录/001-只读分析路由保护/来源审阅与补审汇总核验.json">来源与补审汇总核验</a></p>
+<p><a href="工作目录/001-只读分析路由保护/32b-identical-input-different-replies.json">同输入不同回复原始绑定</a></p>
+<p><a href="工作目录/001-只读分析路由保护/shadow-v1.json">48 CPU shadow</a></p>
+<p><a href="工作目录/001-只读分析路由保护/cpu-web-controls-v1.json">进程内Web假模型控制</a></p>
+<p><a href="工作目录/001-只读分析路由保护/timing-scope-control.json">实际HTTP计时边界</a></p>
+<p><a href="工作目录/001-只读分析路由保护/cpu-control-versions.json">CPU控制执行旧版本</a></p>
+<p><a href="工作目录/001-只读分析路由保护/native-preflight-controls.json">实际进程前置负控</a></p>
+<p><a href="工作目录/001-只读分析路由保护/implicit-affect-whitebox-result.json">补充合成分类原始结果</a></p>
+<p><a href="../../../../../evals/interaction/cycle-31/readonly-analysis-cost-protocol.json">固定原生协议</a></p>
+<p><a href="../../../../../evals/interaction/cycle-31/readonly-analysis-cost-freeze.json">执行冻结</a></p>
+<p><a href="../../../../../evals/interaction/cycle-31/readonly-analysis-cost-retirement.json">完成/失败推广门槛退休</a></p>
+<p><a href="../../cycle-30/审计/系统审计与推进报告.md">C30已封系统报告</a></p>
+<p><a href="../../cycle-29/审计/工作目录/003-独立进程故障边界/full-python-unverified-fix-binding.json">C29完整产品回归</a></p>
+</section>
+</main></body></html>
