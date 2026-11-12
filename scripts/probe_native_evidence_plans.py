@@ -138,6 +138,7 @@ def run(args):
             for index,stream in enumerate(protocol['warmups']):
                 verify();value={'model':args.model,'messages':[{'role':'user','content':'请回答：你好。'}],'stream':stream,'temperature':0,'max_tokens':16}
                 row=request(metadata['url'],value);row.update(role='warmup',warmup_index=index);report['requests'].append(row);save()
+                if row['finish_reason']!='stop':raise RuntimeError('Native warmup incomplete')
             for case,order in zip(protocol['cases'],protocol['arm_orders']):
                 for arm in order:
                     verify();row=request(metadata['url'],payload(case,arm,args.model));row.update(role='source_atom_diagnostic',case=case['id'],arm=arm)

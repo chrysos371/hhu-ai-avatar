@@ -15,7 +15,7 @@ def digest(path):return sha256(path.read_bytes()).hexdigest()
 
 def build():
     base=Path(__file__).resolve().parents[1];work=base/'审计/工作目录/001-来源原子与类型化计划'
-    full_path=work/'full-python-binding.json';full=json.loads(full_path.read_text());log=work/'full-python.log'
+    full_path=work/'full-final-python-binding.json';full=json.loads(full_path.read_text());log=work/'full-final-python.log'
     if not full['completed'] or full['exit_code']!=0 or not full['source_unchanged']:raise ValueError('Full regression not passed')
     result=re.search(r'(\d+) passed, (\d+) skipped in ([\d.]+)s',log.read_text())
     if result is None:raise ValueError('Full test result missing')

@@ -1,0 +1,84 @@
+{
+  "head": "fixture-head",
+  "model_id": "qwen3-4b-q4_k_m",
+  "scope": "standalone_native_source_atom_content_diagnostic",
+  "freeze_sha256": "frozen",
+  "frozen_inputs": {
+    "sha256": {
+      "evals/interaction/cycle-26/model-scale-registry.json": "de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45",
+      "scripts/serve_local_model_eval.py": "provider-sha",
+      "src/avatar/gpu_resources.py": "resource-sha"
+    }
+  },
+  "provider_command": [
+    "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+    "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+    "--model",
+    "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf",
+    "--model-key",
+    "qwen3-4b-q4_k_m",
+    "--metadata",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-metadata-4b.json",
+    "--ready",
+    "/tmp/pytest-of-root/pytest-309/test_truncated_warmup_stops_be0/run/provider-ready.json",
+    "--trace",
+    "/tmp/pytest-of-root/pytest-309/test_truncated_warmup_stops_be0/run/provider-trace.jsonl",
+    "--backend",
+    "cuda",
+    "--registry",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json",
+    "--expected-registry-sha256",
+    "de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45"
+  ],
+  "requests": [
+    {
+      "request": {
+        "model": "qwen3-4b-q4_k_m",
+        "messages": [
+          {
+            "role": "user",
+            "content": "请回答：你好。"
+          }
+        ],
+        "stream": false,
+        "temperature": 0,
+        "max_tokens": 16
+      },
+      "reply": "unfinished",
+      "finish_reason": "length",
+      "role": "warmup",
+      "warmup_index": 0
+    }
+  ],
+  "completed": false,
+  "failure": "RuntimeError('Native warmup incomplete')",
+  "engineering_passed": false,
+  "semantic_approved": false,
+  "cleanup_passed": true,
+  "provider_pid": 987654321,
+  "provider_exit": 0,
+  "atoms_are_experiment_fixtures": true,
+  "avatar_integration_run": false,
+  "real_sql_commit_verified": false,
+  "provider_ready": {
+    "pid": 987654321,
+    "model_id": "qwen3-4b-q4_k_m",
+    "provider_source_sha256": "provider-sha",
+    "resource_selector_sha256": "resource-sha",
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "concurrent_sequences": 1
+    },
+    "chosen_gpu": {
+      "index": 0
+    },
+    "url": "fixture"
+  },
+  "gpu_processes_after": "",
+  "seconds": 0.0006594149745069444
+}
