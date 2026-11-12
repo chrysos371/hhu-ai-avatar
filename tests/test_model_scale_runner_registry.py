@@ -44,3 +44,17 @@ def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkey
     assert len(calls)==1 and output.exists();command=calls[0]
     assert command[command.index('--registry')+1]==str(REGISTRY)
     assert command[command.index('--expected-registry-sha256')+1]==expected
+
+
+
+@pytest.mark.parametrize('pin',[None,'changed'])
+def test_selected_protocol_must_pin_new_registry(tmp_path,pin):
+    import json
+    data=json.loads(PROTOCOL.read_text())
+    if pin is None:data.pop('models_registry_sha256')
+    else:data['models_registry_sha256']=pin
+    protocol=tmp_path/'protocol.json';protocol.write_text(json.dumps(data));output=tmp_path/'must-not-exist'
+    with pytest.raises(ValueError,match='pinned protocol identity'):
+        runner.main(output,Path(sys.executable),protocol=protocol,model_key='qwen3-32b-q4_k_m',
+                    registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest())
+    assert not output.exists()

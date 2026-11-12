@@ -7,6 +7,7 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -14,13 +15,84 @@ from urllib.parse import urlsplit
 from urllib.request import Request, ProxyHandler, build_opener
 import uuid
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'src'))
+
+import avatar.main  # Verify the application module that create_server will use.
+from serve_local_model_eval import load_registry
 from avatar.brain.llm import LLMEngine
 from avatar.brain.memory import MemoryStore
 from avatar.config import config
 from avatar.web import create_server
 
-ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT/'evals/interaction/cycle-15/native-output-protocol.json'
+
+
+def protocol_registry(protocol):
+    name = protocol.get('models_registry')
+    if not isinstance(name, str): raise ValueError('Protocol has no model registry')
+    path = (ROOT / name).resolve()
+    custom = path != ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
+    expected = protocol.get('models_registry_sha256')
+    if custom and not isinstance(expected, str): raise ValueError('Custom protocol requires pinned registry identity')
+    registry, identity, path = load_registry(path, expected_sha256=expected)
+    return registry, identity, path, custom
+
+
+def validate_provider_identity(provider, protocol):
+    """Admission before output/engine creation; legacy default metadata stays compatible."""
+    registry, identity, path, custom = protocol_registry(protocol)
+    if not isinstance(provider, dict) or not isinstance(provider.get('url'), str):
+        raise ValueError('Provider evidence must be an object with a URL')
+    model = next((m for m in registry['models'] if m['model_id'] == provider.get('model_id')), None)
+    address = urlsplit(provider['url'])
+    if (model is None or address.scheme != 'http' or address.hostname != '127.0.0.1' or address.path != '/v1'
+            or provider.get('model_sha256') != model['sha256'] or provider.get('model_revision') != model['revision']):
+        raise ValueError('Only a hash-verified loopback provider is allowed')
+    relative = str(path.relative_to(ROOT))
+    if ((custom or 'registry_sha256' in provider) and provider.get('registry_sha256') != identity
+            or (custom or 'registry_path' in provider) and provider.get('registry_path') != relative):
+        raise ValueError('Provider registry identity differs from selected protocol')
+    declared_backend = protocol.get('provider_backend', 'cuda')
+    if (custom and provider.get('backend') != declared_backend
+            or provider.get('backend', declared_backend) != declared_backend):
+        raise ValueError('Provider backend differs from selected protocol')
+    binding = {'registry_path': relative, 'registry_sha256': identity}
+    if model.get('metadata'):
+        expected_path = (ROOT / model['metadata']).resolve()
+        expected_metadata = sha256(expected_path.read_bytes()).hexdigest()
+        if (provider.get('metadata_sha256') != expected_metadata or not isinstance(provider.get('metadata_path'), str)
+                or Path(provider['metadata_path']).resolve() != expected_path):
+            raise ValueError('Provider model metadata identity differs from selected registry')
+        binding.update(metadata_path=model['metadata'], metadata_sha256=expected_metadata)
+    if custom:
+        gpu = provider.get('chosen_gpu'); allocations = provider.get('process_gpu_mib_after_load')
+        configuration = provider.get('configuration')
+        if (declared_backend != 'cuda' or not isinstance(gpu, dict) or not isinstance(gpu.get('uuid'), str)
+                or not gpu['uuid'] or type(gpu.get('free_mib')) is not int
+                or gpu['free_mib'] < model['required_free_mib']
+                or type(gpu.get('utilization_percent')) is not int or not 0 <= gpu['utilization_percent'] <= 20
+                or not isinstance(allocations, list) or len(allocations) != 1
+                or any(type(value) is not int or value < 1024 for value in allocations)
+                or provider.get('effective_visible_devices') != gpu['uuid']
+                or not isinstance(configuration, dict) or configuration.get('n_gpu_layers') != -1):
+            raise ValueError('CUDA admission/allocation evidence missing for custom registry')
+    return model, binding
+
+
+def runtime_source_identity():
+    result = {}
+    for name, module in sorted(list(sys.modules.items())):
+        if name != 'avatar' and not name.startswith('avatar.'): continue
+        filename = getattr(module, '__file__', None)
+        if filename:
+            path = Path(filename).resolve()
+            if not path.is_relative_to(ROOT/'src'):
+                raise ValueError('Application imported outside this project: ' + name)
+            result[name] = {'path': str(path), 'sha256': sha256(path.read_bytes()).hexdigest()}
+    if not {'avatar.main', 'avatar.web', 'avatar.brain.memory', 'avatar.brain.llm'} <= result.keys():
+        raise ValueError('Required application runtime modules are not bound')
+    return result
 
 
 def fingerprint(protocol_path=PROTOCOL):
@@ -28,7 +100,10 @@ def fingerprint(protocol_path=PROTOCOL):
              'src/avatar/brain/llm.py', 'src/avatar/brain/memory.py', 'src/avatar/brain/boundaries.py',
              'src/avatar/brain/speaker_scope.py', 'src/avatar/brain/speaker_context.py',
              'scripts/serve_local_model_eval.py', str(Path(__file__).resolve().relative_to(ROOT)),
-             str(protocol_path.relative_to(ROOT)), 'evals/interaction/cycle-02/model-scale-protocol.json']
+             str(protocol_path.relative_to(ROOT))]
+    registry, _, registry_path, _ = protocol_registry(json.loads(protocol_path.read_text()))
+    paths.append(str(registry_path.relative_to(ROOT)))
+    paths += [m['metadata'] for m in registry['models'] if m.get('metadata')]
     paths += [str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')]
     return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
 
@@ -52,7 +127,6 @@ def events(response, started):
 
 
 def evaluate(provider_path, output, protocol_path=PROTOCOL):
-    output.mkdir(parents=True, exist_ok=False)
     protocol = json.loads(protocol_path.read_text()); provider = json.loads(provider_path.read_text())
     cases = [c for c in protocol['cases'] if c['partition'] == 'development']
     if not cases or len({c['id'] for c in cases}) != len(cases):
@@ -64,20 +138,19 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
                 or not isinstance(counts, list) or len(counts) != len(turns)
                 or any(type(count) is not int or count < 0 for count in counts)):
             raise ValueError('Invalid fixed turns or reminder controls: '+case['id'])
-    registry = json.loads((ROOT/protocol['models_registry']).read_text())
-    model = next(m for m in registry['models'] if m['model_id'] == provider['model_id'])
-    address = urlsplit(provider['url'])
-    if (address.scheme != 'http' or address.hostname != '127.0.0.1' or address.path != '/v1'
-            or provider['model_sha256'] != model['sha256'] or provider['model_revision'] != model['revision']):
-        raise ValueError('Only a hash-verified loopback provider is allowed')
+    model, registry_binding = validate_provider_identity(provider, protocol)
     for key, value in protocol['inference'].items():
         if provider['configuration'][key] != value: raise ValueError('Inference configuration differs: '+key)
+    source_fingerprint = fingerprint(protocol_path)
+    runtime_modules = runtime_source_identity()
+    output.mkdir(parents=True, exist_ok=False)
     config.llm.base_url = provider['url']; config.llm.api_key = 'local-eval-only'; config.llm.model = provider['model_id']
     config.embedding.model = ''
     report = {'scope': protocol['scope'], 'partition': 'development', 'stage': 'A_current_defaults',
               'createdUtc': datetime.now(timezone.utc).isoformat(),
               'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-              'sourceSha256': fingerprint(protocol_path), 'provider': provider, 'warmups': [], 'cases': [],
+              'sourceSha256': source_fingerprint, 'runtime_modules': runtime_modules,
+              'registry_binding': registry_binding, 'provider': provider, 'warmups': [], 'cases': [],
               'protocol': str(protocol_path.relative_to(ROOT)),
               'execution_complete': False, 'engineering_passed': False, 'failure': None,
               'semantic_approved': False, 'production_activation_approved': False}
@@ -122,6 +195,10 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
                     with opener.open(request, timeout=180) as response: return json.load(response)['data']
                 try:
                     for index, text in enumerate(case['turns']):
+                        current_modules = runtime_source_identity()
+                        if any(current_modules.get(name) != value for name, value in runtime_modules.items()):
+                            raise RuntimeError('Application runtime modules changed during native experiment')
+                        report['runtime_modules'] = current_modules
                         tick = time.perf_counter(); identifier = 'native_output_'+uuid.uuid4().hex
                         accepted = query('/turns', {'request_id': identifier, 'text': text, 'use_web': False})
                         request = Request(base+'/turns/'+accepted['job_id']+'/events', headers={'X-Avatar-Token': server.token})

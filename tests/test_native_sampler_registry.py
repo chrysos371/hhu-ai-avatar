@@ -71,6 +71,8 @@ def test_runtime_source_identity_is_actual_project_modules():
 def test_wrong_provider_rejected_before_output_or_engine(tmp_path,monkeypatch):
     provider,_=ready();provider['metadata_sha256']='changed';path=tmp_path/'provider.json';path.write_text(json.dumps(provider))
     def forbidden(*args,**kwargs):raise AssertionError('Model boundary must not be reached')
+    for obj, field in ((audit.config.llm,'base_url'),(audit.config.llm,'api_key'),(audit.config.llm,'model'),(audit.config.embedding,'model')):
+        monkeypatch.setattr(obj,field,getattr(obj,field))
     monkeypatch.setattr(audit,'LLMEngine',forbidden);output=tmp_path/'must-not-exist'
     with pytest.raises(ValueError):audit.evaluate(path,output,PROTOCOL)
     assert not output.exists()
@@ -82,3 +84,10 @@ def test_real_cli_prefers_own_source_over_foreign_pythonpath(tmp_path):
     result=subprocess.run([sys.executable,str(ROOT/'scripts/evaluate_native_output_audit.py'),'--help'],
                           cwd=ROOT,env=env,capture_output=True,text=True)
     assert result.returncode==0 and '--provider' in result.stdout and 'foreign avatar selected' not in result.stderr
+
+
+
+def test_cached_foreign_module_cannot_be_claimed_as_current_project(tmp_path,monkeypatch):
+    path=tmp_path/'foreign_llm.py';path.write_text('# foreign fixture only\n')
+    monkeypatch.setattr(sys.modules['avatar.brain.llm'],'__file__',str(path))
+    with pytest.raises(ValueError,match='imported outside this project'):audit.runtime_source_identity()

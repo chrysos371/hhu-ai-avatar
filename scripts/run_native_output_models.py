@@ -41,9 +41,12 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         raise ValueError('Registry overrides currently require development stage')
     selected_protocol = protocol if protocol is not None else (ROOT/'evals/interaction/cycle-15/native-output-protocol.json' if stage == 'development' else None)
     if selected_protocol is not None:
-        declared = json.loads(selected_protocol.read_text()).get('models_registry')
+        protocol_data = json.loads(selected_protocol.read_text())
+        declared = protocol_data.get('models_registry')
         if not isinstance(declared, str) or (ROOT/declared).resolve() != registry_path:
             raise ValueError('Selected registry differs from selected protocol')
+        if registry_path != default_registry and protocol_data.get('models_registry_sha256') != registry_sha256:
+            raise ValueError('Selected registry differs from pinned protocol identity')
     specifications = [m for m in registry['models'] if model_key is None or m['model_id'] == model_key]
     if not specifications: raise ValueError('Unknown model key: '+str(model_key))
     frozen_sha = None
