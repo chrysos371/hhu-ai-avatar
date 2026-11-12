@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "freeze_sha256": "41218266bd466d9104edacd275d66bb9fa1e94b2692814a21f06026f89afeea0",
+  "frozen_inputs": 309,
+  "historical_git_all_inputs_verified": true,
+  "actual_llm_or_gpu": false,
+  "controls": [
+    {
+      "name": "controller_wrong_sha",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--output",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/实验/preflight-must-not-exist",
+        "--freeze",
+        "evals/interaction/cycle-30/native-context-use-v2-freeze.json",
+        "--expected-freeze-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py\", line 232, in <module>\n    NativeContext(args).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py\", line 87, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);verify_historical_binding(self.frozen);prior_gate(args)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/context_native_common.py\", line 28, in verify_freeze\n    if digest(path)!=expected:raise ValueError('Native context freeze identity changed')\nValueError: Native context freeze identity changed\n",
+      "output_or_worker_ready_created": false
+    },
+    {
+      "name": "32b_without_4b",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py",
+        "--model",
+        "qwen3-32b-q4_k_m",
+        "--output",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/实验/preflight-must-not-exist",
+        "--freeze",
+        "evals/interaction/cycle-30/native-context-use-v2-freeze.json",
+        "--expected-freeze-sha256",
+        "41218266bd466d9104edacd275d66bb9fa1e94b2692814a21f06026f89afeea0",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py\", line 232, in <module>\n    NativeContext(args).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py\", line 87, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);verify_historical_binding(self.frozen);prior_gate(args)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/run_native_context_use.py\", line 76, in prior_gate\n    if args.prior_4b is None or not args.prior_4b_sha256 or digest(args.prior_4b)!=args.prior_4b_sha256:raise ValueError('32B requires pinned same-freeze complete4B evidence')\nValueError: 32B requires pinned same-freeze complete4B evidence\n",
+      "output_or_worker_ready_created": false
+    },
+    {
+      "name": "worker_wrong_sha",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/context_native_worker.py",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--db",
+        "/data/Users/zrh/repo/runtime/tmp/c30-context-negative/owned.db",
+        "--ready",
+        "/data/Users/zrh/repo/runtime/tmp/c30-context-negative/ready.json",
+        "--runtime-out",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/实验/negative-worker-must-not-exist.json",
+        "--provider-url",
+        "http://127.0.0.1:1/v1",
+        "--freeze",
+        "evals/interaction/cycle-30/native-context-use-v2-freeze.json",
+        "--expected-freeze-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/context_native_worker.py\", line 43, in <module>\n    parser.add_argument('--freeze',required=True,type=Path);parser.add_argument('--expected-freeze-sha256',required=True);parser.add_argument('--no-context-recovery',action='store_true');parser.add_argument('--model',required=True,choices=('qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'));main(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/context_native_worker.py\", line 14, in main\n    verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);require_loopback(args.provider_url)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/context_native_common.py\", line 28, in verify_freeze\n    if digest(path)!=expected:raise ValueError('Native context freeze identity changed')\nValueError: Native context freeze identity changed\n",
+      "output_or_worker_ready_created": false
+    }
+  ]
+}
