@@ -22,7 +22,8 @@
       "qwen3-32b-q4_k_m"
     ],
     "provider_lifetime": "fresh owned provider per model/repetition; shared within 12 cases; native cache policy is existing provider implementation, no physical-state-reset claim",
-    "application_lifetime": "fresh DB+HTTP server thread per case in same sampler OS; no per-case OS restart claim"
+    "application_lifetime": "fresh DB+HTTP server thread per case in same sampler OS; no per-case OS restart claim",
+    "wire_observation": "owned transparent loopback archive of exact request and full response bytes; all responses buffered; no first-token performance comparison"
   },
   "assessment": {
     "stage_A": "retain all native requests/outputs, visible/final/conversation/profile/reminders and actual cleanup; engineering validation separate",
@@ -36,7 +37,8 @@
       "content_or_literal_fidelity",
       "real_local_receipt_conditions"
     ],
-    "no_changes_after_freeze": true
+    "no_changes_after_freeze": true,
+    "finish_policy": "retain every stop/length/error outcome; incomplete wire or transport failure is engineering failure; length is a disclosed quality failure, never relabelled stop or silently dropped; two max16-token warmups separate from quality turns"
   },
   "default_expected_reminders": 0,
   "cases": [
@@ -190,5 +192,6 @@
   "protected_evaluation": "Not executed in this baseline; next candidate needs separately preregistered protected inputs and separate source freeze; do not tune on that split.",
   "native_runtime_reference": "docs/进展报告/2026-11-12-项目数据集中迁移/迁后原生运行库身份.json",
   "legacy_semantic_categories_known": true,
-  "case_independence_claim": false
+  "case_independence_claim": false,
+  "preflight": "24 actual offline-rule application routing/reminder controls before native source freeze; no native quality score"
 }
