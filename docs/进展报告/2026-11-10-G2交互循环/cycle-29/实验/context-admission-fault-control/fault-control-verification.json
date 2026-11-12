@@ -1,0 +1,30 @@
+{
+  "verified": true,
+  "control_kind": "explicit runtime opener bad-ID injection, not context baseline",
+  "fault_control_source_sha256": "b9ba5380dcbfdd1bb5617d160050c6292f716355fc192c831807f3eb7fbdda0a",
+  "head": "5fa9ff73aea1fac4bbb23151ff4a9f2e006b0f10",
+  "baseline_sha256": "8943fecf5afcb5364f3c3964a96a800e60a229f727da1e2f15cd92d6588248d2",
+  "override": [
+    {
+      "url": "http://127.0.0.1:38213/api/v1/turns",
+      "original_fixture_payload": {
+        "request_id": "c29_context_baseline_same_instance_1",
+        "text": "窗边有一只铜色风铃，标记C29-A。我们先聊这个场景。",
+        "use_web": false
+      },
+      "actual_injected_http_payload": {
+        "request_id": "short",
+        "text": "窗边有一只铜色风铃，标记C29-A。我们先聊这个场景。",
+        "use_web": false
+      }
+    }
+  ],
+  "primary_http_error_preserved": true,
+  "raw_error_body_archived": true,
+  "zero_turn_worker_source_validation_and_cleanup_passed": true,
+  "app_processes": 1,
+  "accepted_turns": 0,
+  "model_requests": 0,
+  "context_conclusion_valid": false,
+  "warning": "baseline.json http_calls.request records the pre-injection fixture payload. override.actual_injected_http_payload is the deliberate actual bad request. Never use this control as a source-faithful context comparison."
+}
