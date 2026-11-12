@@ -1,0 +1,63 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_malformed_old_content_outside_speaker_context_stops_older_pairs[broken-content] _
+
+memory = <avatar.brain.memory.MemoryStore object at 0x7f5b34ddf160>
+bad_content = b'broken-content'
+
+    @pytest.mark.parametrize('bad_content',[b'broken-content',''])
+    def test_malformed_old_content_outside_speaker_context_stops_older_pairs(memory,bad_content):
+        first=completed(memory)
+        remaining=[completed(memory,f'合法场景{i}。',f'合法回复{i}。') for i in range(3)]
+        memory._conn.execute('UPDATE memory_messages SET content=? WHERE id=?',(bad_content,first[0]));memory._conn.commit()
+        with current(memory) as options:
+            assert options['scope']=='current_user'
+>           assert ids(read(memory,options))==tuple(value for pair in remaining for value in pair[:2])
+E           assert (1, 2, 3, 4, 5, 6, ...) == (3, 4, 5, 6, 7, 8)
+E             
+E             At index 0 diff: 1 != 3
+E             Left contains 2 more items, first extra item: 7
+E             Use -v to get more diff
+
+tests/test_conversation_context.py:179: AssertionError
+____ test_malformed_old_content_outside_speaker_context_stops_older_pairs[] ____
+
+memory = <avatar.brain.memory.MemoryStore object at 0x7f5b34e9bbb0>
+bad_content = ''
+
+    @pytest.mark.parametrize('bad_content',[b'broken-content',''])
+    def test_malformed_old_content_outside_speaker_context_stops_older_pairs(memory,bad_content):
+        first=completed(memory)
+        remaining=[completed(memory,f'合法场景{i}。',f'合法回复{i}。') for i in range(3)]
+        memory._conn.execute('UPDATE memory_messages SET content=? WHERE id=?',(bad_content,first[0]));memory._conn.commit()
+        with current(memory) as options:
+            assert options['scope']=='current_user'
+>           assert ids(read(memory,options))==tuple(value for pair in remaining for value in pair[:2])
+E           assert (1, 2, 3, 4, 5, 6, ...) == (3, 4, 5, 6, 7, 8)
+E             
+E             At index 0 diff: 1 != 3
+E             Left contains 2 more items, first extra item: 7
+E             Use -v to get more diff
+
+tests/test_conversation_context.py:179: AssertionError
+_ test_derived_reply_with_nontext_source_cannot_be_restored_even_outside_window _
+
+memory = <avatar.brain.memory.MemoryStore object at 0x7f5b34e2bb80>
+
+    def test_derived_reply_with_nontext_source_cannot_be_restored_even_outside_window(memory):
+        first=completed(memory)
+        for i in range(3):completed(memory,f'中间场景{i}。',f'中间回复{i}。')
+        latest=completed(memory,'最新场景。','引用旧源的回复。',extra_sources=[first[0]])
+        memory._conn.execute('UPDATE memory_messages SET content=? WHERE id=?',(b'broken-source',first[0]));memory._conn.commit()
+>       with current(memory) as options:assert read(memory,options,limit_messages=2).messages==()
+E       AssertionError: assert (ContextMessa...essage_id=10)) == ()
+E         
+E         Left contains 2 more items, first extra item: ContextMessage(role='user', content='最新场景。', message_id=9)
+E         Use -v to get more diff
+
+tests/test_conversation_context.py:187: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_conversation_context.py::test_malformed_old_content_outside_speaker_context_stops_older_pairs[broken-content]
+FAILED tests/test_conversation_context.py::test_malformed_old_content_outside_speaker_context_stops_older_pairs[]
+FAILED tests/test_conversation_context.py::test_derived_reply_with_nontext_source_cannot_be_restored_even_outside_window
+3 failed, 30 deselected in 0.89s

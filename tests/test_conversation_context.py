@@ -167,3 +167,21 @@ def test_unverified_control_journal_cannot_restore_otherwise_valid_results(memor
     with current(memory) as options:
         memory._conn.execute('UPDATE memory_web_speaker_state SET cursor=cursor-1 WHERE id=1')
         assert read(memory,options).messages==()
+
+
+@pytest.mark.parametrize('bad_content',[b'broken-content',''])
+def test_malformed_old_content_outside_speaker_context_stops_older_pairs(memory,bad_content):
+    first=completed(memory)
+    remaining=[completed(memory,f'合法场景{i}。',f'合法回复{i}。') for i in range(3)]
+    memory._conn.execute('UPDATE memory_messages SET content=? WHERE id=?',(bad_content,first[0]));memory._conn.commit()
+    with current(memory) as options:
+        assert options['scope']=='current_user'
+        assert ids(read(memory,options))==tuple(value for pair in remaining for value in pair[:2])
+
+
+def test_derived_reply_with_nontext_source_cannot_be_restored_even_outside_window(memory):
+    first=completed(memory)
+    for i in range(3):completed(memory,f'中间场景{i}。',f'中间回复{i}。')
+    latest=completed(memory,'最新场景。','引用旧源的回复。',extra_sources=[first[0]])
+    memory._conn.execute('UPDATE memory_messages SET content=? WHERE id=?',(b'broken-source',first[0]));memory._conn.commit()
+    with current(memory) as options:assert read(memory,options,limit_messages=2).messages==()
