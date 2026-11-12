@@ -95,7 +95,7 @@ def prior_gate(path, expected, prior_sha256):
         raise ValueError('4B raw engineering evidence incomplete')
 
 
-def validate_trace(rows, calls):
+def validate_trace(rows, calls, *, require_request_identity=False):
     if len(calls) != len(rows): raise ValueError('Native trace count mismatch')
     for row, actual in zip(rows, calls):
         if (actual['id'] != row['provider_call_id'] or actual['messages'] != row['request']['messages']
@@ -103,6 +103,22 @@ def validate_trace(rows, calls):
                 or actual['analysis'] != ('response_format' in row['request'])
                 or actual['finish_reason'] != row['finish_reason'] or actual['outcome'] != 'completed'):
             raise ValueError('Native trace/request mismatch')
+        if require_request_identity:
+            response_format = row['request'].get('response_format')
+            schema = response_format.get('json_schema', {}).get('schema') if response_format else None
+            def canonical(value):
+                return sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
+                    separators=(',', ':')).encode()).hexdigest() if value is not None else None
+            required = {'request_body_sha256','response_format','response_format_sha256','response_schema_sha256','grammar_enabled'}
+            expected_wire = sha256(json.dumps(row['request'], ensure_ascii=False).encode()).hexdigest()
+            if (not required <= actual.keys() or row.get('request_sha256') != expected_wire
+                    or actual.get('request_body_sha256') != row.get('request_sha256')
+                    or 'request_body_sha256' not in actual or 'request_sha256' not in row
+                    or actual.get('response_format') != response_format
+                    or actual.get('response_format_sha256') != canonical(response_format)
+                    or actual.get('response_schema_sha256') != canonical(schema)
+                    or actual.get('grammar_enabled') is not ('response_format' in row['request'])):
+                raise ValueError('Native request/schema identity mismatch')
 
 
 def environment(python):
@@ -158,7 +174,7 @@ def run(args):
              '--model-key',args.model,'--metadata',str(ROOT/MODELS[args.model]),'--ready',str(ready),'--trace',str(trace),'--backend','cuda']
     report={'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'model_id':args.model,
             'scope':protocol['scope'],'freeze_sha256':args.expected_freeze_sha256,'frozen_inputs':frozen,
-            'provider_command':command,'requests':[],'completed':False,'failure':None,'engineering_passed':False,
+            'provider_command':command,'trace_identity_required':frozen.get('trace_identity_required',False),'requests':[],'completed':False,'failure':None,'engineering_passed':False,
             'semantic_approved':False,'cleanup_passed':False,'provider_pid':None,'provider_exit':None}
     def save():write(args.output/'probe.json',report)
     save();process=None;started=time.monotonic()
@@ -212,7 +228,7 @@ def run(args):
         report['seconds']=time.monotonic()-started;save()
     try:
         calls=[json.loads(line) for line in trace.read_text().splitlines()]
-        validate_trace(report['requests'], calls)
+        validate_trace(report['requests'], calls, require_request_identity=report['trace_identity_required'])
         report['native_trace_sha256'] = digest(trace)
         for row in report['requests']: row['native_trace_matched'] = True
     except BaseException as error:

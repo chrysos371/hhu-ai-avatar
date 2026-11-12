@@ -76,3 +76,44 @@ def test_matching_trace_data_is_accepted():
 def test_native_binding_rejects_relabelled_or_changed_trace(field):
     row,actual=trace_pair();actual[field]='changed'
     with pytest.raises(ValueError,match='trace/request mismatch'):validate_trace([row],[actual])
+
+
+def identity_pair():
+    row,actual=trace_pair()
+    row['request']['response_format']={'type':'json_schema','json_schema':{'schema':SCHEMA}}
+    row['request_sha256']=sha256(json.dumps(row['request'],ensure_ascii=False).encode()).hexdigest()
+    def canonical(value):return sha256(json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',', ':')).encode()).hexdigest()
+    actual.update(analysis=True,grammar_enabled=True,request_body_sha256=row['request_sha256'],
+                  response_format=row['request']['response_format'],response_format_sha256=canonical(row['request']['response_format']),
+                  response_schema_sha256=canonical(SCHEMA))
+    return row,actual
+
+
+def test_new_trace_identity_binds_wire_format_schema_and_grammar():
+    row,actual=identity_pair();validate_trace([row],[actual],require_request_identity=True)
+
+
+@pytest.mark.parametrize('field',['request_body_sha256','response_format','response_format_sha256','response_schema_sha256','grammar_enabled'])
+def test_new_trace_identity_rejects_wrong_or_missing_fields(field):
+    row,actual=identity_pair();actual[field]='changed'
+    with pytest.raises(ValueError,match='request/schema identity mismatch'):
+        validate_trace([row],[actual],require_request_identity=True)
+
+
+def test_historical_trace_requires_explicit_historical_mode():
+    row,actual=trace_pair();validate_trace([row],[actual])
+    with pytest.raises(ValueError,match='request/schema identity mismatch'):
+        validate_trace([row],[actual],require_request_identity=True)
+
+
+@pytest.mark.parametrize('field',['request_body_sha256','response_format','response_format_sha256','response_schema_sha256','grammar_enabled'])
+def test_new_trace_cannot_omit_identity_fields(field):
+    row,actual=identity_pair();actual.pop(field)
+    with pytest.raises(ValueError,match='request/schema identity mismatch'):
+        validate_trace([row],[actual],require_request_identity=True)
+
+
+def test_new_trace_recomputes_declared_wire_hash():
+    row,actual=identity_pair();row['request_sha256']=actual['request_body_sha256']='forged'
+    with pytest.raises(ValueError,match='request/schema identity mismatch'):
+        validate_trace([row],[actual],require_request_identity=True)
