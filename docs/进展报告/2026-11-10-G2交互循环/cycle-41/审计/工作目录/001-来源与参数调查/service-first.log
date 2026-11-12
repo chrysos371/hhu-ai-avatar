@@ -1,0 +1,89 @@
+........................................F........................F       [100%]
+=================================== FAILURES ===================================
+_________________ test_actual_client_ack_is_not_human_reading __________________
+
+lab = (<avatar.brain.memory.MemoryStore object at 0x7f5e3ff5cdc0>, <avatar.lab.trusted_local_read.LabReadSession object at 0x7f5e3ff5c970>)
+
+    def test_actual_client_ack_is_not_human_reading(lab):
+        memory, session = lab
+        now = time.time()
+>       memory._conn.execute('INSERT INTO memory_reminder_deliveries(reminder_id,queued_at,acknowledged_at) VALUES (?,?,?)', (1,now,now));memory._conn.commit()
+E       sqlite3.OperationalError: table memory_reminder_deliveries has no column named queued_at
+
+tests/test_trusted_local_read.py:122: OperationalError
+_ test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot[True] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-29/test_cross_connection_forget_a1')
+caller_snapshot = True
+
+    @pytest.mark.parametrize('caller_snapshot',[False,True])
+    def test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot(tmp_path, caller_snapshot):
+        path=tmp_path/'source.sqlite'
+        with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
+            calls=[0];armed=[False]
+            fact=writer.remember('本次隐私版本控制事实')
+            def checkpoint():
+                if armed[0]:
+                    calls[0]+=1
+                    if calls[0]==2:writer.forget(fact)
+            session=LabReadSession(memory,'c41-privacy',checkpoint=checkpoint)
+            seed(memory)
+            session.begin_turn('提醒编号1是什么状态？')
+            before=projection(memory)
+            if caller_snapshot:memory._conn.execute('BEGIN')
+            armed[0]=True
+            if caller_snapshot:
+>               result=session.execute('read_reminder_state',{'reminder_id':1})
+
+tests/test_trusted_local_read.py:268: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/lab/trusted_local_read.py:223: in execute
+    self.ensure_current()
+src/avatar/lab/trusted_local_read.py:176: in ensure_current
+    self._checkpoint()
+tests/test_trusted_local_read.py:260: in checkpoint
+    if calls[0]==2:writer.forget(fact)
+src/avatar/brain/memory.py:549: in forget
+    with self.transaction():
+/usr/lib/python3.10/contextlib.py:142: in __exit__
+    next(self.gen)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avatar.brain.memory.MemoryStore object at 0x7f5e3fdea7a0>
+
+    @contextmanager
+    def transaction(self):
+        """Acquire write intent before reads; nested batches retain savepoint rollback."""
+        owned = self._transaction_depth == 0 and not self._conn.in_transaction
+        if owned:
+            self._conn.execute('BEGIN IMMEDIATE')
+        context = None
+        seen_revision = getattr(self, '_seen_context_revision', None)
+        savepoint = f"memory_batch_{self._transaction_depth}"
+        try:
+            if seen_revision is not None:
+                self._refresh_context()
+                seen_revision = self._seen_context_revision
+            context = list(self._short_term)
+            self._conn.execute(f"SAVEPOINT {savepoint}")
+            self._transaction_depth += 1
+            try:
+                yield
+            except BaseException:
+                self._conn.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
+                self._short_term.clear()
+                self._short_term.extend(context)
+                self._seen_context_revision = seen_revision if seen_revision is not None else self.context_revision
+                raise
+            finally:
+                self._transaction_depth -= 1
+                self._conn.execute(f"RELEASE SAVEPOINT {savepoint}")
+            if owned:
+>               self._conn.commit()
+E               sqlite3.OperationalError: database is locked
+
+src/avatar/brain/memory.py:313: OperationalError
+=========================== short test summary info ============================
+FAILED tests/test_trusted_local_read.py::test_actual_client_ack_is_not_human_reading
+FAILED tests/test_trusted_local_read.py::test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot[True]
+2 failed, 64 passed in 6.05s
