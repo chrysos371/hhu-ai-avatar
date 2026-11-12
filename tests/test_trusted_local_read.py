@@ -299,3 +299,14 @@ def test_default_rollback_journal_blocks_writer_until_reader_releases(tmp_path):
         writer.forget(fact)
         assert writer.context_revision==revision+1
         with pytest.raises(Cancelled):session.publish(result)
+
+
+def test_lab_construction_cannot_commit_an_existing_caller_transaction(lab):
+    memory,_=lab
+    memory._conn.execute('BEGIN')
+    memory._conn.execute("INSERT INTO memory_messages(role,content,session_id,created_at) VALUES ('user','调用方尚未提交的内容','pending',0)")
+    with pytest.raises(Cancelled,match='startup'):
+        LabReadSession(memory,'must-not-commit')
+    assert memory._conn.in_transaction
+    memory._conn.rollback()
+    assert not memory._conn.execute("SELECT * FROM memory_messages WHERE session_id='pending'").fetchall()

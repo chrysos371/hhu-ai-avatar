@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_lab_construction_cannot_commit_an_existing_caller_transaction ______
+
+lab = (<avatar.brain.memory.MemoryStore object at 0x7fdd206850c0>, <avatar.lab.trusted_local_read.LabReadSession object at 0x7fdd20684b20>)
+
+    def test_lab_construction_cannot_commit_an_existing_caller_transaction(lab):
+        memory,_=lab
+        memory._conn.execute('BEGIN')
+        memory._conn.execute("INSERT INTO memory_messages(role,content,session_id,created_at) VALUES ('user','调用方尚未提交的内容','pending',0)")
+>       with pytest.raises(Cancelled,match='startup'):
+E       Failed: DID NOT RAISE Cancelled
+
+tests/test_trusted_local_read.py:308: Failed
+=========================== short test summary info ============================
+FAILED tests/test_trusted_local_read.py::test_lab_construction_cannot_commit_an_existing_caller_transaction
+1 failed, 67 deselected in 0.73s
