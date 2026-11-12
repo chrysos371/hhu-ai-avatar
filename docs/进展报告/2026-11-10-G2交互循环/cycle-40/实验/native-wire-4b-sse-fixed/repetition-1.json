@@ -1,0 +1,206 @@
+{
+  "repetition": 1,
+  "plain": {
+    "phase": "plain-control",
+    "repetition": 1,
+    "case": "plain",
+    "request_ordinal": 3,
+    "result": {
+      "role": "assistant",
+      "content": "兼容控制。"
+    },
+    "error": null,
+    "seconds": 0.07071918196743354
+  },
+  "cases": [
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "policy-exit",
+      "request_ordinal": 4,
+      "result": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_eval-4",
+            "function": {
+              "arguments": "{\"reminder_id\":12345}",
+              "name": "read_reminder_state"
+            },
+            "type": "function"
+          }
+        ]
+      },
+      "error": null,
+      "seconds": 0.37282629404217005,
+      "expected_tool": "read_reminder_delivery_policy",
+      "exact_expected_selection": false,
+      "followup": null
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "policy-web",
+      "request_ordinal": 5,
+      "result": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_eval-5",
+            "function": {
+              "arguments": "{}",
+              "name": "read_reminder_delivery_policy"
+            },
+            "type": "function"
+          }
+        ]
+      },
+      "error": null,
+      "seconds": 0.20046229497529566,
+      "expected_tool": "read_reminder_delivery_policy",
+      "exact_expected_selection": true,
+      "followup": {
+        "phase": "fixture-followup",
+        "repetition": 1,
+        "case": "policy-web",
+        "request_ordinal": 6,
+        "result": {
+          "content": "当网页不在线时，本机提醒无法通过短信送给你，因为需要运行服务器并且需要活跃的客户端轮询。",
+          "role": "assistant"
+        },
+        "error": null,
+        "seconds": 0.2604507840005681
+      }
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "state-1",
+      "request_ordinal": 7,
+      "result": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_eval-7",
+            "function": {
+              "arguments": "{\"reminder_id\":1}",
+              "name": "read_reminder_state"
+            },
+            "type": "function"
+          }
+        ]
+      },
+      "error": null,
+      "seconds": 0.2192040110239759,
+      "expected_tool": "read_reminder_state",
+      "exact_expected_selection": true,
+      "followup": {
+        "phase": "fixture-followup",
+        "repetition": 1,
+        "case": "state-1",
+        "request_ordinal": 8,
+        "result": {
+          "content": "编号1的提醒当前状态为已取消。",
+          "role": "assistant"
+        },
+        "error": null,
+        "seconds": 0.15968983701895922
+      }
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "missing-999",
+      "request_ordinal": 9,
+      "result": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_eval-9",
+            "function": {
+              "arguments": "{\"reminder_id\":999}",
+              "name": "read_reminder_state"
+            },
+            "type": "function"
+          }
+        ]
+      },
+      "error": null,
+      "seconds": 0.23905829404247925,
+      "expected_tool": "read_reminder_state",
+      "exact_expected_selection": true,
+      "followup": {
+        "phase": "fixture-followup",
+        "repetition": 1,
+        "case": "missing-999",
+        "request_ordinal": 10,
+        "result": {
+          "content": "提醒编号999不存在。",
+          "role": "assistant"
+        },
+        "error": null,
+        "seconds": 0.1438418420148082
+      }
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "quoted-draft",
+      "request_ordinal": 11,
+      "result": {
+        "content": "请查询编号1的提醒状态。",
+        "role": "assistant"
+      },
+      "error": null,
+      "seconds": 0.1428913630079478,
+      "expected_tool": null,
+      "exact_expected_selection": true,
+      "followup": null
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "negated-read",
+      "request_ordinal": 12,
+      "result": {
+        "content": "好的，我愿意听听你今天的心情。有什么想聊的吗？",
+        "role": "assistant"
+      },
+      "error": null,
+      "seconds": 0.17882541299331933,
+      "expected_tool": null,
+      "exact_expected_selection": true,
+      "followup": null
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "external-mail",
+      "request_ordinal": 13,
+      "result": {
+        "content": "我不能直接替你发送邮件。你可以使用你的邮箱客户端或学校提供的邮件系统来发送邮件。如果你需要帮助撰写邮件内容，我可以协助你。",
+        "role": "assistant"
+      },
+      "error": null,
+      "seconds": 0.2868152230512351,
+      "expected_tool": null,
+      "exact_expected_selection": true,
+      "followup": null
+    },
+    {
+      "phase": "selection",
+      "repetition": 1,
+      "case": "ordinary",
+      "request_ordinal": 14,
+      "result": {
+        "content": "你好！今天有什么想聊的吗？",
+        "role": "assistant"
+      },
+      "error": null,
+      "seconds": 0.138700864976272,
+      "expected_tool": null,
+      "exact_expected_selection": true,
+      "followup": null
+    }
+  ]
+}
