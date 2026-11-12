@@ -56,6 +56,14 @@ assert len(links) == 9 and all(row['valid'] for row in links)
 caches = read(WORK / '批次记录/14-legacy-python-caches.json')
 for row in caches['entries']:
     assert Path(row['source']).is_symlink() and Path(row['source']).resolve() == Path(row['destination'])
+ignored = subprocess.check_output(['git', 'ls-files', '--others', '--ignored', '--exclude-standard', '-z'], cwd=ROOT).decode().split('\0')
+ignored_links = []
+for name in filter(None, ignored):
+    path = ROOT / name
+    if name == '.env':
+        continue  # An explicit user credential/config file is not a runtime asset.
+    assert path.is_symlink() and path.resolve().is_relative_to(assets), name
+    ignored_links.append(name)
 old_cycles = []
 for path in sorted((ROOT / 'docs/进展报告/2026-11-10-G2交互循环').glob('cycle-*/审计/证据清单.json')):
     if int(path.parents[1].name.split('-')[1]) > 34:
@@ -94,7 +102,7 @@ assert models['verified'] and len(models['models']) == 3 and models['actual_mode
 for row in models['models']:
     assert Path(row['current_path']).stat().st_size == row['bytes']
 current_docs = [ROOT / name for name in ('README.md', 'AGENTS.md', 'docs/backend.md', 'docs/本机数据布局.md',
-    'docs/网页语音与最小形象.md', 'experiments/style/README.md')] + sorted(WORK.glob('*.md'))
+    'docs/网页语音与最小形象.md', 'experiments/style/README.md')] + sorted(WORK.rglob('*.md'))
 local_links = 0
 for path in current_docs:
     for link in re.findall(r'\]\(([^)]+)\)', path.read_text()):
@@ -109,6 +117,7 @@ assert authors and all(row == 'spinner-bot\tlangxibielangle@qq.com' for row in a
 report = {'verified': True, 'data_root': str(assets), 'code_repository': str(ROOT), 'relocated_entries': entries,
     'worktrees_clean_with_unchanged_heads': 7, 'checkout_compatibility_links': links,
     'legacy_python_cache_directories': caches['count'], 'old_cycles_byte_unchanged': old_cycles,
+    'ignored_checkout_assets_are_only_links': ignored_links,
     'regressions': regressions, 'native_file_contents_verified': 54,
     'model_hash_proofs_retained': models['models'], 'current_document_local_links_verified': local_links,
     'author_checked_commit_count': len(authors), 'gpu_inference_calls': 0, 'research_goal_remains_paused': True}
