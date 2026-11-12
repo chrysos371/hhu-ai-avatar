@@ -577,6 +577,11 @@ class Avatar:
         elif control is not None:
             self.analysis_mode = 'rules_speaker_control'
             self.emotion.update(user_text)
+        elif self.speaker_scope.scope == 'unverified':
+            # The response is a fixed confirmation boundary. No analysis output
+            # can be used here, so do not send this unknown-scope text to a model.
+            self.analysis_mode = 'rules_speaker_scope'
+            self.emotion.update(user_text)
         elif use_web:
             # Tool outputs never enter fact extraction; web turns only admit
             # explicit claims in the current user's original message.
