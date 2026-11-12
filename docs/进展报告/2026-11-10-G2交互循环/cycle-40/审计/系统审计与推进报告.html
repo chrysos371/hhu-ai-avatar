@@ -1,0 +1,80 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C40 原生工具接口验证与无源参数反例</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C40 原生工具接口验证与无源参数反例</h1><p class="meta">2026-11-13｜持续Goal active｜spinner-bot</p><p class="verdict">40真实native/40stop；完整组38请求一致；预期选择21/24未过门槛，默认不启用。2070/1、192、18/16通过，4限定关闭/1开放。</p>
+<section><h2>原生工具接口可用，尚未接入产品或真实业务</h2>
+<p>C39已交付明确编号/送达条件的真实只读命令；自由措辞仍需研究。调查确认默认WebAgent注册5读工具，只有list_reminders涉及本地提醒；生产普通respond会先认领到期事项，不能只加最终renderer就宣称纯读。当前native评估provider原先拒绝非空tools，并固定模板tools=None。</p>
+<p>本机4B GGUF metadata含tools/tool_call/tool_response模板，SHA57f1fd00...；仅metadata读取无张量推理。新增--enable-tools研究开关与单调用XML→OpenAI SDK适配，默认仍拒绝。只接受完整单调用、注册函数名与JSON object；截断、多调用、重复key、未知函数、混合前言拒绝。wire语法不验证业务参数来源/权限/语义，不执行工具。tools流式及response_format混用明确400；普通stream路径兼容。</p>
+<p>新完整诊断固定4B/温度0/seed42/8192上下文/256题组token上限/三重复，共38真实native＝2预热＋3普通兼容＋24选择＋9合成fixture followup，全部stop。native XML原稿/真实stop与SDK tool_calls/适配finish_reason分开，12条适配调用不是12次真实工具执行。仅按预登记正确选择才给合成fixture，0 Avatar回合、0真实业务读取或写入。</p>
+<p>首352冻结在2个真实预热后因异步hook采证缺口停止，0正式选择；退役后新354冻结完整38。累计40真实native、两次GPU加载均按当时40441MiB空闲/0%选择GPU4同UUID aa1364f0...，每次实际4096MiB、内核PID/argv/maps/GPU及退出0/分配消失核验。54安装库与每次8映射冻结库/12实际项目模块一致；40提示词独立native Jinja无模型重渲染通过。总采证时间含加载/哈希/复核，不当纯推理速度。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>分母</th><th>实际数量</th><th>范围</th></tr></thead><tbody>
+<tr><td>首冻结真实调用</td><td>2预热/0正式选择</td><td>stop；流HTTP collector缺口留存，已退役</td></tr>
+<tr><td>新完整真实调用</td><td>38＝2＋3＋24＋9</td><td>全部stop；38请求SHA/SDK/raw trace一致</td></tr>
+<tr><td>预期选择/合成往返</td><td>21/24；9次fixture followup</td><td>非真实状态读取；三重复同文，不是独立人评</td></tr>
+<tr><td>受控脚本</td><td>8 completion＋额外1 SSE流</td><td>真实HTTP/SDK/Jinja、脚本模型/资源，不混native</td></tr>
+<tr><td>当前默认浏览器维护记录</td><td>5应用结果</td><td>2query＋1现实源控制＋2隐私准备；非全suite总调用</td></tr>
+</tbody></table></div>
+<p><a href="../../../../../evals/interaction/cycle-40/native-tool-wire-protocol.json">预登记协议</a></p>
+<p><a href="../../../../../evals/interaction/cycle-40/model-registry.json">固定模型注册</a></p>
+<p><a href="工作目录/001-工具调用调查/embedded-chat-template.jinja">实际嵌入模板</a></p>
+<p><a href="../实验/native-wire-4b/evaluation.json">首真实失败</a></p>
+<p><a href="../实验/native-wire-4b-sse-fixed/evaluation.json">新完整实际结果</a></p>
+<p><a href="../实验/native-wire-4b-sse-fixed/provider-kernel-proof.json">实际GPU/内核/库</a></p>
+</section>
+<section><h2>接口通过不等于有源参数：凭空编号阻止推广</h2>
+<p>原材料“如果我把这个程序关掉，到时间你还一定能提醒我吗？”三重复均选read_reminder_state(reminder_id=12345)，本应选read_reminder_delivery_policy({})。本轮只有一条当前用户提问，没有编号或其它用户源作为依据；JSON类型正确、工具名在册也不能给参数提供事实来源。</p>
+<p>每重复其余7项符合预登记工具/无工具预期，总21/24，独立从函数名/实际参数重算为7/7/7；同文输出及函数三重复完全相同，不能当三个独立概率样本或一般能力分数。错误调用未给fixture，所以总9而非上限12 followup；实际38而非上限41 native，未筛掉首错误或补跑凑通过。</p>
+<p>正确合成结果后的回答包含“编号1已取消”“编号999不存在”及网页离线不能短信送达，这只是在合成fixture已明确给定这些字段的前提下生成；不代表真实SQLite存在/不存在已被查询，也不把tool-role资料当可靠系统指令。研究sampler只给正确选择回fixture的机制是预登记实验控制，不能包装成已实现产品执行器的源授权屏障。</p>
+<p>整体预期门槛失败，保护未执行，默认Avatar/WebAgent不启用新工具。C40-005与C38本地域/动作路由问题同类，是新的具体反例而非又发现一个全局根因；一般外发P1和自由措辞保证继续开放。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>固定材料</th><th>预期工具</th><th>真实首重复</th><th>重复结论</th></tr></thead><tbody>
+<tr><td>policy-exit</td><td>read_reminder_delivery_policy</td><td>read_reminder_state({&quot;reminder_id&quot;:12345})</td><td>三重复均错误；未给fixture</td></tr>
+<tr><td>policy-web</td><td>read_reminder_delivery_policy</td><td>read_reminder_delivery_policy({})</td><td>三重复均符合</td></tr>
+<tr><td>state-1</td><td>read_reminder_state</td><td>read_reminder_state({&quot;reminder_id&quot;:1})</td><td>三重复均符合</td></tr>
+<tr><td>missing-999</td><td>read_reminder_state</td><td>read_reminder_state({&quot;reminder_id&quot;:999})</td><td>三重复均符合</td></tr>
+<tr><td>quoted-draft</td><td>无工具</td><td>无工具</td><td>三重复均符合</td></tr>
+<tr><td>negated-read</td><td>无工具</td><td>无工具</td><td>三重复均符合</td></tr>
+<tr><td>external-mail</td><td>无工具</td><td>无工具</td><td>三重复均符合</td></tr>
+<tr><td>ordinary</td><td>无工具</td><td>无工具</td><td>三重复均符合</td></tr>
+</tbody></table></div>
+<p><a href="../实验/native-wire-4b-sse-fixed/repetition-1.json">重复1原结果</a></p>
+<p><a href="../实验/native-wire-4b-sse-fixed/repetition-2.json">重复2原结果</a></p>
+<p><a href="../实验/native-wire-4b-sse-fixed/repetition-3.json">重复3原结果</a></p>
+<p><a href="../实验/native-wire-4b-sse-fixed/provider-trace.jsonl">原native输出与适配</a></p>
+<p><a href="问题单/C40-005-服务退出问题被路由成凭空编号查询.md">单项005开放问题</a></p>
+</section>
+<section><h2>工程修正、失败保留与当前系统回归</h2>
+<p>新增53纯wire/SDK content控制，与旧provider相关共93 passed。当前完整Python2070 passed/1 skipped（131.27秒）、前端192、type/lint/build及默认Chromium18 passed/16 optional skipped通过；440输入核Git与前后稳定，浏览器9实际模块/C36隐私与C39查询两协议/5bundle一致，未改生产前端。浏览器维护5结果另计于native实验的0 Avatar回合。</p>
+<p>准备路径错误与native环境缺OpenAI分别在模型启动前失败；正确分离core SDK控制器/native Jinja子进程后，实际HTTP暴露assistant工具回合content被SDK省略而模板断连接。修复只把合法工具历史的缺失/null content转为空串，原wire不改；普通缺文本或模板异常400并记无推理request_rejected，混合/length原稿500并留raw。新tag6脚本completion（default1/opt5）加首阶段2共8；额外1脚本SSE独立正控。</p>
+<p>原生首阶段另发现产品stream_chat创建独立AsyncOpenAI而绕过研究sync hook；不更改产品异步流，研究预热使用同一个已观测sync SDK发SSE，新38请求完整一致后限定关闭。首40实际调用资料/两冻结与退役均保留；一次临时生成退役文档的Python引号错误使f5b239a5标题早于实际退役，91535bc6在任何源修改前补齐，进展明确披露，不改写历史。</p>
+<p>38旧seal（C3–C39共37周期6443项＋迁移88＝6531项）全部字节不变，9数据入口仍集中/data/Users/zrh/data/hhu-ai-avatar。4限定工程问题关闭、005语义项开放；受控/原生/默认回归/真人与物理设备严格分账。独立复核程序不等于独立人评，未批准整体代际跃迁。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>单项</th><th>现状</th><th>结论与范围</th></tr></thead><tbody>
+<tr><td>C40-001/P3</td><td>元数据调查误用模型根路径</td><td>限定关闭；28 metadata/模板读取通过，0推理</td></tr>
+<tr><td>C40-002/P2</td><td>SDK省略工具content使模板中断</td><td>限定关闭；53新控制、实际HTTP往返/拒绝记录通过</td></tr>
+<tr><td>C40-003/P3</td><td>研究控制器误用native SDK依赖</td><td>限定关闭；core/native分工、两子进程清理通过</td></tr>
+<tr><td>C40-004/P3</td><td>异步流预热绕过同步hook</td><td>限定关闭；首2 native留存，新38请求核平</td></tr>
+<tr><td>C40-005/P2</td><td>服务退出错路由成凭空编号</td><td>开放；三重复均12345，保护未执行/默认不启用</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/004-当前软件与浏览器/wire-python-final-binding.json">完整Python绑定</a></p>
+<p><a href="工作目录/004-当前软件与浏览器/wire-browser-final-binding.json">完整浏览器绑定</a></p>
+<p><a href="工作目录/002-受控HTTP交接/content-fixed/opt-in/evaluation.json">受控HTTP新tag</a></p>
+<p><a href="工作目录/003-原生工具wire/sse-controlled.json">独立SSE正控</a></p>
+<p><a href="问题单/C40-001-元数据调查脚本误用模型根路径.md">001问题</a></p>
+<p><a href="问题单/C40-002-SDK工具回合缺失content导致模板中断.md">002问题</a></p>
+<p><a href="问题单/C40-003-研究控制器误用native环境SDK依赖.md">003问题</a></p>
+<p><a href="问题单/C40-004-预热异步流绕过同步请求采集器.md">004问题</a></p>
+<p><a href="收尾核验/system-evidence.json">系统证据</a></p>
+<p><a href="verify_system.py">复核程序</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+</section>
+<section><h2>下一循环：先约束源参数，再研究有界修复</h2>
+<p>C40提供真实原生工具接口能力与一个可复现错域/凭空参数反例。下一轮优先研究独立的源参数门槛：实际当前用户原文、未引用编号、类型/范围、session/revision/独立真人权限，不能把助手旧自称或模型arguments作为事实源。把无源编号明确拒绝后，再预登记真实工具错误反馈与有限修复/不确定答复对照，保留首错误，不自动按提醒关键词强行回送达政策。</p>
+<p>自然本地读必须在原自动认领之前分支或在完全隔离读取流程中做；最终renderer本身不能撤销已发生claim。只读业务与聊天写源分开，服务认领/客户端ACK/真人已读与服务退出送达各有不同证据要求。C39显式路径保持可用，不为了研究伪造其严格源原文。</p>
+<p>先CPU/真实源/取消/副作用及反注入负控，再固定真实模型开发对照；开发反例重用要明确，保护独立未跑。旧候选继续隔离。跨OS PAD、自由对话/物理麦克风ASR、中文口型/ü/声调、多日运行仍需实际独立数据；不把浏览器合成音频回归当新真人验收。Goal active，小步提交、串行推送，封存后进入新目录；GPU按实际余量/UUID、同组最多4张，当前单卡、不动他人进程、无整轮墙钟截止。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>优先级</th><th>后续工作</th><th>验收门槛</th></tr></thead><tbody>
+<tr><td>P1</td><td>可信参数来源/只读执行授权</td><td>当前真实user与权限、未引用ID、类型/范围、读快照；禁止凭空编号</td></tr>
+<tr><td>P1</td><td>错误反馈与有限修复/不确定交付</td><td>先登记对照，保留首错；不能把语法或阻断当正确语义</td></tr>
+<tr><td>P2</td><td>真实状态域接入与交互整合</td><td>在自动认领前控制，真实SQL/取消/隐私/工具结果注入复测；默认推广另审</td></tr>
+<tr><td>持续</td><td>语音/情绪/呈现/记忆长链与设备</td><td>独立人声/物理设备/多日实际数据；不以本轮wire替代</td></tr>
+</tbody></table></div>
+<p><a href="../../远期目标与验收路线.md">远期路线</a></p>
+<p><a href="../../cycle-39/审计/系统审计与推进报告.md">C39真实状态交付</a></p>
+<p><a href="../计划.md">本轮计划</a></p>
+</section>
+</main></body></html>
