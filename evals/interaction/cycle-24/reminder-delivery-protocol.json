@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "date": "2026-11-12",
+  "baseline": "02b4d5e",
+  "scope": "Reminder actual HTTP/SQLite/browser/OS delivery boundary; no model semantic, physical notification or human perception approval.",
+  "source_sha256": {
+    "src/avatar/brain/reminders.py": "ff77b293db43ba49216793b7d40cfb45b6c0f2ce0e077f1b47b678d01512d291",
+    "src/avatar/web_api.py": "5c39e93989c39decfd17c916ba71408407bbd5a05bf69bd9c2b167783445401a",
+    "src/avatar/web_ui.py": "842305d03c1b64a1f80b26a4f2d6052307598468964ff09050962e83b8284e1f",
+    "frontend/src/features/reminders/RemindersPage.tsx": "2133be11559c2e0c2da6d52c9f7d8f3df1a24d97527792606ef4372e91b34788",
+    "docs/本地动作回执.md": "736e61d2369bcee4764930bc1b3a224c4eb5eac314b3696b9c59c6b2870d770e",
+    "docs/记忆工作台与提醒.md": "45711d3122a46193f4bce1546258163e62c0399ea2bd617438ccb688c95950d6"
+  },
+  "fixture": {
+    "owned_disposable_db_per_case": true,
+    "title": "到期投递实验提醒",
+    "controlled_sql_time": true,
+    "natural_waiting_latency_claim": false,
+    "llm_enabled": false,
+    "gpu_required": false
+  },
+  "http_cases": [
+    {
+      "id": "normal_claim",
+      "status": "active",
+      "due_offset_seconds": -60,
+      "observation": "First claim returns1, second0; record not proof of display."
+    },
+    {
+      "id": "response_drop_after_commit",
+      "status": "active",
+      "due_offset_seconds": -60,
+      "observation": "Observe client result/SQL after committed upstream response is discarded."
+    },
+    {
+      "id": "navigation_before_response",
+      "status": "active",
+      "due_offset_seconds": -60,
+      "observation": "Observe component unmount before claimed response delivery and subsequent reload."
+    },
+    {
+      "id": "restart_after_claim",
+      "status": "active",
+      "due_offset_seconds": -60,
+      "observation": "Independent OS producer/consumer, same owned DB; distinguish persisted claim from render."
+    },
+    {
+      "id": "second_client_claimed",
+      "status": "active",
+      "due_offset_seconds": -60,
+      "observation": "Other authenticated client claims before browser page; no browser display assumed."
+    },
+    {
+      "id": "future_not_due",
+      "status": "active",
+      "due_offset_seconds": 3600,
+      "observation": "Negative control remains unclaimed."
+    },
+    {
+      "id": "cancelled_due",
+      "status": "cancelled",
+      "due_offset_seconds": -60,
+      "observation": "Cancelled negative control remains unclaimed."
+    },
+    {
+      "id": "expired_older24h",
+      "status": "active",
+      "due_offset_seconds": -86401,
+      "observation": "Old active reminder remains visible but not newly interrupting."
+    }
+  ],
+  "browser_cases": [
+    "normal_claim",
+    "response_drop_after_commit",
+    "navigation_before_response"
+  ],
+  "os_restart_protocols": [
+    "normal_consumption_control",
+    "claim_without_render_restart"
+  ],
+  "evidence": [
+    "Actual responses/errors and persistent notified_at separate from rendered notice/list labels.",
+    "Actual runtime module/bundle source binding and browser errors/screenshots.",
+    "Owned process PID/start/exit and SQLite integrity after independent restart."
+  ],
+  "next_feature_gates": [
+    "Truthful label distinguishes claim from browser acknowledgement; do not infer user perception.",
+    "Stable pending event survives response loss/navigation/restart until explicit acknowledgement; idempotent confirmation and documented duplicate semantics.",
+    "Cancelled/deleted/stale-revision content not resurrected or acknowledged from stale view.",
+    "Metadata minimization, no duplicate titles/contact bodies, no invented historical acknowledgements."
+  ],
+  "wallClockExperimentDeadline": null,
+  "case_count_fixed": 8,
+  "browser_case_count_fixed": 3,
+  "os_protocol_count_fixed": 2,
+  "semantic_approved": false,
+  "physical_notification_delivery_approved": false,
+  "human_perception_approved": false
+}
