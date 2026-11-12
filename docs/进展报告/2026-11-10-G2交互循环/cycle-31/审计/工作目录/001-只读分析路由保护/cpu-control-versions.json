@@ -1,0 +1,36 @@
+{
+  "controls": [
+    {
+      "evidence": "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/工作目录/001-只读分析路由保护/shadow-v1.json",
+      "evidence_sha256": "056e59f29030a277d5ac11bbfcb11e46534c8efe9789011ea3c4611e06e25490",
+      "helper": "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/probe_readonly_cpu.py",
+      "helper_sha256": "3a0c5ee5fff15dad6ee9a933cba6e2e27fccafabfb693e8b63005668165abf35",
+      "helper_git_ref": "be22e5a41c9f49798a974e3ba7dd6ad239f64fae",
+      "actual_llm_or_gpu": false,
+      "executed_protocol": "evals/interaction/cycle-31/readonly-analysis-cpu-controls.json",
+      "executed_protocol_sha256": "7c482545e972cf86b890d271165420948fcc06accdd2c6b87f806f2f78096c92",
+      "executed_protocol_git_ref": "34fe55372f95f84e9713c5dc3f39891210fdcc7f"
+    },
+    {
+      "evidence": "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/工作目录/001-只读分析路由保护/cpu-web-controls-v1.json",
+      "evidence_sha256": "2dfc74f52913ebebd2a5a8027c755356c36ed4217bca4ac28e6f66ee4faf97a4",
+      "helper": "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/probe_readonly_web_cpu.py",
+      "helper_sha256": "f8e178db5ad5af652bd12888a6ab329c60d93228f4f03a1e60f09e507afee43c",
+      "helper_git_ref": "1a489cb2de23792aa9501c880a5ae675d2fd5282",
+      "actual_llm_or_gpu": false,
+      "executed_protocol": "evals/interaction/cycle-31/readonly-analysis-cost-protocol.json",
+      "executed_protocol_sha256": "93edb5a0eab9be3cafa0ac27d96a3f9de8a44c387427d24681b99d2f06f43075",
+      "executed_protocol_git_ref": "187b3f223bc84914f5f923b512127f339e2cdb9b"
+    },
+    {
+      "evidence": "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/工作目录/001-只读分析路由保护/timing-scope-control.json",
+      "evidence_sha256": "15bacb38d59fe73964e63d573489925f4456b13e867377702299a5b7ab6e29f3",
+      "helper": "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/probe_timing_scope.py",
+      "helper_sha256": "ff46da788bb141741724bf479e545eef5addada74250690825f3ccd440440633",
+      "helper_git_ref": "9d6b0828a755caf1726d73b526976c96e5d28069",
+      "actual_llm_or_gpu": false
+    }
+  ],
+  "candidate_sha256": "b55d132a6f249b5fe91a17b09ff20d21c43e3655126d5ba18fa17b2aa980c816",
+  "note": "CPU outputs retain executed protocol SHA. Later pre-native accounting/timing fields do not relabel the executed protocol; exact older Git refs preserved."
+}

@@ -21,8 +21,8 @@ def digest(path):return sha256(Path(path).read_bytes()).hexdigest()
 
 def source_paths():
     result=old_source_paths()|{PROTOCOL,CPU}
-    result.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('readonly_analysis_candidate.py','probe_readonly_cpu.py','probe_readonly_web_cpu.py','analysis_cost_common.py','analysis_cost_worker.py','run_readonly_analysis_cost.py'))
-    result.update(str((BASE/'审计/工作目录/001-只读分析路由保护'/n).relative_to(ROOT)) for n in ('shadow-v1.json','shadow-v1.log','cpu-web-controls-v1.json','cpu-web-controls-v1.log','cpu-control-versions.json'))
+    result.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('readonly_analysis_candidate.py','probe_readonly_cpu.py','probe_readonly_web_cpu.py','probe_timing_scope.py','analysis_cost_common.py','analysis_cost_worker.py','run_readonly_analysis_cost.py'))
+    result.update(str((BASE/'审计/工作目录/001-只读分析路由保护'/n).relative_to(ROOT)) for n in ('shadow-v1.json','shadow-v1.log','cpu-web-controls-v1.json','cpu-web-controls-v1.log','timing-scope-control.json','timing-scope-control.log','cpu-control-versions.json'))
     return result
 
 

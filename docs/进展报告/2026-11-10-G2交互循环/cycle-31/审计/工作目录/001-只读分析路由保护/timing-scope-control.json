@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "actual_llm_or_gpu": false,
+  "actual_loopback_http_fixture": true,
+  "application_os_restart_claim": false,
+  "helper_sha256": "ff46da788bb141741724bf479e545eef5addada74250690825f3ccd440440633",
+  "events": [
+    {
+      "event": "source_verify_started",
+      "ns": 411017460749244
+    },
+    {
+      "event": "source_verify_finished",
+      "ns": 411017500815524
+    },
+    {
+      "event": "post_received",
+      "ns": 411017502754750
+    },
+    {
+      "event": "fixture_sse_send",
+      "ns": 411017504331136
+    },
+    {
+      "event": "post_terminal_conversation_started",
+      "ns": 411017505807996
+    },
+    {
+      "event": "post_terminal_conversation_finished",
+      "ns": 411017565884694
+    },
+    {
+      "event": "persistence_started",
+      "ns": 411017566370388
+    },
+    {
+      "event": "persistence_finished",
+      "ns": 411017646472481
+    }
+  ],
+  "turn": {
+    "input": "受控计时请求。",
+    "accepted": {
+      "status": 202,
+      "body": {
+        "data": {
+          "job_id": "c31_fixture_timing_job_0001"
+        }
+      }
+    },
+    "job_id": "c31_fixture_timing_job_0001",
+    "app_pid": 3400285,
+    "client_submit_started_ns": 411017500823224,
+    "terminal": "result",
+    "result": {
+      "reply": "明确的计时HTTP夹具。"
+    },
+    "events": [
+      {
+        "event": "text",
+        "id": null,
+        "seconds": 0.0001372210099361837,
+        "data": {
+          "text": "明确的计时HTTP夹具。"
+        }
+      },
+      {
+        "event": "result",
+        "id": null,
+        "seconds": 0.0001603150158189237,
+        "data": {
+          "reply": "明确的计时HTTP夹具。"
+        }
+      }
+    ],
+    "raw_sse": "event: text\ndata: {\"text\": \"\\u660e\\u786e\\u7684\\u8ba1\\u65f6HTTP\\u5939\\u5177\\u3002\"}\n\nevent: result\ndata: {\"reply\": \"\\u660e\\u786e\\u7684\\u8ba1\\u65f6HTTP\\u5939\\u5177\\u3002\"}\n\n",
+    "client_terminal_ns": 411017504940781,
+    "submit_to_terminal_seconds": 0.004117557,
+    "conversation": {
+      "status": 200,
+      "body": {
+        "data": {
+          "items": []
+        }
+      }
+    }
+  },
+  "full_control_call_seconds": 0.185735401,
+  "measured_submit_to_terminal_seconds": 0.004117557,
+  "injected_costs_seconds": {
+    "source_verification": 0.04,
+    "after_terminal_conversation": 0.06,
+    "persistence": 0.08
+  },
+  "source_verify_and_after_terminal_costs_excluded": true,
+  "speedup_claim": false,
+  "thread_closed": true
+}
