@@ -30,6 +30,7 @@ from avatar.config import config
 from avatar.brain.memory import MemoryStore
 from avatar.brain.reminders import ReminderStore
 from avatar.web import create_server
+from avatar.paths import temporary_dir
 from avatar.lab.transport_fixture import controlled_provider
 
 modules = (avatar.main, avatar.web, avatar.web_api, avatar.web_state,
@@ -52,8 +53,8 @@ if '--check-project-runtime' in sys.argv:
     raise SystemExit(0)
 print('Browser fixture runtime: '+json.dumps(runtime_binding, ensure_ascii=False), flush=True)
 
-root = Path(__file__).resolve().parents[3]
-folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=root / "runtime/tmp")
+temporary_dir().mkdir(parents=True, exist_ok=True)
+folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=temporary_dir())
 provider_context = ExitStack()
 reminder_delivery_case = os.getenv('AVATAR_E2E_REMINDER_DELIVERY_CASE')
 if reminder_delivery_case:

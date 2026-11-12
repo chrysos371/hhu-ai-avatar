@@ -1,8 +1,11 @@
 import { defineConfig } from "@playwright/test";
 import { existsSync } from "node:fs";
-const python = existsSync("../../envs/hhu-ai-avatar/bin/python")
-  ? "../../envs/hhu-ai-avatar/bin/python"
-  : "python";
+import { execFileSync } from "node:child_process";
+import { resolve } from "node:path";
+const assets = process.env.HHU_AVATAR_DATA_ROOT
+  ?? execFileSync("python3", [resolve(__dirname, "../scripts/project_paths.py")], { encoding: "utf8" }).trim();
+const managedPython = resolve(assets, "envs/hhu-ai-avatar/bin/python");
+const python = existsSync(managedPython) ? JSON.stringify(managedPython) : "python3";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
