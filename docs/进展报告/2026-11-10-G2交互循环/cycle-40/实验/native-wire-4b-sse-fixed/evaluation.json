@@ -1,0 +1,887 @@
+{
+  "scope": "standalone_native_tool_wire_diagnostic_not_Avatar_or_business_execution",
+  "head": "b9a3ccf6b2fe896d5218ffd18c81dfee9a8bfe52",
+  "freeze_sha256": "1c7181a512d1591e1917d7d7c47e5b76f8bae74e3af91b4e4a945bfaee2fb02e",
+  "frozen_source_ref": "5586dde3e360238df9b2ce9ef61e2d8acc5ea07f",
+  "model_id": "qwen3-4b-q4_k_m",
+  "provider_command": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/bin/python",
+    "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+    "--enable-tools",
+    "--model",
+    "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf",
+    "--model-key",
+    "qwen3-4b-q4_k_m",
+    "--metadata",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-metadata-4b.json",
+    "--ready",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/实验/native-wire-4b-sse-fixed/provider-ready.json",
+    "--trace",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/实验/native-wire-4b-sse-fixed/provider-trace.jsonl",
+    "--backend",
+    "cuda",
+    "--registry",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-40/model-registry.json",
+    "--expected-registry-sha256",
+    "b834d3be073957be725fcedb49dd2fdc0837df8d06c610042585d7410152ac7d"
+  ],
+  "completed": true,
+  "failure": null,
+  "native_calls": 38,
+  "Avatar_application_turns": 0,
+  "business_reads_or_writes": 0,
+  "synthetic_tool_result_fixtures_only": true,
+  "groups": [
+    {
+      "repetition": 1,
+      "plain": {
+        "phase": "plain-control",
+        "repetition": 1,
+        "case": "plain",
+        "request_ordinal": 3,
+        "result": {
+          "role": "assistant",
+          "content": "兼容控制。"
+        },
+        "error": null,
+        "seconds": 0.07071918196743354
+      },
+      "cases": [
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "policy-exit",
+          "request_ordinal": 4,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-4",
+                "function": {
+                  "arguments": "{\"reminder_id\":12345}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.37282629404217005,
+          "expected_tool": "read_reminder_delivery_policy",
+          "exact_expected_selection": false,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "policy-web",
+          "request_ordinal": 5,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-5",
+                "function": {
+                  "arguments": "{}",
+                  "name": "read_reminder_delivery_policy"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.20046229497529566,
+          "expected_tool": "read_reminder_delivery_policy",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 1,
+            "case": "policy-web",
+            "request_ordinal": 6,
+            "result": {
+              "content": "当网页不在线时，本机提醒无法通过短信送给你，因为需要运行服务器并且需要活跃的客户端轮询。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.2604507840005681
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "state-1",
+          "request_ordinal": 7,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-7",
+                "function": {
+                  "arguments": "{\"reminder_id\":1}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.2192040110239759,
+          "expected_tool": "read_reminder_state",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 1,
+            "case": "state-1",
+            "request_ordinal": 8,
+            "result": {
+              "content": "编号1的提醒当前状态为已取消。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.15968983701895922
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "missing-999",
+          "request_ordinal": 9,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-9",
+                "function": {
+                  "arguments": "{\"reminder_id\":999}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.23905829404247925,
+          "expected_tool": "read_reminder_state",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 1,
+            "case": "missing-999",
+            "request_ordinal": 10,
+            "result": {
+              "content": "提醒编号999不存在。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.1438418420148082
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "quoted-draft",
+          "request_ordinal": 11,
+          "result": {
+            "content": "请查询编号1的提醒状态。",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.1428913630079478,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "negated-read",
+          "request_ordinal": 12,
+          "result": {
+            "content": "好的，我愿意听听你今天的心情。有什么想聊的吗？",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.17882541299331933,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "external-mail",
+          "request_ordinal": 13,
+          "result": {
+            "content": "我不能直接替你发送邮件。你可以使用你的邮箱客户端或学校提供的邮件系统来发送邮件。如果你需要帮助撰写邮件内容，我可以协助你。",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.2868152230512351,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 1,
+          "case": "ordinary",
+          "request_ordinal": 14,
+          "result": {
+            "content": "你好！今天有什么想聊的吗？",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.138700864976272,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        }
+      ]
+    },
+    {
+      "repetition": 2,
+      "plain": {
+        "phase": "plain-control",
+        "repetition": 2,
+        "case": "plain",
+        "request_ordinal": 15,
+        "result": {
+          "role": "assistant",
+          "content": "兼容控制。"
+        },
+        "error": null,
+        "seconds": 0.07586180500220507
+      },
+      "cases": [
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "policy-exit",
+          "request_ordinal": 16,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-16",
+                "function": {
+                  "arguments": "{\"reminder_id\":12345}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.4135862779803574,
+          "expected_tool": "read_reminder_delivery_policy",
+          "exact_expected_selection": false,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "policy-web",
+          "request_ordinal": 17,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-17",
+                "function": {
+                  "arguments": "{}",
+                  "name": "read_reminder_delivery_policy"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.19118809996871278,
+          "expected_tool": "read_reminder_delivery_policy",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 2,
+            "case": "policy-web",
+            "request_ordinal": 18,
+            "result": {
+              "content": "当网页不在线时，本机提醒无法通过短信送给你，因为需要运行服务器并且需要活跃的客户端轮询。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.2598643850069493
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "state-1",
+          "request_ordinal": 19,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-19",
+                "function": {
+                  "arguments": "{\"reminder_id\":1}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.21924831997603178,
+          "expected_tool": "read_reminder_state",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 2,
+            "case": "state-1",
+            "request_ordinal": 20,
+            "result": {
+              "content": "编号1的提醒当前状态为已取消。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.1598097259993665
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "missing-999",
+          "request_ordinal": 21,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-21",
+                "function": {
+                  "arguments": "{\"reminder_id\":999}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.22708592197159305,
+          "expected_tool": "read_reminder_state",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 2,
+            "case": "missing-999",
+            "request_ordinal": 22,
+            "result": {
+              "content": "提醒编号999不存在。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.13586316298460588
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "quoted-draft",
+          "request_ordinal": 23,
+          "result": {
+            "content": "请查询编号1的提醒状态。",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.13495356496423483,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "negated-read",
+          "request_ordinal": 24,
+          "result": {
+            "content": "好的，我愿意听听你今天的心情。有什么想聊的吗？",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.17889001296134666,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "external-mail",
+          "request_ordinal": 25,
+          "result": {
+            "content": "我不能直接替你发送邮件。你可以使用你的邮箱客户端或学校提供的邮件系统来发送邮件。如果你需要帮助撰写邮件内容，我可以协助你。",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.28675563004799187,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 2,
+          "case": "ordinary",
+          "request_ordinal": 26,
+          "result": {
+            "content": "你好！今天有什么想聊的吗？",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.1427466279710643,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        }
+      ]
+    },
+    {
+      "repetition": 3,
+      "plain": {
+        "phase": "plain-control",
+        "repetition": 3,
+        "case": "plain",
+        "request_ordinal": 27,
+        "result": {
+          "role": "assistant",
+          "content": "兼容控制。"
+        },
+        "error": null,
+        "seconds": 0.07337100600125268
+      },
+      "cases": [
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "policy-exit",
+          "request_ordinal": 28,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-28",
+                "function": {
+                  "arguments": "{\"reminder_id\":12345}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.4153757870080881,
+          "expected_tool": "read_reminder_delivery_policy",
+          "exact_expected_selection": false,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "policy-web",
+          "request_ordinal": 29,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-29",
+                "function": {
+                  "arguments": "{}",
+                  "name": "read_reminder_delivery_policy"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.19132656697183847,
+          "expected_tool": "read_reminder_delivery_policy",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 3,
+            "case": "policy-web",
+            "request_ordinal": 30,
+            "result": {
+              "content": "当网页不在线时，本机提醒无法通过短信送给你，因为需要运行服务器并且需要活跃的客户端轮询。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.25182829797267914
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "state-1",
+          "request_ordinal": 31,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-31",
+                "function": {
+                  "arguments": "{\"reminder_id\":1}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.21918300102697685,
+          "expected_tool": "read_reminder_state",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 3,
+            "case": "state-1",
+            "request_ordinal": 32,
+            "result": {
+              "content": "编号1的提醒当前状态为已取消。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.16384117200504988
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "missing-999",
+          "request_ordinal": 33,
+          "result": {
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "id": "call_eval-33",
+                "function": {
+                  "arguments": "{\"reminder_id\":999}",
+                  "name": "read_reminder_state"
+                },
+                "type": "function"
+              }
+            ]
+          },
+          "error": null,
+          "seconds": 0.2270187350222841,
+          "expected_tool": "read_reminder_state",
+          "exact_expected_selection": true,
+          "followup": {
+            "phase": "fixture-followup",
+            "repetition": 3,
+            "case": "missing-999",
+            "request_ordinal": 34,
+            "result": {
+              "content": "提醒编号999不存在。",
+              "role": "assistant"
+            },
+            "error": null,
+            "seconds": 0.1358690630295314
+          }
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "quoted-draft",
+          "request_ordinal": 35,
+          "result": {
+            "content": "请查询编号1的提醒状态。",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.13497921300586313,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "negated-read",
+          "request_ordinal": 36,
+          "result": {
+            "content": "好的，我愿意听听你今天的心情。有什么想聊的吗？",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.18331492599099874,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "external-mail",
+          "request_ordinal": 37,
+          "result": {
+            "content": "我不能直接替你发送邮件。你可以使用你的邮箱客户端或学校提供的邮件系统来发送邮件。如果你需要帮助撰写邮件内容，我可以协助你。",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.2830174810369499,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        },
+        {
+          "phase": "selection",
+          "repetition": 3,
+          "case": "ordinary",
+          "request_ordinal": 38,
+          "result": {
+            "content": "你好！今天有什么想聊的吗？",
+            "role": "assistant"
+          },
+          "error": null,
+          "seconds": 0.15020338603062555,
+          "expected_tool": null,
+          "exact_expected_selection": true,
+          "followup": null
+        }
+      ]
+    }
+  ],
+  "warmups": [
+    {
+      "phase": "warmup",
+      "repetition": 0,
+      "case": "1",
+      "request_ordinal": 1,
+      "result": {
+        "role": "assistant",
+        "content": "预热完成。"
+      },
+      "error": null,
+      "seconds": 0.17717836803058162
+    },
+    {
+      "phase": "warmup",
+      "repetition": 0,
+      "case": "2",
+      "request_ordinal": 2,
+      "result": {
+        "role": "assistant",
+        "content": "预热完成。"
+      },
+      "error": null,
+      "sdk_stream_events": [
+        {
+          "id": "eval-2",
+          "choices": [
+            {
+              "delta": {
+                "audio": null,
+                "content": "预",
+                "function_call": null,
+                "refusal": null,
+                "role": null,
+                "tool_calls": null
+              },
+              "index": 0,
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ],
+          "created": null,
+          "model": "qwen3-4b-q4_k_m",
+          "object": "chat.completion.chunk",
+          "moderation": null,
+          "obfuscation": null,
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": null
+        },
+        {
+          "id": "eval-2",
+          "choices": [
+            {
+              "delta": {
+                "audio": null,
+                "content": "热",
+                "function_call": null,
+                "refusal": null,
+                "role": null,
+                "tool_calls": null
+              },
+              "index": 0,
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ],
+          "created": null,
+          "model": "qwen3-4b-q4_k_m",
+          "object": "chat.completion.chunk",
+          "moderation": null,
+          "obfuscation": null,
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": null
+        },
+        {
+          "id": "eval-2",
+          "choices": [
+            {
+              "delta": {
+                "audio": null,
+                "content": "完成",
+                "function_call": null,
+                "refusal": null,
+                "role": null,
+                "tool_calls": null
+              },
+              "index": 0,
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ],
+          "created": null,
+          "model": "qwen3-4b-q4_k_m",
+          "object": "chat.completion.chunk",
+          "moderation": null,
+          "obfuscation": null,
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": null
+        },
+        {
+          "id": "eval-2",
+          "choices": [
+            {
+              "delta": {
+                "audio": null,
+                "content": "。",
+                "function_call": null,
+                "refusal": null,
+                "role": null,
+                "tool_calls": null
+              },
+              "index": 0,
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ],
+          "created": null,
+          "model": "qwen3-4b-q4_k_m",
+          "object": "chat.completion.chunk",
+          "moderation": null,
+          "obfuscation": null,
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": null
+        },
+        {
+          "id": "eval-2",
+          "choices": [
+            {
+              "delta": {
+                "audio": null,
+                "content": "",
+                "function_call": null,
+                "refusal": null,
+                "role": null,
+                "tool_calls": null
+              },
+              "index": 0,
+              "finish_reason": "stop",
+              "logprobs": null
+            }
+          ],
+          "created": null,
+          "model": "qwen3-4b-q4_k_m",
+          "object": "chat.completion.chunk",
+          "moderation": null,
+          "obfuscation": null,
+          "service_tier": null,
+          "system_fingerprint": null,
+          "usage": null
+        }
+      ],
+      "seconds": 0.06098737695720047
+    }
+  ],
+  "cleanup_passed": true,
+  "provider_pid": 3881350,
+  "provider_exit_code": 0,
+  "gpu_processes_after_cleanup": "3819354, GPU-81550800-367d-1855-0f35-c61c274edfdf, 976\n3819365, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 994\n3819375, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 988\n3819386, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 994\n",
+  "provider_proc_present_after_cleanup": false,
+  "native_raw_stop_count": 38,
+  "wire_selection_exact_count": 21,
+  "wire_selection_total": 24,
+  "synthetic_fixture_followups": 9,
+  "request_trace_identity_matched": true,
+  "engineering_passed": true,
+  "wire_expected_gate_passed": false,
+  "overall_seconds_including_load_and_proof": 64.82139439199818,
+  "source_current_after_execution": true,
+  "actual_project_modules": {
+    "avatar": {
+      "file": "src/avatar/__init__.py",
+      "sha256": "7d335c23c07f1fa8c74a6f285088b3b72cd2ef7ee9edf27d38d75e63a76bbcbf"
+    },
+    "avatar.paths": {
+      "file": "src/avatar/paths.py",
+      "sha256": "8da6ef193a36b10097b34fbf807cf16cf573826647161508a1c9e4dbb3570276"
+    },
+    "avatar.config": {
+      "file": "src/avatar/config.py",
+      "sha256": "f9d70d57f5c278262cb653b81de06557d66744f0b93c9873f51882044ff19c2a"
+    },
+    "avatar.brain.analysis_protocol": {
+      "file": "src/avatar/brain/analysis_protocol.py",
+      "sha256": "9759cda7c1d4623937cdd4a32e1f1d50482be6298f72f0b35ab3ad59dd81bd50"
+    },
+    "avatar.cancellation": {
+      "file": "src/avatar/cancellation.py",
+      "sha256": "5cd827f61d4abd84cdf69608fec050b6fad3328f5ac3d916ea28874f82a2e5aa"
+    },
+    "avatar.brain.response_review": {
+      "file": "src/avatar/brain/response_review.py",
+      "sha256": "27d78eb0d80626f16fc274c92d8c648728a0d9ea8f3f24b0b305a3e8a3a80256"
+    },
+    "avatar.brain.llm": {
+      "file": "src/avatar/brain/llm.py",
+      "sha256": "0f4edce4f10451aef22fc9922792da99406685351f580e67002c8c54d74cca08"
+    },
+    "avatar.brain.embeddings": {
+      "file": "src/avatar/brain/embeddings.py",
+      "sha256": "cdd8f2c1e4fe3f6430d3d6b0c7b188920087a0cb1aa6649ed1f077afb971812b"
+    },
+    "avatar.brain.preferences": {
+      "file": "src/avatar/brain/preferences.py",
+      "sha256": "efbe6c72e8bfacf1e6739f04bca9a2d8f5ab1f06d9d987c0a8d45166fe590fdb"
+    },
+    "avatar.brain.memory": {
+      "file": "src/avatar/brain/memory.py",
+      "sha256": "fa3f0d735a0288a682faecdfa27e1c682dc4d85f21ce8a8371f66824170dec14"
+    },
+    "avatar.brain.emotion": {
+      "file": "src/avatar/brain/emotion.py",
+      "sha256": "64669a099e511857a2f0da5a12ccf62a1a2a33d938de40405362a603a7b9f000"
+    },
+    "avatar.brain": {
+      "file": "src/avatar/brain/__init__.py",
+      "sha256": "e8dc8adf83884467906008638449ae8d2f6d67ff85fc287b6afe53a5666f041b"
+    }
+  },
+  "artifacts_sha256": {
+    "provider.log": "0d1f6185092ac59a6e87e08320451880b2b72565c5ae7bb9ec35ed70603f0e3b",
+    "provider-ready.json": "4651561217cba3f745ee3a2e0e527b961552f5848c121e760df08ae49fcb2364",
+    "repetition-3.json": "920b721a9bbac7e5da245cbb016ce36ca7a5d507338fef8943d9681e60b27dd5",
+    "repetition-1.json": "64b3ead521e92561aba61c8042883cfdb778c48fc38898ed0b061db3811460e9",
+    "provider-kernel-proof.json": "49223e8dfdcae1a18929f4c1f527a723c078ab6c636453bfd71782720d747683",
+    "repetition-2.json": "2846caea3b8a180ea64cd452c50cb3da966e69bf49970d6310bf27aa3c60bf50",
+    "request-wire.jsonl": "49bcbebbfe4c85521d909d0fc77e751994208855926aea9e6c089a28e687b889",
+    "response-wire.jsonl": "994ce73a4592013bb8e7612272e14b04d9d0b0652d850f2e0c0233b447ca65da",
+    "provider-trace.jsonl": "d9cf88ede80015dd3b20842bf263e98044b6a19bfc5324fd36388275735bc296"
+  }
+}
