@@ -149,7 +149,7 @@ export function RemindersPage() {
                               ? "已完成"
                               : "已取消"}
                         </span>
-                        {r.notified_at && <small> · 本机已提示</small>}
+                        {r.notified_at && <small> · 已标记到期，显示未确认</small>}
                       </td>
                       <td>
                         <div className="actions">
