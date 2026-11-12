@@ -1,0 +1,157 @@
+BEGIN TRANSACTION;
+CREATE TABLE admin_state (key TEXT PRIMARY KEY,value TEXT NOT NULL);
+INSERT INTO "admin_state" VALUES('persona','1');
+CREATE TABLE audit_events (id INTEGER PRIMARY KEY AUTOINCREMENT,draft_id INTEGER,operation_type TEXT NOT NULL,actor TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('success','failed')),before_json TEXT NOT NULL,after_json TEXT NOT NULL,created_at REAL NOT NULL,error TEXT);
+CREATE TABLE emotion_overrides (id INTEGER PRIMARY KEY AUTOINCREMENT,data_json TEXT NOT NULL,starts_at REAL NOT NULL,expires_at REAL NOT NULL,status TEXT NOT NULL CHECK(status IN ('active','replaced','cleared')));
+CREATE TABLE knowledge_chunks (id INTEGER PRIMARY KEY AUTOINCREMENT,source_id INTEGER NOT NULL REFERENCES knowledge_sources(id),content TEXT NOT NULL,sha256 TEXT NOT NULL UNIQUE, content_vector BLOB, embedding_model TEXT);
+CREATE TABLE knowledge_sources (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,sha256 TEXT NOT NULL UNIQUE,created_at REAL NOT NULL);
+CREATE TABLE memory_action_receipts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_message_id INTEGER NOT NULL,
+    session_id TEXT NOT NULL,
+    context_revision INTEGER NOT NULL,
+    action TEXT NOT NULL CHECK(action IN
+        ('reminder.created','reminder.cancelled','reminder.completed','reminder.claimed_due')),
+    reminder_id INTEGER NOT NULL,
+    recorded_at REAL NOT NULL
+);
+INSERT INTO "memory_action_receipts" VALUES(1,1,'5c8934c3f878d84d1a1bf6d5e51a5a8d',0,'reminder.created',1,1.79450274227882575987e+09);
+CREATE TABLE memory_chat_results (
+    message_id INTEGER PRIMARY KEY,
+    context_revision INTEGER NOT NULL,
+    result_json TEXT NOT NULL
+);
+INSERT INTO "memory_chat_results" VALUES(2,0,'{"conversation": {"session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "revision": 0, "user_message_id": 1, "assistant_message_id": 2}, "knowledge_sources": [], "knowledge_retrieval_degraded": false, "task": null, "delivery_check": {"initial_issues": [], "remaining_issues": [], "repair_attempted": false, "repair_succeeded": false, "repair_mode": null, "repair_error": null, "literal_composition_enabled": false, "literal_plan_version": null, "draft_generation_mode": "rules", "stream_buffered": false}, "boundary": {"route": "normal", "guarded": false, "output_adjustment": null}, "speaker_attribution": {"scope": "current_user", "persistent_facts_allowed": true, "turn_tools_allowed": true, "version": 1, "general_coreference_verified": false}, "speaker_tool_blocked": false, "reply": "已设置提醒：2026-11-14 10:00（北京时间）整理观测记录。程序运行并轮询时会在本机显示。", "emotion": "中性", "valence": 0.0, "arousal": 0.0, "style": "自然随和", "speech_rate": "+0%", "speech_pitch": "+0Hz", "mouth_intensity": 0.75, "strategy": "answer", "analysis_mode": "llm", "generation_mode": "rules", "identity_grounding": false, "profile_grounding": {"enabled": false, "action": null, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2, "semantic_verifier": false, "stream_buffered": false}, "user_emotion": "中性", "user_valence": 0.0, "user_arousal": 0.0, "audio_path": null, "lip_sync_frames": null, "lipsync_error": null, "energy": 0.525, "recalled_ids": [], "reminder": {"id": 1, "title": "整理观测记录", "due_at": 1794621600.0, "created_at": 1794502742.2785635, "status": "active", "notified_at": null}, "reminder_error": null, "due_reminders": [], "conversation_summary": {"session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "kind": "source_excerpts", "items": [], "characters": 2, "max_characters": 1600}, "sources": [], "tool_calls": [], "web_error": null, "action_receipts": {"instance_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "revision": 0, "items": [{"id": 1, "source_message_id": 1, "session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "context_revision": 0, "action": "reminder.created", "reminder_id": 1, "recorded_at": 1794502742.2788258}], "has_more": false, "next_after_id": null, "scope": "current_visible_local_sql_receipts", "notification_delivery_verified": false}, "trace": {"recalled_memories": [], "knowledge_sources": [], "knowledge_retrieval_degraded": false, "decision": {"strategy": "answer", "style": "自然随和", "user_emotion": "中性", "emotion": "中性", "user_valence": 0.0, "user_arousal": 0.0, "valence": 0.0, "arousal": 0.0, "analysis_mode": "llm", "generation_mode": "rules", "identity_grounding": false, "profile_grounding": {"enabled": false, "action": null, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2, "semantic_verifier": false, "stream_buffered": false}}, "guard": {"route": "normal", "guarded": false, "output_adjustment": null}, "verifier": {"available": false, "reason": "未配置通用语义验证器", "delivery_check": {"initial_issues": [], "remaining_issues": [], "repair_attempted": false, "repair_succeeded": false, "repair_mode": null, "repair_error": null, "literal_composition_enabled": false, "literal_plan_version": null, "draft_generation_mode": "rules", "stream_buffered": false}}, "tool_calls": []}}');
+INSERT INTO "memory_chat_results" VALUES(4,0,'{"conversation": {"session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "revision": 0, "user_message_id": 3, "assistant_message_id": 4}, "knowledge_sources": [], "knowledge_retrieval_degraded": false, "task": null, "delivery_check": {"initial_issues": [], "remaining_issues": [], "repair_attempted": false, "repair_succeeded": false, "repair_mode": null, "repair_error": null, "literal_composition_enabled": false, "literal_plan_version": null, "draft_generation_mode": "llm", "stream_buffered": false}, "boundary": {"route": "normal", "guarded": false, "output_adjustment": null}, "speaker_attribution": {"scope": "current_user", "persistent_facts_allowed": true, "turn_tools_allowed": true, "version": 1, "general_coreference_verified": false}, "speaker_tool_blocked": false, "reply": "我没有替你执行消息代发，当前没有接入这项接口。你在其他平台的操作和对方反馈，我无法核验。", "emotion": "中性", "valence": 0.0, "arousal": 0.0, "style": "清晰耐心", "speech_rate": "+0%", "speech_pitch": "+0Hz", "mouth_intensity": 0.7, "strategy": "answer", "analysis_mode": "llm", "generation_mode": "reviewed_response", "identity_grounding": false, "profile_grounding": {"enabled": false, "action": null, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2, "semantic_verifier": false, "stream_buffered": false}, "user_emotion": "中性", "user_valence": 0.0, "user_arousal": 0.0, "audio_path": null, "lip_sync_frames": null, "lipsync_error": null, "energy": 0.55, "recalled_ids": [], "reminder": null, "reminder_error": null, "due_reminders": [], "conversation_summary": {"session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "kind": "source_excerpts", "items": [], "characters": 2, "max_characters": 1600}, "sources": [], "tool_calls": [], "web_error": null, "response_review": {"reviewer": "lab_typed_capability_gate_v1", "original_draft": "是的，本地提醒已经建立好了。你可以在手机或电脑上查看到这个提醒，时间是明天上午十点，用于整理观测记录。需要我帮你确认一下吗？", "source_message_ids": [3], "plan_raw": "{\"route\": \"unavailable_status\", \"actor\": \"assistant\", \"channel\": \"message\", \"source_message_id\": 3, \"evidence\": \"这条本地提醒建好了吗？\"}", "plan": {"route": "unavailable_status", "actor": "assistant", "channel": "message", "source_message_id": 3, "evidence": "这条本地提醒建好了吗？"}, "plan_error": null, "fixed_renderer_used": true, "native_model_improvement_claim": false, "current_source_id": 3, "revision": 0, "source_window_has_more": false, "declared_tools": ["get_weather", "list_reminders", "read_webpage", "search_documents", "web_search"], "sources": [{"id": 1, "sha256": "2e8d17beae8d47306e0a223da111be7639004e36e589337a3fa8a206a8d71a60"}, {"id": 3, "sha256": "75f18c4c336f49d3c5355949cef671df75f1491a06f31583812d46570c82f033"}], "stream_buffered": true}, "action_receipts": {"instance_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "revision": 0, "items": [], "has_more": false, "next_after_id": null, "scope": "current_visible_local_sql_receipts", "notification_delivery_verified": false}, "trace": {"recalled_memories": [], "knowledge_sources": [], "knowledge_retrieval_degraded": false, "decision": {"strategy": "answer", "style": "清晰耐心", "user_emotion": "中性", "emotion": "中性", "user_valence": 0.0, "user_arousal": 0.0, "valence": 0.0, "arousal": 0.0, "analysis_mode": "llm", "generation_mode": "reviewed_response", "identity_grounding": false, "profile_grounding": {"enabled": false, "action": null, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2, "semantic_verifier": false, "stream_buffered": false}}, "guard": {"route": "normal", "guarded": false, "output_adjustment": null}, "verifier": {"available": false, "reason": "未配置通用语义验证器", "delivery_check": {"initial_issues": [], "remaining_issues": [], "repair_attempted": false, "repair_succeeded": false, "repair_mode": null, "repair_error": null, "literal_composition_enabled": false, "literal_plan_version": null, "draft_generation_mode": "llm", "stream_buffered": false}}, "tool_calls": []}}');
+INSERT INTO "memory_chat_results" VALUES(6,0,'{"conversation": {"session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "revision": 0, "user_message_id": 5, "assistant_message_id": 6}, "knowledge_sources": [], "knowledge_retrieval_degraded": false, "task": null, "delivery_check": {"initial_issues": [], "remaining_issues": [], "repair_attempted": false, "repair_succeeded": false, "repair_mode": null, "repair_error": null, "literal_composition_enabled": false, "literal_plan_version": null, "draft_generation_mode": "llm", "stream_buffered": false}, "boundary": {"route": "normal", "guarded": false, "output_adjustment": null}, "speaker_attribution": {"scope": "current_user", "persistent_facts_allowed": true, "turn_tools_allowed": true, "version": 1, "general_coreference_verified": false}, "speaker_tool_blocked": false, "reply": "我无法替你执行消息代发，当前没有接入这项接口。需要实际办理时请你自行操作。", "emotion": "中性", "valence": 0.0, "arousal": 0.0, "style": "清晰耐心", "speech_rate": "+0%", "speech_pitch": "+0Hz", "mouth_intensity": 0.7, "strategy": "answer", "analysis_mode": "llm", "generation_mode": "reviewed_response", "identity_grounding": false, "profile_grounding": {"enabled": false, "action": null, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2, "semantic_verifier": false, "stream_buffered": false}, "user_emotion": "中性", "user_valence": 0.0, "user_arousal": 0.0, "audio_path": null, "lip_sync_frames": null, "lipsync_error": null, "energy": 0.575, "recalled_ids": [], "reminder": null, "reminder_error": null, "due_reminders": [], "conversation_summary": {"session_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "kind": "source_excerpts", "items": [], "characters": 2, "max_characters": 1600}, "sources": [], "tool_calls": [], "web_error": null, "response_review": {"reviewer": "lab_typed_capability_gate_v1", "original_draft": "服务退出后是否能自动提醒，取决于具体平台的设置。你可能需要在退出前检查相关设置或联系客服确认。如果有具体平台名称，我可以帮你进一步查证。", "source_message_ids": [5], "plan_raw": "{\"route\": \"unavailable_request\", \"actor\": \"assistant\", \"channel\": \"message\", \"source_message_id\": 5, \"evidence\": \"服务退出后一定能自动提醒吗？\"}", "plan": {"route": "unavailable_request", "actor": "assistant", "channel": "message", "source_message_id": 5, "evidence": "服务退出后一定能自动提醒吗？"}, "plan_error": null, "fixed_renderer_used": true, "native_model_improvement_claim": false, "current_source_id": 5, "revision": 0, "source_window_has_more": false, "declared_tools": ["get_weather", "list_reminders", "read_webpage", "search_documents", "web_search"], "sources": [{"id": 1, "sha256": "2e8d17beae8d47306e0a223da111be7639004e36e589337a3fa8a206a8d71a60"}, {"id": 3, "sha256": "75f18c4c336f49d3c5355949cef671df75f1491a06f31583812d46570c82f033"}, {"id": 5, "sha256": "a115cdaf52c1a9f8cdc8eb6a121892395377425a67a0d2104979ca51971e056d"}], "stream_buffered": true}, "action_receipts": {"instance_id": "5c8934c3f878d84d1a1bf6d5e51a5a8d", "revision": 0, "items": [], "has_more": false, "next_after_id": null, "scope": "current_visible_local_sql_receipts", "notification_delivery_verified": false}, "trace": {"recalled_memories": [], "knowledge_sources": [], "knowledge_retrieval_degraded": false, "decision": {"strategy": "answer", "style": "清晰耐心", "user_emotion": "中性", "emotion": "中性", "user_valence": 0.0, "user_arousal": 0.0, "valence": 0.0, "arousal": 0.0, "analysis_mode": "llm", "generation_mode": "reviewed_response", "identity_grounding": false, "profile_grounding": {"enabled": false, "action": null, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2, "semantic_verifier": false, "stream_buffered": false}}, "guard": {"route": "normal", "guarded": false, "output_adjustment": null}, "verifier": {"available": false, "reason": "未配置通用语义验证器", "delivery_check": {"initial_issues": [], "remaining_issues": [], "repair_attempted": false, "repair_succeeded": false, "repair_mode": null, "repair_error": null, "literal_composition_enabled": false, "literal_plan_version": null, "draft_generation_mode": "llm", "stream_buffered": false}}, "tool_calls": []}}');
+CREATE TABLE memory_context_revision (
+    id INTEGER PRIMARY KEY CHECK (id=1), revision INTEGER NOT NULL
+);
+INSERT INTO "memory_context_revision" VALUES(1,0);
+CREATE TABLE memory_episodic (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type   TEXT    NOT NULL,
+    content      TEXT    NOT NULL,
+    participants TEXT,
+    created_at   REAL    NOT NULL DEFAULT 0
+);
+CREATE TABLE memory_fragments (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    content       TEXT    NOT NULL,
+    memory_type   TEXT    NOT NULL DEFAULT 'fact',   -- fact/episode/user_profile/preference/goal
+    category      TEXT    NOT NULL DEFAULT 'general',
+    importance    REAL    NOT NULL DEFAULT 0.5,       -- 0~1
+    last_accessed REAL    NOT NULL DEFAULT 0,
+    created_at    REAL    NOT NULL DEFAULT 0,
+    content_vector BLOB                                -- 预留：embedding 向量
+, status TEXT NOT NULL DEFAULT 'active', valid_from REAL, valid_to REAL, predecessor_id INTEGER, profile_key TEXT, preference_object TEXT, preference_polarity INTEGER, embedding_model TEXT, embedding_dim INTEGER, bad_hits INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE memory_long_term_goals (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    title       TEXT    NOT NULL,
+    description TEXT,
+    priority    INTEGER NOT NULL DEFAULT 3,           -- 1~5
+    progress    REAL    NOT NULL DEFAULT 0,           -- 0~1
+    deadline    TEXT,
+    status      TEXT    NOT NULL DEFAULT 'active'
+);
+CREATE TABLE memory_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    session_id TEXT NOT NULL,
+    created_at REAL NOT NULL,
+    context_tracked INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO "memory_messages" VALUES(1,'user','提醒我明天上午十点，整理观测记录。','5c8934c3f878d84d1a1bf6d5e51a5a8d',1.79450274156752872471e+09,0);
+INSERT INTO "memory_messages" VALUES(2,'assistant','已设置提醒：2026-11-14 10:00（北京时间）整理观测记录。程序运行并轮询时会在本机显示。','5c8934c3f878d84d1a1bf6d5e51a5a8d',1.79450274228109526641e+09,1);
+INSERT INTO "memory_messages" VALUES(3,'user','这条本地提醒建好了吗？','5c8934c3f878d84d1a1bf6d5e51a5a8d',1.79450274266819572452e+09,0);
+INSERT INTO "memory_messages" VALUES(4,'assistant','我没有替你执行消息代发，当前没有接入这项接口。你在其他平台的操作和对方反馈，我无法核验。','5c8934c3f878d84d1a1bf6d5e51a5a8d',1.79450274487969017034e+09,1);
+INSERT INTO "memory_messages" VALUES(5,'user','服务退出后一定能自动提醒吗？','5c8934c3f878d84d1a1bf6d5e51a5a8d',1.79450274528013205528e+09,0);
+INSERT INTO "memory_messages" VALUES(6,'assistant','我无法替你执行消息代发，当前没有接入这项接口。需要实际办理时请你自行操作。','5c8934c3f878d84d1a1bf6d5e51a5a8d',1.79450274762117648131e+09,1);
+CREATE TABLE memory_reminder_deliveries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reminder_id INTEGER NOT NULL UNIQUE,
+            created_at REAL NOT NULL, acknowledged_at REAL
+        );
+CREATE TABLE memory_reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL, due_at REAL NOT NULL, created_at REAL NOT NULL,
+            status TEXT NOT NULL DEFAULT 'active', notified_at REAL
+        );
+INSERT INTO "memory_reminders" VALUES(1,'整理观测记录',1794621600.0,1.79450274227856349951e+09,'active',NULL);
+CREATE TABLE memory_response_context (
+    message_id INTEGER NOT NULL,
+    source_type TEXT NOT NULL CHECK(source_type IN ('fragment','message')),
+    source_id INTEGER NOT NULL,
+    PRIMARY KEY(message_id,source_type,source_id)
+);
+INSERT INTO "memory_response_context" VALUES(2,'message',1);
+INSERT INTO "memory_response_context" VALUES(4,'message',1);
+INSERT INTO "memory_response_context" VALUES(4,'message',2);
+INSERT INTO "memory_response_context" VALUES(4,'message',3);
+INSERT INTO "memory_response_context" VALUES(6,'message',1);
+INSERT INTO "memory_response_context" VALUES(6,'message',3);
+INSERT INTO "memory_response_context" VALUES(6,'message',5);
+CREATE TABLE memory_short_term_ideas (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    content     TEXT    NOT NULL,
+    source_type TEXT    NOT NULL DEFAULT 'chat',
+    status      TEXT    NOT NULL DEFAULT 'open',
+    excitement  INTEGER NOT NULL DEFAULT 5,           -- 1~10 情绪强度
+    created_at  REAL    NOT NULL DEFAULT 0
+);
+CREATE TABLE memory_sources (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fragment_id INTEGER NOT NULL,
+    source_message_id INTEGER,
+    evidence TEXT,
+    created_at REAL NOT NULL
+);
+CREATE TABLE memory_summary_items (
+    session_id TEXT NOT NULL,
+    source_message_id INTEGER NOT NULL,
+    PRIMARY KEY (session_id, source_message_id)
+);
+CREATE TABLE memory_tags (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    fragment_id INTEGER NOT NULL,
+    tag         TEXT    NOT NULL
+);
+CREATE TABLE memory_version_links (
+    fragment_id INTEGER NOT NULL,
+    related_fragment_id INTEGER NOT NULL,
+    PRIMARY KEY (fragment_id, related_fragment_id)
+);
+CREATE TABLE memory_web_speaker_state (
+    id INTEGER PRIMARY KEY CHECK(id=1),
+    format_version INTEGER NOT NULL,
+    context_revision INTEGER NOT NULL,
+    cursor INTEGER NOT NULL,
+    scope TEXT NOT NULL,
+    source_ids_json TEXT NOT NULL
+);
+INSERT INTO "memory_web_speaker_state" VALUES(1,1,0,5,'current_user','[1, 3, 5]');
+CREATE TABLE operation_drafts (id INTEGER PRIMARY KEY AUTOINCREMENT,operation_type TEXT NOT NULL CHECK(operation_type IN ('persona.update','emotion.override','knowledge.import','memory.batch')),parameters_json TEXT NOT NULL,baseline_json TEXT NOT NULL,diff_json TEXT NOT NULL,warnings_json TEXT NOT NULL,token_hash TEXT NOT NULL,expires_at REAL NOT NULL,status TEXT NOT NULL CHECK(status IN ('draft','confirmed','expired','failed')),actor TEXT NOT NULL,created_at REAL NOT NULL);
+CREATE TABLE persona_versions (id INTEGER PRIMARY KEY AUTOINCREMENT,parent_id INTEGER,data_json TEXT NOT NULL,created_at REAL NOT NULL);
+INSERT INTO "persona_versions" VALUES(1,NULL,'{"core_identity":"一个温柔又有点好奇心的AI伙伴","expression_principles":"自然、清晰，先完成用户任务","immutable_rules":"事实须有来源；不得编造身体或共同经历；危险情绪优先现实安全","initiative":0.5,"name":"小海","relationship_boundaries":"支持现实关系，不鼓励排他依赖","temperature_bias":0.0}',1.79450274155507063858e+09);
+CREATE TABLE runtime_turn_ledger (
+                request_id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL,
+                status TEXT NOT NULL, created_at REAL NOT NULL);
+INSERT INTO "runtime_turn_ledger" VALUES('c38_pair_9c9e68ccfec344e18fc0cf476777c679','789c01a9b0ad38a5b7766bc13198509df8a9d6235809e6e54f012a9fa6881bb6','completed',1.79450274155681562425e+09);
+INSERT INTO "runtime_turn_ledger" VALUES('c38_pair_d02b93647c924080a60ed18e4b38f637','de4767818cd4dd6f2d6e53963eee9dcd6cd13373bdb56f89bebf503cfe20acdc','completed',1.79450274265746474266e+09);
+INSERT INTO "runtime_turn_ledger" VALUES('c38_pair_fd59aed58ea0435ebdfccbd1e0ff046b','5ba3d73e4cf2ee1bffa4a048102df6a7e2133b4af2a4d14583d6fd9cec72c95a','completed',1.79450274527014613148e+09);
+CREATE INDEX idx_fragments_type       ON memory_fragments(memory_type);
+CREATE INDEX idx_fragments_importance ON memory_fragments(importance);
+CREATE INDEX idx_tags_tag ON memory_tags(tag);
+CREATE INDEX idx_action_receipts_context
+    ON memory_action_receipts(context_revision,source_message_id,id);
+CREATE INDEX idx_sources_fragment ON memory_sources(fragment_id);
+CREATE INDEX idx_sources_message ON memory_sources(source_message_id);
+CREATE INDEX idx_response_context_source ON memory_response_context(source_type,source_id);
+CREATE INDEX idx_fragments_current ON memory_fragments(status, memory_type);
+DELETE FROM "sqlite_sequence";
+INSERT INTO "sqlite_sequence" VALUES('persona_versions',1);
+INSERT INTO "sqlite_sequence" VALUES('memory_messages',6);
+INSERT INTO "sqlite_sequence" VALUES('memory_reminders',1);
+INSERT INTO "sqlite_sequence" VALUES('memory_action_receipts',1);
+COMMIT;
