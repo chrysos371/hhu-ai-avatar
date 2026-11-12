@@ -1,0 +1,14 @@
+qwen3-4b-q4_k_m r1 ready GPU 0 pid 3810165
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/run_pairs.py", line 53, in main
+    sampler=[sys.executable,str(BASE/'审计/sample_pairs.py'),'--provider',str(relay_metadata),'--output',str(output/'sample'),
+NameError: name 'relay_metadata' is not defined
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/run_pairs.py", line 154, in <module>
+    main(p.parse_args())
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/run_pairs.py", line 147, in main
+    if not report['completed']:raise RuntimeError('C38 native pair incomplete; raw data retained: '+str(report['failure'])) from failure
+RuntimeError: C38 native pair incomplete; raw data retained: NameError("name 'relay_metadata' is not defined")
