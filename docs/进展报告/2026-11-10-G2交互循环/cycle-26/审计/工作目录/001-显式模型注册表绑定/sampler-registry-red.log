@@ -1,0 +1,281 @@
+FFFFFFFFFFFFFFFFFFFFF                                                    [100%]
+=================================== FAILURES ===================================
+______ test_new_registry_provider_contract_is_accepted_without_inference _______
+
+    def test_new_registry_provider_contract_is_accepted_without_inference():
+>       provider,protocol=ready();model,binding=audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:28: AttributeError
+_________ test_new_registry_rejects_runtime_mismatch[registry_sha256] __________
+
+field = 'registry_sha256'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+__________ test_new_registry_rejects_runtime_mismatch[registry_path] ___________
+
+field = 'registry_path'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+___________ test_new_registry_rejects_runtime_mismatch[model_sha256] ___________
+
+field = 'model_sha256'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+__________ test_new_registry_rejects_runtime_mismatch[model_revision] __________
+
+field = 'model_revision'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+_________ test_new_registry_rejects_runtime_mismatch[metadata_sha256] __________
+
+field = 'metadata_sha256'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+__________ test_new_registry_rejects_runtime_mismatch[metadata_path] ___________
+
+field = 'metadata_path'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+_____________ test_new_registry_rejects_runtime_mismatch[backend] ______________
+
+field = 'backend'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+____________ test_new_registry_rejects_runtime_mismatch[chosen_gpu] ____________
+
+field = 'chosen_gpu'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+____ test_new_registry_rejects_runtime_mismatch[process_gpu_mib_after_load] ____
+
+field = 'process_gpu_mib_after_load'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+____ test_new_registry_rejects_runtime_mismatch[effective_visible_devices] _____
+
+field = 'effective_visible_devices'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+_____________ test_new_registry_rejects_runtime_mismatch[model_id] _____________
+
+field = 'model_id'
+
+    @pytest.mark.parametrize('field',['registry_sha256','registry_path','model_sha256','model_revision',
+        'metadata_sha256','metadata_path','backend','chosen_gpu','process_gpu_mib_after_load','effective_visible_devices','model_id'])
+    def test_new_registry_rejects_runtime_mismatch(field):
+        provider,protocol=ready();provider[field]=None if field=='chosen_gpu' else ('changed' if field!='process_gpu_mib_after_load' else [])
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:38: AttributeError
+_ test_declared_contract_requires_pin_metadata_and_gpu_offload[missing_registry_pin] _
+
+change = 'missing_registry_pin'
+
+    @pytest.mark.parametrize('change',['missing_registry_pin','wrong_registry_pin','cpu_layers','missing_metadata_sha'])
+    def test_declared_contract_requires_pin_metadata_and_gpu_offload(change):
+        provider,protocol=ready()
+        if change=='missing_registry_pin':protocol.pop('models_registry_sha256')
+        elif change=='wrong_registry_pin':protocol['models_registry_sha256']='changed'
+        elif change=='cpu_layers':provider['configuration']['n_gpu_layers']=0
+        else:provider.pop('metadata_sha256')
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:48: AttributeError
+_ test_declared_contract_requires_pin_metadata_and_gpu_offload[wrong_registry_pin] _
+
+change = 'wrong_registry_pin'
+
+    @pytest.mark.parametrize('change',['missing_registry_pin','wrong_registry_pin','cpu_layers','missing_metadata_sha'])
+    def test_declared_contract_requires_pin_metadata_and_gpu_offload(change):
+        provider,protocol=ready()
+        if change=='missing_registry_pin':protocol.pop('models_registry_sha256')
+        elif change=='wrong_registry_pin':protocol['models_registry_sha256']='changed'
+        elif change=='cpu_layers':provider['configuration']['n_gpu_layers']=0
+        else:provider.pop('metadata_sha256')
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:48: AttributeError
+___ test_declared_contract_requires_pin_metadata_and_gpu_offload[cpu_layers] ___
+
+change = 'cpu_layers'
+
+    @pytest.mark.parametrize('change',['missing_registry_pin','wrong_registry_pin','cpu_layers','missing_metadata_sha'])
+    def test_declared_contract_requires_pin_metadata_and_gpu_offload(change):
+        provider,protocol=ready()
+        if change=='missing_registry_pin':protocol.pop('models_registry_sha256')
+        elif change=='wrong_registry_pin':protocol['models_registry_sha256']='changed'
+        elif change=='cpu_layers':provider['configuration']['n_gpu_layers']=0
+        else:provider.pop('metadata_sha256')
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:48: AttributeError
+_ test_declared_contract_requires_pin_metadata_and_gpu_offload[missing_metadata_sha] _
+
+change = 'missing_metadata_sha'
+
+    @pytest.mark.parametrize('change',['missing_registry_pin','wrong_registry_pin','cpu_layers','missing_metadata_sha'])
+    def test_declared_contract_requires_pin_metadata_and_gpu_offload(change):
+        provider,protocol=ready()
+        if change=='missing_registry_pin':protocol.pop('models_registry_sha256')
+        elif change=='wrong_registry_pin':protocol['models_registry_sha256']='changed'
+        elif change=='cpu_layers':provider['configuration']['n_gpu_layers']=0
+        else:provider.pop('metadata_sha256')
+>       with pytest.raises(ValueError):audit.validate_provider_identity(provider,protocol)
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:48: AttributeError
+_ test_legacy_default_registry_minimal_metadata_remains_explicitly_compatible __
+
+    def test_legacy_default_registry_minimal_metadata_remains_explicitly_compatible():
+        protocol=json.loads((ROOT/'evals/interaction/cycle-19/capability-output-protocol.json').read_text())
+        model=json.loads((ROOT/protocol['models_registry']).read_text())['models'][0]
+        provider={'url':'http://127.0.0.1:1/v1','model_id':model['model_id'],'model_sha256':model['sha256'],
+                  'model_revision':model['revision'],'configuration':protocol['inference']}
+>       selected,_=audit.validate_provider_identity(provider,protocol);assert selected['model_id']==model['model_id']
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'validate_provider_identity'
+
+tests/test_native_sampler_registry.py:56: AttributeError
+____ test_fingerprint_includes_selected_registry_and_all_declared_metadata _____
+
+    def test_fingerprint_includes_selected_registry_and_all_declared_metadata():
+>       fields=audit.fingerprint(PROTOCOL);assert str(REGISTRY.relative_to(ROOT)) in fields
+E       AssertionError: assert 'evals/interaction/cycle-26/model-scale-registry.json' in {'src/avatar/main.py': '647c424072dc67f65b7e7b04590fe31d2187f9924b7462374301576f50a58e29', 'src/avatar/web.py': 'ac2f7...916be10c418f65f92', 'src/avatar/brain/llm.py': '0f4edce4f10451aef22fc9922792da99406685351f580e67002c8c54d74cca08', ...}
+E        +  where 'evals/interaction/cycle-26/model-scale-registry.json' = str(PosixPath('evals/interaction/cycle-26/model-scale-registry.json'))
+E        +    where PosixPath('evals/interaction/cycle-26/model-scale-registry.json') = relative_to(PosixPath('/data/Users/zrh/repo/hhu-ai-avatar'))
+E        +      where relative_to = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json').relative_to
+
+tests/test_native_sampler_registry.py:60: AssertionError
+____________ test_runtime_source_identity_is_actual_project_modules ____________
+
+    def test_runtime_source_identity_is_actual_project_modules():
+>       identity=audit.runtime_source_identity()
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'runtime_source_identity'
+
+tests/test_native_sampler_registry.py:65: AttributeError
+_____________ test_wrong_provider_rejected_before_output_or_engine _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-295/test_wrong_provider_rejected_b0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fcfad79e950>
+
+    def test_wrong_provider_rejected_before_output_or_engine(tmp_path,monkeypatch):
+        provider,_=ready();provider['metadata_sha256']='changed';path=tmp_path/'provider.json';path.write_text(json.dumps(provider))
+        def forbidden(*args,**kwargs):raise AssertionError('Model boundary must not be reached')
+        monkeypatch.setattr(audit,'LLMEngine',forbidden);output=tmp_path/'must-not-exist'
+>       with pytest.raises(ValueError):audit.evaluate(path,output,PROTOCOL)
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_native_sampler_registry.py:75: Failed
+----------------------------- Captured stdout call -----------------------------
+{"execution_complete": false, "engineering_passed": false, "failure": "AssertionError('Model boundary must not be reached')"}
+___________ test_real_cli_prefers_own_source_over_foreign_pythonpath ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-295/test_real_cli_prefers_own_sour0')
+
+    def test_real_cli_prefers_own_source_over_foreign_pythonpath(tmp_path):
+        foreign=tmp_path/'foreign-src/avatar';foreign.mkdir(parents=True);(foreign/'__init__.py').write_text('raise RuntimeError("foreign avatar selected")\n')
+        env=dict(os.environ,PYTHONPATH=str(foreign.parent))
+        result=subprocess.run([sys.executable,str(ROOT/'scripts/evaluate_native_output_audit.py'),'--help'],
+                              cwd=ROOT,env=env,capture_output=True,text=True)
+>       assert result.returncode==0 and '--provider' in result.stdout and 'foreign avatar selected' not in result.stderr
+E       assert (1 == 0)
+E        +  where 1 = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip....py", line 1, in <module>\n    raise RuntimeError("foreign avatar selected")\nRuntimeError: foreign avatar selected\n').returncode
+
+tests/test_native_sampler_registry.py:84: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_native_sampler_registry.py::test_new_registry_provider_contract_is_accepted_without_inference
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[registry_sha256]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[registry_path]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[model_sha256]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[model_revision]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[metadata_sha256]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[metadata_path]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[backend]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[chosen_gpu]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[process_gpu_mib_after_load]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[effective_visible_devices]
+FAILED tests/test_native_sampler_registry.py::test_new_registry_rejects_runtime_mismatch[model_id]
+FAILED tests/test_native_sampler_registry.py::test_declared_contract_requires_pin_metadata_and_gpu_offload[missing_registry_pin]
+FAILED tests/test_native_sampler_registry.py::test_declared_contract_requires_pin_metadata_and_gpu_offload[wrong_registry_pin]
+FAILED tests/test_native_sampler_registry.py::test_declared_contract_requires_pin_metadata_and_gpu_offload[cpu_layers]
+FAILED tests/test_native_sampler_registry.py::test_declared_contract_requires_pin_metadata_and_gpu_offload[missing_metadata_sha]
+FAILED tests/test_native_sampler_registry.py::test_legacy_default_registry_minimal_metadata_remains_explicitly_compatible
+FAILED tests/test_native_sampler_registry.py::test_fingerprint_includes_selected_registry_and_all_declared_metadata
+FAILED tests/test_native_sampler_registry.py::test_runtime_source_identity_is_actual_project_modules
+FAILED tests/test_native_sampler_registry.py::test_wrong_provider_rejected_before_output_or_engine
+FAILED tests/test_native_sampler_registry.py::test_real_cli_prefers_own_source_over_foreign_pythonpath
+21 failed in 0.85s
