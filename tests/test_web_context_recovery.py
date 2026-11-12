@@ -132,3 +132,22 @@ def test_same_instance_fresh_window_is_restored_after_privacy_revision(web_conte
     run_chat(server,'继续新的场景。')
     assert {'role':'user','content':'这是新的场景C29FRESH。'} in calls[-1]
     assert {'role':'assistant','content':fresh['reply']} in calls[-1]
+
+
+def test_unverified_scope_skips_model_analysis_until_canonical_real_confirmation(web_context,monkeypatch):
+    from avatar.main import Avatar
+    path,make,calls=web_context
+    with closing(MemoryStore(path)) as writer:
+        writer.add_message('user','外部未核验内容C29UNKNOWN。','external-cli')
+    analyzed=[];original=Avatar._analyze
+    def track(self,text):
+        analyzed.append(text);return original(self,text)
+    monkeypatch.setattr(Avatar,'_analyze',track)
+    server=make();guard=run_chat(server,'我叫未知甲。')
+    assert guard['speaker_attribution']['scope']=='unverified'
+    assert guard['generation_mode']=='rules_speaker_scope'
+    assert analyzed==[] and calls==[]
+    with closing(MemoryStore(path)) as memory:assert memory.get_user_profile()=={}
+    run_chat(server,'回到现实。');run_chat(server,'我叫真实乙。')
+    assert analyzed==['我叫真实乙。'] and len(calls)==1
+    with closing(MemoryStore(path)) as memory:assert memory.get_user_profile()['名字']=='真实乙'

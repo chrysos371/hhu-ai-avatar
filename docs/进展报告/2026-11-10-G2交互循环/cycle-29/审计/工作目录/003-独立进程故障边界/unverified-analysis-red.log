@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_unverified_scope_skips_model_analysis_until_canonical_real_confirmation _
+
+web_context = ('/tmp/pytest-of-root/pytest-326/test_unverified_scope_skips_mo0/history.db', <function web_context.<locals>.make at 0x7f7bb8b1e8c0>, [])
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7bb8b05e70>
+
+    def test_unverified_scope_skips_model_analysis_until_canonical_real_confirmation(web_context,monkeypatch):
+        from avatar.main import Avatar
+        path,make,calls=web_context
+        with closing(MemoryStore(path)) as writer:
+            writer.add_message('user','外部未核验内容C29UNKNOWN。','external-cli')
+        analyzed=[];original=Avatar._analyze
+        def track(self,text):
+            analyzed.append(text);return original(self,text)
+        monkeypatch.setattr(Avatar,'_analyze',track)
+        server=make();guard=run_chat(server,'我叫未知甲。')
+        assert guard['speaker_attribution']['scope']=='unverified'
+        assert guard['generation_mode']=='rules_speaker_scope'
+>       assert analyzed==[] and calls==[]
+E       AssertionError: assert (['我叫未知甲。'] == []
+E         
+E         Left contains one more item: '我叫未知甲。'
+E         Use -v to get more diff)
+
+tests/test_web_context_recovery.py:149: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_web_context_recovery.py::test_unverified_scope_skips_model_analysis_until_canonical_real_confirmation
+1 failed, 13 deselected in 0.76s
