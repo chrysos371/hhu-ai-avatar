@@ -1,0 +1,72 @@
+FFFFFFF                                                                  [100%]
+=================================== FAILURES ===================================
+______ test_actual_wire_digest_and_canonical_schema_are_distinct_evidence ______
+
+    def test_actual_wire_digest_and_canonical_schema_are_distinct_evidence():
+        data={'messages':[{'role':'user','content':'审计'}],'response_format':formatted()}
+        raw=encode(data);pretty=json.dumps(data,ensure_ascii=False,indent=2).encode()
+>       a=provider.trace_request_metadata(data,raw,grammar_enabled=True)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:19: AttributeError
+_____________ test_schema_order_does_not_change_canonical_identity _____________
+
+    def test_schema_order_does_not_change_canonical_identity():
+        fmt=formatted();other=json.loads(json.dumps(fmt));schema=other['json_schema']['schema'];other['json_schema']['schema']=dict(reversed(list(schema.items())))
+>       a=provider.trace_request_metadata({'response_format':fmt},encode(fmt),grammar_enabled=True)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:29: AttributeError
+__________ test_format_name_is_recorded_without_guessing_request_role __________
+
+    def test_format_name_is_recorded_without_guessing_request_role():
+>       a=provider.trace_request_metadata({'response_format':formatted('analysis')},b'wire-a',grammar_enabled=True)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:36: AttributeError
+___________ test_absent_or_empty_format_does_not_infer_grammar[None] ___________
+
+fmt = None
+
+    @pytest.mark.parametrize('fmt',[None,{}])
+    def test_absent_or_empty_format_does_not_infer_grammar(fmt):
+        data={} if fmt is None else {'response_format':fmt}
+>       row=provider.trace_request_metadata(data,encode(data),grammar_enabled=False)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:47: AttributeError
+___________ test_absent_or_empty_format_does_not_infer_grammar[fmt1] ___________
+
+fmt = {}
+
+    @pytest.mark.parametrize('fmt',[None,{}])
+    def test_absent_or_empty_format_does_not_infer_grammar(fmt):
+        data={} if fmt is None else {'response_format':fmt}
+>       row=provider.trace_request_metadata(data,encode(data),grammar_enabled=False)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:47: AttributeError
+_________________ test_schema_content_change_changes_identity __________________
+
+    def test_schema_content_change_changes_identity():
+        fmt=formatted();data={'response_format':fmt}
+>       old=provider.trace_request_metadata(data,encode(data),grammar_enabled=True)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:54: AttributeError
+_____ test_trace_keeps_a_snapshot_when_caller_later_changes_its_dictionary _____
+
+    def test_trace_keeps_a_snapshot_when_caller_later_changes_its_dictionary():
+>       fmt=formatted();row=provider.trace_request_metadata({'response_format':fmt},encode(fmt),grammar_enabled=True)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'trace_request_metadata'
+
+tests/test_native_provider_trace_identity.py:61: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_native_provider_trace_identity.py::test_actual_wire_digest_and_canonical_schema_are_distinct_evidence
+FAILED tests/test_native_provider_trace_identity.py::test_schema_order_does_not_change_canonical_identity
+FAILED tests/test_native_provider_trace_identity.py::test_format_name_is_recorded_without_guessing_request_role
+FAILED tests/test_native_provider_trace_identity.py::test_absent_or_empty_format_does_not_infer_grammar[None]
+FAILED tests/test_native_provider_trace_identity.py::test_absent_or_empty_format_does_not_infer_grammar[fmt1]
+FAILED tests/test_native_provider_trace_identity.py::test_schema_content_change_changes_identity
+FAILED tests/test_native_provider_trace_identity.py::test_trace_keeps_a_snapshot_when_caller_later_changes_its_dictionary
+7 failed in 0.07s
