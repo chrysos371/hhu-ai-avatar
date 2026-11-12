@@ -41,35 +41,47 @@ def _decode(text):
     return json.loads(text, object_pairs_hook=unique, parse_constant=nonfinite)
 
 
+def _valid_text(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
 class ConversationContextStore:
     def __init__(self, memory):
         self.memory = memory
         self.conn = memory._conn
 
     def _dependencies_valid(self, assistant_id, user_id):
-        own_source = self.conn.execute(
-            "SELECT 1 FROM memory_response_context WHERE message_id=? "
-            "AND source_type='message' AND source_id=? LIMIT 1",
-            (assistant_id, user_id),
-        ).fetchone()
-        if own_source is None:
-            return False
-        # Superseded facts may be legitimate historical context. Missing facts,
-        # redacted messages, and impossible forward/cyclic edges are not.
-        invalid = self.conn.execute(
-            "SELECT 1 FROM memory_response_context c "
+        dependencies = self.conn.execute(
+            "SELECT c.source_type,c.source_id,m.id AS message_id, "
+            "m.content AS message_content,f.id AS fragment_id,f.content AS fragment_content "
+            "FROM memory_response_context c "
             "LEFT JOIN memory_messages m ON c.source_type='message' AND m.id=c.source_id "
             "LEFT JOIN memory_fragments f ON c.source_type='fragment' AND f.id=c.source_id "
-            "WHERE c.message_id=? AND (typeof(c.source_id)<>'integer' OR c.source_id<=0 "
-            "OR c.source_type IS NULL OR c.source_type NOT IN ('message','fragment') "
-            "OR (c.source_type='message' AND (m.id IS NULL OR m.content='[redacted]' OR m.id>=?)) "
-            "OR (c.source_type='fragment' AND f.id IS NULL)) LIMIT 1",
-            (assistant_id, assistant_id),
-        ).fetchone()
-        return invalid is None
+            "WHERE c.message_id=?", (assistant_id,),
+        ).fetchall()
+        own_source = False
+        for dependency in dependencies:
+            identifier = dependency['source_id']
+            if type(identifier) is not int or identifier <= 0:
+                return False
+            if dependency['source_type'] == 'message':
+                content = dependency['message_content']
+                if (dependency['message_id'] is None or identifier >= assistant_id
+                        or not _valid_text(content) or content == '[redacted]'):
+                    return False
+                own_source = own_source or identifier == user_id
+            elif dependency['source_type'] == 'fragment':
+                # Superseded facts can be valid historical context; missing or
+                # malformed content cannot support a derived reply.
+                if dependency['fragment_id'] is None or not _valid_text(dependency['fragment_content']):
+                    return False
+            else:
+                return False
+        return own_source
 
     def _result(self, assistant, user, scope, revision):
         if (assistant['role'] != 'assistant' or user['role'] != 'user'
+                or not _valid_text(assistant['content']) or not _valid_text(user['content'])
                 or assistant['content'] == '[redacted]' or user['content'] == '[redacted]'
                 or assistant['context_tracked'] != 1
                 or assistant['result_revision'] != revision
