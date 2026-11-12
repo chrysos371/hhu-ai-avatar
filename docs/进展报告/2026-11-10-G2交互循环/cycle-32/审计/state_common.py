@@ -27,8 +27,8 @@ def source_paths():
     paths.update(str(p.relative_to(ROOT)) for g in ('src','tests','scripts') for p in (ROOT/g).rglob('*.py'))
     paths.update('evals/interaction/cycle-26/model-metadata-'+m+'.json' for m in ('4b','14b','32b'))
     paths.add(str((BASE.parent/'cycle-31/审计/证据清单.json').relative_to(ROOT)))
-    paths.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('state_common.py','state_policy.py','serve_state_eval.py','run_state_replay.py','probe_policy_cpu.py'))
-    paths.update(str((BASE/'审计/工作目录/001-原生状态隔离'/n).relative_to(ROOT)) for n in ('实现参考与版本绑定.json','policy-cpu-controls.json','policy-cpu-controls.log','cpu-control-version.json'))
+    paths.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('state_common.py','state_policy.py','serve_state_eval.py','run_state_replay.py','probe_policy_cpu.py','probe_transport_cpu.py'))
+    paths.update(str((BASE/'审计/工作目录/001-原生状态隔离'/n).relative_to(ROOT)) for n in ('实现参考与版本绑定.json','policy-cpu-controls.json','policy-cpu-controls.log','cpu-control-version.json','transport-cpu-controls.json','transport-cpu-controls.log','transport-control-version.json'))
     return paths
 
 

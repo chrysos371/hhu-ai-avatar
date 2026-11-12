@@ -1,0 +1,120 @@
+{
+  "passed": true,
+  "actual_llm_or_gpu": false,
+  "actual_loopback_http": true,
+  "controls": [
+    {
+      "control": "compact_json",
+      "row": {
+        "request": {
+          "model": "cpu-only",
+          "messages": [
+            {
+              "role": "user",
+              "content": "原字节：你好"
+            }
+          ],
+          "stream": false
+        },
+        "raw_request_json": "{\"model\":\"cpu-only\",\"messages\":[{\"role\":\"user\",\"content\":\"原字节：你好\"}],\"stream\":false}",
+        "request_sha256": "d0a9120083f2d146051c5bccbf48ce61b616f1fa53cdcb8a335c502d773af8ed",
+        "outcome": "completed",
+        "status": 200,
+        "raw_http_body": "{\"id\": \"cpu-json\", \"choices\": [{\"message\": {\"content\": \"核验通过\"}, \"finish_reason\": \"stop\"}]}",
+        "response_body_sha256": "0cb9d46eaa30e801b4c2f34ea21c315da2be80bf08bda9841e2b828575694e78",
+        "reply": "核验通过",
+        "provider_call_id": "cpu-json",
+        "finish_reason": "stop",
+        "http_roundtrip_seconds": 0.0017672780086286366
+      },
+      "received": {
+        "raw": "{\"model\":\"cpu-only\",\"messages\":[{\"role\":\"user\",\"content\":\"原字节：你好\"}],\"stream\":false}",
+        "authorization": "Bearer local-eval-only",
+        "path": "/v1/chat/completions"
+      },
+      "passed": true
+    },
+    {
+      "control": "compact_stream",
+      "row": {
+        "request": {
+          "model": "cpu-only",
+          "messages": [
+            {
+              "role": "user",
+              "content": "原字节：你好"
+            }
+          ],
+          "stream": true
+        },
+        "raw_request_json": "{\"model\":\"cpu-only\",\"messages\":[{\"role\":\"user\",\"content\":\"原字节：你好\"}],\"stream\":true}",
+        "request_sha256": "321418a318aa2b08b7cea16dc8ee62935d74fe7d0f94f6080645f25e25154b2a",
+        "outcome": "completed",
+        "status": 200,
+        "raw_http_body": "data: {\"id\": \"cpu-stream\", \"choices\": [{\"delta\": {\"content\": \"核验\"}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"cpu-stream\", \"choices\": [{\"delta\": {\"content\": \"通过\"}, \"finish_reason\": \"stop\"}]}\n\ndata: [DONE]\n\n",
+        "response_body_sha256": "239820063b431ede2ca79016378822568f623995d618a50feba7b4be1fd18b98",
+        "reply": "核验通过",
+        "provider_call_id": "cpu-stream",
+        "finish_reason": "stop",
+        "http_roundtrip_seconds": 0.0014843439566902816
+      },
+      "received": {
+        "raw": "{\"model\":\"cpu-only\",\"messages\":[{\"role\":\"user\",\"content\":\"原字节：你好\"}],\"stream\":true}",
+        "authorization": "Bearer local-eval-only",
+        "path": "/v1/chat/completions"
+      },
+      "passed": true
+    },
+    {
+      "control": "http_error",
+      "row": {
+        "request": {
+          "model": "http_error",
+          "stream": true
+        },
+        "raw_request_json": "{\"model\":\"http_error\",\"stream\":true}",
+        "request_sha256": "d35138f8882d6376b648e20bf15c8c37fb3541b39c034e70e1aa239e41ffc1b0",
+        "outcome": "http_error",
+        "status": 503,
+        "raw_http_body": "{\"error\":\"controlled unavailable\"}",
+        "response_body_sha256": "ec01508becb4c2e1d658c82ee373ed5f423e0b21894b77a5f188ae67c29d37b1",
+        "error": "<HTTPError 503: 'Service Unavailable'>",
+        "http_roundtrip_seconds": 0.0013219349784776568
+      },
+      "received": {
+        "raw": "{\"model\":\"http_error\",\"stream\":true}",
+        "authorization": "Bearer local-eval-only",
+        "path": "/v1/chat/completions"
+      },
+      "passed": true
+    },
+    {
+      "control": "incomplete",
+      "row": {
+        "request": {
+          "model": "incomplete",
+          "stream": true
+        },
+        "raw_request_json": "{\"model\":\"incomplete\",\"stream\":true}",
+        "request_sha256": "f2db8319b900f40ccf9718e5b8408ae15bd2227e4b6a8d9993fbaa48b232ec5c",
+        "outcome": "decoding",
+        "status": 200,
+        "raw_http_body": "data: {\"id\": \"cpu-stream\", \"choices\": [{\"delta\": {\"content\": \"核验\"}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"cpu-stream\", \"choices\": [{\"delta\": {\"content\": \"通过\"}, \"finish_reason\": \"stop\"}]}\n\n",
+        "response_body_sha256": "aec28516c1a29afa8e79ff52bc4f17b62ef35b9a481a623362ba78ea8efe8410",
+        "error": "ValueError('Native stream lacks completed chunks')",
+        "http_roundtrip_seconds": 0.0013354650000110269
+      },
+      "received": {
+        "raw": "{\"model\":\"incomplete\",\"stream\":true}",
+        "authorization": "Bearer local-eval-only",
+        "path": "/v1/chat/completions"
+      },
+      "passed": true
+    },
+    {
+      "control": "nonlocal_or_query_endpoint",
+      "rejected_before_network": true,
+      "passed": true
+    }
+  ]
+}
