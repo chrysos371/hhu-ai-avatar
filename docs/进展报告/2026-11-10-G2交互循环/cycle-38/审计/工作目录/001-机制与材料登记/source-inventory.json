@@ -1,0 +1,37 @@
+{
+  "scope": "read_only_mechanism_inventory_before_candidate_or_new_native_calls",
+  "source_ref": "da53af18789e74cb6ac2fe994f59a1764b57aee8",
+  "sha256": {
+    "src/avatar/main.py": "b00f6f2ee0203b43a2c7987622dc2e109de8aff75b20c9528e10b9b4d8a815cf",
+    "src/avatar/lab/capability_prompt.py": "543499c333b454741781c32545142b16953e95edbc9e87275a4627ac86a2b717",
+    "src/avatar/lab/source_capability_prompt.py": "289daecee15d8de7bac2f7830f8f5c33344a54e281d82184598a133fa394b8cc",
+    "src/avatar/lab/receipt_capability_prompt.py": "89c098ce7fa3de32941b6601620130fe9f02fdc68285087250a17a5d9de28b62",
+    "src/avatar/lab/request_scope_capability_prompt.py": "a98338c29ef8e78e2a144e48d6c37c6243563f7f9c5dc633f234fae8cc08dab8",
+    "src/avatar/brain/action_receipts.py": "c216af5f1be6a84083a98134177c27ebb53136213bc43e8be10d029c0c17fcc3",
+    "src/avatar/tools/tool_registry.py": "98f87fa43b30e6f2f3e242a8882511efa23c0e20de7c4bff76c5fe7eb5e48e11",
+    "src/avatar/tools/web_agent.py": "45710aaafd3ba70b38eec1fcc181fb4933ec6597aadc15d397a519dc19dbfbf3",
+    "src/avatar/brain/speaker_scope.py": "76c6162c2203329757d0971314e7d7b8a0e419e10436e2700aa75c622e04b856",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-23/审计/系统审计与推进报告.md": "eb9275b9833c1171488f553b7e4d0929cc0fdb0116600688b40c8e85bb85a723",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/系统审计与推进报告.md": "8b787943e36933bf0227e91b41cfe10e01bead972eb2859220042bda717617be"
+  },
+  "observations": [
+    {
+      "source": "src/avatar/lab/request_scope_capability_prompt.py",
+      "fact": "v4 extends response prompt only; inherited v3 read-only local receipt metadata, no typed response renderer"
+    },
+    {
+      "source": "src/avatar/main.py",
+      "fact": "final_reply_reviewer trusted experiment hook buffers original generated reply and may return reviewed_response; default None"
+    },
+    {
+      "source": "src/avatar/brain/action_receipts.py",
+      "fact": "only four local reminder action types can be recorded inside owning transaction; read receipt scope not notification delivery"
+    },
+    {
+      "source": "src/avatar/brain/speaker_scope.py",
+      "fact": "runtime attribution is bounded explicit role control, not general semantic coreference"
+    }
+  ],
+  "new_native_calls": 0,
+  "production_changes": false
+}
