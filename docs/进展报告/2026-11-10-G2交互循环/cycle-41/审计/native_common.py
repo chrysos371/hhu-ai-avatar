@@ -82,7 +82,7 @@ def required_inputs(partition):
     selected.add('docs/进展报告/2026-11-10-G2交互循环/cycle-40/审计/工作目录/001-工具调用调查/embedded-chat-template.jinja')
     selected.update(m['metadata'] for m in read(REGISTRY)['models'])
     selected.update(str(p.relative_to(ROOT)) for directory in (CONTROLS,REGRESS) for p in directory.rglob('*') if p.is_file())
-    selected.update(str((WORK/name).relative_to(ROOT)) for name in ('native-admission.json','handoff-admission.json','sse-controlled.json'))
+    selected.update(str((WORK/name).relative_to(ROOT)) for name in ('native-admission.json','handoff-admission.json','sse-controlled-current.json'))
     if partition=='protected':
         dev_directory=ROOT/read(WORK/'development-verification.json')['output_relative']
         if not dev_directory.resolve().is_relative_to((BASE/'实验').resolve()):raise ValueError('C41 invalid development archive')

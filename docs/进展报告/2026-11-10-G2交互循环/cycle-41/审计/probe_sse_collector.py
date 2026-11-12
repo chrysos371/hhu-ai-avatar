@@ -9,7 +9,7 @@ from openai import OpenAI
 from native_common import collect_sdk_stream
 from native_common import ROOT,WORK,digest
 
-out=WORK/'sse-controlled.json';assert not out.exists()
+out=WORK/'sse-controlled-current.json';assert not out.exists()
 requests=[];observed=[];responses=[]
 events=[{'id':'scripted-sse-1','object':'chat.completion.chunk','model':'scripted','choices':[{'index':0,'delta':{'content':text},'finish_reason':finish}]} for text,finish in [('预热',None),('完成。',None),('','stop')]]
 body=''.join('data: '+json.dumps(e,ensure_ascii=False)+'\n\n' for e in events)+'data: [DONE]\n\n'
