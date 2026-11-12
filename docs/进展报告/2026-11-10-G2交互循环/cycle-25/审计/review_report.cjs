@@ -26,6 +26,6 @@ if(fs.existsSync(output))throw Error('Fresh report review output required');
   }
   if(errors.length)throw Error(JSON.stringify(errors));
   fs.writeFileSync(output,JSON.stringify({reportSha256:createHash('sha256').update(fs.readFileSync(report)).digest('hex'),views:results,errors,completed:true},null,2)+'\n',{flag:'wx'});
-  process.stdout.write('Report verified in 1440/390: four tables, all links, no overflow or page errors.\n');
+  process.stdout.write('Report verified in 1440/390: four tables, all local links (external URL recorded only), no overflow or page errors.\n');
  }finally{await browser.close();}
 })().catch(e=>{process.stderr.write(String(e)+'\n');process.exitCode=1;});

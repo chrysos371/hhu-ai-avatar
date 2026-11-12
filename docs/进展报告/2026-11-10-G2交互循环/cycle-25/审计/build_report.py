@@ -22,7 +22,8 @@ sections=[
 '完整Python1569通过、1跳过、110.45秒，实际起始HEAD694ed1b，213个Python/入口输入前后字节不变，当前仍一致。模型原诊断对应3004106源/8输入，修后诊断对应ca7ec57源/9输入；执行HEAD与源冻结版本分别记录，以Git历史核验旧文件，不覆盖当前代码来迎合旧哈希。',
 '默认业务src/avatar与前端源/服务包未改。前端153/6.98秒、CYNSx0Ec及默认浏览器15通过/15可选跳过仍为C24原快照，本轮未重跑前端或产品浏览器。原生提供方诊断没有走Avatar记忆、应用HTTP/SSE、真实提醒事务或网页，不拿它关闭产品语义问题。',
 'C21封432、C22封81、C23封80、C24封148项证据哈希均未变。三个自有模型提供方全部退出0，原生trace完成、GPU中无对应PID；不停止他人作业。直接默认库路径导入缺libcudart的环境失败已保存，沿用既有runner显式库路径后预编译4个schema成功，没有重装或隐式CPU回退。',
-'所有文本为预登记诊断输入，审阅由同一代理按原文span进行，不是独立人评。没有物理设备、真人感知、多日或一般任务语义批准。旧失败、校正口径与两阶段原始数据全部保留。']),
+'所有文本为预登记诊断输入，审阅由同一代理按原文span进行，不是独立人评。没有物理设备、真人感知、多日或一般任务语义批准。旧失败、校正口径与两阶段原始数据全部保留。',
+'报告初版390px视口实测文档宽463px，定位为版本哈希长词无法换行（C25-002/P3）。生成器已增加长词换行，保留完整内容；初版SHA、截图、诊断和复测分别留存，最终双视口结果以收尾浏览器记录为准。']),
 ('下一循环与推进策略',[
 'P1：完成同家族更大模型在当前默认产品链路的语义/实际动作边界对照，检验容量变化是否值得进一步研究，不自动切换默认。官方Hub只读核验Qwen/Qwen3-32B-GGUF的Q4_K_M单文件为19762149024字节、revision938a7432affaec9157f883a87164e2646ae17555，LFS摘要已归档；本轮未下载/未推理。下一轮先登记来源、资源、注册表与新冻结，再下载校验并实跑。',
 'P1：若继续研究类型化回复，主体、受众、义务、时间和保护原文必须有明确来源与版本。真实动作状态来自能力/事务证据；自由draft:string不具备该保证。来源原子和有限编辑计划可以实验，但必须测任务覆盖、自然表达、拒答与隐私，不能用模板把模型失误从计分中藏掉。',
@@ -41,6 +42,7 @@ tables=[
 ['前端/应用浏览器','沿用C24且源/包哈希一致；本轮未重跑','不能把历史实跑数写成新增验收']]),
 ('问题与风险处置',['级别/项','状态','保留限制'],[
 ['C25-001 P2 研究trace身份','限定修复并真实4B复测','plain-only关联器仍不是通用结构化回复关联器'],
+['C25-002 P3 报告窄屏长词','长词换行修复，复测另存','不隐藏或删减版本哈希；不修改已封旧报告'],
 ['草稿义务/主体/呈现','JSON外壳方案否决','来源不足风险仍在，无语义候选批准'],
 ['C19-001 一般能力诚实性 P1','开放；C23 v4仍拒绝','本轮不是默认Avatar再现或整体代际提升'],
 ['物理/多日/独立人评','未验收','原生模型与单元测试不能替代体验验收']]),
@@ -51,7 +53,7 @@ tables=[
 links=[('本轮计划','../计划.md'),('全过程进展','../进展.md'),('原4B原始请求/输出','../实验/structured-provider-4b/probe.json'),
 ('原14B原始请求/输出','../实验/structured-provider-14b/probe.json'),('原4B span审阅','工作目录/001-结构约束提供方诊断/4b-span-review.json'),
 ('原14B span审阅','工作目录/001-结构约束提供方诊断/14b-span-review.json'),('原8输入冻结','../../../../../evals/interaction/cycle-25/provider-probe-freeze.json'),
-('trace单项问题','问题/001-结构化提供方trace缺少schema身份.md'),('trace红测日志','工作目录/002-提供方trace身份修复/trace-red.log'),
+('trace单项问题','问题/001-结构化提供方trace缺少schema身份.md'),('报告排版单项问题','问题/002-报告窄屏长词溢出.md'),('trace红测日志','工作目录/002-提供方trace身份修复/trace-red.log'),
 ('40项相关日志','工作目录/002-提供方trace身份修复/trace-binding-strict-unit.log'),('修后4B严格原始数据','../实验/structured-provider-4b-trace-fixed/probe.json'),
 ('修后复测核验','../实验/trace-fixed-completion-verification.json'),('完整Python日志','工作目录/002-提供方trace身份修复/full-python.log'),
 ('213输入来源绑定','工作目录/002-提供方trace身份修复/full-python-binding.json'),('设计与否决','工作目录/003-结构化回复设计审查/设计与暂不实现决定.md'),
@@ -66,7 +68,7 @@ for heading,columns,rows in tables:
  md+=['## '+heading,'','| '+' | '.join(columns)+' |','| '+' | '.join(['---']*len(columns))+' |']+['| '+' | '.join(row)+' |' for row in rows]+['']
 md+=['## 证据入口','']+['- ['+label+']('+href+')' for label,href in links]+['']
 (HERE/'系统审计与推进报告.md').write_text('\n'.join(md))
-css='''body{margin:0;background:#f3f6f8;color:#182c3c;font:16px/1.8 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:32px 28px}header{background:#133247;color:white;padding:32px;border-radius:14px;margin-bottom:28px}h1{font-size:29px;line-height:1.5;margin:8px 0}h2{font-size:21px;margin:30px 0 12px}p{margin:12px 0}section{background:white;padding:10px 24px 20px;border-radius:12px;margin:18px 0}table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #d7e1e8;padding:12px;overflow-wrap:anywhere}th{background:#eaf1f6}a{color:#165c88;overflow-wrap:anywhere}.badge{display:inline-block;border:1px solid #85a7ba;border-radius:20px;padding:2px 12px;margin:4px;font-size:13px}li{margin:7px 0}footer{color:#536b7b;font-size:14px}@media(max-width:600px){main{padding:12px}header{padding:20px}h1{font-size:24px}section{padding:8px 12px 16px}th,td{padding:8px;font-size:12px}body{font-size:15px}}'''
+css='''body{margin:0;background:#f3f6f8;color:#182c3c;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1100px;margin:auto;padding:32px 28px}header{background:#133247;color:white;padding:32px;border-radius:14px;margin-bottom:28px}h1{font-size:29px;line-height:1.5;margin:8px 0}h2{font-size:21px;margin:30px 0 12px}p{margin:12px 0}section{background:white;padding:10px 24px 20px;border-radius:12px;margin:18px 0}table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #d7e1e8;padding:12px;overflow-wrap:anywhere}th{background:#eaf1f6}a{color:#165c88;overflow-wrap:anywhere}.badge{display:inline-block;border:1px solid #85a7ba;border-radius:20px;padding:2px 12px;margin:4px;font-size:13px}li{margin:7px 0}footer{color:#536b7b;font-size:14px}@media(max-width:600px){main{padding:12px}header{padding:20px}h1{font-size:24px}section{padding:8px 12px 16px}th,td{padding:8px;font-size:12px}body{font-size:15px}}'''
 html=['<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escape(title)+'</title><style>'+css+'</style></head><body><main><header><div>HHU AVATAR · CYCLE 25 · 2026-11-12</div><h1>'+escape(title)+'</h1><span class="badge">结构执行已验证</span><span class="badge">仅JSON外壳方案否决</span><span class="badge">Python 1569 / 语义P1开放</span></header>']
 for heading,paragraphs in sections:html+=['<section><h2>'+escape(heading)+'</h2>']+['<p>'+escape(text)+'</p>' for text in paragraphs]+['</section>']
 for heading,columns,rows in tables:
