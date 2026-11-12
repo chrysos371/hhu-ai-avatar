@@ -26,6 +26,7 @@ import avatar.web_state
 import avatar.brain.emotion
 import avatar.brain.memory
 import avatar.brain.reminders
+import avatar.lab.transport_fixture
 from avatar.config import config
 from avatar.brain.memory import MemoryStore
 from avatar.brain.reminders import ReminderStore
@@ -34,11 +35,13 @@ from avatar.paths import temporary_dir
 from avatar.lab.transport_fixture import controlled_provider
 
 modules = (avatar.main, avatar.web, avatar.web_api, avatar.web_state,
-           avatar.brain.emotion, avatar.brain.memory, avatar.brain.reminders)
+           avatar.brain.emotion, avatar.brain.memory, avatar.brain.reminders, avatar.lab.transport_fixture)
 module_paths = {module.__name__: Path(module.__file__).resolve() for module in modules}
 if not all(path.is_relative_to(project_root / 'src') for path in module_paths.values()):
     raise RuntimeError('Browser fixture imported another project source tree')
-runtime_binding = {'project_root': str(project_root), 'python_prefix': sys.prefix,
+state_protocol_path = project_root / 'evals/interaction/cycle-36/maintained-state-privacy-protocol.json'
+state_protocol = json.loads(state_protocol_path.read_text())
+runtime_binding = {'state_privacy_protocol_sha256': sha256(state_protocol_path.read_bytes()).hexdigest(), 'project_root': str(project_root), 'python_prefix': sys.prefix,
     'module_paths': {name: str(path) for name, path in module_paths.items()},
     'module_sha256': {name: sha256(path.read_bytes()).hexdigest() for name, path in module_paths.items()},
     'frontend_dir': str(project_root / 'frontend/dist'),
@@ -80,7 +83,6 @@ else:
             (Path(__file__).resolve().parents[2] / 'evals/interaction/cycle-08/final-three-segments.txt').read_text().strip()}
     # Exact C36 protocol inputs alone get a known cognitive delta. Generation
     # transport and all other cognitive inputs retain the original fixture.
-    state_protocol = json.loads((project_root / 'evals/interaction/cycle-36/maintained-state-privacy-protocol.json').read_text())
     analysis_overrides = {text: json.dumps(state_protocol['controlled_cognitive_response'])
                           for text in state_protocol['preparation'].values()}
     _, provider_url = provider_context.enter_context(controlled_provider(
