@@ -82,13 +82,19 @@ def main(tag):
                     row = collect_arm(case, candidate, opener, output/'wire.jsonl', lambda: None, output, 1)
                     report['arms'].append(row)
                     assert row['completed'] and not row['failure'] and row['server_closed'], row['failure']
-                    if candidate:
-                        for turn, expected in zip(row['turns'], case['expected_routes'], strict=True):
-                            review = turn['result'].get('response_review')
-                            if expected.startswith('unavailable_'):
-                                assert review['fixed_renderer_used'] and review['plan']['route'] == expected
-                            elif review is not None:
-                                assert not review['fixed_renderer_used']
+                    for turn, expected in zip(row['turns'], case['expected_routes'], strict=True):
+                        result = turn['result']
+                        review = result.get('response_review')
+                        if expected == 'framework':
+                            assert result['generation_mode'] not in ('llm', 'reviewed_response')
+                        if expected == 'scope_exempt':
+                            assert result['speaker_attribution']['scope'] == 'fictional_character'
+                            if candidate:
+                                assert review is not None and review['plan_raw'] is None
+                        if candidate and expected.startswith('unavailable_'):
+                            assert review['fixed_renderer_used'] and review['plan']['route'] == expected
+                        elif review is not None:
+                            assert not review['fixed_renderer_used']
         assert relay.closed
         wire = [json.loads(line) for line in (output/'wire.jsonl').read_text().splitlines()]
         assert len(wire) == len(requests)
