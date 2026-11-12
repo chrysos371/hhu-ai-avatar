@@ -1,0 +1,39 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/reminders
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ✓ src/features/reminders/useReminderDeliveries.test.tsx (8 tests) 54ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/reminders/RemindersPage.test.tsx [ src/features/reminders/RemindersPage.test.tsx ]
+Error: Transform failed with 1 error:
+/data/Users/zrh/repo/hhu-ai-avatar/frontend/src/features/reminders/RemindersPage.tsx:55:3: ERROR: Unexpected ","
+  Plugin: vite:esbuild
+  File: /data/Users/zrh/repo/hhu-ai-avatar/frontend/src/features/reminders/RemindersPage.tsx:55:3
+  
+  Unexpected ","
+  53 |        clearInterval(timer);
+  54 |      };
+  55 |    }, []);
+     |     ^
+  56 |    return (
+  57 |      <section>
+  
+ ❯ failureErrorWithLog node_modules/esbuild/lib/main.js:1467:15
+ ❯ node_modules/esbuild/lib/main.js:736:50
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:603:9
+ ❯ handleIncomingPacket node_modules/esbuild/lib/main.js:658:12
+ ❯ Socket.readFromStdout node_modules/esbuild/lib/main.js:581:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  8 passed (8)
+   Start at  08:53:36
+   Duration  1.32s (transform 194ms, setup 300ms, collect 158ms, tests 54ms, environment 746ms, prepare 138ms)
+

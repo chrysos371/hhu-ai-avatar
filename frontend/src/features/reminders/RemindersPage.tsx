@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell } from "lucide-react";
 import { apiRequest, formatTime } from "../../lib/api";
 import type { Draft, Reminder } from "../../lib/types";
@@ -9,14 +9,16 @@ import {
   QueryState,
 } from "../../components/QueryState";
 import { useDraftDialog } from "../../components/OperationConfirmDialog";
+import { useReminderDeliveries } from "./useReminderDeliveries";
 export function RemindersPage() {
+  const client = useQueryClient();
+  const deliveries = useReminderDeliveries(() => { void client.invalidateQueries({ queryKey: ["reminders"] }); });
   const query = useQuery({
     queryKey: ["reminders"],
     queryFn: () => apiRequest<Reminder[]>("/reminders"),
     refetchInterval: 10000,
   });
   const [text, setText] = useState("");
-  const [due, setDue] = useState<Reminder[]>([]);
   const operation = useDraftDialog(() => setText(""));
   const create = useMutation({
     mutationFn: () =>
@@ -46,41 +48,29 @@ export function RemindersPage() {
       ),
     onSuccess: operation.openDraft,
   });
-  useEffect(() => {
-    let alive = true;
-    const poll = () => {
-      void apiRequest<Reminder[]>("/reminders/due", {
-        method: "POST",
-        body: {},
-      })
-        .then((rows) => {
-          if (alive && rows.length) setDue((d) => [...d, ...rows]);
-        })
-        .catch(() => {});
-    };
-    const timer = setInterval(poll, 10000);
-    return () => {
-      alive = false;
-      clearInterval(timer);
-    };
-  }, []);
   return (
     <section>
       <PageHeading
         title="提醒"
         description="创建明确日期、钟点和事项的本机提醒。创建和手动状态修改都先预览，再确认。"
       />
-      {due.length > 0 && (
+      <ErrorMessage error={deliveries.error} />
+      {deliveries.items.length > 0 && (
         <div className="notice" role="status">
           <Bell size={15} style={{ display: "inline", marginRight: 8 }} />
-          到期提醒：{due.map((r) => r.title).join("；")}
-          <button
-            className="button secondary small"
-            style={{ marginLeft: 10 }}
-            onClick={() => setDue([])}
-          >
-            已看到
-          </button>
+          到期提醒：
+          {deliveries.items.map((r) => (
+            <div key={r.delivery_id}>
+              <span>{r.title}</span>
+              <button className="button secondary small" style={{ marginLeft: 10 }}
+                disabled={deliveries.ackId !== null}
+                aria-label={"确认已看到提醒 #" + r.id}
+                onClick={() => deliveries.acknowledge(r.delivery_id)}>
+                {deliveries.ackId === r.delivery_id ? "正在确认…" : "已看到"}
+              </button>
+            </div>
+          ))}
+          <small>未确认的近期提醒可在返回或刷新后恢复；确认仅记录客户端提交。</small>
         </div>
       )}
       <article className="panel">
@@ -111,7 +101,7 @@ export function RemindersPage() {
           </button>
         </form>
         <p className="muted">
-          程序和页面保持运行时在本机提示，不会向手机或其他人发送通知。时间以北京时间解析。
+          服务运行且打开提醒页时在本机提示，不会向手机或其他人发送通知。仅恢复24小时内仍有效的待确认事项；旧版已认领记录不自动补发。时间以北京时间解析。
         </p>
         <ErrorMessage error={create.error || update.error} />
         {operation.success && (
@@ -149,7 +139,9 @@ export function RemindersPage() {
                               ? "已完成"
                               : "已取消"}
                         </span>
-                        {r.notified_at && <small> · 已标记到期，显示未确认</small>}
+                        {r.delivery_acknowledged_at != null
+                          ? <small> · 网页已确认（客户端）</small>
+                          : r.notified_at != null && <small> · 已标记到期，显示未确认</small>}
                       </td>
                       <td>
                         <div className="actions">

@@ -52,6 +52,7 @@ export interface Reminder {
   created_at: number;
   status: string;
   notified_at: number | null;
+  delivery_acknowledged_at?: number | null;
 }
 export interface AuditEvent {
   id: number;
