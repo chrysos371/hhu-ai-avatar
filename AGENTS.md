@@ -3,6 +3,14 @@
 > 本文件为在此仓库工作的 AI 编码助手（Codex / Claude Code 等）提供项目上下文。
 > 开始任何改动前，请先读完本文件，并阅读 `docs/技术选型与模块重写计划.md`。
 
+## 2026-11-12 第二十九轮B基础实现/相关复测（优先）
+
+阶段A31证据已封于W001/阶段A证据清单.json（base=repository），原before错误/显式坏ID注入负控/有效v2基线分开；150输入已历史retire，生产代码可在新阶段改变，旧数据/描述符不改。有效3OS/6真实HTTP-SSE/12受控HTTP模型请求：同进程第三生成先4条角色消息各1，重启各0，SQL/API均6；各45模块绑源全退出0。不是全部记忆失效/实模/DOM验收。
+
+B已实现brain/conversation_context.py纯读完成对窗口（当前revision、已完成result绑定、连续pair/scope/规范控制/gap边界，默认18历史），main.py在当前source/scope同事务装载并跟踪所有恢复user+assistant IDs，web默认启用；CLI/独立Avatar不装hook，四实验identity/profile/task/literal开关保留旧路径，recover_context严格bool/--no-context-recovery可关闭。sync内部Web也记完成元数据。当前仅单元/进程内集成，尚未独立OS-after/完整/全部故障验收，C29-002待验证。
+
+基础22存储/43相关已过；补审C29-003受控BLOB/空正文/依赖5红，文本与依赖统一非空str后91/4.36s；C29-004正常forget同服务错误旧依赖阻断新窗口2红，durable模式改只取实际恢复角色源+当前user（fact/speaker/summary保留，legacy不变）后93/3.76s。003/004在本进程内范围已修，原失败留存。1720/1@30fc131是feature之前快照，不能冒称当前完整通过；接下来完整回归、同原两协议新源重跑、privacy/role/cancel/gap/corruption/window/旧动作/事务控制，必要实模限定数据，再系统MD/HTML封全轮。C19-001/P1等开放，固定计划路线不再调优。旧C21-C28不回写（C28封43），C29新过程写W002以后，W001已封不回写；Goal active，spinner-bot指定SSH即时小步提交/串行推送，无整轮截止；GPU若需实际余量UUID/同组最多4/单提供方，不固定6–7。
+
 ## 2026-11-12 第二十九轮阶段A完成/B设计（优先）
 
 阶段A有效context-baseline-v2完成3OS/6真实HTTP-SSE/12受控HTTP模型请求（6认知6生成），4.701328s、全退出0、各45实际Avatar模块绑150源。第三生成同进程先前4角色消息各1，重启各0，SQL/API都6条；只确认角色消息未接续，不称全部记忆丢失/真实模型质量/本轮浏览器DOM验收。SQL导出全表重建、SDK/SSE/API/源ID独立核验通过。首before夹具19位ID/cleanup覆盖错误失败、坏ID注入负控与有效v2分开保留；C29-001已修，C29-002稳定交互缺口待推进。

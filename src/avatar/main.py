@@ -634,9 +634,15 @@ class Avatar:
         response_context_ids = {row['id'] for row in self._turn_facts}
         response_context_ids.update(row[0] for row in self.memory._conn.execute(
             "SELECT id FROM memory_fragments WHERE memory_type='user_profile' AND status='active'"))
-        response_source_ids = {row['id'] for row in self.memory._conn.execute(
-            'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
-            (self.session_id, self.memory.short_term_limit))}
+        if self.conversation_context_store is not None:
+            # The durable reader is authoritative for past role messages. A
+            # session-wide query would reattach erased or deliberately omitted
+            # rows and make a fresh, valid window inherit invalid dependencies.
+            response_source_ids = {self._current_message_id}
+        else:
+            response_source_ids = {row['id'] for row in self.memory._conn.execute(
+                'SELECT id FROM memory_messages WHERE session_id=? ORDER BY id DESC LIMIT ?',
+                (self.session_id, self.memory.short_term_limit))}
         response_source_ids.update(self.speaker_scope.source_ids)
         response_source_ids.update(self.speaker_scope.context_source_ids)
         response_source_ids.update(self._history_source_ids)
