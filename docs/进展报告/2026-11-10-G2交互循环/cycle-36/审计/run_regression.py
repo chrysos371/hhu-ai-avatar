@@ -61,7 +61,7 @@ def main(mode, tag=''):
         seconds=time.monotonic() - started, log_sha256=digest(log))
     if mode.startswith('browser') or mode == 'build':
         report['runtime_artifact_sha256'] = artifacts()
-    if mode == 'browser' and runtime.exists():
+    if mode.startswith('browser') and runtime.exists():
         actual = json.loads(runtime.read_text())
         matches = (actual['python_prefix'] == sys.prefix and actual['project_root'] == str(ROOT)
             and actual['state_privacy_protocol_sha256'] == before['evals/interaction/cycle-36/maintained-state-privacy-protocol.json'])
