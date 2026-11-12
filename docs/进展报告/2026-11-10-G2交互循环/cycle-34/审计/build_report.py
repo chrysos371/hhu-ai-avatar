@@ -1,0 +1,96 @@
+"""Build C34 MD/HTML from completed measurements; never rewrite old cycles."""
+import json
+from pathlib import Path
+import sys
+
+BASE = Path(__file__).resolve().parents[1]
+OUT = BASE / '审计'
+sys.path.insert(0, str(BASE.parent / 'cycle-33/审计'))
+from render_report import render
+
+
+def read(path):
+    return json.loads(path.read_text())
+
+
+system = read(OUT / '收尾核验/system-evidence.json')
+browser = read(OUT / '工作目录/003-浏览器情绪缓存补审/v2/independent-proof.json')
+assert system['verified'] and browser['verified']
+native_rows = []
+for label, folder in [('4B before', 'native-before-v2-4b'), ('4B after', 'native-after-4b'),
+                      ('32B before', 'native-before-v2-32b'), ('32B after', 'native-after-32b'),
+                      ('4B原采证失败', 'native-before-4b')]:
+    report = read(BASE / ('实验/' + folder + '/evaluation.json'))
+    observation = report['cases'][0].get('observations', {})
+    native_rows.append([label, str(len(report['requests'])), str(len(report['cases'][0]['turns'])),
+        '1', str(report['provider_ready']['chosen_gpu']['index']),
+        ('已归零' if observation.get('automatic_zero_after_forget') else '仍非0') if report['completed'] else '规则SSE采证断言失败',
+        f"{report['seconds']:.3f}", '应用/提供方0退出'])
+times = [row['eventual_clear_ms'] / 1000 for row in browser['rows']]
+sections = [
+    {'title': '结论与实现边界', 'paragraphs': [
+        '默认产品C33-004的后端自动情绪失效已修复：来源隐私版本改变时，用户观测、角色PAD、观测文本、活动能量与旧诊断失效；同版本正常情绪连续性保留。实现分d0c69ef、5ea9e5a、0098f79小步提交，作者spinner-bot。',
+        'Avatar每回合绑定原始版本，分析finally检查迟到旧结果；public forget/correct立即清空。Web情绪、仪表盘和legacy状态统一在共享RLock内取副本，以情绪自身版本核验，不能拿取消worker finally已更新的窗口版本当授权。诊断记录绑定原结果版本，未知/过时记录不返回。',
+        '人工override独立保留；取消生成不等于遗忘，不撤销合法已完成观测/事实/提醒。未增加跨OS情绪持久化，未推广C31候选。结果不证明真人情绪判断、通用语义质量或整体代际跃迁。',
+        '补审实际确认C34-004前端缓存仍有传播空档：后端已归零不等于页面即时清除。该P2开放，下一周期优先修；本报告不把服务端通过写成全链路隐私已通过。'],
+     'links': [('单项修复记录', '工作目录/001-自动情绪版本失效/现状与修复结论.md'),
+               ('预登记方案', '../计划.md')]},
+    {'title': '实际原生模型：修前、修后与失败成本',
+     'paragraphs': ['每个有效模型阶段固定2预热+6SDK调用、4回合、1独立应用OS；实际CUDA、C26量化模型身份、0.3.19提供方logical_reset及54运行文件前后核验。相同已知两回合准备、遗忘、规范确认和中性请求；不是未见语料或真人质量评测。',
+        '两个模型修前均实际产生非零用户/角色数值，源红删、revision0→1后仍残留；修后首API读均归零，后续中性用户/角色均[0,0]，最后两次SDK无已删cue。四阶段独立重建原SDK/schema/native trace、SSE、API与SQL终态。before修后按历史Git核验，不冒称旧源码仍当前。',
+        '有效32native/16回合/4OS，加原失败6native/3实际result，总38native=10warm+14认知+14生成，19实际result、5应用OS/5提供方均退出清理。失败驱动仅累计2回合但原SSE有3result，按原证据计数。GPU按实际空闲选择，before用1、after用0；不同GPU及含采证耗时不用于性能增益结论。'],
+     'table': (['阶段', 'native', '实际result', '应用OS', 'GPU', '遗忘后自动状态', '含采证秒', '资源退出'], native_rows),
+     'links': [('完整退役/实际调用清单', '工作目录/001-自动情绪版本失效/native-after-retirement.json'),
+               ('4B修后独立证明', '工作目录/001-自动情绪版本失效/native-after-4b-independent.json'),
+               ('32B修后独立证明', '工作目录/001-自动情绪版本失效/native-after-32b-independent.json')]},
+    {'title': '系统回归、正负控与浏览器补审',
+     'paragraphs': ['同字节HTTP夹具只使用明确假模型方法，不能混算native。每阶段6场景、12提交/9result/3cancelled。遗忘组3/3旧状态残留变0/3；取消组3/3保留合法已完成观测，继续作为正控。原API body/SSE/SQL及历史源码已独立重建。',
+        f'补审3次真实Chromium/离线规则/独立HTTP遗忘：新API双方0且源红删，DOM在约1秒仍旧值3/3，约{min(times):.3f}–{max(times):.3f}秒轮询后归零。无页面刷新/导航。另保留缺启动token导致的1准备回合失败，未执行遗忘，不混入3次有效分母。截图已人工查看，数值符合原DOM。'],
+     'table': (['检查', '实测结果', '证据边界'], [
+        ['完整Python', '1810 passed /1 skipped，121.08s', '本轮新执行，307输入前后稳定 @4876dad'],
+        ['默认浏览器', '15 passed /16可选跳过，36.1s', '417输入，7实际模块和5份dist核验；受控提供方'],
+        ['新增单项测试', '20内核+12编排+9Web=41项', '84/53/20定向批次有重叠，不相加当独立样本'],
+        ['同源HTTP before/after', '遗忘残留3→0；取消保留3→3', '两阶段各12提交/9result/3cancelled'],
+        ['入场负控', 'before4项、after4项拒绝', '实际子进程，输出/DB/提供方前拒绝，无GPU'],
+        ['规则SSE采证控制', '8项通过', '既存原SSE重读+正负控，无新模型调用'],
+        ['情绪页面缓存补审', '1秒旧值3/3，约9.85秒才清除', '3有效离线准备回合；另1启动失败保留，0native']]),
+     'links': [('HTTP独立证明', '工作目录/001-自动情绪版本失效/controlled-http-independent.json'),
+               ('完整Python绑定', '工作目录/002-系统回归/full-python-binding.json'),
+               ('默认浏览器绑定', '工作目录/002-系统回归/default-browser-binding.json'),
+               ('浏览器缓存原始数据', '工作目录/003-浏览器情绪缓存补审/v2/browser-cache-observations.json'),
+               ('浏览器缓存独立证明', '工作目录/003-浏览器情绪缓存补审/v2/independent-proof.json'),
+               ('遗忘后1秒实际截图', '工作目录/003-浏览器情绪缓存补审/v2/repetition-1-after-1s.png')]},
+    {'title': '逐项审计与开放问题',
+     'paragraphs': ['本轮关闭1项继承的后端P2问题；新增4张单项文档，其中3项采证P3已修、1项前端P2开放。C34-004为同一隐私目标的浏览器传播扩展，不能重复当作独立模型语义缺陷；历史C19-001/P1和C31系列等不合并计作本轮新发现。'],
+     'table': (['编号', '级别/状态', '证据与处置'], [
+        ['C33-004后端范围', 'P2已修并回归', '41新测试、同源HTTP3遗忘、两模型真实修前修后；页面传播另列'],
+        ['C34-001规则SSE采证假设', 'P3关闭', '保留首失败6native/3result，规则result-only与严格LLM文本分开核验'],
+        ['C34-002 ignored产物/Git来源', 'P3关闭', 'Git archive拒绝首次冻结，5份实际bundle独立归档/映射后491源历史核验'],
+        ['C34-003浏览器启动鉴权', 'P3关闭', '缺token fragment首跑保留，修完整链接，v2三重复成功'],
+        ['C34-004页面旧情绪缓存', 'P2开放', '源红删/新API0而1秒DOM旧值3/3；下一周期优先修'],
+        ['历史语义/连续性/设备验收', '继续开放', 'C19-001、C31候选、跨OS情绪、物理麦克风/口型/多日未获新批准']]),
+     'links': [(name, '问题单/' + name + '.md') for name in [
+        'C34-001-规则SSE终态采证断言不适用', 'C34-002-构建物与Git来源冻结的区别',
+        'C34-003-补审浏览器启动缺少鉴权片段', 'C34-004-外部遗忘后情绪页面仍显示旧缓存']]},
+    {'title': '下一周期优先级与远期推进',
+     'paragraphs': ['远期Goal继续active。每轮先登记输入和验收，再研究/实现/实测/审计；小步及时提交推送，不积压完成改动。此次是可复核的局部工程改进，尚未达到整体代际跃迁。'],
+     'table': (['推进顺序', '工作', '完成标准'], [
+        ['下一周期先行，P2确定性修复', '情绪/概览派生缓存隐私版本屏障', '收到版本变化即隐藏旧数据、拒迟到旧响应；普通游标/人工override正控；同源真实浏览器修前修后'],
+        ['持续P1研究', 'C19-001通用语义、实际动作诚实与任务交付', '独立未见输入预登记和原SDK/来源/结果审查，不在旧题上反复调后自称泛化'],
+        ['P2后续扩展', '跨OS角色PAD连续性', '先保持来源失效闭环，再研究保存时间戳、衰减、来源绑定和恢复负控'],
+        ['设备与长期验收', '真人对话/物理音频/口型/多日运行', '实际设备与独立样本，不能用合成或局部HTTP通过替代']])},
+    {'title': '来源、版本管理与归档', 'paragraphs': [
+        '修前v2冻结355项，8c4c3905...；修后冻结491项，2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3。所有冻结输入先提交、Git archive核验后执行，原失败/退役版本不覆盖。源代码、运行库、实际GPU UUID、SDK原字节和证据关联均可复核。',
+        '31份C3–C33历史seal全量核对未改，C33仍2015项/SHA5b4d59c0...。完整回归本轮重新执行，旧C29数据不冒称当前；前端153单元仍C24历史快照，本轮未改功能源码或CYNSx0Ec构建。',
+        '5份ignored实际构建物按独立归档路径进入Git并与浏览器实际运行SHA对应，不冒称frontend/dist根路径在Git。活动实验文件完成清理后再提交；提供方单卡串行，未停止他人进程。小步提交覆盖实现、测试、失败记录、实验与独立证明。'],
+     'links': [('系统证据总核验', '收尾核验/system-evidence.json'),
+               ('修后491项来源冻结', '工作目录/001-自动情绪版本失效/native-after-freeze.json'),
+               ('实际bundle归档映射', '工作目录/002-系统回归/browser-dist-archive.json'),
+               ('全过程进展', '../进展.md')]},
+]
+metadata = render(OUT, 'C34 自动情绪隐私版本修复与系统审计',
+    '2026-11-12 · spinner-bot · 1810/1 Python · 15/16默认浏览器 · 38实际native含失败 · 新确认页面缓存P2',
+    '后端失效边界已修；浏览器旧缓存传播问题仍开放。所有结果限定于实际执行范围，下一周期继续修复。',
+    sections, BASE.parent / 'cycle-33/审计/系统审计与推进报告.html')
+(OUT / 'report-render-metadata.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n')
+print(metadata)

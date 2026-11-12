@@ -1,0 +1,77 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C34 自动情绪隐私版本修复与系统审计</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C34 自动情绪隐私版本修复与系统审计</h1><p class="meta">2026-11-12 · spinner-bot · 1810/1 Python · 15/16默认浏览器 · 38实际native含失败 · 新确认页面缓存P2</p><p class="verdict">后端失效边界已修；浏览器旧缓存传播问题仍开放。所有结果限定于实际执行范围，下一周期继续修复。</p>
+<section><h2>结论与实现边界</h2>
+<p>默认产品C33-004的后端自动情绪失效已修复：来源隐私版本改变时，用户观测、角色PAD、观测文本、活动能量与旧诊断失效；同版本正常情绪连续性保留。实现分d0c69ef、5ea9e5a、0098f79小步提交，作者spinner-bot。</p>
+<p>Avatar每回合绑定原始版本，分析finally检查迟到旧结果；public forget/correct立即清空。Web情绪、仪表盘和legacy状态统一在共享RLock内取副本，以情绪自身版本核验，不能拿取消worker finally已更新的窗口版本当授权。诊断记录绑定原结果版本，未知/过时记录不返回。</p>
+<p>人工override独立保留；取消生成不等于遗忘，不撤销合法已完成观测/事实/提醒。未增加跨OS情绪持久化，未推广C31候选。结果不证明真人情绪判断、通用语义质量或整体代际跃迁。</p>
+<p>补审实际确认C34-004前端缓存仍有传播空档：后端已归零不等于页面即时清除。该P2开放，下一周期优先修；本报告不把服务端通过写成全链路隐私已通过。</p>
+<p><a href="工作目录/001-自动情绪版本失效/现状与修复结论.md">单项修复记录</a></p>
+<p><a href="../计划.md">预登记方案</a></p>
+</section>
+<section><h2>实际原生模型：修前、修后与失败成本</h2>
+<p>每个有效模型阶段固定2预热+6SDK调用、4回合、1独立应用OS；实际CUDA、C26量化模型身份、0.3.19提供方logical_reset及54运行文件前后核验。相同已知两回合准备、遗忘、规范确认和中性请求；不是未见语料或真人质量评测。</p>
+<p>两个模型修前均实际产生非零用户/角色数值，源红删、revision0→1后仍残留；修后首API读均归零，后续中性用户/角色均[0,0]，最后两次SDK无已删cue。四阶段独立重建原SDK/schema/native trace、SSE、API与SQL终态。before修后按历史Git核验，不冒称旧源码仍当前。</p>
+<p>有效32native/16回合/4OS，加原失败6native/3实际result，总38native=10warm+14认知+14生成，19实际result、5应用OS/5提供方均退出清理。失败驱动仅累计2回合但原SSE有3result，按原证据计数。GPU按实际空闲选择，before用1、after用0；不同GPU及含采证耗时不用于性能增益结论。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>阶段</th><th>native</th><th>实际result</th><th>应用OS</th><th>GPU</th><th>遗忘后自动状态</th><th>含采证秒</th><th>资源退出</th></tr></thead><tbody>
+<tr><td>4B before</td><td>8</td><td>4</td><td>1</td><td>1</td><td>仍非0</td><td>35.239</td><td>应用/提供方0退出</td></tr>
+<tr><td>4B after</td><td>8</td><td>4</td><td>1</td><td>0</td><td>已归零</td><td>33.996</td><td>应用/提供方0退出</td></tr>
+<tr><td>32B before</td><td>8</td><td>4</td><td>1</td><td>1</td><td>仍非0</td><td>90.224</td><td>应用/提供方0退出</td></tr>
+<tr><td>32B after</td><td>8</td><td>4</td><td>1</td><td>0</td><td>已归零</td><td>87.404</td><td>应用/提供方0退出</td></tr>
+<tr><td>4B原采证失败</td><td>6</td><td>3</td><td>1</td><td>0</td><td>规则SSE采证断言失败</td><td>33.022</td><td>应用/提供方0退出</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/001-自动情绪版本失效/native-after-retirement.json">完整退役/实际调用清单</a></p>
+<p><a href="工作目录/001-自动情绪版本失效/native-after-4b-independent.json">4B修后独立证明</a></p>
+<p><a href="工作目录/001-自动情绪版本失效/native-after-32b-independent.json">32B修后独立证明</a></p>
+</section>
+<section><h2>系统回归、正负控与浏览器补审</h2>
+<p>同字节HTTP夹具只使用明确假模型方法，不能混算native。每阶段6场景、12提交/9result/3cancelled。遗忘组3/3旧状态残留变0/3；取消组3/3保留合法已完成观测，继续作为正控。原API body/SSE/SQL及历史源码已独立重建。</p>
+<p>补审3次真实Chromium/离线规则/独立HTTP遗忘：新API双方0且源红删，DOM在约1秒仍旧值3/3，约9.847–9.862秒轮询后归零。无页面刷新/导航。另保留缺启动token导致的1准备回合失败，未执行遗忘，不混入3次有效分母。截图已人工查看，数值符合原DOM。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>检查</th><th>实测结果</th><th>证据边界</th></tr></thead><tbody>
+<tr><td>完整Python</td><td>1810 passed /1 skipped，121.08s</td><td>本轮新执行，307输入前后稳定 @4876dad</td></tr>
+<tr><td>默认浏览器</td><td>15 passed /16可选跳过，36.1s</td><td>417输入，7实际模块和5份dist核验；受控提供方</td></tr>
+<tr><td>新增单项测试</td><td>20内核+12编排+9Web=41项</td><td>84/53/20定向批次有重叠，不相加当独立样本</td></tr>
+<tr><td>同源HTTP before/after</td><td>遗忘残留3→0；取消保留3→3</td><td>两阶段各12提交/9result/3cancelled</td></tr>
+<tr><td>入场负控</td><td>before4项、after4项拒绝</td><td>实际子进程，输出/DB/提供方前拒绝，无GPU</td></tr>
+<tr><td>规则SSE采证控制</td><td>8项通过</td><td>既存原SSE重读+正负控，无新模型调用</td></tr>
+<tr><td>情绪页面缓存补审</td><td>1秒旧值3/3，约9.85秒才清除</td><td>3有效离线准备回合；另1启动失败保留，0native</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/001-自动情绪版本失效/controlled-http-independent.json">HTTP独立证明</a></p>
+<p><a href="工作目录/002-系统回归/full-python-binding.json">完整Python绑定</a></p>
+<p><a href="工作目录/002-系统回归/default-browser-binding.json">默认浏览器绑定</a></p>
+<p><a href="工作目录/003-浏览器情绪缓存补审/v2/browser-cache-observations.json">浏览器缓存原始数据</a></p>
+<p><a href="工作目录/003-浏览器情绪缓存补审/v2/independent-proof.json">浏览器缓存独立证明</a></p>
+<p><a href="工作目录/003-浏览器情绪缓存补审/v2/repetition-1-after-1s.png">遗忘后1秒实际截图</a></p>
+</section>
+<section><h2>逐项审计与开放问题</h2>
+<p>本轮关闭1项继承的后端P2问题；新增4张单项文档，其中3项采证P3已修、1项前端P2开放。C34-004为同一隐私目标的浏览器传播扩展，不能重复当作独立模型语义缺陷；历史C19-001/P1和C31系列等不合并计作本轮新发现。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>编号</th><th>级别/状态</th><th>证据与处置</th></tr></thead><tbody>
+<tr><td>C33-004后端范围</td><td>P2已修并回归</td><td>41新测试、同源HTTP3遗忘、两模型真实修前修后；页面传播另列</td></tr>
+<tr><td>C34-001规则SSE采证假设</td><td>P3关闭</td><td>保留首失败6native/3result，规则result-only与严格LLM文本分开核验</td></tr>
+<tr><td>C34-002 ignored产物/Git来源</td><td>P3关闭</td><td>Git archive拒绝首次冻结，5份实际bundle独立归档/映射后491源历史核验</td></tr>
+<tr><td>C34-003浏览器启动鉴权</td><td>P3关闭</td><td>缺token fragment首跑保留，修完整链接，v2三重复成功</td></tr>
+<tr><td>C34-004页面旧情绪缓存</td><td>P2开放</td><td>源红删/新API0而1秒DOM旧值3/3；下一周期优先修</td></tr>
+<tr><td>历史语义/连续性/设备验收</td><td>继续开放</td><td>C19-001、C31候选、跨OS情绪、物理麦克风/口型/多日未获新批准</td></tr>
+</tbody></table></div>
+<p><a href="问题单/C34-001-规则SSE终态采证断言不适用.md">C34-001-规则SSE终态采证断言不适用</a></p>
+<p><a href="问题单/C34-002-构建物与Git来源冻结的区别.md">C34-002-构建物与Git来源冻结的区别</a></p>
+<p><a href="问题单/C34-003-补审浏览器启动缺少鉴权片段.md">C34-003-补审浏览器启动缺少鉴权片段</a></p>
+<p><a href="问题单/C34-004-外部遗忘后情绪页面仍显示旧缓存.md">C34-004-外部遗忘后情绪页面仍显示旧缓存</a></p>
+</section>
+<section><h2>下一周期优先级与远期推进</h2>
+<p>远期Goal继续active。每轮先登记输入和验收，再研究/实现/实测/审计；小步及时提交推送，不积压完成改动。此次是可复核的局部工程改进，尚未达到整体代际跃迁。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>推进顺序</th><th>工作</th><th>完成标准</th></tr></thead><tbody>
+<tr><td>下一周期先行，P2确定性修复</td><td>情绪/概览派生缓存隐私版本屏障</td><td>收到版本变化即隐藏旧数据、拒迟到旧响应；普通游标/人工override正控；同源真实浏览器修前修后</td></tr>
+<tr><td>持续P1研究</td><td>C19-001通用语义、实际动作诚实与任务交付</td><td>独立未见输入预登记和原SDK/来源/结果审查，不在旧题上反复调后自称泛化</td></tr>
+<tr><td>P2后续扩展</td><td>跨OS角色PAD连续性</td><td>先保持来源失效闭环，再研究保存时间戳、衰减、来源绑定和恢复负控</td></tr>
+<tr><td>设备与长期验收</td><td>真人对话/物理音频/口型/多日运行</td><td>实际设备与独立样本，不能用合成或局部HTTP通过替代</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>来源、版本管理与归档</h2>
+<p>修前v2冻结355项，8c4c3905...；修后冻结491项，2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3。所有冻结输入先提交、Git archive核验后执行，原失败/退役版本不覆盖。源代码、运行库、实际GPU UUID、SDK原字节和证据关联均可复核。</p>
+<p>31份C3–C33历史seal全量核对未改，C33仍2015项/SHA5b4d59c0...。完整回归本轮重新执行，旧C29数据不冒称当前；前端153单元仍C24历史快照，本轮未改功能源码或CYNSx0Ec构建。</p>
+<p>5份ignored实际构建物按独立归档路径进入Git并与浏览器实际运行SHA对应，不冒称frontend/dist根路径在Git。活动实验文件完成清理后再提交；提供方单卡串行，未停止他人进程。小步提交覆盖实现、测试、失败记录、实验与独立证明。</p>
+<p><a href="收尾核验/system-evidence.json">系统证据总核验</a></p>
+<p><a href="工作目录/001-自动情绪版本失效/native-after-freeze.json">修后491项来源冻结</a></p>
+<p><a href="工作目录/002-系统回归/browser-dist-archive.json">实际bundle归档映射</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+</section>
+</main></body></html>
