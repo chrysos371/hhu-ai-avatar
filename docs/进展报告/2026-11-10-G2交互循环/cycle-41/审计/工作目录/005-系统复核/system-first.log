@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-41/审计/verify_system.py", line 154, in <module>
+    if __name__=='__main__':main()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-41/审计/verify_system.py", line 67, in main
+    wrong_native=[t for t in traces if t.get('wire_message',{}).get('tool_calls') and json.loads(t['wire_message']['tool_calls'][0]['function']['arguments'])=={'reminder_id':12345}]
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-41/审计/verify_system.py", line 67, in <listcomp>
+    wrong_native=[t for t in traces if t.get('wire_message',{}).get('tool_calls') and json.loads(t['wire_message']['tool_calls'][0]['function']['arguments'])=={'reminder_id':12345}]
+AttributeError: 'NoneType' object has no attribute 'get'
