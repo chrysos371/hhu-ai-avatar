@@ -1,0 +1,580 @@
+FFFFFFFF...............F.F.F.F.F.F.F.F.F.F......F.                       [100%]
+=================================== FAILURES ===================================
+____ test_bad_registry_contract_rejected_before_output_or_provider[no_sha] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_bad_registry_contract_rej0')
+change = 'no_sha'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+
+tests/test_model_scale_runner_registry.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = None, root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+___ test_bad_registry_contract_rejected_before_output_or_provider[wrong_sha] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_bad_registry_contract_rej1')
+change = 'wrong_sha'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+
+tests/test_model_scale_runner_registry.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = 'changed', root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+_ test_bad_registry_contract_rejected_before_output_or_provider[protocol_mismatch] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_bad_registry_contract_rej2')
+change = 'protocol_mismatch'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+
+tests/test_model_scale_runner_registry.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = 'de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45'
+root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+_ test_bad_registry_contract_rejected_before_output_or_provider[implicit_old] __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_bad_registry_contract_rej3')
+change = 'implicit_old'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+
+tests/test_model_scale_runner_registry.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = None, expected_sha256 = None, root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+_ test_bad_registry_contract_rejected_before_output_or_provider[capability_override] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_bad_registry_contract_rej4')
+change = 'capability_override'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+
+tests/test_model_scale_runner_registry.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = 'de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45'
+root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+_ test_bad_registry_contract_rejected_before_output_or_provider[unknown_model] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_bad_registry_contract_rej5')
+change = 'unknown_model'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+
+tests/test_model_scale_runner_registry.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = 'de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45'
+root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+_ test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-4b-q4_k_m] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_valid_new_registry_reache0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213a9d1c60>
+model = 'qwen3-4b-q4_k_m'
+
+    @pytest.mark.parametrize('model',['qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'])
+    def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model):
+        calls=[]
+        def boundary(command,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=boundary,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory')
+        monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        output=tmp_path/'owned-output';expected=sha256(REGISTRY.read_bytes()).hexdigest()
+>       with pytest.raises(BoundaryReached):runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key=model,
+            registry_path=REGISTRY,expected_registry_sha256=expected)
+
+tests/test_model_scale_runner_registry.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = 'de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45'
+root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+_ test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-32b-q4_k_m] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_valid_new_registry_reache1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f21ded1bbe0>
+model = 'qwen3-32b-q4_k_m'
+
+    @pytest.mark.parametrize('model',['qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'])
+    def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model):
+        calls=[]
+        def boundary(command,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=boundary,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory')
+        monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        output=tmp_path/'owned-output';expected=sha256(REGISTRY.read_bytes()).hexdigest()
+>       with pytest.raises(BoundaryReached):runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key=model,
+            registry_path=REGISTRY,expected_registry_sha256=expected)
+
+tests/test_model_scale_runner_registry.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:38: in main
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json')
+expected_sha256 = 'de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45'
+root = None
+
+    def load_registry(path=None, *, expected_sha256=None, root=None):
+        """Bind a selected project registry before any model or CUDA construction."""
+>       root = ROOT if root is None else Path(root)
+E       NameError: name 'ROOT' is not defined
+
+scripts/serve_local_model_eval.py:33: NameError
+___ test_mismatch_rejected_before_provider_or_output[declared0-cuda-runner] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213a9d3550>
+entry = 'runner'
+declared = {'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}
+selected = 'cuda'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'selected': 'cuda', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"cpu_threads": 4, "provider_backend": "cpu_explicit", "request_timeout_seconds": 900}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cuda"}
+_ test_mismatch_rejected_before_provider_or_output[declared1-cpu_explicit-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213aa07af0>
+entry = 'runner', declared = {'provider_backend': 'cuda'}
+selected = 'cpu_explicit'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cuda'}, 'selected': 'cpu_explicit', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"provider_backend": "cuda"}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cpu_explicit"}
+_ test_mismatch_rejected_before_provider_or_output[declared2-cpu_explicit-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213a9d1570>
+entry = 'runner', declared = {}, selected = 'cpu_explicit'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {}, 'selected': 'cpu_explicit', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cpu_explicit"}
+___ test_mismatch_rejected_before_provider_or_output[declared3-cuda-runner] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213aa051e0>
+entry = 'runner', declared = {'provider_backend': 'invalid'}, selected = 'cuda'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'invalid'}, 'selected': 'cuda', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"provider_backend": "invalid"}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cuda"}
+_ test_mismatch_rejected_before_provider_or_output[declared4-cpu_explicit-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213a9d2e00>
+entry = 'runner'
+declared = {'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}
+selected = 'cpu_explicit'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'selected': 'cpu_explicit', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"cpu_threads": 8, "provider_backend": "cpu_explicit", "request_timeout_seconds": 900}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cpu_explicit"}
+_ test_mismatch_rejected_before_provider_or_output[declared5-cpu_explicit-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213aa05e70>
+entry = 'runner'
+declared = {'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}
+selected = 'cpu_explicit'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'selected': 'cpu_explicit', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"cpu_threads": 4, "provider_backend": "cpu_explicit", "request_timeout_seconds": 30}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cpu_explicit"}
+_ test_mismatch_rejected_before_provider_or_output[declared6-cpu_explicit-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_mismatch_rejected_before_12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213aa68880>
+entry = 'runner'
+declared = {'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}
+selected = 'cpu_explicit'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cuda'),
+        ({'provider_backend': 'cuda'}, 'cpu_explicit'),
+        ({}, 'cpu_explicit'),
+        ({'provider_backend': 'invalid'}, 'cuda'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 8, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 30}, 'cpu_explicit'),
+        ({'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_mismatch_rejected_before_provider_or_output(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert isinstance(error, ValueError), observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cpu_explicit', 'request_timeout_seconds': 900}, 'selected': 'cpu_explicit', 'full_source_hashes_valid': True, ...}
+E       assert False
+E        +  where False = isinstance(NameError("name 'ROOT' is not defined"), ValueError)
+
+tests/test_capability_entry_contract.py:98: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"provider_backend": "cpu_explicit", "request_timeout_seconds": 900}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cpu_explicit"}
+_ test_authorized_execution_reaches_same_controlled_boundary[declared0-cuda-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_authorized_execution_reac0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213aa04040>
+entry = 'runner', declared = {'provider_backend': 'cuda'}, selected = 'cuda'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cuda'}, 'cuda'),
+        ({}, 'cuda'),  # Historical CUDA freezes predate the explicit CPU protocol.
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_authorized_execution_reaches_same_controlled_boundary(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert observed['controlled_boundary_calls'] == 1, observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cuda'}, 'selected': 'cuda', 'full_source_hashes_valid': True, ...}
+E       assert 0 == 1
+
+tests/test_capability_entry_contract.py:111: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"provider_backend": "cuda"}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cuda"}
+_ test_authorized_execution_reaches_same_controlled_boundary[declared1-cuda-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_authorized_execution_reac2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213a9d1bd0>
+entry = 'runner', declared = {}, selected = 'cuda'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cuda'}, 'cuda'),
+        ({}, 'cuda'),  # Historical CUDA freezes predate the explicit CPU protocol.
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_authorized_execution_reaches_same_controlled_boundary(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert observed['controlled_boundary_calls'] == 1, observed
+E       AssertionError: {'entry': 'runner', 'declared': {}, 'selected': 'cuda', 'full_source_hashes_valid': True, ...}
+E       assert 0 == 1
+
+tests/test_capability_entry_contract.py:111: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cuda"}
+_ test_authorized_execution_reaches_same_controlled_boundary[declared2-cpu_explicit-runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_authorized_execution_reac4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f213a9d3940>
+entry = 'runner'
+declared = {'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}
+selected = 'cpu_explicit'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    @pytest.mark.parametrize('declared,selected', [
+        ({'provider_backend': 'cuda'}, 'cuda'),
+        ({}, 'cuda'),  # Historical CUDA freezes predate the explicit CPU protocol.
+        ({'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'cpu_explicit'),
+    ])
+    def test_authorized_execution_reaches_same_controlled_boundary(tmp_path, monkeypatch, entry, declared, selected):
+        observed, error = exercise(tmp_path, monkeypatch, entry, declared, selected)
+>       assert observed['controlled_boundary_calls'] == 1, observed
+E       AssertionError: {'entry': 'runner', 'declared': {'provider_backend': 'cpu_explicit', 'cpu_threads': 4, 'request_timeout_seconds': 900}, 'selected': 'cpu_explicit', 'full_source_hashes_valid': True, ...}
+E       assert 0 == 1
+
+tests/test_capability_entry_contract.py:111: AssertionError
+----------------------------- Captured stdout call -----------------------------
+CONTRACT_OBSERVATION {"actual_model_or_gpu_started": false, "controlled_boundary_calls": 0, "declared": {"cpu_threads": 4, "provider_backend": "cpu_explicit", "request_timeout_seconds": 900}, "entry": "runner", "error": "name 'ROOT' is not defined", "error_type": "NameError", "full_source_hashes_valid": true, "output_created": false, "report_failure": null, "selected": "cpu_explicit"}
+___ test_real_child_entry_rejects_parent_sha_before_output_or_model[runner] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-292/test_real_child_entry_rejects_0')
+entry = 'runner'
+
+    @pytest.mark.parametrize('entry', ['runner', 'sampler'])
+    def test_real_child_entry_rejects_parent_sha_before_output_or_model(tmp_path, entry):
+        freeze = tmp_path / 'freeze.json'
+        descriptor = frozen(freeze)
+        original = sha256(freeze.read_bytes()).hexdigest()
+        descriptor['scope'] = 'Changed between parent and child'
+        freeze.write_text(json.dumps(descriptor))
+        output = tmp_path / 'must-not-exist'
+        command = [sys.executable, str(ROOT / 'scripts' / ('run_native_output_models.py' if entry == 'runner'
+                                                          else 'evaluate_capability_pair.py')),
+                   '--candidate-freeze', str(freeze), '--protocol', str(PROTOCOL), '--pair-protocol', str(PAIR),
+                   '--partition', 'development', '--output', str(output), '--expected-freeze-sha256', original]
+        if entry == 'runner':
+            command += ['--provider-python', sys.executable, '--stage', 'capability_pair',
+                        '--candidate', 'source_capability_v4', '--backend', 'cuda', '--model-key', 'qwen3-4b-q4_k_m']
+        else:
+            command += ['--provider', str(tmp_path / 'nonexistent-provider.json'),
+                        '--trace', str(tmp_path / 'unused-trace'), '--candidate', CANDIDATE]
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+        print('FREEZE_CHILD_OBSERVATION ' + json.dumps({'entry': entry, 'returncode': result.returncode,
+              'identity_rejected': 'Frozen descriptor identity changed' in result.stderr,
+              'output_exists': output.exists(), 'model_started': False}))
+>       assert result.returncode != 0 and 'Frozen descriptor identity changed' in result.stderr
+E       assert (1 != 0 and 'Frozen descriptor identity changed' in 'Traceback (most recent call last):\n  File "/data/Users/zrh/repo/hhu-ai-avatar/scripts/run_native_output_models.py", ... line 33, in load_registry\n    root = ROOT if root is None else Path(root)\nNameError: name \'ROOT\' is not defined\n')
+E        +  where 1 = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip...line 33, in load_registry\n    root = ROOT if root is None else Path(root)\nNameError: name \'ROOT\' is not defined\n').returncode
+E        +  and   'Traceback (most recent call last):\n  File "/data/Users/zrh/repo/hhu-ai-avatar/scripts/run_native_output_models.py", ... line 33, in load_registry\n    root = ROOT if root is None else Path(root)\nNameError: name \'ROOT\' is not defined\n' = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip...line 33, in load_registry\n    root = ROOT if root is None else Path(root)\nNameError: name \'ROOT\' is not defined\n').stderr
+
+tests/test_capability_freeze_identity.py:133: AssertionError
+----------------------------- Captured stdout call -----------------------------
+FREEZE_CHILD_OBSERVATION {"entry": "runner", "returncode": 1, "identity_rejected": false, "output_exists": false, "model_started": false}
+=========================== short test summary info ============================
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[no_sha]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[wrong_sha]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[protocol_mismatch]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[implicit_old]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[capability_override]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[unknown_model]
+FAILED tests/test_model_scale_runner_registry.py::test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-4b-q4_k_m]
+FAILED tests/test_model_scale_runner_registry.py::test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-32b-q4_k_m]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared0-cuda-runner]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared1-cpu_explicit-runner]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared2-cpu_explicit-runner]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared3-cuda-runner]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared4-cpu_explicit-runner]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared5-cpu_explicit-runner]
+FAILED tests/test_capability_entry_contract.py::test_mismatch_rejected_before_provider_or_output[declared6-cpu_explicit-runner]
+FAILED tests/test_capability_entry_contract.py::test_authorized_execution_reaches_same_controlled_boundary[declared0-cuda-runner]
+FAILED tests/test_capability_entry_contract.py::test_authorized_execution_reaches_same_controlled_boundary[declared1-cuda-runner]
+FAILED tests/test_capability_entry_contract.py::test_authorized_execution_reaches_same_controlled_boundary[declared2-cpu_explicit-runner]
+FAILED tests/test_capability_freeze_identity.py::test_real_child_entry_rejects_parent_sha_before_output_or_model[runner]
+19 failed, 31 passed in 2.66s

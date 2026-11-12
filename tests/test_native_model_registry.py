@@ -71,3 +71,24 @@ def test_wrong_json_types_are_rejected_before_gpu(registries,change):
     if change=='revision_type':model['revision']=123
     new.write_text(json.dumps([] if change=='top_level' else {'models':[model]}))
     with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=sha256(new.read_bytes()).hexdigest(),root=root)
+
+
+
+def test_actual_default_registry_works_without_explicit_fixture_root():
+    data,identity,path=provider.load_registry()
+    assert path==provider.ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
+    assert identity==sha256(path.read_bytes()).hexdigest()
+    assert {m['model_id'] for m in data['models']}=={'qwen3-4b-q4_k_m','qwen3-14b-q4_k_m'}
+
+
+def test_real_provider_cli_wrong_registry_sha_stops_before_model_or_output(tmp_path):
+    import subprocess
+    root=Path(__file__).resolve().parents[1]
+    ready=tmp_path/'ready.json';trace=tmp_path/'trace.jsonl'
+    command=[sys.executable,str(root/'scripts/serve_local_model_eval.py'),'--model',str(tmp_path/'absent.gguf'),
+        '--model-key','qwen3-32b-q4_k_m','--metadata',str(root/'evals/interaction/cycle-26/model-metadata-32b.json'),
+        '--registry',str(root/'evals/interaction/cycle-26/model-scale-registry.json'),'--expected-registry-sha256','changed',
+        '--ready',str(ready),'--trace',str(trace)]
+    result=subprocess.run(command,cwd=root,capture_output=True,text=True)
+    assert result.returncode!=0 and 'Registry identity changed' in result.stderr
+    assert not ready.exists() and not trace.exists()

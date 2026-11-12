@@ -16,7 +16,8 @@ import sys
 import threading
 import time
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 from avatar.gpu_resources import select_available_gpu
 
 
