@@ -113,3 +113,35 @@ def test_prior_gate_recomputes_actual_rows_instead_of_trusting_flags(tmp_path,pr
     if forged_schema:
         with pytest.raises(ValueError,match='actual schema evidence incomplete'):runner.prior_gate(prior,'freeze',runner.digest(prior))
     else:runner.prior_gate(prior,'freeze',runner.digest(prior))
+
+
+def test_truncated_warmup_stops_before_second_call_and_cleans_owned_provider(tmp_path,monkeypatch,protocol):
+    from types import SimpleNamespace
+    args=SimpleNamespace(model=runner.MODELS[0],output=tmp_path/'run',freeze=tmp_path/'unused.json',expected_freeze_sha256='frozen',provider_python=Path(sys.executable))
+    registry=json.loads((ROOT/runner.REGISTRY).read_text());registry_sha=runner.digest(ROOT/runner.REGISTRY)
+    source={'sha256':{runner.REGISTRY:registry_sha,'scripts/serve_local_model_eval.py':'provider-sha','src/avatar/gpu_resources.py':'resource-sha'}}
+    monkeypatch.setattr(runner,'verify_freeze',lambda *a,**k:source)
+    monkeypatch.setattr(runner,'load_registry',lambda *a,**k:(registry,registry_sha,ROOT/runner.REGISTRY))
+    monkeypatch.setattr(runner,'validate_provider_identity',lambda *a,**k:None)
+    monkeypatch.setattr(runner,'environment',lambda *a:{})
+    monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+    class OwnedProvider:
+        pid=987654321
+        def __init__(self,*a,**k):
+            self.returncode=None
+            metadata={'pid':self.pid,'model_id':args.model,'provider_source_sha256':'provider-sha','resource_selector_sha256':'resource-sha','configuration':{'n_gpu_layers':-1,'n_ctx':8192,'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'concurrent_sequences':1},'chosen_gpu':{'index':0},'url':'fixture'}
+            (args.output/'provider-ready.json').write_text(json.dumps(metadata))
+        def poll(self):return self.returncode
+        def terminate(self):self.returncode=0
+        def wait(self,**k):return self.returncode
+    monkeypatch.setattr(runner.subprocess,'Popen',OwnedProvider)
+    monkeypatch.setattr(runner.subprocess,'check_output',lambda *a,**k:'fixture-head\n')
+    calls=[]
+    def truncated(url,value):
+        calls.append(value);return {'request':value,'reply':'unfinished','finish_reason':'length'}
+    monkeypatch.setattr(runner,'request',truncated)
+    with pytest.raises(RuntimeError,match='incomplete'):runner.run(args)
+    result=json.loads((args.output/'probe.json').read_text())
+    assert len(calls)==1 and len(result['requests'])==1
+    assert result['provider_exit']==0 and result['cleanup_passed']
+    assert not result['completed'] and not result['engineering_passed']

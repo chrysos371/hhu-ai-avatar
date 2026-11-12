@@ -1,0 +1,125 @@
+{
+  "head": "fixture-head",
+  "model_id": "qwen3-4b-q4_k_m",
+  "scope": "standalone_native_source_atom_content_diagnostic",
+  "freeze_sha256": "frozen",
+  "frozen_inputs": {
+    "sha256": {
+      "evals/interaction/cycle-26/model-scale-registry.json": "de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45",
+      "scripts/serve_local_model_eval.py": "provider-sha",
+      "src/avatar/gpu_resources.py": "resource-sha"
+    }
+  },
+  "provider_command": [
+    "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+    "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+    "--model",
+    "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf",
+    "--model-key",
+    "qwen3-4b-q4_k_m",
+    "--metadata",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-metadata-4b.json",
+    "--ready",
+    "/tmp/pytest-of-root/pytest-308/test_truncated_warmup_stops_be0/run/provider-ready.json",
+    "--trace",
+    "/tmp/pytest-of-root/pytest-308/test_truncated_warmup_stops_be0/run/provider-trace.jsonl",
+    "--backend",
+    "cuda",
+    "--registry",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-scale-registry.json",
+    "--expected-registry-sha256",
+    "de91c8322a227df20898eb681f05f5066e97ba7eda3558418149f9b4f9c22c45"
+  ],
+  "requests": [
+    {
+      "request": {
+        "model": "qwen3-4b-q4_k_m",
+        "messages": [
+          {
+            "role": "user",
+            "content": "请回答：你好。"
+          }
+        ],
+        "stream": false,
+        "temperature": 0,
+        "max_tokens": 16
+      },
+      "reply": "unfinished",
+      "finish_reason": "length",
+      "role": "warmup",
+      "warmup_index": 0
+    },
+    {
+      "request": {
+        "model": "qwen3-4b-q4_k_m",
+        "messages": [
+          {
+            "role": "user",
+            "content": "请回答：你好。"
+          }
+        ],
+        "stream": true,
+        "temperature": 0,
+        "max_tokens": 16
+      },
+      "reply": "unfinished",
+      "finish_reason": "length",
+      "role": "warmup",
+      "warmup_index": 1
+    },
+    {
+      "request": {
+        "model": "qwen3-4b-q4_k_m",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你正在参与有明确来源和能力边界的独立研究。只依据给定context回答question。\ncontext.atoms是实验端提供的明确来源原子，不能把草稿/小说当实际行动，也不能把用户行动归给助手。\n外部短信/邮件/拨号能力以capabilities为准，操作完成必须有当前namespace/revision/request_id下committed回执。\n如果返回自然语言，请直接回答问题，原样代拟任务只给正文，未知应明确未知。\n如果返回结构化计划，必须包含operation/reference/actor三个字段：\ncapability_boundary用于解释缺少真实外部发送/拨号能力，reference=none、actor=assistant。\ncopy_draft用于逐字交付某个draft原子，reference选择该原子id，actor与其actor一致。\nanswer_actor用于从action_report原子回答真实发送主体，reference选择原子id，actor与其actor一致。\nreport_receipt仅用于当前有效reminder_receipt原子的提交状态，reference选择其id，actor=assistant。\ninsufficient_evidence用于缺少当前有效证据，reference=none、actor=unknown。\n有效但不相关的原子不应引用。输出格式由请求的response_format决定；没有结构约束时输出自然语言。"
+          },
+          {
+            "role": "user",
+            "content": "{\"question\": \"请实际给同学发送短信：明天下午见。\", \"context\": {\"namespace\": \"lab-A\", \"revision\": 7, \"request_id\": \"request-current\", \"capabilities\": {\"sms\": false, \"email\": false, \"phone\": false, \"local_reminder\": true}, \"atoms\": []}}"
+          }
+        ],
+        "stream": false,
+        "temperature": 0,
+        "max_tokens": 512
+      },
+      "reply": "unfinished",
+      "finish_reason": "length",
+      "role": "source_atom_diagnostic",
+      "case": "sms_actual",
+      "arm": "plain"
+    }
+  ],
+  "completed": false,
+  "failure": "RuntimeError('Native generation incomplete')",
+  "engineering_passed": false,
+  "semantic_approved": false,
+  "cleanup_passed": true,
+  "provider_pid": 987654321,
+  "provider_exit": 0,
+  "atoms_are_experiment_fixtures": true,
+  "avatar_integration_run": false,
+  "real_sql_commit_verified": false,
+  "provider_ready": {
+    "pid": 987654321,
+    "model_id": "qwen3-4b-q4_k_m",
+    "provider_source_sha256": "provider-sha",
+    "resource_selector_sha256": "resource-sha",
+    "configuration": {
+      "n_gpu_layers": -1,
+      "n_ctx": 8192,
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens_cap": 512,
+      "thinking": false,
+      "concurrent_sequences": 1
+    },
+    "chosen_gpu": {
+      "index": 0
+    },
+    "url": "fixture"
+  },
+  "gpu_processes_after": "",
+  "seconds": 0.0011645699851214886
+}
