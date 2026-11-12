@@ -53,7 +53,7 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
     }, input.page, {timeout: input.eventual_timeout_ms});
     const eventual = await dom(), eventualMs = performance.now() - start;
     if (errors.length) throw Error(JSON.stringify(errors));
-    const result = {completed: true, before, before_api: beforeApi.data, immediate, delayed, delayed_ms: delayedMs,
+    const result = {completed: true, browser_version: browser.version(), node_version: process.version, before, before_api: beforeApi.data, immediate, delayed, delayed_ms: delayedMs,
       after_api: afterApi.data, eventual, eventual_ms: eventualMs,
       stale_immediate: JSON.stringify(immediate.values) === JSON.stringify(before.values),
       stale_at_fixed_observation: JSON.stringify(delayed.values) === JSON.stringify(before.values),

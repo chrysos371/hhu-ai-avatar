@@ -20,8 +20,11 @@ def source_names():
     selected = {name for name in tracked if name.startswith(('src/', 'frontend/'))
         or (name.startswith(('tests/', 'scripts/')) and name.endswith('.py'))}
     selected.update(str((BASE / '审计' / name).relative_to(ROOT)) for name in (
-        'browser_common.py', 'prepare_browser_phase.py', 'browser_probe.py', 'browser_probe.cjs'))
+        'browser_common.py', 'prepare_browser_phase.py', 'browser_probe.py', 'browser_probe.cjs',
+        'browser_supplement.py', 'browser_supplement.cjs', 'run_regression.py'))
     selected.add(str(PROTOCOL.relative_to(ROOT)))
+    selected.add('evals/interaction/cycle-35/browser-privacy-supplement-protocol.json')
+    selected.update(('scripts/project-python', 'scripts/project_env.sh', 'scripts/frontend.sh'))
     return selected
 
 
