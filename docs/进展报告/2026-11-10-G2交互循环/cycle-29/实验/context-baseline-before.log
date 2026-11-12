@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py", line 128, in run
+    accepted=query(ready,'/turns',{'request_id':f'c29_{case["id"]}_{index}','text':text,'use_web':False});job=accepted['body']['data']['job_id']
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py", line 85, in query
+    with opener.open(req,timeout=30) as response:return {'status':response.status,'body':json.load(response)}
+  File "/usr/lib/python3.10/urllib/request.py", line 525, in open
+    response = meth(req, response)
+  File "/usr/lib/python3.10/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+  File "/usr/lib/python3.10/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.10/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 422: Unprocessable Entity
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py", line 166, in <module>
+    parser.add_argument('--expected-freeze-sha256',required=True);run(parser.parse_args())
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py", line 150, in run
+    for state in live:stop_worker(state)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py", line 111, in stop_worker
+    if not {'avatar.main','avatar.web','avatar.brain.memory','avatar.brain.llm'}<=actual['module_sources'].keys():raise ValueError('Required actual runtime modules absent')
+ValueError: Required actual runtime modules absent
