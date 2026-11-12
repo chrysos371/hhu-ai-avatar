@@ -6,7 +6,7 @@ import struct
 
 ROOT=Path(__file__).resolve().parents[5]
 BASE=Path(__file__).resolve().parents[1]
-model=ROOT/'models/Qwen3-4B-Q4_K_M.gguf'
+model=ROOT/'models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf'
 out=BASE/'审计/工作目录/001-工具调用调查'
 assert not (out/'gguf-template.json').exists()
 with model.open('rb') as f:
