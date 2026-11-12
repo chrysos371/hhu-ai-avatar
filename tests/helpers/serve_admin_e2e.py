@@ -21,6 +21,9 @@ sys.path.insert(0, str(project_root / 'src'))
 import numpy as np
 import avatar.main
 import avatar.web
+import avatar.web_api
+import avatar.web_state
+import avatar.brain.emotion
 import avatar.brain.memory
 import avatar.brain.reminders
 from avatar.config import config
@@ -29,7 +32,8 @@ from avatar.brain.reminders import ReminderStore
 from avatar.web import create_server
 from avatar.lab.transport_fixture import controlled_provider
 
-modules = (avatar.main, avatar.web, avatar.brain.memory, avatar.brain.reminders)
+modules = (avatar.main, avatar.web, avatar.web_api, avatar.web_state,
+           avatar.brain.emotion, avatar.brain.memory, avatar.brain.reminders)
 module_paths = {module.__name__: Path(module.__file__).resolve() for module in modules}
 if not all(path.is_relative_to(project_root / 'src') for path in module_paths.values()):
     raise RuntimeError('Browser fixture imported another project source tree')
