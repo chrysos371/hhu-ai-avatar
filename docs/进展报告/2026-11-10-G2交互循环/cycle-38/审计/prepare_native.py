@@ -1,11 +1,13 @@
 """Record installed identity before clean committed C38 development freeze."""
 import argparse
 import json
+import re
 import subprocess
 from native_common import ROOT, PROTOCOL, REGISTRY, WORK, RUNTIME, digest, read, capture_runtime, required_inputs, verify_source
 
 
-def main(action):
+def main(action, tag=""):
+    assert not tag or re.fullmatch(r"[a-z0-9_-]+", tag)
     WORK.mkdir(parents=True, exist_ok=True)
     if action == 'runtime':
         assert not RUNTIME.exists()
@@ -23,7 +25,7 @@ def main(action):
         'registry_sha256': digest(REGISTRY), 'models': ['qwen3-4b-q4_k_m'],
         'case_ids': [c['id'] for c in cases], 'turn_count_per_arm': sum(len(c['turns']) for c in cases),
         'repetitions': protocol['sampling']['repetitions'], 'sha256': {n: digest(ROOT/n) for n in sorted(required_inputs())}}
-    path = WORK/'execution-freeze.json'
+    path = WORK/('execution-freeze'+('-'+tag if tag else '')+'.json')
     assert not path.exists()
     path.write_text(json.dumps(frozen, ensure_ascii=False, indent=2)+'\n')
     verify_source(path, digest(path))
@@ -33,4 +35,6 @@ def main(action):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=('runtime', 'freeze'))
-    main(parser.parse_args().action)
+    parser.add_argument('--tag', default='')
+    args = parser.parse_args()
+    main(args.action, args.tag)

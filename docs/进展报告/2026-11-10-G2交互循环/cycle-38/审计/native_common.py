@@ -16,6 +16,7 @@ REFERENCE = ROOT / 'docs/进展报告/2026-11-12-项目数据集中迁移/迁后
 WORK = BASE / '审计/工作目录/003-原生开发配对'
 RUNTIME = WORK / 'native-runtime.json'
 ADMISSION = BASE / '审计/工作目录/002-工程全量/native-admission.json'
+HANDOFF_PROOF = BASE / '审计/工作目录/003-原生开发配对/handoff-admission.json'
 sys.path.insert(0, str(ROOT / 'scripts'))
 sys.path.insert(0, str(ROOT / 'src'))
 from avatar.paths import environment_python
@@ -61,7 +62,7 @@ def required_inputs():
     names = {n for n in names if n.startswith(('src/', 'scripts/', 'tests/', 'evals/interaction/cycle-38/'))
              or (n.startswith(str((BASE / '审计').relative_to(ROOT)) + '/') and n.endswith('.py'))}
     names.update(m['metadata'] for m in read(REGISTRY)['models'])
-    names.update((str(REFERENCE.relative_to(ROOT)), str(RUNTIME.relative_to(ROOT)), str(ADMISSION.relative_to(ROOT))))
+    names.update((str(REFERENCE.relative_to(ROOT)), str(RUNTIME.relative_to(ROOT)), str(ADMISSION.relative_to(ROOT)), str(HANDOFF_PROOF.relative_to(ROOT))))
     return names
 
 
@@ -88,6 +89,11 @@ def verify_source(path, expected, model='qwen3-4b-q4_k_m'):
     admission = read(ADMISSION)
     if admission.get('verified') is not True or admission.get('new_native_calls') != 0:
         raise ValueError('C38 controlled admission missing')
+    handoff = read(HANDOFF_PROOF)
+    if (handoff.get('verified') is not True
+            or handoff.get('controller_sha256') != digest(BASE/'审计/run_pairs.py')
+            or handoff.get('sampler_sha256') != digest(BASE/'审计/sample_pairs.py')):
+        raise ValueError('C38 current handoff regression proof missing')
     hashes = frozen.get('sha256')
     if not isinstance(hashes, dict) or not required_inputs() <= hashes.keys():
         raise ValueError('C38 frozen inputs incomplete')

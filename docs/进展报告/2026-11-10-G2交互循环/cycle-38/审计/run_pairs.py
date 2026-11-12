@@ -7,6 +7,12 @@ from evaluate_native_output_audit import validate_provider_identity
 from run_native_output_models import gpu_snapshot,gpu_processes,has_pid
 
 
+def sampler_command(metadata, output, freeze, expected, repetition):
+    return [sys.executable,str(BASE/'审计/sample_pairs.py'),'--provider',str(metadata),'--output',str(output/'sample'),
+        '--wire',str(output/'wire.jsonl'),'--freeze',str(freeze.resolve()),
+        '--expected-freeze-sha256',expected,'--repetition',str(repetition)]
+
+
 def main(args):
     frozen=verify_source(args.freeze,args.expected_freeze_sha256,args.model)
     assert not args.run_tag or re.fullmatch(r'[a-z0-9_-]+',args.run_tag)
@@ -50,9 +56,7 @@ def main(args):
             with NativeWireRelay(native['url'],output/'wire.jsonl',actual_native=True) as relay:
                 via=dict(native,url=relay.url,upstream_native_url=native['url'],full_wire_relay_buffered=True)
                 metadata=output/'relay-provider-ready.json';metadata.write_text(json.dumps(via,ensure_ascii=False,indent=2)+'\n')
-                sampler=[sys.executable,str(BASE/'审计/sample_pairs.py'),'--provider',str(relay_metadata),'--output',str(output/'sample'),
-                    '--wire',str(output/'wire.jsonl'),'--freeze',str(args.freeze.resolve()),
-                    '--expected-freeze-sha256',args.expected_freeze_sha256,'--repetition',str(args.repetition)]
+                sampler=sampler_command(metadata,output,args.freeze,args.expected_freeze_sha256,args.repetition)
                 report['sampler_argv']=sampler;save()
                 with (output/'sampler.log').open('x') as log:
                     worker=subprocess.Popen(sampler,cwd=ROOT,env=dict(os.environ,NO_PROXY='127.0.0.1,localhost',no_proxy='127.0.0.1,localhost'),stdout=log,stderr=subprocess.STDOUT)
