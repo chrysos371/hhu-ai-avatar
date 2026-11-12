@@ -58,7 +58,7 @@ class FixtureHandler(BaseHTTPRequestHandler):
 
 
 def save(path,value):
-    tmp=path.with_suffix(path.suffix+'.tmp');tmp.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n');os.replace(tmp,path)
+    tmp=path.with_suffix(path.suffix+'.tmp');tmp.write_text(json.dumps(value,ensure_ascii=False,indent=2,default=lambda v:{'sqlite_blob_hex':v.hex()} if isinstance(v,bytes) else str(v))+'\n');os.replace(tmp,path)
 
 
 def sql_snapshot(path):
@@ -134,6 +134,8 @@ def run(args):
                         if ''.join(e['data']['text'] for e in observed if e['event']=='text')!=result['reply']:raise ValueError('SSE/final reply mismatch')
                     stop_worker(state)
                     row['sql_snapshot']=sql_snapshot(db)
+                    with closing(sqlite3.connect('file:'+str(db)+'?mode=ro',uri=True)) as export:
+                        with (folder/'database_dump.sql').open('x') as stream:stream.write('\n'.join(export.iterdump())+'\n')
                     with provider.guard:row['model_requests']=deepcopy(provider.rows)
                     generations=[r for r in row['model_requests'] if r['kind']=='generation'];assert len(generations)==3
                     final=generations[-1]['request']['messages'];actual=Counter((m['role'],m['content']) for m in final)

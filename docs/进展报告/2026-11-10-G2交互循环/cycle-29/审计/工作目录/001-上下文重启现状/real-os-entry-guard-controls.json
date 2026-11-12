@@ -1,0 +1,48 @@
+{
+  "controlled_admission_verified": true,
+  "rows": [
+    {
+      "entry": "run_context_baseline.py",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/工作目录/001-上下文重启现状/guard-invalid-descriptor.txt",
+        "--expected-freeze-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--output",
+        "/data/Users/zrh/repo/runtime/tmp/c29-context-wmawpnra/run_context_baseline.py.must-not-exist"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py\", line 166, in <module>\n    parser.add_argument('--expected-freeze-sha256',required=True);run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_baseline.py\", line 73, in run\n    frozen=verify_freeze(args.freeze,args.expected_freeze_sha256);protocol=json.loads((ROOT/PROTOCOL).read_text())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/context_baseline_common.py\", line 23, in verify_freeze\n    if digest(path)!=expected:raise ValueError('Baseline freeze identity changed')\nValueError: Baseline freeze identity changed\n",
+      "output_not_created": true,
+      "actual_app_or_provider_started": false
+    },
+    {
+      "entry": "context_baseline_worker.py",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/context_baseline_worker.py",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/工作目录/001-上下文重启现状/guard-invalid-descriptor.txt",
+        "--expected-freeze-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--db",
+        "/data/Users/zrh/repo/runtime/tmp/c29-context-wmawpnra/owned.db",
+        "--ready",
+        "/data/Users/zrh/repo/runtime/tmp/c29-context-wmawpnra/context_baseline_worker.py.must-not-exist",
+        "--runtime-out",
+        "/data/Users/zrh/repo/runtime/tmp/c29-context-wmawpnra/must-not-write-runtime.json",
+        "--provider-url",
+        "http://127.0.0.1:9/v1"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/context_baseline_worker.py\", line 43, in <module>\n    parser.add_argument('--freeze',required=True,type=Path);parser.add_argument('--expected-freeze-sha256',required=True);main(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/context_baseline_worker.py\", line 14, in main\n    verify_freeze(args.freeze,args.expected_freeze_sha256);require_loopback(args.provider_url)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/context_baseline_common.py\", line 23, in verify_freeze\n    if digest(path)!=expected:raise ValueError('Baseline freeze identity changed')\nValueError: Baseline freeze identity changed\n",
+      "output_not_created": true,
+      "actual_app_or_provider_started": false
+    }
+  ],
+  "note": "Actual OS CLI wrong raw SHA; no app worker/network/model started. These are controlled guard tests, not context results."
+}
