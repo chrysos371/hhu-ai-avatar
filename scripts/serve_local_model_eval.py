@@ -19,6 +19,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from avatar.gpu_resources import select_available_gpu
+from avatar.lab.native_tool_wire import ToolWireError, request_tools, adapt_completion
 
 
 def sha(path):
@@ -102,6 +103,7 @@ def main():
     parser.add_argument('--ready', type=Path, required=True)
     parser.add_argument('--trace', type=Path, required=True)
     parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
+    parser.add_argument('--enable-tools', action='store_true', help='isolated nonstreaming single-call XML adapter; default disabled')
     parser.add_argument('--registry', type=Path)
     parser.add_argument('--expected-registry-sha256')
     args = parser.parse_args()
@@ -193,13 +195,15 @@ def main():
                 self.send_json(413,{'error':{'message':'invalid request length'}});return
             raw_request=self.rfile.read(length)
             data=json.loads(raw_request)
-            if data.get('tools'):
-                self.send_json(400,{'error':{'message':'tool evaluation not enabled'}});return
+            try:
+                tools=request_tools(data,enabled=args.enable_tools)
+            except ToolWireError as error:
+                self.send_json(400,{'error':{'message':str(error)}});return
             with guard:
                 counter[0]+=1
                 identifier=f'eval-{counter[0]}'
                 messages=[{'tool_calls': [], 'reasoning_content': None} | message for message in data['messages']]
-                prompt=template.render(messages=messages,tools=None,add_generation_prompt=True,
+                prompt=template.render(messages=messages,tools=tools,add_generation_prompt=True,
                     enable_thinking=False,bos_token='',eos_token='')
                 assert prompt.endswith('<think>\n\n</think>\n\n')
                 grammar=None
@@ -211,6 +215,7 @@ def main():
                     grammar=LlamaGrammar.from_json_schema(json.dumps(schema),verbose=False)
                 started=time.monotonic();first=None;parts=[];outcome='completed';usage=None;finish_reason=None
                 stream=bool(data.get('stream'))
+                wire_message=None;wire_finish_reason=None
                 try:
                     if stream:
                         self.send_response(200);self.send_header('Content-Type','text/event-stream')
@@ -235,9 +240,10 @@ def main():
                         text=response['choices'][0]['text'];parts=[text];usage=response.get('usage')
                         finish_reason=response['choices'][0]['finish_reason']
                         first=time.monotonic()-started
+                        wire_message,wire_finish_reason=adapt_completion(text,finish_reason,tools,identifier)
                         self.send_json(200,{'id':identifier,'object':'chat.completion','model':args.model_key,
-                            'choices':[{'index':0,'message':{'role':'assistant','content':text},
-                                'finish_reason':response['choices'][0]['finish_reason']}],'usage':usage})
+                            'choices':[{'index':0,'message':wire_message,
+                                'finish_reason':wire_finish_reason}],'usage':usage})
                 except (BrokenPipeError,ConnectionResetError):
                     outcome='client_disconnected'
                 except Exception as exc:
@@ -249,7 +255,9 @@ def main():
                         'id':identifier,'stream':stream,'analysis':grammar is not None,
                         'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),'messages':data['messages'],
                         'response':''.join(parts),'first_seconds':first,'total_seconds':time.monotonic()-started,
-                        'usage':usage,'finish_reason':finish_reason,'outcome':outcome},ensure_ascii=False)+'\n');trace.flush()
+                        'usage':usage,'finish_reason':finish_reason,'outcome':outcome,
+                        'tool_adapter_enabled':args.enable_tools,'tools':tools,
+                        'wire_message':wire_message,'wire_finish_reason':wire_finish_reason},ensure_ascii=False)+'\n');trace.flush()
     server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
     server.daemon_threads=True
     args.ready.write_text(json.dumps({'url':f'http://127.0.0.1:{server.server_port}/v1',
@@ -267,7 +275,9 @@ def main():
             'n_ctx':8192,'n_batch_prompt_tokens':256,'concurrent_sequences':1,
             'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'flash_attention':True},
         'llama_cpp_python':version('llama-cpp-python'),'load_seconds':load_seconds,
-        'provider_source_sha256':sha(__file__),'process_gpu_mib_after_load':allocated,
+        'provider_source_sha256':sha(__file__),'tool_adapter_enabled':args.enable_tools,
+        'tool_adapter_source_sha256':sha(ROOT/'src/avatar/lab/native_tool_wire.py'),
+        'process_gpu_mib_after_load':allocated,
         'pid':os.getpid()},indent=2)+'\n')
     stopping=threading.Event()
     def shutdown(signum, frame):
