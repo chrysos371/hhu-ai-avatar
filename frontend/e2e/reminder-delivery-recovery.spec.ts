@@ -78,7 +78,7 @@ test('durable reminders recover faults and persist explicit client confirmation'
     report.finalPending=(await check.json()).data;expect((report.finalPending as {items:unknown[]}).items).toEqual([]);
     await expect(notice()).toHaveCount(0);report.finalList=await list();
     await page.screenshot({path:join(folder,'acknowledged-mobile.png'),fullPage:true});
-    // Keep the real next ten-second page poll as a separate no-replay check.
+    // Observe a browser read after reload; timing may be immediate or periodic.
     const next=await afterReload;expect((await next.json()).data.items).toEqual([]);
     report.pendingResponses=pending;report.acks=acks;report.posts=posts;report.errors=errors;report.requestFailures=failures;
     expect(errors).toEqual([]);report.completed=true;save();
