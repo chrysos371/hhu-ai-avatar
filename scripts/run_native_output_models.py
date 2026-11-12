@@ -12,6 +12,8 @@ import time
 from serve_local_model_eval import load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 
 
 def gpu_snapshot():
@@ -141,8 +143,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     # task-specific absolute home. Preserve any caller GPU visibility mask.
     purelib = Path(subprocess.check_output([str(provider_python), '-c',
         'import sysconfig; print(sysconfig.get_path("purelib"))'], text=True).strip())
-    libraries = [purelib/'nvidia/cuda_runtime/lib', ROOT.parent/'runtime/gpu-libs/nvidia/cublas/lib',
-                 ROOT.parent/'runtime/gpu-libs/nvidia/cudnn/lib']
+    libraries = [purelib/'nvidia/cuda_runtime/lib', project_data_root(ROOT)/'runtime/gpu-libs/nvidia/cublas/lib',
+                 project_data_root(ROOT)/'runtime/gpu-libs/nvidia/cudnn/lib']
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = ':'.join([str(p) for p in libraries]+([env['LD_LIBRARY_PATH']] if env.get('LD_LIBRARY_PATH') else []))
     try:

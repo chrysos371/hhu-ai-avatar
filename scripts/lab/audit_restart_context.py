@@ -15,6 +15,8 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 
 
 def source_hashes():
@@ -120,7 +122,7 @@ def audit(output):
         try:
             if source_hashes() != report['sourceSha256']:
                 raise RuntimeError('experiment sources changed after freeze')
-            with tempfile.TemporaryDirectory(prefix='restart-audit-', dir=ROOT.parent/'runtime/tmp') as temporary:
+            with tempfile.TemporaryDirectory(prefix='restart-audit-', dir=project_data_root(ROOT)/'tmp') as temporary:
                 db = Path(temporary)/'owned.db'
                 current = OwnedServer(db, folder, 'first')
                 row['firstInitial'] = current.ready['initial']

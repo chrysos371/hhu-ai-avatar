@@ -16,6 +16,7 @@ from urllib.request import build_opener, ProxyHandler, Request
 
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'src'))
+from avatar.paths import project_data_root
 from avatar.brain.action_receipts import ActionReceiptStore
 from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken, Cancelled
@@ -72,7 +73,7 @@ def audit(output):
     save();opener=build_opener(ProxyHandler({}))
     for case in ('normal','cancel_after_commit','forget_after_commit'):
         row={'case':case,'cleanup':False};report['cases'].append(row)
-        with tempfile.TemporaryDirectory(prefix='receipt-os-',dir=ROOT.parent/'runtime/tmp') as folder:
+        with tempfile.TemporaryDirectory(prefix='receipt-os-',dir=project_data_root(ROOT)/'tmp') as folder:
             db=Path(folder)/'owned.db';ready=Path(folder)/'ready.json'
             command=[sys.executable,str(Path(__file__).resolve())]
             producer=subprocess.Popen([*command,'--producer',str(db),'--case',case],cwd=ROOT,

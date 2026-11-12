@@ -12,6 +12,7 @@ from audit_restart_context import OwnedServer, database, source_hashes as worker
 from avatar.brain.memory import MemoryStore
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 PROTOCOL = ROOT/'evals/interaction/cycle-17/role-restart-protocol.json'
 
 
@@ -38,7 +39,7 @@ def audit(output):
         row = {'id': case['id'], 'turns': [], 'checks': {}, 'passed': False, 'failure': None, 'services': []}
         report['cases'].append(row); current = None
         try:
-            with tempfile.TemporaryDirectory(prefix='role-restart-', dir=ROOT.parent/'runtime/tmp') as temporary:
+            with tempfile.TemporaryDirectory(prefix='role-restart-', dir=project_data_root(ROOT)/'tmp') as temporary:
                 db = Path(temporary)/'owned.db'
                 def turn(text):
                     result = current.data('/chat', {'text': text})

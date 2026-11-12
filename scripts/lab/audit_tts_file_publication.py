@@ -11,6 +11,7 @@ from avatar.cancellation import CancellationToken
 import avatar.mouth.tts as module
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 OLD = b'previous-user-owned-output'
 PARTIAL = b'fixture-partial-audio'
 NEW = b'fixture-complete-audio'
@@ -31,7 +32,7 @@ def audit(output):
             for existing in (True, False):
                 row = {'behavior': behavior, 'target_existed': existing, 'component_paths': [], 'cleanup': False}
                 report['cases'].append(row); token = CancellationToken()
-                with tempfile.TemporaryDirectory(prefix='tts-publication-', dir=ROOT.parent/'runtime/tmp') as folder:
+                with tempfile.TemporaryDirectory(prefix='tts-publication-', dir=project_data_root(ROOT)/'tmp') as folder:
                     target = Path(folder)/'user-output.mp3'
                     if existing: target.write_bytes(OLD)
                     class Communication:

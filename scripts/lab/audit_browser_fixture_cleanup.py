@@ -11,6 +11,8 @@ import time
 from urllib.request import urlopen
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 
 
 def main():
@@ -27,7 +29,7 @@ def main():
               'pid': None, 'created': [], 'remaining': [], 'exitCode': None, 'failure': None, 'passed': False}
     with args.output.open('x') as file:
         json.dump(report, file, ensure_ascii=False, indent=2)
-    temp = ROOT.parent/'runtime/tmp'
+    temp = project_data_root(ROOT)/'tmp'
     before = set(temp.glob('admin-e2e-*'))
     proc = None
     started = time.monotonic()

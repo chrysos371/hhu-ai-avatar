@@ -19,6 +19,7 @@ import avatar.web_state
 import avatar.brain.emotion
 from avatar.brain.memory import MemoryStore
 from avatar.config import config
+from avatar.paths import project_data_root
 from avatar.web import create_server
 
 parser = argparse.ArgumentParser()
@@ -52,7 +53,7 @@ save()
 try:
     for repetition in range(1, protocol['repetitions_per_page_phase'] + 1):
         verify(args.freeze, args.expected_freeze_sha256, args.phase)
-        owned = Path(tempfile.mkdtemp(prefix='c35-browser-', dir=ROOT.parent / 'runtime/tmp'))
+        owned = Path(tempfile.mkdtemp(prefix='c35-browser-', dir=project_data_root() / 'tmp'))
         server = create_server(str(owned / 'owned.db'), port=0, legacy_writes=True)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
@@ -70,10 +71,10 @@ try:
             with closing(MemoryStore(server.db_path)) as writer:
                 fragment = writer.remember('C35浏览器缓存边界来源。', source_message_id=source)
             env = dict(os.environ)
-            env['PLAYWRIGHT_BROWSERS_PATH'] = str(ROOT.parent / 'runtime/playwright')
-            env['FONTCONFIG_FILE'] = str(ROOT.parent / 'runtime/browser-libs/fontconfig.xml')
-            env['LD_LIBRARY_PATH'] = str(ROOT.parent / 'runtime/browser-libs/extracted/usr/lib/x86_64-linux-gnu')
-            command = [str(ROOT.parent / 'runtime/node-npm/node_modules/node/bin/node'), str(BASE / '审计/browser_probe.cjs')]
+            env['PLAYWRIGHT_BROWSERS_PATH'] = str(project_data_root() / 'runtime/playwright')
+            env['FONTCONFIG_FILE'] = str(project_data_root() / 'runtime/browser-libs/fontconfig.xml')
+            env['LD_LIBRARY_PATH'] = str(project_data_root() / 'runtime/browser-libs/extracted/usr/lib/x86_64-linux-gnu')
+            command = [str(project_data_root() / 'runtime/node-npm/node_modules/node/bin/node'), str(BASE / '审计/browser_probe.cjs')]
             run = subprocess.run(command, input=json.dumps({'base_url': url, 'token': server.token,
                 'fragment_id': fragment, 'page': args.page, 'phase': args.phase,
                 'observation_ms': protocol['fixed_observation_after_boundary_ms'],

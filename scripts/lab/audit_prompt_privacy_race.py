@@ -21,6 +21,7 @@ from avatar.lab.transport_fixture import controlled_provider
 from avatar.main import Avatar
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 PRIVATE = '待删来源实验名'
 
 
@@ -37,7 +38,7 @@ def audit(output):
     for arm, avatar_class in [('current_default', Avatar), ('source_capability_v2', SourceCapabilityPromptAvatar)]:
         row = {'arm': arm, 'requests': [], 'writer': None, 'first_terminal': None, 'cleanup': False}
         report['arms'].append(row)
-        with tempfile.TemporaryDirectory(prefix='prompt-privacy-', dir=ROOT.parent/'runtime/tmp') as folder:
+        with tempfile.TemporaryDirectory(prefix='prompt-privacy-', dir=project_data_root(ROOT)/'tmp') as folder:
             path = str(Path(folder)/'owned.db')
             with controlled_provider(delay=.0001) as (provider, url):
                 handler = provider.RequestHandlerClass; original_post = handler.do_POST

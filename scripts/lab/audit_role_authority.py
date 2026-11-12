@@ -13,6 +13,7 @@ from avatar.config import config
 from avatar.web import create_server, run_chat
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 PROTOCOL = ROOT/'evals/interaction/cycle-17/role-authority-protocol.json'
 
 
@@ -72,7 +73,7 @@ def audit(output):
         cases = json.loads(PROTOCOL.read_text())['cases']
         for case in cases:
             assert fingerprint() == report['sourceSha256']
-            with tempfile.TemporaryDirectory(prefix='role-authority-', dir=ROOT.parent/'runtime/tmp') as folder:
+            with tempfile.TemporaryDirectory(prefix='role-authority-', dir=project_data_root(ROOT)/'tmp') as folder:
                 row = evaluate_case(Path(folder)/'owned.db', case)
             report['cases'].append(row); save()
             assert fingerprint() == report['sourceSha256']

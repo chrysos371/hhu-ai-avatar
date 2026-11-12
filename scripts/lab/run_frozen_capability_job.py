@@ -18,6 +18,7 @@ import time
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'src'))
 sys.path.insert(0, str(ROOT/'scripts'))
+from avatar.paths import project_data_root
 
 
 def utc(): return datetime.now(timezone.utc).isoformat()
@@ -134,7 +135,7 @@ def supervise(job, expected):
             raise ValueError('Supervisor source changed before worker startup')
         if config['context'].get('freeze'):
             import fcntl
-            lease = (ROOT.parent/'runtime/tmp/capability-supervisor.lock').open('a')
+            lease = (project_data_root(ROOT)/'tmp/capability-supervisor.lock').open('a')
             fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
             if digest(ROOT/config['context']['freeze']) != config['context']['freeze_sha256']:
                 raise ValueError('Freeze descriptor changed after launch')

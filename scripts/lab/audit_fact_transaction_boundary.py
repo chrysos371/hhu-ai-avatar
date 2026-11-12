@@ -14,6 +14,7 @@ from avatar.lab.transport_fixture import controlled_provider
 from avatar.main import Avatar
 
 ROOT=Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 NAME='小岚'
 
 
@@ -28,7 +29,7 @@ def audit(output):
     save()
     for change in ('normal','cancel','same_forget','external_forget','same_correct','external_correct'):
         row={'change':change,'requests':[],'cleanup':False};report['cases'].append(row)
-        with tempfile.TemporaryDirectory(prefix='fact-boundary-',dir=ROOT.parent/'runtime/tmp') as folder:
+        with tempfile.TemporaryDirectory(prefix='fact-boundary-',dir=project_data_root(ROOT)/'tmp') as folder:
             path=str(Path(folder)/'owned.db');token=CancellationToken()
             with controlled_provider(delay=.0001) as (provider,url):
                 handler=provider.RequestHandlerClass;original_post=handler.do_POST

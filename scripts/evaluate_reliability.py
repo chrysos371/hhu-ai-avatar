@@ -12,6 +12,8 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 
 
 def sha(path):
@@ -60,7 +62,7 @@ def main():
         cases += json.loads(old.read_text())['cases']
     if len({c['id'] for c in cases}) != len(cases):
         raise ValueError('Duplicate case IDs across suites')
-    model_path = ROOT.parent / 'models/Qwen3-4B'
+    model_path = project_data_root(ROOT) / 'models/Qwen3-4B'
     proof = json.loads((model_path / 'verified-revision.json').read_text())
     expected = json.loads((ROOT / 'training/companion/base-model.json').read_text())
     assert proof['revision'] == expected['revision'] and proof['verified_weight_sha256'] == expected['sha256']

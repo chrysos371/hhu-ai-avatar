@@ -28,6 +28,7 @@ from evaluate_native_output_audit import events
 from evaluate_body_review_pair import native_calls
 
 ROOT = Path(__file__).resolve().parents[1]
+from avatar.paths import project_data_root
 CANDIDATE = 'lab_capability_prompt_v1'
 BASELINE = 'baseline_current_defaults'
 CANDIDATE_ARM = 'candidate_lab_capability_prompt'
@@ -113,7 +114,7 @@ def collect_arm(case, arm, opener, trace, candidate_id=CANDIDATE, request_timeou
     row = {'id': case['id'], 'frame': case['frame'], 'arm': arm, 'turns': [], 'completed': False, 'error': None}
     original = main_module.Avatar
     original_engine = main_module.LLMEngine
-    with tempfile.TemporaryDirectory(prefix='capability-pair-', dir=ROOT.parent/'runtime/tmp') as folder:
+    with tempfile.TemporaryDirectory(prefix='capability-pair-', dir=project_data_root(ROOT)/'tmp') as folder:
         path = str(Path(folder)/'owned.db'); server = None; thread = None
         try:
             if candidate: main_module.Avatar = CANDIDATES[candidate_id]

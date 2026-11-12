@@ -9,8 +9,10 @@ import tempfile
 import urllib.request
 import urllib.error
 
+from ..paths import project_data_root
+
 PROJECT = Path(__file__).resolve().parents[3]
-WORKSPACE = PROJECT.parent
+WORKSPACE = project_data_root(PROJECT)
 
 
 def sha(path):

@@ -18,6 +18,7 @@ from avatar.lab.transport_fixture import controlled_provider
 from avatar.web import create_server
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 
 
 def audit(output):
@@ -30,7 +31,7 @@ def audit(output):
         'sourceSha256': fingerprint(), 'steps': [], 'services': [], 'model_requests': [],
         'completed': False, 'failure': None, 'cleanup': False}
     started = time.perf_counter(); opener = build_opener(ProxyHandler({})); server = None; thread = None
-    folder = tempfile.TemporaryDirectory(prefix='canonical-control-http-', dir=ROOT.parent/'runtime/tmp')
+    folder = tempfile.TemporaryDirectory(prefix='canonical-control-http-', dir=project_data_root(ROOT)/'tmp')
     path = str(Path(folder.name)/'owned.db')
     def save():
         report['elapsedSeconds'] = time.perf_counter()-started

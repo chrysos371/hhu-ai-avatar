@@ -14,6 +14,7 @@ from avatar.main import Avatar
 from avatar.web import create_server, run_chat
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 PROTOCOL = ROOT/'evals/interaction/cycle-14/mixed-writer-protocol.json'
 
 
@@ -97,7 +98,7 @@ def main(output):
     save()
     for case in json.loads(PROTOCOL.read_text())['cases']:
         assert fingerprint() == report['sourceSha256'], 'source changed during audit'
-        with tempfile.TemporaryDirectory(prefix='mixed-writer-audit-', dir=ROOT.parent/'runtime/tmp') as folder:
+        with tempfile.TemporaryDirectory(prefix='mixed-writer-audit-', dir=project_data_root(ROOT)/'tmp') as folder:
             row = evaluate_case(Path(folder)/'owned.db', case)
         row['checks']['sources_frozen'] = fingerprint() == report['sourceSha256']
         row['passed'] = row['passed'] and row['checks']['sources_frozen']

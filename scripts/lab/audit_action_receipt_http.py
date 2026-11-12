@@ -19,6 +19,7 @@ from avatar.web import create_server
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'scripts'))
+from avatar.paths import project_data_root
 from evaluate_native_output_audit import events
 
 
@@ -35,7 +36,7 @@ def audit(output):
         for change in ('normal', 'cancel', 'forget'):
             row = {'operation': operation, 'change': change, 'cleanup': False}; report['cases'].append(row)
             entered, proceed = threading.Event(), threading.Event()
-            with tempfile.TemporaryDirectory(prefix='reminder-http-', dir=ROOT.parent/'runtime/tmp') as folder:
+            with tempfile.TemporaryDirectory(prefix='reminder-http-', dir=project_data_root(ROOT)/'tmp') as folder:
                 path = str(Path(folder)/'owned.db')
                 server = create_server(path, port=0, legacy_writes=False)
                 with closing(MemoryStore(path)) as seed:

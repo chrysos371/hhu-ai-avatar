@@ -17,6 +17,7 @@ from urllib.request import ProxyHandler, Request, build_opener
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 from avatar.brain.memory import MemoryStore
 from avatar.brain.reminders import ReminderStore
 from avatar.config import config
@@ -161,7 +162,7 @@ def baseline(output):
         write(output / 'baseline.json', report)
     save()
     try:
-        with tempfile.TemporaryDirectory(prefix='reminder-delivery-baseline-', dir=ROOT.parent / 'runtime/tmp') as name:
+        with tempfile.TemporaryDirectory(prefix='reminder-delivery-baseline-', dir=project_data_root(ROOT)/'tmp') as name:
             root = Path(name)
             for case in protocol['http_cases']:
                 folder = root / case['id']

@@ -20,6 +20,7 @@ from avatar.main import Avatar
 from avatar.mouth.tts import EdgeTTSEngine
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 PRIVATE = '待删语音实验名'
 
 
@@ -38,7 +39,7 @@ def audit(output, native_edge=False):
     for change in cases:
         row = {'case': change, 'tts_calls': [], 'changed': None, 'cleanup': False}
         report['cases'].append(row); token = CancellationToken()
-        with tempfile.TemporaryDirectory(prefix='sdk-tts-privacy-', dir=ROOT.parent/'runtime/tmp') as folder:
+        with tempfile.TemporaryDirectory(prefix='sdk-tts-privacy-', dir=project_data_root(ROOT)/'tmp') as folder:
             path = str(Path(folder)/'owned.db'); audio = str(Path(folder)/'reply.wav')
             class Engine:
                 available = True

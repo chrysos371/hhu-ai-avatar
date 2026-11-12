@@ -23,6 +23,7 @@ from avatar.web import create_server
 from evaluate_native_output_audit import events
 
 ROOT = Path(__file__).resolve().parents[1]
+from avatar.paths import project_data_root
 PROTOCOL = ROOT/'evals/interaction/cycle-15/native-output-protocol.json'
 PAIR = ROOT/'evals/interaction/cycle-15/prospective-paired-protocol.json'
 CANDIDATE = 'lab_explicit_body_v1'
@@ -63,7 +64,7 @@ def collect_arm(case, arm, opener, trace=None):
     row = {'id': case['id'], 'frame': case['frame'], 'arm': arm,
            'turns': [], 'completed': False, 'error': None}
     original = main_module.Avatar
-    with tempfile.TemporaryDirectory(prefix='body-pair-', dir=ROOT.parent/'runtime/tmp') as folder:
+    with tempfile.TemporaryDirectory(prefix='body-pair-', dir=project_data_root(ROOT)/'tmp') as folder:
         path = str(Path(folder)/'owned.db')
         server = None; thread = None
         try:

@@ -9,6 +9,9 @@ import time
 from urllib.error import HTTPError
 from urllib.request import Request, ProxyHandler, build_opener
 from audit_reminder_delivery_baseline import ROOT, TOKEN, digest, write, seed, service
+import sys
+sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 
 
 def sql(db):
@@ -48,7 +51,7 @@ def run(output):
     def save(): write(output/'restart-recovery.json',report)
     save()
     try:
-        with tempfile.TemporaryDirectory(prefix='reminder-recovery-',dir=ROOT.parent/'runtime/tmp') as name:
+        with tempfile.TemporaryDirectory(prefix='reminder-recovery-',dir=project_data_root(ROOT)/'tmp') as name:
             root = Path(name)
             for case in protocol['os_restart_cases']:
                 folder = root/case; folder.mkdir(); evidence = output/case; evidence.mkdir(); db = folder/'owned.db'

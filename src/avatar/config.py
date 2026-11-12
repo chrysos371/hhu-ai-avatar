@@ -5,6 +5,7 @@ import os
 from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
+from .paths import project_data_root
 
 # 加载项目根目录下的 .env（若存在）
 load_dotenv()
@@ -44,7 +45,7 @@ class Config:
         default_factory=lambda: _get("AVATAR_PERSONA", "一个温柔又有点好奇心的AI伙伴")
     )
     memory_db_path: str = field(
-        default_factory=lambda: _get("MEMORY_DB_PATH", "./data/memory.db")
+        default_factory=lambda: _get("MEMORY_DB_PATH", str(project_data_root() / "artifacts/memory.db"))
     )
     sample_rate: int = field(
         default_factory=lambda: int(_get("AUDIO_SAMPLE_RATE", "24000"))

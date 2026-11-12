@@ -22,6 +22,7 @@ from avatar.main import Avatar
 from avatar.tools.web_agent import WebAgent
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 PRIVATE = '待删联网实验名'
 
 
@@ -37,7 +38,7 @@ def audit(output):
     for change in ('normal', 'cancel_after_tool', 'forget_after_tool'):
         row = {'case': change, 'requests': [], 'fixture_tool_calls': [], 'change': None, 'cleanup': False}
         report['cases'].append(row); token = CancellationToken()
-        with tempfile.TemporaryDirectory(prefix='web-dispatch-', dir=ROOT.parent/'runtime/tmp') as folder:
+        with tempfile.TemporaryDirectory(prefix='web-dispatch-', dir=project_data_root(ROOT)/'tmp') as folder:
             path = str(Path(folder)/'owned.db')
             class Session:
                 async def list_tools(self):

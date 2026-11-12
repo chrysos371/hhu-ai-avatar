@@ -9,6 +9,7 @@ import tempfile
 import threading
 import time
 from audit_reminder_delivery_baseline import ROOT, digest, write, seed, service
+from avatar.paths import project_data_root
 from audit_reminder_recovery_restart import send, sql
 from avatar.brain.memory import MemoryStore
 from avatar.brain.reminders import ReminderStore
@@ -66,7 +67,7 @@ def run(output):
     def save():write(output/'concurrency.json',report)
     save()
     try:
-        with tempfile.TemporaryDirectory(prefix='reminder-concurrency-',dir=ROOT.parent/'runtime/tmp') as name:
+        with tempfile.TemporaryDirectory(prefix='reminder-concurrency-',dir=project_data_root(ROOT)/'tmp') as name:
             folder=Path(name);db=folder/'http.db'
             seed(db,{'due_offset_seconds':-60,'status':'active'})
             with service(db,folder,output,1,report['processes']) as url:

@@ -17,6 +17,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 
 import avatar.main  # Verify the application module that create_server will use.
 from serve_local_model_eval import load_registry
@@ -233,7 +234,7 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL, *, execution_freeze=
             if fingerprint(protocol_path) != report['sourceSha256']: raise RuntimeError('Source changed during native experiment')
             row = {'id': case['id'], 'frame': case['frame'], 'turns': [], 'completed': False, 'error': None}
             report['cases'].append(row); save()
-            with tempfile.TemporaryDirectory(prefix='native-output-audit-', dir=ROOT.parent/'runtime/tmp') as folder:
+            with tempfile.TemporaryDirectory(prefix='native-output-audit-', dir=project_data_root(ROOT)/'tmp') as folder:
                 path = str(Path(folder)/'owned.db')
                 server = create_server(path, port=0, legacy_writes=False, identity_grounding=False,
                                        profile_grounding=False, task_delivery_check=False, literal_composition=False)

@@ -16,6 +16,7 @@ from avatar.cancellation import CancellationToken, Cancelled
 from avatar.main import Avatar
 
 ROOT = Path(__file__).resolve().parents[2]
+from avatar.paths import project_data_root
 
 
 def audit(output):
@@ -33,7 +34,7 @@ def audit(output):
         for change in ('normal', 'cancel', 'forget'):
             row = {'operation': operation, 'change': change, 'injected': False, 'cleanup': False}
             report['cases'].append(row)
-            with tempfile.TemporaryDirectory(prefix='reminder-boundary-', dir=ROOT.parent/'runtime/tmp') as folder:
+            with tempfile.TemporaryDirectory(prefix='reminder-boundary-', dir=project_data_root(ROOT)/'tmp') as folder:
                 path = str(Path(folder)/'owned.db'); token = CancellationToken()
                 bot = Avatar(db_path=path, llm=Engine())
                 fragment = bot.memory.remember_user('名字', '动作事务实验名')

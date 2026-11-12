@@ -78,8 +78,8 @@ def gpu_lease(gpus, required_cards):
             fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         validate_gpu_selection(gpus, gpu_inventory(), required_cards=required_cards)
         os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(map(str, gpus))
-        os.environ["HF_HOME"] = str(WORKSPACE / "hf-cache")
-        os.environ["TMPDIR"] = str(WORKSPACE / "runtime/tmp")
+        os.environ["HF_HOME"] = str(WORKSPACE / "cache/huggingface")
+        os.environ["TMPDIR"] = str(WORKSPACE / "tmp")
         yield
 
 
@@ -228,7 +228,7 @@ def download_model(lock_path, name):
         entry["repo"],
         revision=entry["revision"],
         local_dir=target,
-        cache_dir=WORKSPACE / "hf-cache",
+        cache_dir=WORKSPACE / "cache/huggingface",
         allow_patterns=[
             "*.json",
             "*.safetensors",
@@ -435,7 +435,7 @@ def run_suite(suite, backend, output, *, arms=("base",)):
                 raise ValueError("Unsupported case action")
             model = ReplyScopedModel(backend, arm=arm)
             with tempfile.TemporaryDirectory(
-                prefix="lab-case-", dir=WORKSPACE / "runtime/tmp"
+                prefix="lab-case-", dir=WORKSPACE / "tmp"
             ) as folder:
                 avatar = Avatar(
                     db_path=str(Path(folder) / "memory.db"),

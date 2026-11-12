@@ -10,6 +10,8 @@ import time
 from urllib.request import Request, ProxyHandler, build_opener
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'src'))
+from avatar.paths import project_data_root
 PROTOCOL = 'evals/interaction/cycle-25/structured-provider-protocol.json'
 MODELS = {'qwen3-4b-q4_k_m': 'evals/interaction/cycle-25/model-metadata-4b.json',
           'qwen3-14b-q4_k_m': 'evals/interaction/cycle-25/model-metadata-14b.json'}
@@ -123,8 +125,8 @@ def validate_trace(rows, calls, *, require_request_identity=False):
 
 def environment(python):
     purelib = Path(subprocess.check_output([str(python), '-c', 'import sysconfig;print(sysconfig.get_path("purelib"))'], text=True).strip())
-    libraries = [purelib/'nvidia/cuda_runtime/lib', ROOT.parent/'runtime/gpu-libs/nvidia/cublas/lib',
-                 ROOT.parent/'runtime/gpu-libs/nvidia/cudnn/lib']
+    libraries = [purelib/'nvidia/cuda_runtime/lib', project_data_root(ROOT)/'runtime/gpu-libs/nvidia/cublas/lib',
+                 project_data_root(ROOT)/'runtime/gpu-libs/nvidia/cudnn/lib']
     env = dict(os.environ)
     env['LD_LIBRARY_PATH'] = ':'.join([str(p) for p in libraries]+([env['LD_LIBRARY_PATH']] if env.get('LD_LIBRARY_PATH') else []))
     return env
