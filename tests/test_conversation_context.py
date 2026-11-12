@@ -129,3 +129,41 @@ def test_valid_historical_superseded_fragment_is_not_treated_as_erased(memory):
     memory._conn.execute('UPDATE memory_fragments SET status=? WHERE id=?',('superseded',fragment))
     memory._conn.execute('INSERT INTO memory_response_context VALUES (?,?,?)',(aid,'fragment',fragment));memory._conn.commit()
     with current(memory) as options:assert ids(read(memory,options))==(uid,aid)
+
+
+def test_metadata_without_own_user_dependency_cannot_be_trusted(memory):
+    uid,aid,_=completed(memory)
+    memory._conn.execute('DELETE FROM memory_response_context WHERE message_id=?',(aid,));memory._conn.commit()
+    with current(memory) as options:assert read(memory,options).messages==()
+
+
+def test_redacted_ancestor_assistant_invalidates_derived_pair_without_skipping_it(memory):
+    a=completed(memory);b=completed(memory,'后续场景。','后续回复。',extra_sources=[a[1]])
+    memory._conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?",(a[1],));memory._conn.commit()
+    with current(memory) as options:assert read(memory,options).messages==()
+
+
+def test_missing_fragment_or_self_dependency_is_not_verified_history(memory):
+    uid,aid,_=completed(memory)
+    memory._conn.execute('INSERT INTO memory_response_context VALUES (?,?,?)',(aid,'message',aid));memory._conn.commit()
+    with current(memory) as options:assert read(memory,options).messages==()
+
+
+def test_missing_fragment_dependency_is_not_verified_history(memory):
+    uid,aid,_=completed(memory)
+    memory._conn.execute('INSERT INTO memory_response_context VALUES (?,?,?)',(aid,'fragment',99999));memory._conn.commit()
+    with current(memory) as options:assert read(memory,options).messages==()
+
+
+@pytest.mark.parametrize('limit',[True,-1,201])
+def test_unbounded_or_boolean_history_limits_rejected(memory,limit):
+    completed(memory)
+    with current(memory) as options:
+        with pytest.raises(ValueError):read(memory,options,limit_messages=limit)
+
+
+def test_unverified_control_journal_cannot_restore_otherwise_valid_results(memory):
+    completed(memory)
+    with current(memory) as options:
+        memory._conn.execute('UPDATE memory_web_speaker_state SET cursor=cursor-1 WHERE id=1')
+        assert read(memory,options).messages==()
