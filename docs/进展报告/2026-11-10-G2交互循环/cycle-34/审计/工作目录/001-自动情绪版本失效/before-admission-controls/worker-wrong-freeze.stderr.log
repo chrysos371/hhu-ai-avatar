@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/revision_worker.py", line 43, in <module>
+    parser.add_argument('--freeze',required=True,type=Path);parser.add_argument('--expected-freeze-sha256',required=True);parser.add_argument('--phase',required=True,choices=('before','after'));parser.add_argument('--model',required=True,choices=('qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'));main(parser.parse_args())
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/revision_worker.py", line 14, in main
+    verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,phase=args.phase);require_loopback(args.provider_url)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/revision_common.py", line 24, in verify_freeze
+    if digest(path)!=expected:raise ValueError('Emotion revision freeze identity changed')
+ValueError: Emotion revision freeze identity changed
