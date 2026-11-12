@@ -212,7 +212,8 @@
   "expected_model_http_calls_per_model": 272,
   "expected_diagnostic_calls": {
     "current_analysis": 144,
-    "lab_readonly_candidate": 126
+    "lab_readonly_candidate": 126,
+    "lab_readonly_candidate_max": 144
   },
   "restart_after_turn": 2,
   "context_recovery": true,
@@ -284,5 +285,9 @@
       "new_assistant_rows": 0,
       "revision_increment": 1
     }
-  }
+  },
+  "nominal_calls_require_all_18_readonly_probe_contexts_eligible": true,
+  "max_model_http_calls_per_model": 290,
+  "native_call_count_formula": "290 minus actual eligible probe skips (0..18); preparation and both protected types must never skip",
+  "runtime_coverage_policy": "candidate_probe_eligible labels the question template; actual recent affect/facts/risk may conservatively decline. Retain all18 predefined readonly pairs in latency denominator; no posthoc filtering on successful skips"
 }
