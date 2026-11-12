@@ -572,7 +572,20 @@ class Avatar:
                 (self._current_message_id,)).fetchone()
             if not source or source['role'] != 'user' or source['content'] != user_text:
                 raise Cancelled('canonical control source changed')
-        if self.task_contract_enabled:
+        from .brain.reminder_queries import parse_query, resolve_query, QuerySource
+        reminder_query = (parse_query(user_text)
+                          if boundary.reply is None and control is None else None)
+        query_reply = None
+        if (reminder_query is not None and self.speaker_scope.scope == 'current_user'
+                and self.speaker_scope.allows_actions):
+            query_reply = resolve_query(self.reminders, reminder_query, user_text,
+                QuerySource(self._current_message_id, self.session_id, turn_context_revision,
+                            self.speaker_scope.scope, self.speaker_scope.allows_actions),
+                checkpoint=checkpoint_context)
+            # The read snapshot has released. An external privacy writer may
+            # now be visible; never publish a result from the old source epoch.
+            checkpoint_context()
+        if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
         try:
@@ -580,6 +593,9 @@ class Avatar:
                 self.emotion.update(user_text)
             elif control is not None:
                 self.analysis_mode = 'rules_speaker_control'
+                self.emotion.update(user_text)
+            elif reminder_query is not None:
+                self.analysis_mode = 'rules_reminder_query'
                 self.emotion.update(user_text)
             elif self.speaker_scope.scope == 'unverified':
                 # The response is a fixed confirmation boundary. No analysis output
@@ -609,7 +625,7 @@ class Avatar:
             r'\s*(?:请)?(?:帮我)?(?:取消|撤销)提醒(?:编号|#)?\s*(\d+)(?:号)?[。！!]?\s*',
             user_text)
         speaker_tool_blocked = bool(not self.speaker_scope.allows_actions
-                                    and (use_web or reminder_request or cancel_match))
+                                    and (use_web or reminder_request or cancel_match or reminder_query is not None))
         if boundary.reply is None and reminder_request and not speaker_tool_blocked:
             try:
                 reminder = self.reminders.create(user_text, checkpoint=checkpoint_context, receipt_context=receipt_context)
@@ -624,20 +640,22 @@ class Avatar:
             except ValueError as exc:
                 reminder_error = str(exc)
                 cancelled_reminder_id = None
-        self._turn_facts = [] if control is not None else self.memory.recall(query=user_text, limit=5)
+        self._turn_facts = ([] if control is not None or reminder_query is not None
+                            else self.memory.recall(query=user_text, limit=5))
         self._knowledge_context=[];self._knowledge_degraded=False
         knowledge_store=self._admin_store()
-        if knowledge_store and boundary.reply is None and control is None:
+        if knowledge_store and boundary.reply is None and control is None and reminder_query is None:
             try:
                 from .brain.knowledge import KnowledgeService
                 self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
             except Exception:
                 self._knowledge_degraded=True
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
-        if self.summary_enabled and control is None:
+        if self.summary_enabled and control is None and reminder_query is None:
             self.summaries.refresh(self.session_id)
         self._due_reminders = (self.reminders.claim_due(checkpoint=checkpoint_context, receipt_context=receipt_context)
-                               if boundary.reply is None and control is None and self.speaker_scope.allows_actions else [])
+                               if boundary.reply is None and control is None and reminder_query is None
+                               and self.speaker_scope.allows_actions else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
@@ -666,7 +684,7 @@ class Avatar:
         generation_mode = 'rules'
         delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
             and boundary.reply is None and reminder is None and cancelled_reminder_id is None
-            and not reminder_error and not use_web and control is None)
+            and not reminder_error and not use_web and control is None and reminder_query is None)
         buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
                         or self.final_reply_reviewer is not None)
         streamed_prefix = []
@@ -681,6 +699,14 @@ class Avatar:
         elif control is not None:
             reply = control.reply
             generation_mode = 'rules_speaker_control'
+        elif reminder_query is not None:
+            if query_reply is None:
+                reply = ('当前语境未授权读取真人提醒。请先单独发送“回到现实”，'
+                         '再独立查询提醒状态或送达条件。')
+                generation_mode = 'rules_speaker_scope'
+            else:
+                reply = query_reply.reply
+                generation_mode = 'rules_reminder_query'
         elif self.speaker_scope.scope == 'unverified':
             reply = ('此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。'
                      '请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。')
@@ -928,6 +954,8 @@ class Avatar:
         }
         if self._response_review is not None:
             result['response_review'] = self._response_review
+        if query_reply is not None:
+            result['reminder_query'] = query_reply.metadata
         if control is not None:
             result['speaker_control'] = control.data()
         from .brain.action_receipts import ActionReceiptStore
