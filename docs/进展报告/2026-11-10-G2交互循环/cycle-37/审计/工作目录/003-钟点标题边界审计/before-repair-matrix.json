@@ -1,0 +1,242 @@
+{
+  "scope": "deterministic_clock_title_boundary_development_probe_not_native_quality",
+  "frozen_native_sources_unchanged": true,
+  "new_cases_do_not_modify_native_protocol": true,
+  "actual_model_calls": 0,
+  "old_source_ref": "4363796",
+  "old_source_sha256": "4e291fa176c5aa55bece0a93143435a17ad23440682e4a0d63f9d86ed0cd9424",
+  "current_source_sha256": "ab192311ba92538154d48551f011eb4454a945d6ae8f67a7e6c3166cf050f98c",
+  "note": "Expected interpretations are agent-defined bounded title preservation controls, not human natural-language gold; compare identical punctuation controls and explicit minute/half positives.",
+  "cases": [
+    {
+      "input": "提醒我明天上午九点5分钟呼吸练习",
+      "expected_bounded_interpretation": {
+        "title": "5分钟呼吸练习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "钟呼吸练习",
+          "due_at": 1793581500.0
+        },
+        "matches_expected": false
+      }
+    },
+    {
+      "input": "提醒我明天上午9点5分钟呼吸练习",
+      "expected_bounded_interpretation": {
+        "title": "5分钟呼吸练习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "parsed": {
+          "title": "钟呼吸练习",
+          "due_at": 1793581500.0
+        },
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "钟呼吸练习",
+          "due_at": 1793581500.0
+        },
+        "matches_expected": false
+      }
+    },
+    {
+      "input": "提醒我明天上午九点半小时复习",
+      "expected_bounded_interpretation": {
+        "title": "半小时复习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "小时复习",
+          "due_at": 1793583000.0
+        },
+        "matches_expected": false
+      }
+    },
+    {
+      "input": "提醒我明天上午9点半小时复习",
+      "expected_bounded_interpretation": {
+        "title": "半小时复习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "parsed": {
+          "title": "小时复习",
+          "due_at": 1793583000.0
+        },
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "小时复习",
+          "due_at": 1793583000.0
+        },
+        "matches_expected": false
+      }
+    },
+    {
+      "input": "提醒我明天上午九点五分钟呼吸练习",
+      "expected_bounded_interpretation": {
+        "title": "五分钟呼吸练习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "五分钟呼吸练习",
+          "due_at": 1793581200.0
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "input": "提醒我明天上午九点，5分钟呼吸练习",
+      "expected_bounded_interpretation": {
+        "title": "5分钟呼吸练习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "5分钟呼吸练习",
+          "due_at": 1793581200.0
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "input": "提醒我明天上午九点，半小时复习",
+      "expected_bounded_interpretation": {
+        "title": "半小时复习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "半小时复习",
+          "due_at": 1793581200.0
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "input": "提醒我明天上午九点5分开始练习",
+      "expected_bounded_interpretation": {
+        "title": "开始练习",
+        "due_at": 1793581500.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "开始练习",
+          "due_at": 1793581500.0
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "input": "提醒我明天上午九点半开始练习",
+      "expected_bounded_interpretation": {
+        "title": "开始练习",
+        "due_at": 1793583000.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "开始练习",
+          "due_at": 1793583000.0
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "input": "提醒我明天上午9点15复习",
+      "expected_bounded_interpretation": {
+        "title": "复习",
+        "due_at": 1793582100.0
+      },
+      "before_chinese_feature": {
+        "parsed": {
+          "title": "复习",
+          "due_at": 1793582100.0
+        },
+        "matches_expected": true
+      },
+      "current": {
+        "parsed": {
+          "title": "复习",
+          "due_at": 1793582100.0
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "input": "提醒我明天上午九点3D打印练习",
+      "expected_bounded_interpretation": {
+        "title": "3D打印练习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。",
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "D打印练习",
+          "due_at": 1793581380.0
+        },
+        "matches_expected": false
+      }
+    },
+    {
+      "input": "提醒我明天上午9点3D打印练习",
+      "expected_bounded_interpretation": {
+        "title": "3D打印练习",
+        "due_at": 1793581200.0
+      },
+      "before_chinese_feature": {
+        "parsed": {
+          "title": "D打印练习",
+          "due_at": 1793581380.0
+        },
+        "matches_expected": false
+      },
+      "current": {
+        "parsed": {
+          "title": "D打印练习",
+          "due_at": 1793581380.0
+        },
+        "matches_expected": false
+      }
+    }
+  ],
+  "current_matches": 6,
+  "total": 12
+}
