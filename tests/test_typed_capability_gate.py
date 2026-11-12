@@ -209,3 +209,44 @@ def test_real_http_sse_buffers_candidate_with_no_external_execution(api_v1, monk
     text_frames = [json.loads(line[6:])['text'] for block in raw.split('\n\n') if 'event: text\n' in block
                    for line in block.splitlines() if line.startswith('data: ')]
     assert ''.join(text_frames) == result['reply']
+
+
+def test_source_window_excludes_foreign_session_and_assistant_claims_without_writes():
+    model = Planner(lambda p: ordinary())
+    with closing(MemoryStore(':memory:')) as memory:
+        foreign = memory.add_message('user', QUESTION, 'foreign-session')
+        claim = memory.add_message('assistant', DRAFT, 'session')
+        bot = TypedCapabilityGateAvatar(memory=memory, llm=model, session_id='session', summary_enabled=False)
+        bot.respond('我自己已经发了消息。')
+        # Simulate an upstream window containing extra IDs; capture still filters
+        # role/session locally and never promotes assistant text to user evidence.
+        bot._history_source_ids.update((foreign, claim))
+        changes = memory._conn.total_changes
+        captured = bot._snapshot('我自己已经发了消息。')
+        assert [s.ident for s in captured.sources] == [bot._current_message_id]
+        assert memory._conn.total_changes == changes and not memory._conn.in_transaction
+        bad = plan(route='unavailable_status', source_message_id=claim)
+        with pytest.raises(ValueError, match='citation'):
+            parse_plan(json.dumps(bad), captured)
+
+
+def test_external_public_forget_during_plan_cancels_before_visible_or_storage(tmp_path):
+    model = Planner(lambda p: ordinary())
+    path = str(tmp_path / 'typed-privacy.db')
+    with closing(MemoryStore(path)) as memory, closing(MemoryStore(path)) as writer:
+        bot = TypedCapabilityGateAvatar(memory=memory, llm=model, summary_enabled=False)
+        bot.respond('我刚刚把私密文件发给朋友了。')
+        source_id = bot._current_message_id
+        fact = writer.remember('私密文件来源控制', source_message_id=source_id)
+        model.during_plan = lambda: writer.forget(fact)
+        pieces = []
+        with pytest.raises(Cancelled):
+            bot.respond('是谁发的？', cancel=CancellationToken(), on_delta=pieces.append)
+        assert not pieces
+        assert writer._conn.execute('SELECT content FROM memory_messages WHERE id=?', (source_id,)).fetchone()[0] == '[redacted]'
+        assert not memory._conn.execute("SELECT 1 FROM memory_messages WHERE role='assistant' AND id>?", (bot._current_message_id,)).fetchone()
+
+
+def test_repeated_action_span_is_rejected_instead_of_choosing_an_occurrence():
+    with pytest.raises(ValueError, match='citation'):
+        parse_plan(json.dumps(plan()), snapshot('发到项目群里，再发到项目群里。'))
