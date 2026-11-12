@@ -10,6 +10,7 @@ from .brain.admin_store import AdminStore, initial_persona
 from .brain.operations import OperationService, OperationError
 from .brain.persona import PersonaService
 from .brain.emotion_overrides import EmotionOverrideService
+from .web_state import automatic_emotion_snapshot
 from .brain.knowledge import KnowledgeService
 from .brain.reminders import ReminderStore
 from .brain.summaries import SummaryStore
@@ -63,16 +64,18 @@ def enrich_chat_result(server, memory, result):
     }
     from .brain.conversations import ConversationStore
     ConversationStore(memory).record_result(result)
-    server.chat_events.append(
-        {
-            "timestamp": time.time(),
-            "strategy": result.get("strategy"),
-            "route": result.get("boundary", {}).get("route"),
-            "valence": result.get("valence"),
-            "arousal": result.get("arousal"),
-        }
-    )
-    server.chat_events[:] = server.chat_events[-100:]
+    with server.state_lock:
+        server.chat_events.append(
+            {
+                "timestamp": time.time(),
+                "strategy": result.get("strategy"),
+                "route": result.get("boundary", {}).get("route"),
+                "valence": result.get("valence"),
+                "arousal": result.get("arousal"),
+                "context_revision": (result.get("conversation") or {}).get("revision"),
+            }
+        )
+        server.chat_events[:] = server.chat_events[-100:]
     return result
 
 
@@ -163,19 +166,18 @@ class V1API:
                 status=get("status"),
             )
         if not post and path == "/dashboard":
-            state = self.server.emotion.state
+            state = automatic_emotion_snapshot(self.server, self.memory)
             return 200, {
                 "counts": self.store.system_counts(),
                 "persona_version": self.store.current_persona()["id"],
                 "emotion": {
-                    "valence": state.valence,
-                    "arousal": state.arousal,
-                    "label": state.label(),
+                    **state['automatic'],
+                    "label": state['label'],
                 },
-                "energy": self.server.emotion.energy,
+                "energy": state['energy'],
                 "verification_rate": None,
                 "verification_reason": "尚无独立语义验收统计",
-                "recent_events": list(reversed(self.server.chat_events[-20:])),
+                "recent_events": list(reversed(state['events'][-20:])),
                 "audit": self.store.list_audit(limit=10),
             }
         if post and path == "/chat":
@@ -248,21 +250,18 @@ class V1API:
                 data.get("text"), allow_cloud=data.get("allow_cloud", False)
             )
         if not post and path == "/emotion":
-            state = self.server.emotion.state
+            state = automatic_emotion_snapshot(self.server, self.memory)
             active = EmotionOverrideService(self.store).active()
             return 200, {
-                "automatic": {"valence": state.valence, "arousal": state.arousal},
-                "user_observation": {
-                    "valence": self.server.emotion.user_state.valence,
-                    "arousal": self.server.emotion.user_state.arousal,
-                },
+                "automatic": state['automatic'],
+                "user_observation": state['user_observation'],
                 "effective": (
                     {k: active["data"][k] for k in ("valence", "arousal")}
                     if active
-                    else {"valence": state.valence, "arousal": state.arousal}
+                    else dict(state['automatic'])
                 ),
                 "override": active,
-                "recent_observations": self.server.chat_events[-30:],
+                "recent_observations": state['events'][-30:],
             }
         if post and path == "/emotion/draft":
             return 201, self.ops.create_draft("emotion.override", data).data()

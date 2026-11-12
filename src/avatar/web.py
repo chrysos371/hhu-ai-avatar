@@ -20,6 +20,7 @@ from .brain.reminders import ReminderStore
 from .brain.summaries import SummaryStore
 from .brain.operations import OperationError
 from .turns import TurnCoordinator
+from .web_state import automatic_emotion_snapshot
 
 logger = logging.getLogger(__name__)
 
@@ -247,14 +248,12 @@ class Handler(BaseHTTPRequestHandler):
             elif not post and path == "/api/summary":
                 result = {"summary": SummaryStore(memory).read(self.server.session_id)}
             elif not post and path == "/api/state":
-                with self.server.state_lock:
-                    state = self.server.emotion.state
-                    result = {
-                        "energy": self.server.emotion.energy,
-                        "valence": state.valence,
-                        "arousal": state.arousal,
-                        "mode": "单用户本机模式",
-                    }
+                state = automatic_emotion_snapshot(self.server, memory)
+                result = {
+                    "energy": state['energy'],
+                    **state['automatic'],
+                    "mode": "单用户本机模式",
+                }
             elif post and path == "/api/correct":
                 result = {"id": memory.correct(ident(), text("content"))}
                 with self.server.state_lock:
