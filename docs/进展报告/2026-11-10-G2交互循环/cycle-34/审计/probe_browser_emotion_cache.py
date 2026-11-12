@@ -17,7 +17,7 @@ from avatar.config import config
 from avatar.web import create_server
 
 protocol = json.loads((ROOT / 'evals/interaction/cycle-34/browser-emotion-cache-supplement.json').read_text())
-work = BASE / '审计/工作目录/003-浏览器情绪缓存补审'
+work = BASE / '审计/工作目录/003-浏览器情绪缓存补审/v2'
 work.mkdir(exist_ok=True)
 target = work / 'browser-cache-observations.json'
 assert not target.exists()

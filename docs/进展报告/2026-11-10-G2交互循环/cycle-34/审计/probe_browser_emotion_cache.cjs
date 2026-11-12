@@ -20,7 +20,7 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
   };
   const dom = () => page.locator('.grid.three .metric-number').allTextContents();
   try {
-    await page.goto(input.base_url + '/emotion');
+    await page.goto(input.base_url + '/emotion#' + input.token);
     await page.locator('.grid.three .metric-number').first().waitFor();
     const before = await dom(), beforeApi = await query('/api/v1/emotion');
     if (beforeApi.data.automatic.arousal >= 0) throw Error('Required nonzero preparation absent');
@@ -33,7 +33,7 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
     const delayed = await dom(), delayedMs = performance.now() - start;
     await page.screenshot({path: input.screenshot});
     await page.waitForFunction(() => [...document.querySelectorAll('.grid.three .metric-number')]
-      .every(element => element.textContent.replace(/\s/g, '') === 'P0.00/A0.00'), {timeout: 15000});
+      .every(element => element.textContent.replace(/\s/g, '') === 'P0.00/A0.00'), null, {timeout: 15000});
     const eventual = await dom(), eventualMs = performance.now() - start;
     if (errors.length) throw Error(JSON.stringify(errors));
     process.stdout.write(JSON.stringify({completed: true, before, before_api: beforeApi.data,
