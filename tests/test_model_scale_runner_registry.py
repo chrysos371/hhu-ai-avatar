@@ -32,15 +32,20 @@ def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,chang
 
 
 @pytest.mark.parametrize('model',['qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'])
-def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model):
+@pytest.mark.parametrize('relative',[False,True])
+def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model,relative):
+    monkeypatch.chdir(ROOT)
     calls=[]
     def boundary(command,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
     monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=boundary,STDOUT=subprocess.STDOUT))
     monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory')
     monkeypatch.setattr(runner,'gpu_processes',lambda:'')
     output=tmp_path/'owned-output';expected=sha256(REGISTRY.read_bytes()).hexdigest()
-    with pytest.raises(BoundaryReached):runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key=model,
-        registry_path=REGISTRY,expected_registry_sha256=expected)
+    from test_model_scale_execution_freeze import frozen
+    freeze=tmp_path/'execution.json';_,pinned=frozen(freeze)
+    selected_protocol=Path(PROTOCOL.relative_to(ROOT)) if relative else PROTOCOL
+    with pytest.raises(BoundaryReached):runner.main(output,Path(sys.executable),protocol=selected_protocol,model_key=model,
+        registry_path=REGISTRY,expected_registry_sha256=expected,execution_freeze=freeze,expected_execution_freeze_sha256=pinned)
     assert len(calls)==1 and output.exists();command=calls[0]
     assert command[command.index('--registry')+1]==str(REGISTRY)
     assert command[command.index('--expected-registry-sha256')+1]==expected

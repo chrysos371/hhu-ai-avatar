@@ -108,6 +108,43 @@ def fingerprint(protocol_path=PROTOCOL):
     return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
 
 
+def verify_execution_freeze(path, expected_sha256, protocol_path, *, model_id=None):
+    raw = path.read_bytes()
+    if sha256(raw).hexdigest() != expected_sha256:
+        raise ValueError('Execution freeze descriptor identity changed')
+    frozen = json.loads(raw)
+    if not isinstance(frozen, dict): raise ValueError("Invalid execution freeze object")
+    protocol_path = Path(protocol_path).resolve()
+    protocol = json.loads(protocol_path.read_text())
+    registry, registry_sha, registry_path, _ = protocol_registry(protocol)
+    cases = [c for c in protocol['cases'] if c['partition'] == 'development']
+    models = frozen.get('models')
+    registered_ids = {m['model_id'] for m in registry['models']}
+    selected = {model_id} if model_id is not None else registered_ids
+    if (frozen.get('scope') != 'native_current_defaults_model_scale' or frozen.get('candidate') != 'none'
+            or frozen.get('execution_authorized') is not True or frozen.get('allowed_partition') != 'development'
+            or frozen.get('provider_backend') != 'cuda' or protocol.get('provider_backend', 'cuda') != 'cuda'
+            or frozen.get('protocol') != str(protocol_path.relative_to(ROOT))
+            or frozen.get('models_registry') != str(registry_path.relative_to(ROOT))
+            or frozen.get('registry_sha256') != registry_sha
+            or not isinstance(models, list) or not models or any(not isinstance(m, str) for m in models)
+            or len(set(models)) != len(models) or not set(models) <= registered_ids or not selected <= set(models)
+            or frozen.get('case_ids') != [c['id'] for c in cases]
+            or type(frozen.get('case_count')) is not int or frozen['case_count'] != len(cases)
+            or type(frozen.get('turn_count')) is not int or frozen['turn_count'] != sum(len(c['turns']) for c in cases)):
+        raise ValueError('Current-default execution freeze contract mismatch')
+    hashes = frozen.get('sha256')
+    required = set(fingerprint(protocol_path)) | {'scripts/run_native_output_models.py'}
+    if not isinstance(hashes, dict) or not required <= hashes.keys():
+        raise ValueError('Execution freeze inputs incomplete')
+    for name, expected in hashes.items():
+        if not isinstance(name, str) or Path(name).is_absolute() or not (ROOT/name).resolve().is_relative_to(ROOT):
+            raise ValueError('Execution freeze contains a non-project input')
+        if sha256((ROOT/name).read_bytes()).hexdigest() != expected:
+            raise ValueError('Execution frozen source changed: ' + name)
+    return frozen
+
+
 def events(response, started):
     kind, ident, data, observed, raw_lines = 'message', None, [], [], []
     for raw in response:
@@ -126,7 +163,8 @@ def events(response, started):
     raise ValueError('SSE ended without terminal result')
 
 
-def evaluate(provider_path, output, protocol_path=PROTOCOL):
+def evaluate(provider_path, output, protocol_path=PROTOCOL, *, execution_freeze=None, expected_execution_freeze_sha256=None):
+    protocol_path = Path(protocol_path).resolve()
     protocol = json.loads(protocol_path.read_text()); provider = json.loads(provider_path.read_text())
     cases = [c for c in protocol['cases'] if c['partition'] == 'development']
     if not cases or len({c['id'] for c in cases}) != len(cases):
@@ -139,6 +177,16 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
                 or any(type(count) is not int or count < 0 for count in counts)):
             raise ValueError('Invalid fixed turns or reminder controls: '+case['id'])
     model, registry_binding = validate_provider_identity(provider, protocol)
+    if (execution_freeze is None) != (expected_execution_freeze_sha256 is None):
+        raise ValueError('Execution freeze requires its externally pinned descriptor SHA')
+    custom_registry = registry_binding['registry_path'] != 'evals/interaction/cycle-02/model-scale-protocol.json'
+    if custom_registry and execution_freeze is None:
+        raise ValueError('Custom registry requires a current-default execution freeze')
+    def verify_inputs():
+        if execution_freeze is not None:
+            return verify_execution_freeze(execution_freeze, expected_execution_freeze_sha256,
+                                          protocol_path, model_id=provider['model_id'])
+    verify_inputs()
     for key, value in protocol['inference'].items():
         if provider['configuration'][key] != value: raise ValueError('Inference configuration differs: '+key)
     source_fingerprint = fingerprint(protocol_path)
@@ -151,7 +199,7 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
               'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'sourceSha256': source_fingerprint, 'runtime_modules': runtime_modules,
               'registry_binding': registry_binding, 'provider': provider, 'warmups': [], 'cases': [],
-              'protocol': str(protocol_path.relative_to(ROOT)),
+              'protocol': str(protocol_path.relative_to(ROOT)), 'executionFreezeSha256': expected_execution_freeze_sha256,
               'execution_complete': False, 'engineering_passed': False, 'failure': None,
               'semantic_approved': False, 'production_activation_approved': False}
     started = time.perf_counter()
@@ -175,11 +223,13 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
         engine = LLMEngine(base_url=provider['url'], api_key='local-eval-only', model=provider['model_id'], timeout=180)
         try:
             for streaming in [False, True]:
+                verify_inputs()
                 tick = time.perf_counter(); messages = [{'role': 'user', 'content': '请回答：你好。'}]
                 reply = engine.stream_chat(messages, temperature=0, max_tokens=16) if streaming else engine.chat(messages, temperature=0, max_tokens=16)
                 report['warmups'].append({'streaming': streaming, 'reply': reply, 'seconds': time.perf_counter()-tick}); save()
         finally: engine.close()
         for case in cases:
+            verify_inputs()
             if fingerprint(protocol_path) != report['sourceSha256']: raise RuntimeError('Source changed during native experiment')
             row = {'id': case['id'], 'frame': case['frame'], 'turns': [], 'completed': False, 'error': None}
             report['cases'].append(row); save()
@@ -195,6 +245,7 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
                     with opener.open(request, timeout=180) as response: return json.load(response)['data']
                 try:
                     for index, text in enumerate(case['turns']):
+                        verify_inputs()
                         current_modules = runtime_source_identity()
                         if any(current_modules.get(name) != value for name, value in runtime_modules.items()):
                             raise RuntimeError('Application runtime modules changed during native experiment')
@@ -232,7 +283,9 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
                 finally:
                     server.shutdown(); thread.join(); server.server_close(); save()
             if fingerprint(protocol_path) != report['sourceSha256']: raise RuntimeError('Source changed after scenario')
+            verify_inputs()
             print(case['id'], 'completed', len(row['turns']), flush=True)
+        verify_inputs()
         report['generation_modes'] = dict(Counter(t['result'].get('generation_mode') for r in report['cases'] for t in r['turns']))
         report['analysis_modes'] = dict(Counter(t['result'].get('analysis_mode') for r in report['cases'] for t in r['turns']))
         report['execution_complete'] = len(report['cases']) == len(cases) and all(c['completed'] for c in report['cases'])
@@ -247,6 +300,10 @@ def evaluate(provider_path, output, protocol_path=PROTOCOL):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--provider', type=Path, required=True)
     parser.add_argument('--protocol', type=Path, help='Explicit frozen protocol; default preserves cycle-15 development scenarios')
-    parser.add_argument('--output', type=Path, required=True); options = parser.parse_args()
-    result = evaluate(options.provider, options.output.resolve(), options.protocol.resolve() if options.protocol else PROTOCOL)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--execution-freeze', type=Path)
+    parser.add_argument('--expected-execution-freeze-sha256')
+    options = parser.parse_args()
+    result = evaluate(options.provider, options.output.resolve(), options.protocol.resolve() if options.protocol else PROTOCOL,
+        execution_freeze=options.execution_freeze, expected_execution_freeze_sha256=options.expected_execution_freeze_sha256)
     if not result['engineering_passed']: raise SystemExit(1)

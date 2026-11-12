@@ -30,11 +30,12 @@ def has_pid(raw, pid):
 
 def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None,
          protocol=None, pair_protocol=None, candidate='v1', partition='development', backend='cuda',
-         expected_freeze_sha256=None, registry_path=None, expected_registry_sha256=None):
+         expected_freeze_sha256=None, registry_path=None, expected_registry_sha256=None, execution_freeze=None, expected_execution_freeze_sha256=None):
     if backend not in ('cuda', 'cpu_explicit') or backend != 'cuda' and stage != 'capability_pair':
         raise ValueError('Explicit CPU requires separately registered capability pairs')
     if expected_freeze_sha256 is not None and stage != 'capability_pair':
         raise ValueError('Expected freeze identity currently applies to capability pairs only')
+    protocol = Path(protocol).resolve() if protocol is not None else None
     registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
     default_registry = ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
     if stage != 'development' and registry_path != default_registry:
@@ -49,6 +50,20 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             raise ValueError('Selected registry differs from pinned protocol identity')
     specifications = [m for m in registry['models'] if model_key is None or m['model_id'] == model_key]
     if not specifications: raise ValueError('Unknown model key: '+str(model_key))
+    if (execution_freeze is None) != (expected_execution_freeze_sha256 is None):
+        raise ValueError('Execution freeze requires its externally pinned descriptor SHA')
+    if execution_freeze is not None and stage != 'development':
+        raise ValueError('Current-default execution freeze requires development stage')
+    if execution_freeze is not None and candidate != 'v1':
+        raise ValueError('Current-default execution freeze cannot select a lab candidate')
+    if registry_path != default_registry and execution_freeze is None:
+        raise ValueError('Custom registry requires a current-default execution freeze')
+    def verify_development_inputs(selected_model=None):
+        if execution_freeze is not None:
+            from evaluate_native_output_audit import verify_execution_freeze
+            return verify_execution_freeze(execution_freeze, expected_execution_freeze_sha256,
+                                          selected_protocol, model_id=selected_model)
+    development_frozen = verify_development_inputs(model_key)
     frozen_sha = None
     if stage == 'capability_pair':
         if candidate_freeze is None or protocol is None or pair_protocol is None:
@@ -99,6 +114,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         paths += [str(p.resolve().relative_to(ROOT)) for p in [protocol, pair_protocol] if p is not None]
         if candidate == 'source_bound_v2':
             paths += ['src/avatar/lab/composition_sources.py', 'src/avatar/lab/source_bound_body_review.py']
+    if development_frozen is not None: paths += list(development_frozen['sha256'])
     def fingerprint(): return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
     metadata_paths = {'qwen3-4b-q4_k_m': ROOT/'data/g2-cycle-02/gguf-metadata.json',
                       'qwen3-14b-q4_k_m': ROOT/'data/g2-cycle-02/qwen14b-gguf-metadata.json'}
@@ -110,7 +126,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     report = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': source_fingerprint,
               'registry_path': str(registry_path.relative_to(ROOT)), 'registry_sha256': registry_sha256,
-              'stage': stage, 'candidate': candidate, 'backend': backend, 'requested_models': [m['model_id'] for m in specifications],
+              'executionFreezeSha256': expected_execution_freeze_sha256,
+              'stage': stage, 'candidate': 'none' if development_frozen is not None else candidate, 'backend': backend, 'requested_models': [m['model_id'] for m in specifications],
               'candidateFreezeSha256': (frozen_sha if stage == 'capability_pair' else
                                        sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None),
               'models': [], 'completed': False, 'failure': None,
@@ -128,6 +145,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     env['LD_LIBRARY_PATH'] = ':'.join([str(p) for p in libraries]+([env['LD_LIBRARY_PATH']] if env.get('LD_LIBRARY_PATH') else []))
     try:
         for specification in specifications:
+            verify_development_inputs(specification['model_id'])
             if stage == 'capability_pair': verify_capability_inputs()
             assert fingerprint() == report['sourceSha256'], 'Sources changed during model audit'
             key = specification['model_id']; folder = output/key; folder.mkdir()
@@ -154,6 +172,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                             if metadata is not None: break
                         time.sleep(.1)
                     assert metadata['pid'] == process.pid
+                    verify_development_inputs(key)
                     if metadata.get('registry_sha256') != registry_sha256 or metadata.get('registry_path') != str(registry_path.relative_to(ROOT)):
                         raise ValueError('Provider runtime registry differs from pinned selection')
                     row['provider_ready'] = metadata; save()
@@ -166,6 +185,9 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                             '--provider', str(ready), '--output', str(folder/'sample')]
                         if stage == 'development' and protocol is not None:
                             sampler_command += ['--protocol', str(protocol)]
+                        if execution_freeze is not None:
+                            sampler_command += ['--execution-freeze', str(execution_freeze),
+                                                '--expected-execution-freeze-sha256', expected_execution_freeze_sha256]
                         if stage == 'capability_pair':
                             sampler_command += ['--trace', str(trace), '--candidate-freeze', str(candidate_freeze),
                                 '--protocol', str(protocol), '--pair-protocol', str(pair_protocol), '--partition', partition,
@@ -193,6 +215,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                         row['cleanup_passed'] = row['provider_exit'] == 0 and not has_pid(raw, process.pid)
                         save()
             if not row['cleanup_passed']: raise RuntimeError(f'{key} owned resource cleanup did not pass')
+            verify_development_inputs(key)
             assert fingerprint() == report['sourceSha256'], 'Sources changed after model audit'
             if stage == 'capability_pair': verify_capability_inputs()
             print(key, 'sample complete, provider exit', row['provider_exit'], 'GPU pid absent', flush=True)
@@ -211,6 +234,8 @@ if __name__ == '__main__':
     parser.add_argument('--model-key')
     parser.add_argument('--registry', type=Path)
     parser.add_argument('--expected-registry-sha256')
+    parser.add_argument('--execution-freeze', type=Path)
+    parser.add_argument('--expected-execution-freeze-sha256')
     parser.add_argument('--candidate-freeze', type=Path)
     parser.add_argument('--protocol', type=Path)
     parser.add_argument('--pair-protocol', type=Path)
@@ -223,4 +248,5 @@ if __name__ == '__main__':
     main(options.output.resolve(), options.provider_python.expanduser().absolute(),
          options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate,
          options.partition, options.backend, expected_freeze_sha256=options.expected_freeze_sha256,
-         registry_path=options.registry, expected_registry_sha256=options.expected_registry_sha256)
+         registry_path=options.registry, expected_registry_sha256=options.expected_registry_sha256,
+         execution_freeze=options.execution_freeze, expected_execution_freeze_sha256=options.expected_execution_freeze_sha256)

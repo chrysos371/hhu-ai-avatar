@@ -90,3 +90,24 @@ def test_freeze_checked_between_controlled_warmups_before_application_server(tmp
     assert report['executionFreezeSha256']==expected and not report['engineering_passed']
     if mutate:assert warm==['sync'] and servers==[] and 'descriptor identity changed' in report['failure']
     else:assert warm==['sync','stream'] and len(servers)==1 and 'controlled application server boundary' in report['failure']
+
+
+
+@pytest.mark.parametrize('entry',['runner','sampler'])
+def test_custom_registry_cannot_run_without_source_freeze(tmp_path,entry):
+    output=tmp_path/'must-not-exist'
+    with pytest.raises(ValueError,match='requires a current-default execution freeze'):
+        if entry=='runner':runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-32b-q4_k_m',
+            registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest())
+        else:
+            provider,_=ready();path=tmp_path/'provider.json';path.write_text(json.dumps(provider));audit.evaluate(path,output,PROTOCOL)
+    assert not output.exists()
+
+
+def test_current_defaults_freeze_cannot_select_a_lab_candidate(tmp_path):
+    path=tmp_path/'freeze.json';_,expected=frozen(path);output=tmp_path/'must-not-exist'
+    with pytest.raises(ValueError,match='cannot select a lab candidate'):
+        runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-4b-q4_k_m',
+            registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest(),
+            execution_freeze=path,expected_execution_freeze_sha256=expected,candidate='source_bound_v2')
+    assert not output.exists()
