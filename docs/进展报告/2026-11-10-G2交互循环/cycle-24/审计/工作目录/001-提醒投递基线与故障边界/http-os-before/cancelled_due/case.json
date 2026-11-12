@@ -1,0 +1,159 @@
+{
+  "id": "cancelled_due",
+  "seed": {
+    "created_by_actual_store": {
+      "id": 1,
+      "title": "到期投递实验提醒",
+      "due_at": 1794553200.0,
+      "created_at": 1794443103.0917327,
+      "status": "active",
+      "notified_at": null
+    },
+    "controlled_due_offset_seconds": -60,
+    "clock_utc": "2026-11-12T00:25:03.091733+00:00",
+    "scope": "Controlled due timestamp, not naturally elapsed scheduling or dialog creation evidence.",
+    "initial_sql": {
+      "reminders": [
+        {
+          "id": 1,
+          "title": "到期投递实验提醒",
+          "due_at": 1794443043.0917327,
+          "created_at": 1794443103.0917327,
+          "status": "cancelled",
+          "notified_at": null
+        }
+      ],
+      "integrity": "ok"
+    }
+  },
+  "processes": [
+    {
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/audit_reminder_delivery_baseline.py",
+        "--worker-db",
+        "/data/Users/zrh/repo/runtime/tmp/reminder-delivery-baseline-nsn_xeu3/cancelled_due/owned.db",
+        "--ready",
+        "/data/Users/zrh/repo/runtime/tmp/reminder-delivery-baseline-nsn_xeu3/cancelled_due/ready-1.json"
+      ],
+      "pid": 3191440,
+      "start_identity": {
+        "pid": 3191440,
+        "start_ticks": 38329082,
+        "state": "R",
+        "argv": [
+          "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+          "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/audit_reminder_delivery_baseline.py",
+          "--worker-db",
+          "/data/Users/zrh/repo/runtime/tmp/reminder-delivery-baseline-nsn_xeu3/cancelled_due/owned.db",
+          "--ready",
+          "/data/Users/zrh/repo/runtime/tmp/reminder-delivery-baseline-nsn_xeu3/cancelled_due/ready-1.json"
+        ]
+      },
+      "ready": {
+        "url": "http://127.0.0.1:43853/api/v1",
+        "pid": 3191440,
+        "identity": {
+          "pid": 3191440,
+          "start_ticks": 38329082,
+          "state": "R",
+          "argv": [
+            "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+            "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/audit_reminder_delivery_baseline.py",
+            "--worker-db",
+            "/data/Users/zrh/repo/runtime/tmp/reminder-delivery-baseline-nsn_xeu3/cancelled_due/owned.db",
+            "--ready",
+            "/data/Users/zrh/repo/runtime/tmp/reminder-delivery-baseline-nsn_xeu3/cancelled_due/ready-1.json"
+          ]
+        },
+        "llm_enabled": false,
+        "module_paths": {
+          "avatar.main": "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/main.py",
+          "avatar.web": "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/web.py"
+        },
+        "module_sha256": {
+          "avatar.main": "647c424072dc67f65b7e7b04590fe31d2187f9924b7462374301576f50a58e29",
+          "avatar.web": "ac2f70a236552c936f6e8dff217aede748fba28a3c58ba996fb3a91b83d2bc96"
+        }
+      },
+      "exit_code": 0,
+      "identity_after_wait": null
+    }
+  ],
+  "requests": [
+    {
+      "route": "/reminders/due",
+      "method": "POST",
+      "status": 200,
+      "body_consumed": true,
+      "envelope": {
+        "data": [],
+        "error": null,
+        "request_id": "e1035f5d295167125511e489"
+      },
+      "seconds": 0.013575809949543327
+    },
+    {
+      "route": "/reminders/due",
+      "method": "POST",
+      "status": 200,
+      "body_consumed": true,
+      "envelope": {
+        "data": [],
+        "error": null,
+        "request_id": "cb3dffeaad78da60f6d76ef8"
+      },
+      "seconds": 0.0029316750005818903
+    },
+    {
+      "route": "/reminders",
+      "method": "GET",
+      "status": 200,
+      "body_consumed": true,
+      "envelope": {
+        "data": [
+          {
+            "id": 1,
+            "title": "到期投递实验提醒",
+            "due_at": 1794443043.0917327,
+            "created_at": 1794443103.0917327,
+            "status": "cancelled",
+            "notified_at": null
+          }
+        ],
+        "error": null,
+        "request_id": "84f5f0f73034cd6ed79a9f57"
+      },
+      "seconds": 0.002848845033440739
+    }
+  ],
+  "ui_observed": false,
+  "scope": "HTTP/SQLite control; navigation/render claims require separate Chromium evidence.",
+  "sql_after_first": {
+    "reminders": [
+      {
+        "id": 1,
+        "title": "到期投递实验提醒",
+        "due_at": 1794443043.0917327,
+        "created_at": 1794443103.0917327,
+        "status": "cancelled",
+        "notified_at": null
+      }
+    ],
+    "integrity": "ok"
+  },
+  "final_sql": {
+    "reminders": [
+      {
+        "id": 1,
+        "title": "到期投递实验提醒",
+        "due_at": 1794443043.0917327,
+        "created_at": 1794443103.0917327,
+        "status": "cancelled",
+        "notified_at": null
+      }
+    ],
+    "integrity": "ok"
+  },
+  "completed": true
+}
