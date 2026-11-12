@@ -89,6 +89,18 @@ def main():
             assert not (BASE/'实验/paired-4b-r1').exists()
             negatives.append({'control': name, 'argv': command, 'exit_code': result.returncode,
                 'stdout': result.stdout, 'stderr': result.stderr, 'rejected_before_output_or_provider': True})
+        # The child entry must independently reject the parent's wrong SHA,
+        # before reading even provider metadata or creating its sample directory.
+        descriptor = folder/'sampler-parent.json'
+        descriptor.write_text(json.dumps(base))
+        sample_output = folder/'must-not-exist'
+        command = [sys.executable, str(BASE/'审计/sample_pairs.py'), '--provider', str(folder/'missing-provider.json'),
+            '--wire', str(folder/'missing-wire.jsonl'), '--output', str(sample_output), '--freeze', str(descriptor),
+            '--expected-freeze-sha256', '0'*64, '--repetition', '1']
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+        assert result.returncode != 0 and 'descriptor bytes changed' in result.stderr and not sample_output.exists()
+        negatives.append({'control': 'sampler_parent_sha', 'argv': command, 'exit_code': result.returncode,
+            'stdout': result.stdout, 'stderr': result.stderr, 'rejected_before_output_or_provider': True})
     seals = []
     for p in sorted(BASE.parent.glob('cycle-*/审计/证据清单.json')):
         if int(p.parents[1].name[6:]) >= 38:
@@ -111,7 +123,7 @@ def main():
         'old_seals_total_including_migration': 36, 'old_entries_including_migration': 6212,
         'semantic_or_production_approval': False, 'protected_execution_authorized': False}
     ADMISSION.write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')
-    print('C38 engineering admission:1958/1;434inputs;44controlled app/97HTTP;4real CLI negatives;54runtime;36seals;0native')
+    print('C38 engineering admission:1958/1;434inputs;44controlled app/97HTTP;5real CLI negatives;54runtime;36seals;0native')
 
 
 if __name__ == '__main__':
