@@ -64,7 +64,7 @@ def main():
         parity.append({'repetition':q['context']['repetition'],'case':q['context']['case'],'wire_SHA_equal':True,'native_raw_equal':True})
     assert len(parity)==24
     assert sum(t['wire_finish_reason']=='tool_calls' for t in traces)==15
-    wrong_native=[t for t in traces if t.get('wire_message',{}).get('tool_calls') and json.loads(t['wire_message']['tool_calls'][0]['function']['arguments'])=={'reminder_id':12345}]
+    wrong_native=[t for t in traces if (t.get('wire_message') or {}).get('tool_calls') and json.loads(t['wire_message']['tool_calls'][0]['function']['arguments'])=={'reminder_id':12345}]
     assert len(wrong_native)==6
     source=BASE/'审计/工作目录/001-来源与参数调查'
     anchors=[('service-first-source.json','0a562d89'),('service-fixtures-fixed-source.json','35bafb59'),
@@ -145,7 +145,7 @@ def main():
         'current_software_bindings':bindings,'current_source_count':445,'full_python':'2138 passed/1 skipped',
         'frontend':'192 passed','default_browser':'18 passed/16 optional skipped','default_browser_modules':9,
         'current_maintained_browser_results':5,'old_cycle_seals':seals,'old_seals_including_migration':39,
-        'old_entries_including_migration':6643,'asset_links':assets,'closed_issues':['C41-001','C41-002','C41-003'],
+        'old_entries_including_migration':6643,'asset_links':assets,'closed_issues':['C41-001','C41-002','C41-003','C41-005'],
         'open_issues':['C41-004'],'general_semantic_or_physical_approval':False,'goal_remains_active':True}
     OUT.parent.mkdir(exist_ok=True);OUT.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     print('C41 system verified:29native,48SQLdumps,9guard rejects;21/24 both arms;445current;2138/1,192,18/16;39oldseals')
