@@ -1,0 +1,93 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第29轮系统审计与推进报告：有来源的重启上下文与故障边界</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>第29轮系统审计与推进报告：有来源的重启上下文与故障边界</h1><p class="meta">2026-11-12 · spinner-bot · 受控HTTP，实际OS/SQL</p><p class="verdict">默认Web已完成有界角色窗口恢复与隐私/动作故障控制；整体语义质量与代际提升仍待证据。</p>
+<section><h2>本轮结论</h2>
+<p>默认Web现从当前隐私版本的可验证已完成对话中恢复有界角色窗口，覆盖服务重启；新回复跟踪全部恢复user/assistant来源，外部遗忘可以清除跨session派生回复。旧动作不重放，未知语境跳过无用认知模型调用。CLI、独立Avatar和四实验生成开关仍沿用其原上下文装载路径；PAD/任意写作任务语义没有新增跨重启持久化。</p>
+<p>同原协议真实HTTP/SSE对照：重启第三次生成中先前四条角色消息由各0次变为各1次，同进程正控始终各1次，SQL/API均保留6条消息。此为实际模型输入连续性，提供方只是受控HTTP夹具，没有本轮真实LLM/GPU语义质量数据。</p>
+<p>八类故障、显式事务交错、完整Python和默认浏览器均有原始及独立绑定证据。本轮形成7项单项记录，按下列范围关闭；C19-001通用能力诚实性P1、C26–28原生语义/任务不足、真实设备/真人质量/多日仍开放，不能宣称整体代际跃迁。</p>
+</section>
+<section><h2>实验分组与版本</h2>
+<p>各组分母及源码版本分别保留；不把不同版本、首失败、注入负控和完成实验汇总成单一通过率。初次连续性after早于C29-006，最终未知语境变更由v3故障、事务及完整回归覆盖。计时均为本机固定小样本，不是速度提升统计。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>分组</th><th>应用进程</th><th>提交/终态</th><th>受控模型HTTP</th><th>观测秒数</th></tr></thead><tbody>
+<tr><td>修前有效v2</td><td>3，全exit0</td><td>6 result</td><td>12</td><td>4.701328</td></tr>
+<tr><td>同协议修后after</td><td>3，全exit0</td><td>6 result</td><td>12</td><td>4.320925</td></tr>
+<tr><td>八场景v3</td><td>20，全exit0</td><td>45=44 result+1 cancelled</td><td>78</td><td>38.892491</td></tr>
+<tr><td>显式事务调度</td><td>2，全exit0</td><td>2=1 result+1 cancelled</td><td>2（仅setup）</td><td>2.377827</td></tr>
+<tr><td>完整Python@24f4529</td><td>pytest</td><td>1769 passed / 1 skipped</td><td>不作本轮GPU声明</td><td>116.63（pytest）</td></tr>
+<tr><td>默认Chromium@d631302</td><td>实际Web fixture</td><td>15 passed / 16可选skipped</td><td>受控提供方</td><td>35.9（Playwright）</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>恢复规则与边界</h2>
+<p>当前user来源、说话者观察和完成窗口读取处于同一BEGIN IMMEDIATE写事务。默认最多18条历史消息，为当前user/assistant预留两条，总短期上限20；只按相邻完整user/assistant对读取，结果JSON、revision、session、角色scope和稳定source ID一致才接受。损坏、缺失、未完成、红删或未知写入处停止，不向更老历史跳跃。</p>
+<p>规范本人/虚构控制对作为角色边界；unverified不恢复，也不向认知/生成模型发出无用请求，单独回到现实后新请求正常分析。历史只复制role/content，不重新执行提醒/工具或分析旧请求；当次认知仍可读取最近6条历史辅助情绪/指代，抽取证据必须来自当前输入。</p>
+<p>新回复删除依赖包含本次实际恢复的所有历史user和assistant ID；不再把当前session中已丢弃/红删的旧消息重新附加到新回复。事实、摘要、说话者原有来源仍保留。隐私检查不能追溯撤回先前或已经在途的提供方请求，不保证SQLite取证级物理擦除。</p>
+<p>create_server(recover_context=False)或python -m avatar.web --no-context-recovery显式关闭恢复，数据库历史不删除。旧库没有可验证完成元数据时保守空窗口；只恢复已验证的新连续后缀，不补造旧回执。</p>
+</section>
+<section><h2>八类故障控制</h2>
+<p>v3总计25项现场检查，另由23项独立原始数据断言核验；二者是不同检查集合。78条SDK请求/响应原文与SHA、45个SSE终态、20个实际模块来源、每个SQL快照及SQL导出全表重建均已核对。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>场景</th><th>实际提交</th><th>应用进程</th><th>验证边界</th></tr></thead><tbody>
+<tr><td>privacy_crosssession</td><td>5</td><td>3</td><td>跨session删除闭包、同服务新窗口/再重启</td></tr>
+<tr><td>scope</td><td>9</td><td>3</td><td>虚构/现实fence、假名不入画像、真实提醒正控</td></tr>
+<tr><td>cancel</td><td>4</td><td>2</td><td>提供方屏障处真实取消、孤儿gap、后继合法对</td></tr>
+<tr><td>corrupt_result</td><td>3</td><td>2</td><td>显式坏result JSON、拒绝坏对、后继恢复</td></tr>
+<tr><td>mixed_writer</td><td>4</td><td>2</td><td>未跟踪CLI写入、未知无模型、现实确认恢复</td></tr>
+<tr><td>bounded_window</td><td>14</td><td>3</td><td>12回合后2次重启、18历史完整对/无重复</td></tr>
+<tr><td>no_old_actions</td><td>4</td><td>3</td><td>启动/普通回合不重放、真实新动作不同ID</td></tr>
+<tr><td>optout</td><td>2</td><td>2</td><td>显式关闭后无重启角色恢复、SQL仍保留</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>事务与系统审计</h2>
+<p>单独登记的2进程交错对真实ConversationContextStore.read和BoundaryPolicy.assess加明确审计代理，只调度暂停并委托原函数，未改返回窗口。窗口源1/2读取后source写事务仍持锁；外部writer的SQLite BEGIN IMMEDIATE trace先触发且未完成遗忘，释放后source提交，再forget递增revision 0→1并红删。边界返回后的真实checkpoint取消旧回合，竞态回合0模型HTTP、无新assistant；仅setup有2条请求。所有线程/进程退出。此为受控因果调度，不是自然并发频率。</p>
+<p>完整Python1769/1/116.63s，HEAD24f4529，552项启动时源码/测试/评测输入前后字节一致。默认浏览器15/16可选跳过，HEADd631302，190输入稳定，实际四个后端模块与frontend/dist均匹配。前端源与CYNSx0Ec包未改，153单元仍为C24历史数据，没有冒称本轮重跑。</p>
+<p>修前有效基线三进程各45模块，修后与默认故障进程实际46模块（加载新读取器）；事务第二worker显式加载hook，其实际模块数独立记录，不能套用相同常数。所有执行descriptor均有独立retirement；旧C21–C28封存不回写，C29阶段A31项也不回写。</p>
+<p>首基线坏ID/早清理、显式坏ID注入负控、首故障规则流断言失败、v2未知语境认知调用失败均保留原日志。独立故障核验器的两次错误假设（认知非流式/无短历史）也保留，最终按实际stream及6条历史suffix绑定，未改原实验输出。</p>
+</section>
+<section><h2>单项问题与修复范围</h2>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>编号</th><th>优先级/归属</th><th>现象</th><th>结论</th></tr></thead><tbody>
+<tr><td>001</td><td>P2 / 夹具</td><td>请求ID长度及早拒绝清理覆盖首错</td><td>合法ID/实际422负控、原错与清理全部保留</td></tr>
+<tr><td>002</td><td>P2 / 产品</td><td>重启生成窗口未接续</td><td>同协议4×0→4×1；故障/事务/完整默认范围关闭</td></tr>
+<tr><td>003</td><td>P2 / 新组件</td><td>BLOB/空正文及坏依赖进入窗口</td><td>5损坏负控红→绿，拒绝坏源；非任意损坏库容错</td></tr>
+<tr><td>004</td><td>P2 / 新组件</td><td>遗忘后误附旧依赖阻断新窗口</td><td>同服务新对恢复、跨session删除闭包均过</td></tr>
+<tr><td>005</td><td>P2 / 夹具</td><td>规则结果被错误要求text事件</td><td>规则result独立接受，LLM流最终一致仍严格核对</td></tr>
+<tr><td>006</td><td>P2 / 产品</td><td>未知scope固定结果前无用认知外发</td><td>单测先红后绿；最终OS无调用/现实新请求正控</td></tr>
+<tr><td>007</td><td>P2 / 文档</td><td>当前README/重启说明滞后</td><td>入口文档同步当前证据，旧封报告保留历史</td></tr>
+</tbody></table></div>
+<p><a href="问题/001-基线采证请求编号与早期清理错误.md">001 单项记录</a></p>
+<p><a href="问题/002-重启后普通生成未接续持久对话.md">002 单项记录</a></p>
+<p><a href="问题/003-损坏正文与依赖仍可进入恢复窗口.md">003 单项记录</a></p>
+<p><a href="问题/004-遗忘后旧依赖阻断合法新窗口.md">004 单项记录</a></p>
+<p><a href="问题/C29-005-规则SSE夹具错误断言.md">005 单项记录</a></p>
+<p><a href="问题/C29-006-未知说话人仍调用认知模型.md">006 单项记录</a></p>
+<p><a href="问题/007-当前入口文档落后实现与实验.md">007 单项记录</a></p>
+</section>
+<section><h2>后续推进与优先级</h2>
+<p>停止C28固定计划机制的同批提示调优，不自动更换默认模型，不启用v1–v4候选或运行原前瞻。下一循环先明确真实模型上下文利用的因果对照：同一最终代码、同样任务与当前消息，显式opt-out为重启无历史控制，默认恢复为实验臂；记录实际SDK/SQL/模型身份和逐轮来源，区分输入送达与正确利用。当前还没有该新实验数据。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>优先级</th><th>下一步</th><th>验收条件</th></tr></thead><tbody>
+<tr><td>P1</td><td>一般能力/回执诚实性、来源归属与任务充分性</td><td>独立任务与逐轮来源证据；无回执不声称已发送/已完成，既有P1不因工程绿色关闭</td></tr>
+<tr><td>P2</td><td>真实模型重启上下文利用</td><td>先冻结协议/源码与实际资源；工程输入匹配、答案正确/错误/保守未知分列，失败保留</td></tr>
+<tr><td>P2</td><td>长窗口成本与多日运行</td><td>先量化依赖图/读取成本与资源，保留算法轮数；当前14回合不是多日或任意长度</td></tr>
+<tr><td>P2</td><td>真人语音/中文口型/正式形象与设备</td><td>真实来源、物理设备和独立人评证据，合成/软件时钟不替代</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>证据入口</h2>
+<p><a href="../进展.md">全过程进展</a></p>
+<p><a href="工作目录/001-上下文重启现状/阶段A证据清单.json">阶段A封存31项</a></p>
+<p><a href="../实验/context-baseline-v2/baseline.json">修前有效原始HTTP/SQL</a></p>
+<p><a href="../实验/context-baseline-after/baseline.json">同协议修后原始HTTP/SQL</a></p>
+<p><a href="工作目录/002-有界已完成对话恢复/修后OS核验.json">修后独立核验</a></p>
+<p><a href="../实验/context-fault-controls-v3/faults.json">八场景全部原始SDK/SSE/SQL</a></p>
+<p><a href="工作目录/003-独立进程故障边界/独立八场景核验.json">八场景独立核验</a></p>
+<p><a href="../实验/context-transaction-interleaving/race.json">事务原始数据与调度</a></p>
+<p><a href="工作目录/004-上下文读取隐私事务交错/独立事务交错核验.json">事务独立核验</a></p>
+<p><a href="工作目录/003-独立进程故障边界/full-python-unverified-fix.log">完整Python原始日志</a></p>
+<p><a href="工作目录/003-独立进程故障边界/full-python-unverified-fix-binding.json">完整源码绑定</a></p>
+<p><a href="工作目录/005-浏览器回归/default-browser.log">默认浏览器原始日志</a></p>
+<p><a href="工作目录/005-浏览器回归/default-browser-binding.json">浏览器源码与包绑定</a></p>
+<p><a href="工作目录/005-浏览器回归/browser-runtime.json">实际浏览器模块/包路径</a></p>
+<p><a href="../实验/context-fault-controls/faults.json">八场景原始失败</a></p>
+<p><a href="../实验/context-fault-controls-v2/faults.json">未知认知调用原始失败</a></p>
+<p><a href="../../../../../evals/interaction/cycle-29/completed-context-recovery-protocol.json">实现前恢复合同</a></p>
+<p><a href="../../../../../evals/interaction/cycle-29/context-fault-controls-v3-freeze.json">八场景冻结</a></p>
+<p><a href="../../../../../evals/interaction/cycle-29/context-fault-controls-v3-retirement.json">八场景retirement</a></p>
+<p><a href="../../../../../evals/interaction/cycle-29/context-transaction-interleaving-freeze.json">事务冻结</a></p>
+<p><a href="../../../../../evals/interaction/cycle-29/context-transaction-interleaving-retirement.json">事务retirement</a></p>
+</section>
+</main></body></html>
