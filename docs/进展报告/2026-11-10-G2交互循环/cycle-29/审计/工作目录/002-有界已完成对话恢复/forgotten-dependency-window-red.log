@@ -1,0 +1,39 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_same_instance_after_forget_starts_valid_new_window_without_erased_dependencies _
+
+web_context = ('/tmp/pytest-of-root/pytest-323/test_same_instance_after_forge0/history.db', <function web_context.<locals>.make at 0...建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '这是新的场景C29FRESH。'}]])
+
+    def test_same_instance_after_forget_starts_valid_new_window_without_erased_dependencies(web_context):
+        path,make,calls=web_context;server=make()
+        old=run_chat(server,'窗边的纸风车编号C29PRIVATE。');old_ids={old['conversation']['user_message_id'],old['conversation']['assistant_message_id']}
+        with closing(MemoryStore(path)) as writer:
+            fragment=writer.remember('纸风车编号C29PRIVATE。',source_message_id=old['conversation']['user_message_id'])
+            writer.forget(fragment)
+        fresh=run_chat(server,'这是新的场景C29FRESH。');fresh_id=fresh['conversation']['assistant_message_id']
+        with closing(MemoryStore(path)) as memory:
+            dependencies={row[0] for row in memory._conn.execute("SELECT source_id FROM memory_response_context WHERE message_id=? AND source_type='message'",(fresh_id,))}
+>           assert not old_ids & dependencies
+E           assert not ({1, 2} & {1, 2, 3})
+
+tests/test_web_context_recovery.py:119: AssertionError
+______ test_same_instance_fresh_window_is_restored_after_privacy_revision ______
+
+web_context = ('/tmp/pytest-of-root/pytest-323/test_same_instance_fresh_windo0/history.db', <function web_context.<locals>.make at 0...不要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '继续新的场景。'}]])
+
+    def test_same_instance_fresh_window_is_restored_after_privacy_revision(web_context):
+        path,make,calls=web_context;server=make()
+        old=run_chat(server,'窗边的纸风车编号C29PRIVATE。')
+        with closing(MemoryStore(path)) as writer:
+            fragment=writer.remember('纸风车编号C29PRIVATE。',source_message_id=old['conversation']['user_message_id'])
+            writer.forget(fragment)
+        fresh=run_chat(server,'这是新的场景C29FRESH。')
+        run_chat(server,'继续新的场景。')
+>       assert {'role':'user','content':'这是新的场景C29FRESH。'} in calls[-1]
+E       AssertionError: assert {'role': 'user', 'content': '这是新的场景C29FRESH。'} in [{'role': 'system', 'content': '你是测试形象C29，受控上下文测试助手。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arousal...志；不要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '继续新的场景。'}]
+
+tests/test_web_context_recovery.py:133: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_web_context_recovery.py::test_same_instance_after_forget_starts_valid_new_window_without_erased_dependencies
+FAILED tests/test_web_context_recovery.py::test_same_instance_fresh_window_is_restored_after_privacy_revision
+2 failed, 11 deselected in 0.82s

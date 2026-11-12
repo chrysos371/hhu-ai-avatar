@@ -105,3 +105,30 @@ def test_recovery_flag_rejects_non_boolean_before_server_or_db_creation(tmp_path
     path=tmp_path/'must-not-exist.db'
     with pytest.raises(ValueError):create_server(str(path),port=0,recover_context=1)
     assert not path.exists()
+
+
+def test_same_instance_after_forget_starts_valid_new_window_without_erased_dependencies(web_context):
+    path,make,calls=web_context;server=make()
+    old=run_chat(server,'窗边的纸风车编号C29PRIVATE。');old_ids={old['conversation']['user_message_id'],old['conversation']['assistant_message_id']}
+    with closing(MemoryStore(path)) as writer:
+        fragment=writer.remember('纸风车编号C29PRIVATE。',source_message_id=old['conversation']['user_message_id'])
+        writer.forget(fragment)
+    fresh=run_chat(server,'这是新的场景C29FRESH。');fresh_id=fresh['conversation']['assistant_message_id']
+    with closing(MemoryStore(path)) as memory:
+        dependencies={row[0] for row in memory._conn.execute("SELECT source_id FROM memory_response_context WHERE message_id=? AND source_type='message'",(fresh_id,))}
+        assert not old_ids & dependencies
+    run_chat(server,'继续新的场景。')
+    assert any(m['role']=='user' and m['content']=='这是新的场景C29FRESH。' for m in calls[-1])
+    assert not any('C29PRIVATE' in m['content'] for m in calls[-1])
+
+
+def test_same_instance_fresh_window_is_restored_after_privacy_revision(web_context):
+    path,make,calls=web_context;server=make()
+    old=run_chat(server,'窗边的纸风车编号C29PRIVATE。')
+    with closing(MemoryStore(path)) as writer:
+        fragment=writer.remember('纸风车编号C29PRIVATE。',source_message_id=old['conversation']['user_message_id'])
+        writer.forget(fragment)
+    fresh=run_chat(server,'这是新的场景C29FRESH。')
+    run_chat(server,'继续新的场景。')
+    assert {'role':'user','content':'这是新的场景C29FRESH。'} in calls[-1]
+    assert {'role':'assistant','content':fresh['reply']} in calls[-1]
