@@ -1,0 +1,103 @@
+{
+  "verified": true,
+  "scope": "scripted model/fake GPU resources; actual HTTP, SDK, Jinja and provider handler only",
+  "native_or_GPU_calls": 0,
+  "scripted_completion_calls": 1,
+  "HTTP_cases": [
+    {
+      "request": {
+        "model": "fixture",
+        "messages": [
+          {
+            "role": "user",
+            "content": "读取编号1"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "read_reminder_state",
+              "description": "只读查询一个本机提醒编号的当前记录；不创建、认领、ACK或保证真人阅读。",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "reminder_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9223372036854775807
+                  }
+                },
+                "required": [
+                  "reminder_id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "read_reminder_delivery_policy",
+              "description": "读取当前本机提醒运行与送达条件；可核验服务退出、网页在线轮询及外部通道的限制。",
+              "parameters": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "stream": false
+      },
+      "wire_sha256": "9e35675d8f3e4b603dd6c9f6bc23b8a839f8352d4f280cda447a629043cef4d0",
+      "status": 400,
+      "response": {
+        "error": {
+          "message": "tool evaluation not enabled"
+        }
+      }
+    },
+    {
+      "request": {
+        "model": "fixture",
+        "messages": [
+          {
+            "role": "user",
+            "content": "你好"
+          }
+        ]
+      },
+      "wire_sha256": "e0e8e7b3651300f6e75d876d67a1192c4df07c545a2c57ebd5ca47390a495cb1",
+      "status": 200,
+      "response": {
+        "id": "eval-1",
+        "object": "chat.completion",
+        "model": "fixture",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "普通兼容。"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 1,
+          "completion_tokens": 1,
+          "total_tokens": 2
+        }
+      }
+    }
+  ],
+  "SDK_messages": [],
+  "provider_trace_sha256": "2fce1baf6c498816bc5b2fdb12f67f57303e9fbc6c4f3b82368a473f986e340e",
+  "provider_source_sha256": "3ffac08f4920a525f69b781b7007d4e476e6c6122f6252be6be5cc29ea245290",
+  "wire_adapter_sha256": "092c5b7174ac9aa0ba2f953e67dbe1cfb46193ee315136c1d0728ee3ccfd5fbe",
+  "controller_sha256": "e0d9204760543660318688cb2060eacd54f27ce79fdc5e53959832fe70a6a30e",
+  "worker_sha256": "f250abadbbd46f85c779b1f24936b3821da1cdee2b5dd9f1e51ea1b89166ce8a",
+  "all_servers_models_closed": true,
+  "worker_exit_code": 0
+}

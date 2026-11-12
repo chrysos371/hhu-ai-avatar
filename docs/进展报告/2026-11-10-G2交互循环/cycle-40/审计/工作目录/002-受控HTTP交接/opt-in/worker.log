@@ -1,0 +1,28 @@
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 45350)
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/usr/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/usr/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/usr/lib/python3.10/http/server.py", line 435, in handle
+    self.handle_one_request()
+  File "/usr/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py", line 206, in do_POST
+    prompt=template.render(messages=messages,tools=tools,add_generation_prompt=True,
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "<template>", line 34, in top-level template code
+jinja2.exceptions.UndefinedError: 'dict object' has no attribute 'content'
+----------------------------------------
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/审计/controlled_worker.py", line 67, in <module>
+    if __name__=='__main__':main()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/审计/controlled_worker.py", line 62, in main
+    if enabled:assert '# Tools' in calls[0]['prompt'] and '<tool_response>' in calls[1]['prompt']
+IndexError: list index out of range

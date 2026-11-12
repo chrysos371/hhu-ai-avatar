@@ -1,0 +1,71 @@
+default: actual HTTP/SDK controlled proof passed; scripted completions=1;0 native/GPU
+Traceback (most recent call last):
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_transports/default.py", line 98, in map_httpcore_exceptions
+    yield
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_transports/default.py", line 245, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/connection_pool.py", line 242, in handle_request
+    raise exc from None
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/connection_pool.py", line 224, in handle_request
+    response = connection.handle_request(pool_request.request)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/connection.py", line 96, in handle_request
+    return self._connection.handle_request(request)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/http11.py", line 125, in handle_request
+    raise exc
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/http11.py", line 97, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/http11.py", line 167, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpcore2/_sync/http11.py", line 212, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore2.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_base_client.py", line 1183, in request
+    response = self._send_request(
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_client.py", line 211, in _send_request
+    return sync_send_request(self, request, stream=stream, **kwargs)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/lib/_client_auth.py", line 328, in sync_send_request
+    response = self._send_with_auth_retry(request, stream=stream, **kwargs)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_client.py", line 197, in _send_with_auth_retry
+    return sync_send_with_auth_retry(
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/lib/_client_auth.py", line 313, in sync_send_with_auth_retry
+    response = super(_owner, self)._send_request(request, stream=stream, **kwargs)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_base_client.py", line 1104, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_client.py", line 980, in send
+    response = self._send_handling_auth(
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_client.py", line 1008, in _send_handling_auth
+    response = self._send_handling_redirects(
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_client.py", line 1043, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_client.py", line 1076, in _send_single_request
+    response = transport.handle_request(request)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_transports/default.py", line 244, in handle_request
+    with map_httpcore_exceptions():
+  File "/usr/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/httpx2/_transports/default.py", line 115, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx2.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/审计/controlled_provider.py", line 85, in <module>
+    run_one(False);run_one(True)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/审计/controlled_provider.py", line 56, in run_one
+    final=engine.chat_tools(follow,tools=PROTOCOL['tools']);sdk.append(final)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/src/avatar/brain/llm.py", line 61, in chat_tools
+    response = self._client.chat.completions.create(**options)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_utils/_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/resources/chat/completions/completions.py", line 1611, in create
+    return self._post(
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_base_client.py", line 1474, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+  File "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/lib/python3.10/site-packages/openai/_base_client.py", line 1218, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
