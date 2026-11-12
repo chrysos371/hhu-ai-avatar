@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "scope": "actual_http_os_context_fault_controls",
+  "provider_kind": "controlled_loopback_fixture",
+  "actual_llm_or_gpu": false,
+  "case_ids": [
+    "privacy_crosssession",
+    "scope",
+    "cancel",
+    "corrupt_result",
+    "mixed_writer",
+    "bounded_window",
+    "no_old_actions",
+    "optout"
+  ],
+  "app_turns": 45,
+  "expected_results": 44,
+  "expected_cancelled": 1,
+  "expected_app_processes": 20,
+  "cases": [
+    {
+      "id": "privacy_crosssession",
+      "submitted_turns": 5,
+      "app_processes": 3,
+      "goal": "跨session历史依赖闭包、外部forget、当前服务新窗口及再次重启，无删除标记泄漏"
+    },
+    {
+      "id": "scope",
+      "submitted_turns": 9,
+      "app_processes": 3,
+      "goal": "现实/虚构/规范控制隔离，虚构name不写profile/提醒不执行，现实新name与提醒正控"
+    },
+    {
+      "id": "cancel",
+      "submitted_turns": 4,
+      "app_processes": 2,
+      "goal": "真实HTTP取消在受控提供方generation屏障处，孤儿尾部阻断旧角色恢复，新连续对可恢复"
+    },
+    {
+      "id": "corrupt_result",
+      "submitted_turns": 3,
+      "app_processes": 2,
+      "goal": "注入旧result_json无效JSON，重启不崩溃、不恢复坏对、后继合法对可恢复"
+    },
+    {
+      "id": "mixed_writer",
+      "submitted_turns": 4,
+      "app_processes": 2,
+      "goal": "外部CLI无完成元数据写入，重启scope未知保守拒绝，规范回到现实后恢复合法新窗口"
+    },
+    {
+      "id": "bounded_window",
+      "submitted_turns": 14,
+      "app_processes": 3,
+      "goal": "十二轮后两次真实重启，18历史+当前user，完整对/无重复消息"
+    },
+    {
+      "id": "no_old_actions",
+      "submitted_turns": 4,
+      "app_processes": 3,
+      "goal": "历史提醒不重执行、启动无模型调用，新独立请求创建不同ID正控"
+    },
+    {
+      "id": "optout",
+      "submitted_turns": 2,
+      "app_processes": 2,
+      "goal": "显式recover_context=False，SQL保存但重启prompt不恢复"
+    }
+  ],
+  "instrumentation": "controlled provider delay/conditional fake privacy marker echo only; production worker default except optout explicit flag; DB corrupt/untracked writes explicit external fixture operations",
+  "privacy_marker": "C29PRIVATE",
+  "real_llm_semantics_claim": false,
+  "wall_clock_experiment_deadline": null,
+  "transaction_privacy_interleaving": "separate protocol and subsequent controlled scheduler; not counted in this eight-case group",
+  "failures": "keep raw failure; do not revise accepted run or descriptors; new source/freeze/output required"
+}
