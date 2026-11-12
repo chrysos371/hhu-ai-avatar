@@ -1,0 +1,150 @@
+{
+  "verified": true,
+  "evaluation_sha256": "f293d24d910c9ccf75b7413217299f8b1241e27a66f2f6d0db3d26a892c590fc",
+  "freeze_sha256": "41218266bd466d9104edacd275d66bb9fa1e94b2692814a21f06026f89afeea0",
+  "historical_inputs": 309,
+  "verifier_sha256": "cb633e478eece630b22869a33fa0f0d828b202cf4ea4eb049d86bb43518f652c",
+  "model_id": "qwen3-32b-q4_k_m",
+  "app_turns": 36,
+  "app_processes": 24,
+  "native_calls": 74,
+  "actual_worker_module_counts": {
+    "45": 12,
+    "46": 12
+  },
+  "gpu": {
+    "index": 0,
+    "uuid": "GPU-81550800-367d-1855-0f35-c61c274edfdf",
+    "free_mib": 40441,
+    "utilization_percent": 0
+  },
+  "gpu_allocations_mib": [
+    21042
+  ],
+  "actual_llm_or_gpu": true,
+  "exact_raw_sender_wire_schema_native_trace_verified": true,
+  "metrics": {
+    "optout_restart": {
+      "cases": 6,
+      "strict_correct": 1,
+      "isolated_pairs": 6
+    },
+    "recovered_restart": {
+      "cases": 6,
+      "strict_correct": 5,
+      "isolated_pairs": 6
+    }
+  },
+  "probe_summaries": [
+    {
+      "case": "scene_token",
+      "arm": "optout_restart",
+      "strict_correct": false,
+      "source_role_count": 0,
+      "isolated": true,
+      "reply": "无法确认。",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "scene_token",
+      "arm": "recovered_restart",
+      "strict_correct": true,
+      "source_role_count": 4,
+      "isolated": true,
+      "reply": "ZK-5831",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "object_owner",
+      "arm": "recovered_restart",
+      "strict_correct": true,
+      "source_role_count": 4,
+      "isolated": true,
+      "reply": "小岚",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "object_owner",
+      "arm": "optout_restart",
+      "strict_correct": false,
+      "source_role_count": 0,
+      "isolated": true,
+      "reply": "无法确认",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "route_correction",
+      "arm": "optout_restart",
+      "strict_correct": false,
+      "source_role_count": 0,
+      "isolated": true,
+      "reply": "无法确认",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "route_correction",
+      "arm": "recovered_restart",
+      "strict_correct": true,
+      "source_role_count": 4,
+      "isolated": true,
+      "reply": "竹园站",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "literal_quote",
+      "arm": "recovered_restart",
+      "strict_correct": true,
+      "source_role_count": 4,
+      "isolated": true,
+      "reply": "“等通知后再确定，不要提前答应。”",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "literal_quote",
+      "arm": "optout_restart",
+      "strict_correct": false,
+      "source_role_count": 0,
+      "isolated": true,
+      "reply": "目前没有可引用的先前纸条内容，无法确认。",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "corrected_budget",
+      "arm": "optout_restart",
+      "strict_correct": false,
+      "source_role_count": 0,
+      "isolated": true,
+      "reply": "无法确认",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "corrected_budget",
+      "arm": "recovered_restart",
+      "strict_correct": false,
+      "source_role_count": 4,
+      "isolated": true,
+      "reply": "590 + 370 = 960",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "missing_contact",
+      "arm": "recovered_restart",
+      "strict_correct": true,
+      "source_role_count": 4,
+      "isolated": true,
+      "reply": "无法确认。",
+      "sql_export_roundtrip": true
+    },
+    {
+      "case": "missing_contact",
+      "arm": "optout_restart",
+      "strict_correct": true,
+      "source_role_count": 0,
+      "isolated": true,
+      "reply": "无法确认。",
+      "sql_export_roundtrip": true
+    }
+  ],
+  "all_results_and_sql_api_stable_sources_bound": true,
+  "general_semantics_or_human_validation_claim": false
+}

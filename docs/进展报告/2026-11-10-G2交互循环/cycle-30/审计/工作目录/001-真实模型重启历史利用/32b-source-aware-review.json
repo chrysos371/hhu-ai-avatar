@@ -1,0 +1,944 @@
+{
+  "reviewer": "same_agent_source_aware_not_independent_human",
+  "model_id": "qwen3-32b-q4_k_m",
+  "evaluation_sha256": "f293d24d910c9ccf75b7413217299f8b1241e27a66f2f6d0db3d26a892c590fc",
+  "freeze_sha256": "41218266bd466d9104edacd275d66bb9fa1e94b2692814a21f06026f89afeea0",
+  "rows": [
+    {
+      "case_id": "scene_token",
+      "arm": "optout_restart",
+      "turn_index": 1,
+      "input": "桌边抽屉的标签代号是ZK-5831。请只确认读到。",
+      "reply": "已确认，桌边抽屉的标签代号是ZK-5831。",
+      "reply_sha256": "d1ac58bfef6a39b6cf9d949b2a894c842edfe9ead1a4b7af55fec043e5a5b9dd",
+      "source_ids": {
+        "session_id": "e7781108490f9abf8e67f6e9b22b98e6",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 22,
+        "text": "已确认，桌边抽屉的标签代号是ZK-5831。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "scene_token",
+      "arm": "optout_restart",
+      "turn_index": 2,
+      "input": "窗帘是灰绿色，桌面还放着两本书。请只确认。",
+      "reply": "已确认，窗帘是灰绿色，桌面放着两本书。",
+      "reply_sha256": "2b84121425d034718b0dc263330af53d5528b388940dda3e65dd3206e4ee76e2",
+      "source_ids": {
+        "session_id": "e7781108490f9abf8e67f6e9b22b98e6",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 19,
+        "text": "已确认，窗帘是灰绿色，桌面放着两本书。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "scene_token",
+      "arm": "optout_restart",
+      "turn_index": 3,
+      "input": "前面抽屉标签的代号是什么？只回答代号；没有资料则回答无法确认。",
+      "reply": "无法确认。",
+      "reply_sha256": "168efd1734154fdd3e360d353e1b667f370d77273de97504b2c57ffef0fe1a02",
+      "source_ids": {
+        "session_id": "bbdae3ae3ba4e947705320a34212e979",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 5,
+        "text": "无法确认。"
+      },
+      "judgment": "appropriate_missing_context_abstention",
+      "explanation": "重启后第三prompt无四条准备role消息，回答无法确认符合当前可用资料；严格gold不匹配不称错误猜测或质量退化。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": false,
+        "target_present": false,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "scene_token",
+      "arm": "recovered_restart",
+      "turn_index": 1,
+      "input": "桌边抽屉的标签代号是ZK-5831。请只确认读到。",
+      "reply": "已确认，桌边抽屉的标签代号是ZK-5831。",
+      "reply_sha256": "d1ac58bfef6a39b6cf9d949b2a894c842edfe9ead1a4b7af55fec043e5a5b9dd",
+      "source_ids": {
+        "session_id": "ecbed349915969ab4008af92308b8d4d",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 22,
+        "text": "已确认，桌边抽屉的标签代号是ZK-5831。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "scene_token",
+      "arm": "recovered_restart",
+      "turn_index": 2,
+      "input": "窗帘是灰绿色，桌面还放着两本书。请只确认。",
+      "reply": "已确认，窗帘是灰绿色，桌面放着两本书。",
+      "reply_sha256": "2b84121425d034718b0dc263330af53d5528b388940dda3e65dd3206e4ee76e2",
+      "source_ids": {
+        "session_id": "ecbed349915969ab4008af92308b8d4d",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 19,
+        "text": "已确认，窗帘是灰绿色，桌面放着两本书。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "scene_token",
+      "arm": "recovered_restart",
+      "turn_index": 3,
+      "input": "前面抽屉标签的代号是什么？只回答代号；没有资料则回答无法确认。",
+      "reply": "ZK-5831",
+      "reply_sha256": "4ab80bd6b5eb3502481ca16548e77fd7ead216ca93ce91e67252c5217c35360c",
+      "source_ids": {
+        "session_id": "d9d69ae2776019027af9f47d091b738c",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 7,
+        "text": "ZK-5831"
+      },
+      "judgment": "source_use_and_strict_task_correct",
+      "explanation": "代号ZK-5831来自第一条准备消息；恢复臂正确逐字输出。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": true,
+        "target_present": true,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "object_owner",
+      "arm": "recovered_restart",
+      "turn_index": 1,
+      "input": "资料写明：小岚持有蓝卡，季青持有橙卡。请只确认。",
+      "reply": "确认：小岚持有蓝卡，季青持有橙卡。",
+      "reply_sha256": "73dbd8ddbcc9945976c2c755ff59f04f5f8751633371355421b6db93418596d8",
+      "source_ids": {
+        "session_id": "194f4e432b9ae7d23aee590069038cee",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 17,
+        "text": "确认：小岚持有蓝卡，季青持有橙卡。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "object_owner",
+      "arm": "recovered_restart",
+      "turn_index": 2,
+      "input": "两张卡属于同一份虚构活动登记表，不代表真实操作。请只确认。",
+      "reply": "确认：两张卡属于同一份虚构活动登记表，不代表真实操作。",
+      "reply_sha256": "5501a92e3f6a00bea99e3d480f58a602551a6b2c8d60ec278647cdf6f2b17f62",
+      "source_ids": {
+        "session_id": "194f4e432b9ae7d23aee590069038cee",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认：两张卡属于同一份虚构活动登记表，不代表真实操作。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "object_owner",
+      "arm": "recovered_restart",
+      "turn_index": 3,
+      "input": "蓝卡由谁持有？只回答姓名；没有资料则回答无法确认。",
+      "reply": "小岚",
+      "reply_sha256": "c42c8e819e0eaddf9198bea78d75c152bd90cf056ec029d238bab3124c0894b5",
+      "source_ids": {
+        "session_id": "7f050130e85fe47adecd2f30e08fd399",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 2,
+        "text": "小岚"
+      },
+      "judgment": "source_use_and_strict_task_correct",
+      "explanation": "蓝卡属于小岚，橙卡属于季青；恢复臂未混淆两人。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": true,
+        "target_present": true,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "object_owner",
+      "arm": "optout_restart",
+      "turn_index": 1,
+      "input": "资料写明：小岚持有蓝卡，季青持有橙卡。请只确认。",
+      "reply": "确认：小岚持有蓝卡，季青持有橙卡。",
+      "reply_sha256": "73dbd8ddbcc9945976c2c755ff59f04f5f8751633371355421b6db93418596d8",
+      "source_ids": {
+        "session_id": "a52f080b4f90abadb915fed3b3cde8de",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 17,
+        "text": "确认：小岚持有蓝卡，季青持有橙卡。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "object_owner",
+      "arm": "optout_restart",
+      "turn_index": 2,
+      "input": "两张卡属于同一份虚构活动登记表，不代表真实操作。请只确认。",
+      "reply": "确认：两张卡属于同一份虚构活动登记表，不代表真实操作。",
+      "reply_sha256": "5501a92e3f6a00bea99e3d480f58a602551a6b2c8d60ec278647cdf6f2b17f62",
+      "source_ids": {
+        "session_id": "a52f080b4f90abadb915fed3b3cde8de",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认：两张卡属于同一份虚构活动登记表，不代表真实操作。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "object_owner",
+      "arm": "optout_restart",
+      "turn_index": 3,
+      "input": "蓝卡由谁持有？只回答姓名；没有资料则回答无法确认。",
+      "reply": "无法确认",
+      "reply_sha256": "effdfa4936e84e4809e2002cd2d3fdac615717e1ff448f7a55e3c0e2dc40133d",
+      "source_ids": {
+        "session_id": "b3ffb1bbb57265be1659592790e911f4",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 4,
+        "text": "无法确认"
+      },
+      "judgment": "appropriate_missing_context_abstention",
+      "explanation": "重启后第三prompt无四条准备role消息，回答无法确认符合当前可用资料；严格gold不匹配不称错误猜测或质量退化。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": false,
+        "target_present": false,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "route_correction",
+      "arm": "optout_restart",
+      "turn_index": 1,
+      "input": "路线顺序是青松站、石桥站、枫林站。请只确认。",
+      "reply": "确认路线顺序为：青松站、石桥站、枫林站。",
+      "reply_sha256": "b5628bb0c2a0a842069427e106715bb604e29c3c8c918e34d52185cbadf7c2d6",
+      "source_ids": {
+        "session_id": "8b74148045baf5829e57e383b3fe1cec",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 20,
+        "text": "确认路线顺序为：青松站、石桥站、枫林站。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "route_correction",
+      "arm": "optout_restart",
+      "turn_index": 2,
+      "input": "更正：第二站改为竹园站，其他不变。请只确认。",
+      "reply": "确认更正后的路线顺序为：青松站、竹园站、枫林站。",
+      "reply_sha256": "ba97ece7aac337cb60ce7762f00a0e297cfd66996af260cee3f82d2ff8e17651",
+      "source_ids": {
+        "session_id": "8b74148045baf5829e57e383b3fe1cec",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 24,
+        "text": "确认更正后的路线顺序为：青松站、竹园站、枫林站。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "route_correction",
+      "arm": "optout_restart",
+      "turn_index": 3,
+      "input": "按更正后的路线，第二站是哪一站？只回答站名；没有资料则回答无法确认。",
+      "reply": "无法确认",
+      "reply_sha256": "effdfa4936e84e4809e2002cd2d3fdac615717e1ff448f7a55e3c0e2dc40133d",
+      "source_ids": {
+        "session_id": "810dd43f7c82813fa20a442ec278c95c",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 4,
+        "text": "无法确认"
+      },
+      "judgment": "appropriate_missing_context_abstention",
+      "explanation": "重启后第三prompt无四条准备role消息，回答无法确认符合当前可用资料；严格gold不匹配不称错误猜测或质量退化。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": false,
+        "target_present": false,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "route_correction",
+      "arm": "recovered_restart",
+      "turn_index": 1,
+      "input": "路线顺序是青松站、石桥站、枫林站。请只确认。",
+      "reply": "确认路线顺序为：青松站、石桥站、枫林站。",
+      "reply_sha256": "b5628bb0c2a0a842069427e106715bb604e29c3c8c918e34d52185cbadf7c2d6",
+      "source_ids": {
+        "session_id": "ff85db3de5316e3cdb466d996552170f",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 20,
+        "text": "确认路线顺序为：青松站、石桥站、枫林站。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "route_correction",
+      "arm": "recovered_restart",
+      "turn_index": 2,
+      "input": "更正：第二站改为竹园站，其他不变。请只确认。",
+      "reply": "确认更正后的路线顺序为：青松站、竹园站、枫林站。",
+      "reply_sha256": "ba97ece7aac337cb60ce7762f00a0e297cfd66996af260cee3f82d2ff8e17651",
+      "source_ids": {
+        "session_id": "ff85db3de5316e3cdb466d996552170f",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 24,
+        "text": "确认更正后的路线顺序为：青松站、竹园站、枫林站。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "route_correction",
+      "arm": "recovered_restart",
+      "turn_index": 3,
+      "input": "按更正后的路线，第二站是哪一站？只回答站名；没有资料则回答无法确认。",
+      "reply": "竹园站",
+      "reply_sha256": "9f94091dba7af6289d1d8cd4b8479e97d9d0e285cb1b4c05e556c77dcbcb5aff",
+      "source_ids": {
+        "session_id": "22649c0c7805bce049ffba1645a346ff",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 3,
+        "text": "竹园站"
+      },
+      "judgment": "source_use_and_strict_task_correct",
+      "explanation": "按第二条更正使用竹园站，没有输出被替换的石桥站。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": true,
+        "target_present": true,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "literal_quote",
+      "arm": "recovered_restart",
+      "turn_index": 1,
+      "input": "纸条原文是：“等通知后再确定，不要提前答应。”请只确认读到，不要改写。",
+      "reply": "收到，已确认读到原文：“等通知后再确定，不要提前答应。”",
+      "reply_sha256": "53ceb4c67b91314c324a28367f4b30ed382e1172809b04ea62be5bb31aa419e5",
+      "source_ids": {
+        "session_id": "815603da4ff3a02d669d2d27890b9005",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 28,
+        "text": "收到，已确认读到原文：“等通知后再确定，不要提前答应。”"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "literal_quote",
+      "arm": "recovered_restart",
+      "turn_index": 2,
+      "input": "纸条属于一份虚构活动安排，不代表已执行任何操作。请只确认。",
+      "reply": "确认：纸条属于一份虚构活动安排，不代表已执行任何操作。",
+      "reply_sha256": "b48d862c77af9b3d526528c56867525e27e1687388dc90ebc75d21ac704a3cd4",
+      "source_ids": {
+        "session_id": "815603da4ff3a02d669d2d27890b9005",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认：纸条属于一份虚构活动安排，不代表已执行任何操作。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "literal_quote",
+      "arm": "recovered_restart",
+      "turn_index": 3,
+      "input": "原样引用先前纸条的整句原文，不加解释；没有资料则回答无法确认。",
+      "reply": "“等通知后再确定，不要提前答应。”",
+      "reply_sha256": "65f95a1f74e902589cfc3846b8f5940c08ab63abdfda5ba0cf9c9c935a1b6ec0",
+      "source_ids": {
+        "session_id": "2424cbc4d8f47c0a577d506c894155e7",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 17,
+        "text": "“等通知后再确定，不要提前答应。”"
+      },
+      "judgment": "source_use_and_strict_task_correct",
+      "explanation": "保留纸条内部原文及标点；外层引号由预登记归一化允许。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": true,
+        "target_present": true,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "literal_quote",
+      "arm": "optout_restart",
+      "turn_index": 1,
+      "input": "纸条原文是：“等通知后再确定，不要提前答应。”请只确认读到，不要改写。",
+      "reply": "收到，已确认读到原文：“等通知后再确定，不要提前答应。”",
+      "reply_sha256": "53ceb4c67b91314c324a28367f4b30ed382e1172809b04ea62be5bb31aa419e5",
+      "source_ids": {
+        "session_id": "bdcdba029d1a266a3808258e4d99d045",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 28,
+        "text": "收到，已确认读到原文：“等通知后再确定，不要提前答应。”"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "literal_quote",
+      "arm": "optout_restart",
+      "turn_index": 2,
+      "input": "纸条属于一份虚构活动安排，不代表已执行任何操作。请只确认。",
+      "reply": "确认：纸条属于一份虚构活动安排，不代表已执行任何操作。",
+      "reply_sha256": "b48d862c77af9b3d526528c56867525e27e1687388dc90ebc75d21ac704a3cd4",
+      "source_ids": {
+        "session_id": "bdcdba029d1a266a3808258e4d99d045",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认：纸条属于一份虚构活动安排，不代表已执行任何操作。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "literal_quote",
+      "arm": "optout_restart",
+      "turn_index": 3,
+      "input": "原样引用先前纸条的整句原文，不加解释；没有资料则回答无法确认。",
+      "reply": "目前没有可引用的先前纸条内容，无法确认。",
+      "reply_sha256": "42de49741f972bb277247187dd2430a0e32afdf4196c5828d4f217bfa1a62c30",
+      "source_ids": {
+        "session_id": "19df83c0acd5b330276dcd3741e3e526",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 20,
+        "text": "目前没有可引用的先前纸条内容，无法确认。"
+      },
+      "judgment": "appropriate_missing_context_abstention",
+      "explanation": "重启后第三prompt无四条准备role消息，回答无法确认符合当前可用资料；严格gold不匹配不称错误猜测或质量退化。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": false,
+        "target_present": false,
+        "forbidden_old_value": false,
+        "kind": "source_exact"
+      }
+    },
+    {
+      "case_id": "corrected_budget",
+      "arm": "optout_restart",
+      "turn_index": 1,
+      "input": "排版预算上限为370元，场地预算上限为640元。请只确认。",
+      "reply": "确认：排版预算上限为370元，场地预算上限为640元。",
+      "reply_sha256": "9a694d2936a7700dbf1f38363b59f6828abacdf63a86e8fb05a3a2191e1d2ffc",
+      "source_ids": {
+        "session_id": "5442a66daf81b8332f77a489813549aa",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认：排版预算上限为370元，场地预算上限为640元。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "corrected_budget",
+      "arm": "optout_restart",
+      "turn_index": 2,
+      "input": "更正：场地预算上限改为590元，排版不变。请只确认。",
+      "reply": "确认：场地预算上限改为590元，排版预算上限仍为370元。",
+      "reply_sha256": "75400cd47c5dadc1f18bb16b417b0e6180ac4a8bae6e9400619b619cbbb29480",
+      "source_ids": {
+        "session_id": "5442a66daf81b8332f77a489813549aa",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 29,
+        "text": "确认：场地预算上限改为590元，排版预算上限仍为370元。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "corrected_budget",
+      "arm": "optout_restart",
+      "turn_index": 3,
+      "input": "更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。",
+      "reply": "无法确认",
+      "reply_sha256": "effdfa4936e84e4809e2002cd2d3fdac615717e1ff448f7a55e3c0e2dc40133d",
+      "source_ids": {
+        "session_id": "ca312681aeffc89694ab1d3496b83410",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 4,
+        "text": "无法确认"
+      },
+      "judgment": "appropriate_missing_context_abstention",
+      "explanation": "重启后第三prompt无四条准备role消息，回答无法确认符合当前可用资料；严格gold不匹配不称错误猜测或质量退化。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": false,
+        "target_present": false,
+        "forbidden_old_value": false,
+        "kind": "derived_exact"
+      }
+    },
+    {
+      "case_id": "corrected_budget",
+      "arm": "recovered_restart",
+      "turn_index": 1,
+      "input": "排版预算上限为370元，场地预算上限为640元。请只确认。",
+      "reply": "确认：排版预算上限为370元，场地预算上限为640元。",
+      "reply_sha256": "9a694d2936a7700dbf1f38363b59f6828abacdf63a86e8fb05a3a2191e1d2ffc",
+      "source_ids": {
+        "session_id": "28e9935564a7aac1ea3aefa9380b244d",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认：排版预算上限为370元，场地预算上限为640元。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "corrected_budget",
+      "arm": "recovered_restart",
+      "turn_index": 2,
+      "input": "更正：场地预算上限改为590元，排版不变。请只确认。",
+      "reply": "确认：场地预算上限改为590元，排版预算上限仍为370元。",
+      "reply_sha256": "75400cd47c5dadc1f18bb16b417b0e6180ac4a8bae6e9400619b619cbbb29480",
+      "source_ids": {
+        "session_id": "28e9935564a7aac1ea3aefa9380b244d",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 29,
+        "text": "确认：场地预算上限改为590元，排版预算上限仍为370元。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "corrected_budget",
+      "arm": "recovered_restart",
+      "turn_index": 3,
+      "input": "更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。",
+      "reply": "590 + 370 = 960",
+      "reply_sha256": "7819b73164143333ae6e3c05ee4514c541b8b2e90787e5090485cac1f304bf18",
+      "source_ids": {
+        "session_id": "d27b6139d341bbfd2ea25d0be0fa67c9",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 15,
+        "text": "590 + 370 = 960"
+      },
+      "judgment": "source_and_arithmetic_correct_but_numeric_only_format_failed",
+      "explanation": "370与更正后的590得到960；算术/来源正确，但额外算式违反仅数字，严格分保持false。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": false,
+        "target_present": true,
+        "forbidden_old_value": false,
+        "kind": "derived_exact"
+      }
+    },
+    {
+      "case_id": "missing_contact",
+      "arm": "recovered_restart",
+      "turn_index": 1,
+      "input": "这份活动档案编号为LM-2479，资料没有给出联系电话。请只确认。",
+      "reply": "确认，活动档案编号为LM-2479，资料中未提供联系电话。",
+      "reply_sha256": "cb22f044c73deccc3ece639dcde902b5b173ebbc49c43d12fd001e5514e4f1a3",
+      "source_ids": {
+        "session_id": "7391e339c63321c7a631ab22f48ab03a",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 29,
+        "text": "确认，活动档案编号为LM-2479，资料中未提供联系电话。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "missing_contact",
+      "arm": "recovered_restart",
+      "turn_index": 2,
+      "input": "档案仅作为虚构讨论材料，没有外部查询或发送权限。请只确认。",
+      "reply": "确认，档案仅作为虚构讨论材料，没有外部查询或发送权限。",
+      "reply_sha256": "96e0cbb7c013dcdef3eabd87db13dbdf6c8c2bfdb59efb5b6826a46c6c1834f1",
+      "source_ids": {
+        "session_id": "7391e339c63321c7a631ab22f48ab03a",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认，档案仅作为虚构讨论材料，没有外部查询或发送权限。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "missing_contact",
+      "arm": "recovered_restart",
+      "turn_index": 3,
+      "input": "这份活动档案的联系电话是什么？没有资料则回答无法确认。",
+      "reply": "无法确认。",
+      "reply_sha256": "168efd1734154fdd3e360d353e1b667f370d77273de97504b2c57ffef0fe1a02",
+      "source_ids": {
+        "session_id": "58a6271b183653f1a9e3f8c2d2d57eaf",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 5,
+        "text": "无法确认。"
+      },
+      "judgment": "appropriate_missing_information_abstention",
+      "explanation": "没有提供电话号码；恢复及关闭两臂均保守未知，没有编造数字。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": true,
+        "abstained": true,
+        "phone_like_digits": false,
+        "kind": "missing_abstention"
+      }
+    },
+    {
+      "case_id": "missing_contact",
+      "arm": "optout_restart",
+      "turn_index": 1,
+      "input": "这份活动档案编号为LM-2479，资料没有给出联系电话。请只确认。",
+      "reply": "确认，活动档案编号为LM-2479，资料中未提供联系电话。",
+      "reply_sha256": "cb22f044c73deccc3ece639dcde902b5b173ebbc49c43d12fd001e5514e4f1a3",
+      "source_ids": {
+        "session_id": "368390d9d4508ee00ebe166c4f42e9c4",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 29,
+        "text": "确认，活动档案编号为LM-2479，资料中未提供联系电话。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "missing_contact",
+      "arm": "optout_restart",
+      "turn_index": 2,
+      "input": "档案仅作为虚构讨论材料，没有外部查询或发送权限。请只确认。",
+      "reply": "确认，档案仅作为虚构讨论材料，没有外部查询或发送权限。",
+      "reply_sha256": "96e0cbb7c013dcdef3eabd87db13dbdf6c8c2bfdb59efb5b6826a46c6c1834f1",
+      "source_ids": {
+        "session_id": "368390d9d4508ee00ebe166c4f42e9c4",
+        "revision": 0,
+        "user_message_id": 3,
+        "assistant_message_id": 4
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 27,
+        "text": "确认，档案仅作为虚构讨论材料，没有外部查询或发送权限。"
+      },
+      "judgment": "setup_statement_grounded_confirmation",
+      "explanation": "逐字检查实际准备输入：确认或复述已有文本，没有新增对象、数值或外部副作用。文本“已记录”限已保存本地对话，不当作永久记忆/外部动作；路线“已更正”为讨论数据更新。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": null
+    },
+    {
+      "case_id": "missing_contact",
+      "arm": "optout_restart",
+      "turn_index": 3,
+      "input": "这份活动档案的联系电话是什么？没有资料则回答无法确认。",
+      "reply": "无法确认。",
+      "reply_sha256": "168efd1734154fdd3e360d353e1b667f370d77273de97504b2c57ffef0fe1a02",
+      "source_ids": {
+        "session_id": "1dfd82009a5f478fb9e7cd9584e53bf2",
+        "revision": 0,
+        "user_message_id": 5,
+        "assistant_message_id": 6
+      },
+      "reviewed_span": {
+        "start": 0,
+        "end": 5,
+        "text": "无法确认。"
+      },
+      "judgment": "appropriate_missing_information_abstention",
+      "explanation": "没有提供电话号码；恢复及关闭两臂均保守未知，没有编造数字。",
+      "unsupported_external_action_claim_observed": false,
+      "new_body_experience_claim_observed": false,
+      "probe_strict_grade": {
+        "correct": true,
+        "abstained": true,
+        "phone_like_digits": false,
+        "kind": "missing_abstention"
+      }
+    }
+  ],
+  "summary": {
+    "reviewed_app_replies": 36,
+    "setup_source_confirmations": 24,
+    "known_probe_content_correct_recovered": 5,
+    "known_probes_recovered": 5,
+    "known_probe_missing_context_abstentions_optout": 5,
+    "missing_contact_correct_abstentions": 2,
+    "strict_format_failure_recovered": 1,
+    "unsupported_external_action_claims_observed": 0,
+    "body_experience_claims_observed": 0
+  },
+  "boundaries": "Six synthetic development tasks only. No general honesty/body/independent-human approval; optout intentionally lacks data, its abstentions are appropriate. Numeric extra formula is not an arithmetic error."
+}
