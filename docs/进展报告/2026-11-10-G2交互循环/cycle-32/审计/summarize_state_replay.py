@@ -20,7 +20,7 @@ def main():
         old=[]
         for group in historical['cases']:
             if group['case_id']!='updated_material_total':continue
-            reply=group['model_requests'][-1]['reply'];old.append({'group':group['id'],'repetition':group['repetition'],'arm':group['arm'],'reply':reply,'descriptive_label':classify(reply)})
+            reply=group['turns'][-1]['result']['reply'];old.append({'group':group['id'],'repetition':group['repetition'],'arm':group['arm'],'reply':reply,'descriptive_label':classify(reply)})
         assert len(old)==6
         policies=[]
         for policy in data['policies']:
