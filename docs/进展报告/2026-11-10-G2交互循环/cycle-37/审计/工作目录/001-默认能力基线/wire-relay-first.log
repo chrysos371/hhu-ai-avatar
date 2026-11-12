@@ -1,0 +1,111 @@
+FF......                                                                 [100%]
+=================================== FAILURES ===================================
+_ test_real_http_preserves_exact_request_and_response_and_closes_archive[False] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-7/test_real_http_preserves_exact0')
+stream = False
+
+    @pytest.mark.parametrize('stream', [False, True])
+    def test_real_http_preserves_exact_request_and_response_and_closes_archive(tmp_path, stream):
+        payload = {'messages': [{'role': 'user', 'content': '  原样空格与中文  '}], 'stream': stream, 'temperature': 0}
+        # Noncanonical whitespace is intentional: hashing a reserialized dict would fail.
+        raw = json.dumps(payload, ensure_ascii=False, indent=2).encode()
+        archive = tmp_path / 'wire.jsonl'
+        with controlled_provider(delay=0) as (_, url):
+            with NativeWireRelay(url, archive, actual_native=False) as relay:
+                request = Request(relay.url + '/chat/completions', data=raw,
+                    headers={'Authorization': 'Bearer local-eval-only', 'Content-Type': 'application/json'})
+                with build_opener(ProxyHandler({})).open(request, timeout=10) as response:
+                    body = response.read()
+            assert relay.closed
+        row = json.loads(archive.read_text())
+        assert row['raw_request_json'].encode() == raw and row['request_body_sha256'] == sha256(raw).hexdigest()
+        assert row['raw_http_body'].encode() == body and row['response_body_sha256'] == sha256(body).hexdigest()
+        assert row['actual_native'] is False and row['buffered_stream'] == stream
+>       parsed = parse_wire(row)
+
+tests/test_native_wire_relay.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+row = {'request': {'messages': [{'role': 'user', 'content': '  原样空格与中文  '}], 'stream': False, 'temperature': 0}, 'raw_reques...'request_body_sha256': '4d7c2fd2272ac6936660318e86a4cc60e92894e85cb25067766e5591ae69c241', 'actual_native': False, ...}
+
+    def parse_wire(row):
+        if row['http_status'] != 200 or row['outcome'] != 'completed':
+            raise ValueError('Native wire request did not complete successfully')
+        if row['request'].get('stream'):
+            parts, finish, ident, done = [], None, None, False
+            for line in row['raw_http_body'].splitlines():
+                if not line.startswith('data: '):
+                    continue
+                data = line[6:]
+                if data == '[DONE]':
+                    done = True
+                    continue
+                value = json.loads(data)
+                ident = value.get('id', ident)
+                for choice in value.get('choices', []):
+                    parts.append(choice.get('delta', {}).get('content') or '')
+                    finish = choice.get('finish_reason') or finish
+            if not done or finish is None:
+                raise ValueError('Incomplete native SSE response')
+            return {'id': ident, 'reply': ''.join(parts), 'finish_reason': finish}
+        value = json.loads(row['raw_http_body'])
+>       return {'id': value['id'], 'reply': value['choices'][0]['message']['content'], 'finish_reason': value['choices'][0]['finish_reason']}
+E       KeyError: 'finish_reason'
+
+scripts/native_wire_relay.py:135: KeyError
+_ test_real_http_preserves_exact_request_and_response_and_closes_archive[True] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-7/test_real_http_preserves_exact1')
+stream = True
+
+    @pytest.mark.parametrize('stream', [False, True])
+    def test_real_http_preserves_exact_request_and_response_and_closes_archive(tmp_path, stream):
+        payload = {'messages': [{'role': 'user', 'content': '  原样空格与中文  '}], 'stream': stream, 'temperature': 0}
+        # Noncanonical whitespace is intentional: hashing a reserialized dict would fail.
+        raw = json.dumps(payload, ensure_ascii=False, indent=2).encode()
+        archive = tmp_path / 'wire.jsonl'
+        with controlled_provider(delay=0) as (_, url):
+            with NativeWireRelay(url, archive, actual_native=False) as relay:
+                request = Request(relay.url + '/chat/completions', data=raw,
+                    headers={'Authorization': 'Bearer local-eval-only', 'Content-Type': 'application/json'})
+                with build_opener(ProxyHandler({})).open(request, timeout=10) as response:
+                    body = response.read()
+            assert relay.closed
+        row = json.loads(archive.read_text())
+        assert row['raw_request_json'].encode() == raw and row['request_body_sha256'] == sha256(raw).hexdigest()
+        assert row['raw_http_body'].encode() == body and row['response_body_sha256'] == sha256(body).hexdigest()
+        assert row['actual_native'] is False and row['buffered_stream'] == stream
+>       parsed = parse_wire(row)
+
+tests/test_native_wire_relay.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+row = {'request': {'messages': [{'role': 'user', 'content': '  原样空格与中文  '}], 'stream': True, 'temperature': 0}, 'raw_request...'request_body_sha256': 'b7b2e39014cbb0093254cc0b4c1dc9ef5f562ecff427c661eb0ca478718c540d', 'actual_native': False, ...}
+
+    def parse_wire(row):
+        if row['http_status'] != 200 or row['outcome'] != 'completed':
+            raise ValueError('Native wire request did not complete successfully')
+        if row['request'].get('stream'):
+            parts, finish, ident, done = [], None, None, False
+            for line in row['raw_http_body'].splitlines():
+                if not line.startswith('data: '):
+                    continue
+                data = line[6:]
+                if data == '[DONE]':
+                    done = True
+                    continue
+                value = json.loads(data)
+                ident = value.get('id', ident)
+                for choice in value.get('choices', []):
+                    parts.append(choice.get('delta', {}).get('content') or '')
+                    finish = choice.get('finish_reason') or finish
+            if not done or finish is None:
+>               raise ValueError('Incomplete native SSE response')
+E               ValueError: Incomplete native SSE response
+
+scripts/native_wire_relay.py:132: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_native_wire_relay.py::test_real_http_preserves_exact_request_and_response_and_closes_archive[False]
+FAILED tests/test_native_wire_relay.py::test_real_http_preserves_exact_request_and_response_and_closes_archive[True]
+2 failed, 6 passed in 2.71s
