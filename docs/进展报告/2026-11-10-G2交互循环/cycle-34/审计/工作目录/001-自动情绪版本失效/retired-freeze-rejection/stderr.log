@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py", line 189, in <module>
+    RevisionAudit(args).run()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py", line 58, in __init__
+    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,phase=args.phase);verify_historical_binding(self.frozen);gate(args)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/revision_common.py", line 37, in verify_freeze
+    if not source_paths(phase)<=frozen.get('sha256',{}).keys():raise ValueError('Emotion revision source inputs missing')
+ValueError: Emotion revision source inputs missing
