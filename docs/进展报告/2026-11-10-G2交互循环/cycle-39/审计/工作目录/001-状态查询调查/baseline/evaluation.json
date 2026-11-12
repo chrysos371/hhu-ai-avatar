@@ -1,0 +1,521 @@
+{
+  "scope": "actual_Avatar_SQL_no_model_original_coverage_observation_not_old_design_fault_or_quality_score",
+  "head": "3681a2d39985f87d3af12a86f22bc68522415ca7",
+  "source_sha256": {
+    "src/avatar/main.py": "b00f6f2ee0203b43a2c7987622dc2e109de8aff75b20c9528e10b9b4d8a815cf",
+    "src/avatar/brain/reminders.py": "bd2ec65bef2b37b5e7dbbb930320d256b023a112887b10c6e7652049be95a3e5",
+    "evals/interaction/cycle-39/explicit-reminder-query-protocol.json": "59911acb601fa643659e9eee50586495e14595e88c183c569e62a87530989f44",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-39/审计/probe_query_baseline.py": "498aedc58612334d80d17ac048bc40ddb9af43919859d0820b52944c3d1dc1fa"
+  },
+  "cases": [
+    {
+      "id": "status_due",
+      "input": "查询提醒编号1",
+      "direct_synthetic_sql_seed": true,
+      "before": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.6606493,
+            "created_at": 1794500506.6606493,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "after": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.6606493,
+            "created_at": 1794500506.6606493,
+            "status": "active",
+            "notified_at": 1794504106.6757755
+          }
+        ],
+        "memory_reminder_deliveries": [
+          {
+            "id": 1,
+            "reminder_id": 1,
+            "created_at": 1794504106.6757755,
+            "acknowledged_at": null
+          }
+        ],
+        "memory_action_receipts": [
+          {
+            "id": 1,
+            "source_message_id": 1,
+            "session_id": "8dc1bcd9efea443c86ee4be4f41cd080",
+            "context_revision": 0,
+            "action": "reminder.claimed_due",
+            "reminder_id": 1,
+            "recorded_at": 1794504106.675974
+          }
+        ]
+      },
+      "existing_management_listing": [
+        {
+          "id": 1,
+          "title": "受控到期记录",
+          "due_at": 1794504046.6606493,
+          "created_at": 1794500506.6606493,
+          "status": "active",
+          "notified_at": null,
+          "delivery_acknowledged_at": null
+        }
+      ],
+      "new_query_mode_present": false,
+      "business_unchanged": false,
+      "result": {
+        "conversation": {
+          "session_id": "8dc1bcd9efea443c86ee4be4f41cd080",
+          "revision": 0,
+          "user_message_id": 1,
+          "assistant_message_id": 2
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「查询提醒编号1」吧？\n到期提醒：受控到期记录",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.6606493,
+            "created_at": 1794500506.6606493,
+            "status": "active",
+            "notified_at": 1794504106.6757755
+          }
+        ],
+        "conversation_summary": {
+          "session_id": "8dc1bcd9efea443c86ee4be4f41cd080",
+          "kind": "disabled",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "action_receipts": {
+          "instance_id": "8dc1bcd9efea443c86ee4be4f41cd080",
+          "revision": 0,
+          "items": [
+            {
+              "id": 1,
+              "source_message_id": 1,
+              "session_id": "8dc1bcd9efea443c86ee4be4f41cd080",
+              "context_revision": 0,
+              "action": "reminder.claimed_due",
+              "reminder_id": 1,
+              "recorded_at": 1794504106.675974
+            }
+          ],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        }
+      },
+      "after_sql_dump_sha256": "00004bb0a10490014cbae351fe4731e70fdfb0619553d1fdedf67c587cc98239"
+    },
+    {
+      "id": "conditions_due",
+      "input": "查看提醒送达条件",
+      "direct_synthetic_sql_seed": true,
+      "before": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.6924636,
+            "created_at": 1794500506.6924636,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "after": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.6924636,
+            "created_at": 1794500506.6924636,
+            "status": "active",
+            "notified_at": 1794504106.6938283
+          }
+        ],
+        "memory_reminder_deliveries": [
+          {
+            "id": 1,
+            "reminder_id": 1,
+            "created_at": 1794504106.6938283,
+            "acknowledged_at": null
+          }
+        ],
+        "memory_action_receipts": [
+          {
+            "id": 1,
+            "source_message_id": 1,
+            "session_id": "f2199876e19a4da3a0793320ded9532f",
+            "context_revision": 0,
+            "action": "reminder.claimed_due",
+            "reminder_id": 1,
+            "recorded_at": 1794504106.6939943
+          }
+        ]
+      },
+      "existing_management_listing": [
+        {
+          "id": 1,
+          "title": "受控到期记录",
+          "due_at": 1794504046.6924636,
+          "created_at": 1794500506.6924636,
+          "status": "active",
+          "notified_at": null,
+          "delivery_acknowledged_at": null
+        }
+      ],
+      "new_query_mode_present": false,
+      "business_unchanged": false,
+      "result": {
+        "conversation": {
+          "session_id": "f2199876e19a4da3a0793320ded9532f",
+          "revision": 0,
+          "user_message_id": 1,
+          "assistant_message_id": 2
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「查看提醒送达条件」吧？\n到期提醒：受控到期记录",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.6924636,
+            "created_at": 1794500506.6924636,
+            "status": "active",
+            "notified_at": 1794504106.6938283
+          }
+        ],
+        "conversation_summary": {
+          "session_id": "f2199876e19a4da3a0793320ded9532f",
+          "kind": "disabled",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "action_receipts": {
+          "instance_id": "f2199876e19a4da3a0793320ded9532f",
+          "revision": 0,
+          "items": [
+            {
+              "id": 1,
+              "source_message_id": 1,
+              "session_id": "f2199876e19a4da3a0793320ded9532f",
+              "context_revision": 0,
+              "action": "reminder.claimed_due",
+              "reminder_id": 1,
+              "recorded_at": 1794504106.6939943
+            }
+          ],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        }
+      },
+      "after_sql_dump_sha256": "1f377784ef9d70c473c1c035ec4cdc215107f531d52133811deb5bc1d79f7385"
+    },
+    {
+      "id": "invalid_id_due",
+      "input": "查询提醒编号0",
+      "direct_synthetic_sql_seed": true,
+      "before": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.7078683,
+            "created_at": 1794500506.7078683,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "after": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.7078683,
+            "created_at": 1794500506.7078683,
+            "status": "active",
+            "notified_at": 1794504106.7092824
+          }
+        ],
+        "memory_reminder_deliveries": [
+          {
+            "id": 1,
+            "reminder_id": 1,
+            "created_at": 1794504106.7092824,
+            "acknowledged_at": null
+          }
+        ],
+        "memory_action_receipts": [
+          {
+            "id": 1,
+            "source_message_id": 1,
+            "session_id": "dc951c5602194cac8927c921490b214c",
+            "context_revision": 0,
+            "action": "reminder.claimed_due",
+            "reminder_id": 1,
+            "recorded_at": 1794504106.7094488
+          }
+        ]
+      },
+      "existing_management_listing": [
+        {
+          "id": 1,
+          "title": "受控到期记录",
+          "due_at": 1794504046.7078683,
+          "created_at": 1794500506.7078683,
+          "status": "active",
+          "notified_at": null,
+          "delivery_acknowledged_at": null
+        }
+      ],
+      "new_query_mode_present": false,
+      "business_unchanged": false,
+      "result": {
+        "conversation": {
+          "session_id": "dc951c5602194cac8927c921490b214c",
+          "revision": 0,
+          "user_message_id": 1,
+          "assistant_message_id": 2
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_unconfigured",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "（demo 模式）我现在感觉中性，你刚才说的是「查询提醒编号0」吧？\n到期提醒：受控到期记录",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_fallback",
+        "generation_mode": "rules_unconfigured",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794504046.7078683,
+            "created_at": 1794500506.7078683,
+            "status": "active",
+            "notified_at": 1794504106.7092824
+          }
+        ],
+        "conversation_summary": {
+          "session_id": "dc951c5602194cac8927c921490b214c",
+          "kind": "disabled",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "action_receipts": {
+          "instance_id": "dc951c5602194cac8927c921490b214c",
+          "revision": 0,
+          "items": [
+            {
+              "id": 1,
+              "source_message_id": 1,
+              "session_id": "dc951c5602194cac8927c921490b214c",
+              "context_revision": 0,
+              "action": "reminder.claimed_due",
+              "reminder_id": 1,
+              "recorded_at": 1794504106.7094488
+            }
+          ],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        }
+      },
+      "after_sql_dump_sha256": "e59fc9531811498f61b4cf58475cc5e5e26e2a539e15a5707c3a69085d8b9bff"
+    }
+  ],
+  "native_or_GPU_calls": 0,
+  "completed": true
+}
