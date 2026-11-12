@@ -22,7 +22,20 @@ if(fs.existsSync(output))throw Error('Fresh report review output required');
    if(links.some(link=>!link.external&&!link.exists))throw Error('Broken report link: '+JSON.stringify(links.filter(x=>!x.exists)));
    await page.screenshot({path:path.join(__dirname,viewport.width===1440?'final-report-desktop.png':'final-report-mobile-viewport.png'),fullPage:viewport.width===1440});
    if(viewport.width===390)await page.locator('table').first().screenshot({path:path.join(__dirname,'final-report-mobile-table.png')});
-   results.push({viewport,...state,links});
+   const horizontalTables=[];
+   if(viewport.width===390){
+    for(const region of await page.locator('.table-wrap').all()){
+     const scroll=await region.evaluate(e=>{
+      e.scrollLeft=e.scrollWidth-e.clientWidth;
+      const last=e.querySelector('tr:last-child td:last-child'),box=e.getBoundingClientRect(),cell=last.getBoundingClientRect();
+      return {scrollWidth:e.scrollWidth,clientWidth:e.clientWidth,scrollLeft:e.scrollLeft,lastCellRight:cell.right,regionRight:box.right,lastCellReadable:cell.right<=box.right+1,lastCellText:last.textContent};
+     });
+     if(!scroll.lastCellReadable)throw Error('Rightmost report table cell unreachable');
+     horizontalTables.push(scroll);
+    }
+    await page.locator('.table-wrap').first().screenshot({path:path.join(__dirname,'final-report-mobile-table-right.png')});
+   }
+   results.push({viewport,...state,links,horizontalTables});
   }
   if(errors.length)throw Error(JSON.stringify(errors));
   fs.writeFileSync(output,JSON.stringify({reportSha256:createHash('sha256').update(fs.readFileSync(report)).digest('hex'),views:results,errors,completed:true},null,2)+'\n',{flag:'wx'});

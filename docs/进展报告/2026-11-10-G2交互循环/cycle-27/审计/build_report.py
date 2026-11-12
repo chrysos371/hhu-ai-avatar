@@ -65,6 +65,7 @@ def build():
     for heading,content in sections:
         md+=['## '+heading,''];body+=['<section><h2>'+heading+'</h2>']
         if heading in headers:
+            if heading=='原生结果与计数':body+=['<p class="scroll-hint">手机可横向滑动表格查看右侧数据。</p>']
             hs=headers[heading];md+=['| '+' | '.join(hs)+' |','| '+' | '.join(['---']*len(hs))+' |'];md+=['| '+' | '.join(row)+' |' for row in content];md+=['']
             body+=['<div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table'+(' class="wide"' if heading=='原生结果与计数' else '')+'><thead><tr>'+''.join('<th>'+html.escape(x)+'</th>' for x in hs)+'</tr></thead><tbody>'];body+=['<tr>'+''.join('<td>'+html.escape(x)+'</td>' for x in row)+'</tr>' for row in content];body+=['</tbody></table></div>']
         elif heading=='证据入口':
@@ -75,7 +76,7 @@ def build():
         else:
             for text in content:md+=[text,''];body+=['<p>'+html.escape(text)+'</p>']
         body+=['</section>']
-    page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+title+'</title><style>body{margin:0;background:#f4f6f8;color:#172936;font:16px/1.75 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:32px auto;padding:24px;background:white;border-radius:12px}h1{font-size:30px;line-height:1.35}h2{margin-top:28px;color:#23496b}.meta{color:#536778}.verdict{padding:16px;border-left:5px solid #c68019;background:#fff5de}a{color:#0759a5}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}table.wide{min-width:680px}td,th{padding:9px;border:1px solid #d4dce5;text-align:left;vertical-align:top}th{background:#eaf0f6}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}td,th{padding:5px}}</style><main>'+''.join(body)+'</main></html>'
+    page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+title+'</title><style>body{margin:0;background:#f4f6f8;color:#172936;font:16px/1.75 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:32px auto;padding:24px;background:white;border-radius:12px}h1{font-size:30px;line-height:1.35}h2{margin-top:28px;color:#23496b}.meta{color:#536778}.verdict{padding:16px;border-left:5px solid #c68019;background:#fff5de}a{color:#0759a5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}table{width:100%;border-collapse:collapse;font-size:14px}table.wide{min-width:680px}td,th{padding:9px;border:1px solid #d4dce5;text-align:left;vertical-align:top}th{background:#eaf0f6}@media(max-width:600px){.scroll-hint{display:block;color:#536778;font-size:14px}main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}td,th{padding:5px}}</style><main>'+''.join(body)+'</main></html>'
     (BASE/'审计/系统审计与推进报告.md').write_text('\n'.join(md));(BASE/'审计/系统审计与推进报告.html').write_text(page+'\n');print('Built C27 four-table report with',len(sections[-1][1]),'local links.')
 
 if __name__=='__main__':build()
