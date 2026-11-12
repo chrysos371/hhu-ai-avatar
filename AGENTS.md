@@ -14,7 +14,7 @@
 
 ## 当前阶段（2026-11-13）
 
-- **C40已启动**：[计划](docs/进展报告/2026-11-10-G2交互循环/cycle-40/计划.md) / [进展](docs/进展报告/2026-11-10-G2交互循环/cycle-40/进展.md)。C39已3f51fa48封77项/SHAbfd05b7428b3af761ffd5b73aaf74d4f7a175184bebff609883caf40f6c9d36f，2017/1 Python、192前端、18/16浏览器、436源/9模块/221MD/25HTML/1440与390核平，0native。现38旧seal6531项不可回写。C40先真实native工具wire/提供方显式opt-in与CPU负控，再冻结/实际单GPU实验；通过才登记本地状态自然问答隔离对照，默认不启用，不能只加final reviewer绕过ordinary claim_due。一般语义/真人设备仍开放。Goal active。
+- **C40原生工具wire隔离研究进行中**：[计划](docs/进展报告/2026-11-10-G2交互循环/cycle-40/计划.md) / [进展](docs/进展报告/2026-11-10-G2交互循环/cycle-40/进展.md)。C39已3f51fa48封77项/SHAbfd05b7428b3af761ffd5b73aaf74d4f7a175184bebff609883caf40f6c9d36f；38旧seal6531项/9集中入口未变。C40新增默认关闭的研究provider工具适配，53新控制、2070/1 Python、192前端、18/16浏览器、type/lint/build、440源/9模块/54库通过；3准备/集成问题限定闭。首352冻结2native预热/0正式选择因异步采证缺口停止，清理0退出、已退役；新354冻结b9a3ccf6/SHA1c7181a512d1591e1917d7d7c47e5b76f8bae74e3af91b4e4a945bfaee2fb02e正在原3重复/最多41调用重跑，004待真实复验。合成tool结果只验wire，0真实业务读取/0产品启用，不声称自然问题已解；Avatar普通自动claim边界保持。Goal active。
 - C36已64274de封60项/SHAf504b2c5772b53c5cc5442d51067264bcc514907c9d83f4dc6a8e97ffda71dd9；[MD](docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/系统审计与推进报告.md) / [HTML](docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/系统审计与推进报告.html)。默认新增两页来源红删/固定1秒DOM回归，完整1835/1 Python、192前端、17/16可选浏览器、type/lint/build，426源/8模块/协议/5bundle核平。6维护页面回合、3fixture HTTP请求，0native；4问题关闭，201MD链接/1440/390通过。
 - C35已3f67215封142项/SHA41ba6fa0...，C34-004两页各3/3→0/3，8补充修后通过/2工具失败保留，共23离线结果/0native。旧current冻结不可认证新源；现在保持38历史seal（37cycle＋迁移），封存资料不回写。
 - 所有配套环境/模型/缓存/运行数据/7历史工作树在`/data/Users/zrh/data/hhu-ai-avatar`，代码repo/hhu-ai-avatar；9入口集中，迁移9271bae封88项/SHA717af4a7...。统一project-python/frontend.sh，新临时/模型/工作树禁止散落repo父级。每次写前确认/data挂载。
