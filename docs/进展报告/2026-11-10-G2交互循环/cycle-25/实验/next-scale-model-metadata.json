@@ -1,0 +1,139 @@
+{
+  "retrieved_utc": "2026-11-12T01:29:07.083960+00:00",
+  "source_url": "https://huggingface.co/api/models/Qwen/Qwen3-32B-GGUF?blobs=true",
+  "metadata": {
+    "_id": "68134bb1c347c9dffa077aae",
+    "id": "Qwen/Qwen3-32B-GGUF",
+    "private": false,
+    "pipeline_tag": "text-generation",
+    "tags": [
+      "gguf",
+      "text-generation",
+      "arxiv:2309.00071",
+      "base_model:Qwen/Qwen3-32B",
+      "base_model:quantized:Qwen/Qwen3-32B",
+      "license:apache-2.0",
+      "endpoints_compatible",
+      "region:us",
+      "conversational"
+    ],
+    "downloads": 123090,
+    "likes": 78,
+    "modelId": "Qwen/Qwen3-32B-GGUF",
+    "author": "Qwen",
+    "sha": "938a7432affaec9157f883a87164e2646ae17555",
+    "lastModified": "2025-05-09T07:16:46.000Z",
+    "gated": false,
+    "disabled": false,
+    "widgetData": [
+      {
+        "text": "Hi, what can you help me with?"
+      },
+      {
+        "text": "What is 84 * 3 / 2?"
+      },
+      {
+        "text": "Tell me an interesting fact about the universe!"
+      },
+      {
+        "text": "Explain quantum computing in simple terms."
+      }
+    ],
+    "model-index": null,
+    "config": {},
+    "cardData": {
+      "license": "apache-2.0",
+      "license_link": "https://huggingface.co/Qwen/Qwen3-32B-GGUF/blob/main/LICENSE",
+      "pipeline_tag": "text-generation",
+      "base_model": "Qwen/Qwen3-32B"
+    },
+    "gguf": {
+      "total": 32762123264,
+      "architecture": "qwen3",
+      "context_length": 40960,
+      "chat_template": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0].role == 'system' %}\n        {{- messages[0].content + '\\n\\n' }}\n    {%- endif %}\n    {{- \"# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0].role == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0].content + '<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}\n{%- for index in range(ns.last_query_index, -1, -1) %}\n    {%- set message = messages[index] %}\n    {%- if ns.multi_step_tool and message.role == \"user\" and not('<tool_response>' in message.content and '</tool_response>' in message.content) %}\n        {%- set ns.multi_step_tool = false %}\n        {%- set ns.last_query_index = index %}\n    {%- endif %}\n{%- endfor %}\n{%- for message in messages %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) %}\n        {{- '<|im_start|>' + message.role + '\\n' + message.content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {%- set content = message.content %}\n        {%- set reasoning_content = '' %}\n        {%- if message.reasoning_content is defined and message.reasoning_content is not none %}\n            {%- set reasoning_content = message.reasoning_content %}\n        {%- else %}\n            {%- if '</think>' in message.content %}\n                {%- set content = message.content.split('</think>')[-1].lstrip('\\n') %}\n                {%- set reasoning_content = message.content.split('</think>')[0].rstrip('\\n').split('<think>')[-1].lstrip('\\n') %}\n            {%- endif %}\n        {%- endif %}\n        {%- if loop.index0 > ns.last_query_index %}\n            {%- if loop.last or (not loop.last and reasoning_content) %}\n                {{- '<|im_start|>' + message.role + '\\n<think>\\n' + reasoning_content.strip('\\n') + '\\n</think>\\n\\n' + content.lstrip('\\n') }}\n            {%- else %}\n                {{- '<|im_start|>' + message.role + '\\n' + content }}\n            {%- endif %}\n        {%- else %}\n            {{- '<|im_start|>' + message.role + '\\n' + content }}\n        {%- endif %}\n        {%- if message.tool_calls %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if (loop.first and content) or (not loop.first) %}\n                    {{- '\\n' }}\n                {%- endif %}\n                {%- if tool_call.function %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {{- '<tool_call>\\n{\"name\": \"' }}\n                {{- tool_call.name }}\n                {{- '\", \"arguments\": ' }}\n                {%- if tool_call.arguments is string %}\n                    {{- tool_call.arguments }}\n                {%- else %}\n                    {{- tool_call.arguments | tojson }}\n                {%- endif %}\n                {{- '}\\n</tool_call>' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if loop.first or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- message.content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n    {%- if enable_thinking is defined and enable_thinking is false %}\n        {{- '<think>\\n\\n</think>\\n\\n' }}\n    {%- endif %}\n{%- endif %}",
+      "bos_token": "<|endoftext|>",
+      "eos_token": "<|im_end|>",
+      "totalFileSize": 19762149024
+    },
+    "siblings": [
+      {
+        "rfilename": ".gitattributes",
+        "blobId": "fc27c7a65b0ccffa4e5c4f81b0d38c168daded18",
+        "size": 1803
+      },
+      {
+        "rfilename": "LICENSE",
+        "blobId": "6f9739bb281a3d2ade8fb5f6dd6dde597a739c80",
+        "size": 11544
+      },
+      {
+        "rfilename": "Qwen3-32B-Q4_K_M.gguf",
+        "blobId": "f3771a8b7c3b96dcc43b44b38b192450e7d40ed8",
+        "size": 19762149024,
+        "lfs": {
+          "sha256": "efd971561896866f0e910cce52761ca77b1b138090c7f15fe284676d57d1f689",
+          "size": 19762149024,
+          "pointerSize": 136
+        }
+      },
+      {
+        "rfilename": "Qwen3-32B-Q5_0.gguf",
+        "blobId": "d3ec677413db878a34f21e65bf667cd8579cd317",
+        "size": 22635493024,
+        "lfs": {
+          "sha256": "e63772e0e1d384b028ad806c08e78c0f60a6bab9036c493fdad991f12fce9f20",
+          "size": 22635493024,
+          "pointerSize": 136
+        }
+      },
+      {
+        "rfilename": "Qwen3-32B-Q5_K_M.gguf",
+        "blobId": "8ab8d59bd9eb6b0d165117c1679399362a74e5a0",
+        "size": 23214831232,
+        "lfs": {
+          "sha256": "82ec20068a0cc9388ffc93eb968015b0941931d0ff65a216baba5b4824d2a966",
+          "size": 23214831232,
+          "pointerSize": 136
+        }
+      },
+      {
+        "rfilename": "Qwen3-32B-Q6_K.gguf",
+        "blobId": "5babc7ff5d3eb0902ee8796d1dacd0cca5032c9a",
+        "size": 26883306112,
+        "lfs": {
+          "sha256": "c4c7c3cb6da260df1fe1d3cfd090a32dc7cc348f1278158be18e301f390d6f6e",
+          "size": 26883306112,
+          "pointerSize": 136
+        }
+      },
+      {
+        "rfilename": "Qwen3-32B-Q8_0.gguf",
+        "blobId": "3099d68d778555bb1706bec20a079e5f96d82cbd",
+        "size": 34817718912,
+        "lfs": {
+          "sha256": "2c50eb8aad05047dbf24fa014eb621adf552e14176cabe0c5db4ef38c91e2169",
+          "size": 34817718912,
+          "pointerSize": 136
+        }
+      },
+      {
+        "rfilename": "README.md",
+        "blobId": "eb502ff1961b4d7a4992443a4d2d2079ad2f169d",
+        "size": 7497
+      },
+      {
+        "rfilename": "params",
+        "blobId": "b79a3bdde8373ca566bd404904abbd5270d7825d",
+        "size": 270
+      }
+    ],
+    "spaces": [
+      "octooai/llm-vram-calculator",
+      "Erinaldordso1996/Udud"
+    ],
+    "createdAt": "2025-05-01T10:23:45.000Z",
+    "usedStorage": 254626997248
+  },
+  "scope": "Read-only feasibility; no download, inference, or model selection."
+}
