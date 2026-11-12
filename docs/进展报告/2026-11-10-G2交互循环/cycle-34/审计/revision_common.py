@@ -33,6 +33,7 @@ def verify_freeze(path,expected,model=None,*,phase):
             if data.get(key)!=value:raise ValueError('Emotion revision contract differs: '+key)
     if model is not None and model not in MODELS:raise ValueError('Unexpected emotion revision model')
     if len(protocol['native_fixed_source'])!=2 or len(protocol['native_after_forget_turns'])!=2:raise ValueError('Emotion revision task schedule differs')
+    if protocol['native_model_registry']!=REGISTRY or protocol['native_runtime_identity']!=RUNTIME:raise ValueError('Emotion revision provider identity inputs differ')
     if not source_paths(phase)<=frozen.get('sha256',{}).keys():raise ValueError('Emotion revision source inputs missing')
     for name,value in frozen['sha256'].items():
         target=ROOT/name

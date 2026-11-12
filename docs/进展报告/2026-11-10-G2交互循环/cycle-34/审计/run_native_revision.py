@@ -106,3 +106,73 @@ class RevisionAudit(SharedAffect):
             'neutral_result_character_pad':[neutral['valence'],neutral['arousal']],'neutral_result_user_observation':[neutral['user_valence'],neutral['user_arousal']],
             'human_emotion_truth_or_quality_claim':False})
         self.persist();print(self.args.phase,self.args.model,self.case['observations'],flush=True)
+    def run(self):
+        registry,registry_sha,_=load_registry(ROOT/REGISTRY,expected_sha256=self.frozen['sha256'][REGISTRY]);spec=next(model for model in registry['models'] if model['model_id']==self.args.model)
+        ready=self.args.output/'provider-ready.json';trace=self.args.output/'provider-trace.jsonl'
+        command=[str(self.args.provider_python),str(OLD32/'serve_state_eval.py'),'--state-policy','logical_reset',
+            '--backend-runtime-identity',str(ROOT/RUNTIME),'--expected-backend-runtime-sha256',self.frozen['sha256'][RUNTIME],
+            '--model',str(ROOT/'models'/self.args.model.replace('-q4_k_m','-gguf')/spec['file']),'--model-key',self.args.model,
+            '--metadata',str(ROOT/spec['metadata']),'--ready',str(ready),'--trace',str(trace),'--backend','cuda','--registry',str(ROOT/REGISTRY),'--expected-registry-sha256',registry_sha]
+        self.report['provider_command']=command;process=None;relay_thread=None;started=time.monotonic();log=(self.args.output/'provider.log').open('x');self.persist()
+        try:
+            self.verify();process=subprocess.Popen(command,cwd=ROOT,env=environment(self.args.provider_python),stdout=log,stderr=subprocess.STDOUT);self.report['provider_pid']=process.pid;self.persist()
+            while True:
+                if process.poll() is not None:raise RuntimeError('Emotion revision native provider exited before readiness')
+                if ready.exists():
+                    try:metadata=json.loads(ready.read_text());break
+                    except json.JSONDecodeError:pass
+                time.sleep(.1)
+            validate_provider_identity(metadata,{'models_registry':REGISTRY,'models_registry_sha256':registry_sha,'provider_backend':'cuda'})
+            assert metadata['pid']==process.pid and metadata['model_id']==self.args.model and metadata['provider_source_sha256']==self.frozen['sha256'][str((OLD32/'serve_state_eval.py').relative_to(ROOT))]
+            assert metadata['resource_selector_sha256']==self.frozen['sha256']['src/avatar/gpu_resources.py'] and metadata['backend_runtime_identity_sha256']==self.frozen['sha256'][RUNTIME] and metadata['backend_runtime_files_verified']==54 and metadata['model_context_memory_present']
+            for method in metadata['state_method_sources'].values():assert self.backend['files_sha256'][method['path']]==method['file_sha256']
+            for key,value in {'n_gpu_layers':-1,'n_ctx':8192,'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'concurrent_sequences':1,'repeat_penalty':1.0,'top_p':1.0,'top_k':0,'state_policy':'logical_reset'}.items():assert metadata['configuration'][key]==value
+            self.report['provider_ready']=metadata;self.persist();print('Ready revision',self.args.phase,self.args.model,metadata['chosen_gpu'],flush=True)
+            for index,stream in enumerate(self.protocol['native_warmups']):
+                self.verify();payload={'model':self.args.model,'messages':[{'role':'user','content':'请回答：你好。'}],'stream':stream,'temperature':0,'max_tokens':16}
+                row={'role':'warmup','warmup_index':index};self.report['warmups'].append(row);self.report['requests'].append(row);self.persist()
+                try:send_raw(metadata['url'],json.dumps(payload,ensure_ascii=False),row)
+                finally:self.persist()
+                assert row['finish_reason']=='stop'
+            self.relay=NativeRelay(metadata['url']);relay_thread=threading.Thread(target=self.relay.serve_forever,daemon=True);relay_thread.start();self.workflow();self.verify()
+        except BaseException as error:self.report['failure']=repr(error);raise
+        finally:
+            for state in self.states:
+                try:self.stop(state)
+                except BaseException as error:self.report['cleanup_errors'].append({'pid':state['process'].pid,'error':repr(error)})
+            if relay_thread:
+                self.relay.shutdown();relay_thread.join(10);self.relay.server_close()
+                raw=[deepcopy(row) for row in self.relay.rows];self.case['raw_model_requests']=raw
+                self.report['requests'].extend(parse_wire(row) for row in raw if row.get('outcome')=='completed' and row.get('http_status')==200)
+            if process is not None:
+                if process.poll() is None:process.terminate()
+                try:self.report['provider_exit']=process.wait(timeout=60)
+                except subprocess.TimeoutExpired:process.kill();self.report['provider_exit']=process.wait();self.report['provider_forced_cleanup']=True
+                for _ in range(100):
+                    raw=gpu_processes()
+                    if not any(line.split(',')[0].strip()==str(process.pid) for line in raw.splitlines()):break
+                    time.sleep(.1)
+                self.report['gpu_processes_after']=raw;closeout=self.args.output/'provider-closeout.json';marker=json.loads(closeout.read_text()) if closeout.exists() else None;self.report['provider_closeout']=marker
+                valid=(marker and marker['pid']==process.pid and marker['state_policy']=='logical_reset' and marker['model_closed'] and marker['server_closed']
+                    and marker['backend_runtime_identity_sha256']==self.frozen['sha256'][RUNTIME] and marker['runtime_files_verified_after']==54)
+                self.report['cleanup_passed']=bool(valid and self.report['provider_exit']==0 and not self.report.get('provider_forced_cleanup') and not self.report['cleanup_errors']
+                    and not any(line.split(',')[0].strip()==str(process.pid) for line in raw.splitlines()))
+            log.close();self.report['seconds']=time.monotonic()-started;self.persist()
+        try:
+            validate_calls(self.report);self.report['native_trace_sha256']=digest(trace)
+            assert len(self.report['workers'])==1 and self.report['workers'][0]['exit_code']==0 and not self.report['workers'][0]['forced_cleanup'] and self.report['workers'][0]['turns_completed']==4
+            assert self.case['complete'] and len(self.case['turns'])==4 and self.report['cleanup_passed']
+            self.verify();verify_backend(ROOT/RUNTIME,self.frozen['sha256'][RUNTIME])
+            if self.args.phase=='after':assert self.case['observations']['automatic_zero_after_forget'] and self.case['observations']['user_observation_zero_after_forget']
+            self.report.update(completed=True,engineering_passed=True);self.persist()
+        except BaseException as error:self.report['failure']=repr(error);self.persist();raise
+        print('Completed revision',self.args.phase,self.args.model,'8native/4app/1OS,clean exit; observed state',self.case['observations'],'general quality approval false',flush=True)
+
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--phase',required=True,choices=PHASES);parser.add_argument('--model',required=True,choices=MODELS)
+    parser.add_argument('--output',required=True,type=Path);parser.add_argument('--freeze',required=True,type=Path);parser.add_argument('--expected-freeze-sha256',required=True);parser.add_argument('--provider-python',required=True,type=Path)
+    parser.add_argument('--prior-4b',type=Path);parser.add_argument('--prior-4b-sha256');parser.add_argument('--before',type=Path);parser.add_argument('--before-sha256');args=parser.parse_args()
+    if not __debug__:raise ValueError('Run without Python optimization')
+    signal.signal(signal.SIGTERM,lambda signum,frame:(_ for _ in ()).throw(KeyboardInterrupt('Owned emotion revision regression interrupted')))
+    RevisionAudit(args).run()
