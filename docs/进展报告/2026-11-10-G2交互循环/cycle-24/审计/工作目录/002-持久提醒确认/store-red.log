@@ -1,0 +1,264 @@
+FFFFFFFFFFFFFFFFFFF                                                      [100%]
+=================================== FAILURES ===================================
+__ test_stable_replay_across_connections_and_restart_preserves_claim_contract __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_stable_replay_across_conn0')
+
+    def test_stable_replay_across_connections_and_restart_preserves_claim_contract(tmp_path):
+        path = str(tmp_path/'queue.db')
+        with closing(MemoryStore(path)) as memory:
+            store = ReminderStore(memory); rid = seed(store)
+            first = store.claim_due(now=NOW)
+            assert [r['id'] for r in first] == [rid]
+>           pending = store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:24: AttributeError
+__________ test_enqueue_failure_rolls_back_claim_in_same_transaction ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_enqueue_failure_rolls_bac0')
+
+    def test_enqueue_failure_rolls_back_claim_in_same_transaction(tmp_path):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           memory._conn.execute("CREATE TRIGGER reject_delivery BEFORE INSERT ON memory_reminder_deliveries BEGIN SELECT RAISE(ABORT,'fixture failure'); END")
+E           sqlite3.OperationalError: no such table: main.memory_reminder_deliveries
+
+tests/test_reminder_deliveries.py:38: OperationalError
+_________ test_explicit_ack_idempotent_and_does_not_duplicate_content __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_explicit_ack_idempotent_a0')
+
+    def test_explicit_ack_idempotent_and_does_not_duplicate_content(tmp_path):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           event = store.pending_deliveries(now=NOW)[0]['delivery_id']
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:50: AttributeError
+_____ test_status_change_filters_pending_and_rejects_unseen_ack[cancelled] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_status_change_filters_pen0')
+status = 'cancelled'
+
+    @pytest.mark.parametrize('status', ['cancelled','completed'])
+    def test_status_change_filters_pending_and_rejects_unseen_ack(tmp_path, status):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); rid = seed(store)
+>           event = store.pending_deliveries(now=NOW)[0]['delivery_id']
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:64: AttributeError
+_____ test_status_change_filters_pending_and_rejects_unseen_ack[completed] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_status_change_filters_pen1')
+status = 'completed'
+
+    @pytest.mark.parametrize('status', ['cancelled','completed'])
+    def test_status_change_filters_pending_and_rejects_unseen_ack(tmp_path, status):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); rid = seed(store)
+>           event = store.pending_deliveries(now=NOW)[0]['delivery_id']
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:64: AttributeError
+___________________ test_delete_removes_event_and_cannot_ack ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_delete_removes_event_and_0')
+
+    def test_delete_removes_event_and_cannot_ack(tmp_path):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); rid = seed(store)
+>           event = store.pending_deliveries(now=NOW)[0]['delivery_id']
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:75: AttributeError
+__________________ test_current_24h_window_is_preserved[1-0] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_current_24h_window_is_pre0')
+offset = 1, expected = 0
+
+    @pytest.mark.parametrize('offset,expected', [(1,0),(-86401,0),(-86400,1),(0,1)])
+    def test_current_24h_window_is_preserved(tmp_path, offset, expected):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store, offset)
+>           assert len(store.pending_deliveries(now=NOW)) == expected
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:87: AttributeError
+________________ test_current_24h_window_is_preserved[-86401-0] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_current_24h_window_is_pre1')
+offset = -86401, expected = 0
+
+    @pytest.mark.parametrize('offset,expected', [(1,0),(-86401,0),(-86400,1),(0,1)])
+    def test_current_24h_window_is_preserved(tmp_path, offset, expected):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store, offset)
+>           assert len(store.pending_deliveries(now=NOW)) == expected
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:87: AttributeError
+________________ test_current_24h_window_is_preserved[-86400-1] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_current_24h_window_is_pre2')
+offset = -86400, expected = 1
+
+    @pytest.mark.parametrize('offset,expected', [(1,0),(-86401,0),(-86400,1),(0,1)])
+    def test_current_24h_window_is_preserved(tmp_path, offset, expected):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store, offset)
+>           assert len(store.pending_deliveries(now=NOW)) == expected
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:87: AttributeError
+__________________ test_current_24h_window_is_preserved[0-1] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_current_24h_window_is_pre3')
+offset = 0, expected = 1
+
+    @pytest.mark.parametrize('offset,expected', [(1,0),(-86401,0),(-86400,1),(0,1)])
+    def test_current_24h_window_is_preserved(tmp_path, offset, expected):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store, offset)
+>           assert len(store.pending_deliveries(now=NOW)) == expected
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:87: AttributeError
+____________ test_legacy_claim_is_not_fabricated_as_pending_or_ack _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_legacy_claim_is_not_fabri0')
+
+    def test_legacy_claim_is_not_fabricated_as_pending_or_ack(tmp_path):
+        path = str(tmp_path/'queue.db')
+        with closing(MemoryStore(path)) as memory:
+            store = ReminderStore(memory); seed(store)
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_reminders SET notified_at=?', (NOW-1,))
+>           assert store.pending_deliveries(now=NOW) == []
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:101: AttributeError
+______ test_privacy_revision_fences_old_ack_but_preserves_legal_reminder _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_privacy_revision_fences_o0')
+
+    def test_privacy_revision_fences_old_ack_but_preserves_legal_reminder(tmp_path):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           event = store.pending_deliveries(now=NOW)[0]['delivery_id']
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:108: AttributeError
+_____________ test_ack_rejects_invalid_ids_without_mutation[True] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w0')
+bad = True
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+_______________ test_ack_rejects_invalid_ids_without_mutation[0] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w1')
+bad = 0
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+______________ test_ack_rejects_invalid_ids_without_mutation[-1] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w2')
+bad = -1
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+______ test_ack_rejects_invalid_ids_without_mutation[9223372036854775808] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w3')
+bad = 9223372036854775808
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+______________ test_ack_rejects_invalid_ids_without_mutation[1.5] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w4')
+bad = 1.5
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+_______________ test_ack_rejects_invalid_ids_without_mutation[1] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w5')
+bad = '1'
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+_____________ test_ack_rejects_invalid_ids_without_mutation[None] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-276/test_ack_rejects_invalid_ids_w6')
+bad = None
+
+    @pytest.mark.parametrize('bad', [True,0,-1,2**63,1.5,'1',None])
+    def test_ack_rejects_invalid_ids_without_mutation(tmp_path, bad):
+        with closing(MemoryStore(str(tmp_path/'queue.db'))) as memory:
+            store = ReminderStore(memory); seed(store)
+>           store.pending_deliveries(now=NOW)
+E           AttributeError: 'ReminderStore' object has no attribute 'pending_deliveries'
+
+tests/test_reminder_deliveries.py:122: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_deliveries.py::test_stable_replay_across_connections_and_restart_preserves_claim_contract
+FAILED tests/test_reminder_deliveries.py::test_enqueue_failure_rolls_back_claim_in_same_transaction
+FAILED tests/test_reminder_deliveries.py::test_explicit_ack_idempotent_and_does_not_duplicate_content
+FAILED tests/test_reminder_deliveries.py::test_status_change_filters_pending_and_rejects_unseen_ack[cancelled]
+FAILED tests/test_reminder_deliveries.py::test_status_change_filters_pending_and_rejects_unseen_ack[completed]
+FAILED tests/test_reminder_deliveries.py::test_delete_removes_event_and_cannot_ack
+FAILED tests/test_reminder_deliveries.py::test_current_24h_window_is_preserved[1-0]
+FAILED tests/test_reminder_deliveries.py::test_current_24h_window_is_preserved[-86401-0]
+FAILED tests/test_reminder_deliveries.py::test_current_24h_window_is_preserved[-86400-1]
+FAILED tests/test_reminder_deliveries.py::test_current_24h_window_is_preserved[0-1]
+FAILED tests/test_reminder_deliveries.py::test_legacy_claim_is_not_fabricated_as_pending_or_ack
+FAILED tests/test_reminder_deliveries.py::test_privacy_revision_fences_old_ack_but_preserves_legal_reminder
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[True]
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[0]
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[-1]
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[9223372036854775808]
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[1.5]
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[1]
+FAILED tests/test_reminder_deliveries.py::test_ack_rejects_invalid_ids_without_mutation[None]
+19 failed in 1.06s
