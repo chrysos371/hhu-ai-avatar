@@ -1,0 +1,14 @@
+diff --git a/frontend/src/lib/usePrivateStateQuery.test.tsx b/frontend/src/lib/usePrivateStateQuery.test.tsx
+index a2c3aa7..9b78c38 100644
+--- a/frontend/src/lib/usePrivateStateQuery.test.tsx
++++ b/frontend/src/lib/usePrivateStateQuery.test.tsx
+@@ -165,6 +165,9 @@ it('times out an unresponsive bootstrap, retries, and rejects its late uncancell
+   context = { instance_id: 'newer', revision: 1 }; value = 'fresh';
+   fireEvent.click(screen.getByRole('button', { name: 'retry' }));
+   await act(async () => { await vi.advanceTimersByTimeAsync(10); });
++  console.log('BOOTSTRAP_RETRY_OBSERVATION', JSON.stringify({ shown: screen.getByTestId('value').textContent,
++    error: screen.getByTestId('error').textContent, calls: vi.mocked(apiRequest).mock.calls.map(([path]) => path),
++    cached: client.getQueryCache().getAll().map(query => ({ data: query.state.data, status: query.state.status })) }));
+   expect(screen.getByTestId('value')).toHaveTextContent('fresh');
+   await act(async () => {
+     held.resolve({ instance_id: 'original', revision: 0 });

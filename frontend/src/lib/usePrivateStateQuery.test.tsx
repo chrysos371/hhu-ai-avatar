@@ -165,6 +165,8 @@ it('times out an unresponsive bootstrap, retries, and rejects its late uncancell
   context = { instance_id: 'newer', revision: 1 }; value = 'fresh';
   fireEvent.click(screen.getByRole('button', { name: 'retry' }));
   await act(async () => { await vi.advanceTimersByTimeAsync(10); });
+  // React commits the new query after the first async act; flush its queued observer notification.
+  await act(async () => { await vi.advanceTimersByTimeAsync(10); });
   expect(screen.getByTestId('value')).toHaveTextContent('fresh');
   await act(async () => {
     held.resolve({ instance_id: 'original', revision: 0 });

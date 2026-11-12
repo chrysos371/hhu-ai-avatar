@@ -1,0 +1,60 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/lib/usePrivateStateQuery.test.tsx -t times out an unresponsive bootstrap
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+stdout | src/lib/usePrivateStateQuery.test.tsx > times out an unresponsive bootstrap, retries, and rejects its late uncancellable response
+BOOTSTRAP_RETRY_OBSERVATION {"shown":"empty","error":"","calls":["/conversation/changes?instance_id=state-bootstrap&revision=0","/conversation/changes?instance_id=state-bootstrap&revision=0","/emotion"],"cached":[{"data":{"context":{"instance_id":"newer","revision":1},"value":"fresh"},"status":"success"}]}
+
+ ❯ src/lib/usePrivateStateQuery.test.tsx (17 tests | 1 failed | 16 skipped) 102ms
+   ↓ only reads emotion after metadata and supplies the fetch abort signal
+   ↓ only reads dashboard after metadata and supplies the fetch abort signal
+   ↓ hides old state at a higher revision and clears inactive derived cache too
+   ↓ rejects a late old payload even when its transport ignores cancellation
+   ↓ hides state on notification failure and waits for a successful same-revision recovery
+   ↓ keeps old state hidden on authentication failure until an explicit metadata retry succeeds
+   ↓ accepts a new instance with a lower revision and rejects same-instance rollback
+   ↓ leaves a normal same-revision heartbeat and legitimate state untouched
+   ↓ never displays a state payload with missing, malformed or mismatched context undefined
+   ↓ never displays a state payload with missing, malformed or mismatched context {"instance_id":"original","revision":true}
+   ↓ never displays a state payload with missing, malformed or mismatched context {"instance_id":"other","revision":0}
+   ↓ does not request state after an unavailable initial metadata check
+   × times out an unresponsive bootstrap, retries, and rejects its late uncancellable response 100ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  fresh
+Received:
+  empty
+   ↓ clears its bootstrap deadline and aborts the request when unmounted before metadata
+   ↓ rechecks same-window privacy notices and never adopts a stale bootstrap response
+   ↓ rechecks a cross-window privacy message with a separate sender
+   ↓ aborts version and state requests on route unmount and rechecks before reusing a cache
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/usePrivateStateQuery.test.tsx > times out an unresponsive bootstrap, retries, and rejects its late uncancellable response
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  fresh
+Received:
+  empty
+ ❯ src/lib/usePrivateStateQuery.test.tsx:171:39
+    169|     error: screen.getByTestId('error').textContent, calls: vi.mocked(a…
+    170|     cached: client.getQueryCache().getAll().map(query => ({ data: quer…
+    171|   expect(screen.getByTestId('value')).toHaveTextContent('fresh');
+       |                                       ^
+    172|   await act(async () => {
+    173|     held.resolve({ instance_id: 'original', revision: 0 });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 skipped (17)
+   Start at  21:51:44
+   Duration  1.37s (transform 156ms, setup 145ms, collect 173ms, tests 102ms, environment 378ms, prepare 76ms)
+
