@@ -58,6 +58,19 @@ def validate_backend(frozen, protocol, backend):
     validate_execution_contract(frozen, protocol, backend)
 
 
+def experiment_path(name, value):
+    path = (ROOT / value).resolve()
+    if name in ('candidate_freeze', 'output'):
+        allowed = (ROOT.resolve(), project_data_root(ROOT).resolve())
+    elif name in ('protocol', 'pair_protocol'):
+        allowed = (ROOT.resolve(),)
+    else:
+        raise ValueError('Unknown experiment path role')
+    if not any(path.is_relative_to(base) for base in allowed):
+        raise ValueError('Experiment path outside project or owned data root')
+    return path
+
+
 def prepare(spec):
     from evaluate_capability_pair import verify_freeze, CLI_CANDIDATES
     required = {'candidate', 'candidate_freeze', 'protocol', 'pair_protocol', 'output',
@@ -66,11 +79,8 @@ def prepare(spec):
         raise ValueError('Use only the explicit frozen experiment selection fields')
     choices = CLI_CANDIDATES
     if spec['candidate'] not in choices: raise ValueError('Unknown candidate')
-    def local(name):
-        path = (ROOT/spec[name]).resolve()
-        if not path.is_relative_to(ROOT): raise ValueError('Experiment path outside project')
-        return path
-    freeze, protocol, pair, output = (local(name) for name in ('candidate_freeze', 'protocol', 'pair_protocol', 'output'))
+    freeze, protocol, pair, output = (experiment_path(name, spec[name])
+                                    for name in ('candidate_freeze', 'protocol', 'pair_protocol', 'output'))
     frozen_sha = digest(freeze)
     frozen = verify_freeze(freeze, spec['partition'], choices[spec['candidate']], expected_sha256=frozen_sha)
     data = json.loads(protocol.read_text()); validate_backend(frozen, data, spec['backend'])
@@ -91,10 +101,11 @@ def prepare(spec):
         '--partition', spec['partition'], '--model-key', spec['model_key'], '--candidate-freeze', str(freeze),
         '--protocol', str(protocol), '--pair-protocol', str(pair), '--output', str(output),
         '--expected-freeze-sha256', frozen_sha]
-    context = {'freeze': str(freeze.relative_to(ROOT)), 'freeze_sha256': frozen_sha,
+    recorded_path = lambda path: str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
+    context = {'freeze': recorded_path(freeze), 'freeze_sha256': frozen_sha,
         'frozen_inputs': len(frozen['sha256']), 'protocol_sha256': digest(protocol), 'pair_protocol_sha256': digest(pair),
         'backend': spec['backend'], 'model_key': spec['model_key'], 'partition': spec['partition'],
-        'output': str(output.relative_to(ROOT)), 'whole_experiment_deadline': None, 'selection': spec}
+        'output': recorded_path(output), 'whole_experiment_deadline': None, 'selection': spec}
     return command, context
 
 
