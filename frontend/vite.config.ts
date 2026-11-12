@@ -1,10 +1,14 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { execFileSync } from "node:child_process";
+import { resolve } from "node:path";
+const assets = process.env.HHU_AVATAR_DATA_ROOT
+  ?? execFileSync("python3", ["-B", resolve(__dirname, "../scripts/project_paths.py")], { encoding: "utf8" }).trim();
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   // AudioWorklet modules must remain same-origin files under our strict CSP.
-  build: { assetsInlineLimit: 0 },
+  build: { assetsInlineLimit: 0, outDir: resolve(assets, "frontend/dist"), emptyOutDir: true },
   server: {
     host: "127.0.0.1",
     port: 5173,
