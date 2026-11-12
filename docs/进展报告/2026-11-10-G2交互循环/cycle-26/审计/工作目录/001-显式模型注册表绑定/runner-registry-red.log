@@ -1,0 +1,170 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+____ test_bad_registry_contract_rejected_before_output_or_provider[no_sha] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_bad_registry_contract_rej0')
+change = 'no_sha'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:30: TypeError
+___ test_bad_registry_contract_rejected_before_output_or_provider[wrong_sha] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_bad_registry_contract_rej1')
+change = 'wrong_sha'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:30: TypeError
+_ test_bad_registry_contract_rejected_before_output_or_provider[protocol_mismatch] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_bad_registry_contract_rej2')
+change = 'protocol_mismatch'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:30: TypeError
+_ test_bad_registry_contract_rejected_before_output_or_provider[implicit_old] __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_bad_registry_contract_rej3')
+change = 'implicit_old'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:30: TypeError
+_ test_bad_registry_contract_rejected_before_output_or_provider[capability_override] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_bad_registry_contract_rej4')
+change = 'capability_override'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:30: TypeError
+_ test_bad_registry_contract_rejected_before_output_or_provider[unknown_model] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_bad_registry_contract_rej5')
+change = 'unknown_model'
+
+    @pytest.mark.parametrize('change',['no_sha','wrong_sha','protocol_mismatch','implicit_old','capability_override','unknown_model'])
+    def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,change):
+        output=tmp_path/'must-not-exist'
+        options={'registry_path':REGISTRY,'expected_registry_sha256':sha256(REGISTRY.read_bytes()).hexdigest(),
+                 'protocol':PROTOCOL,'model_key':'qwen3-32b-q4_k_m'}
+        if change=='no_sha':options['expected_registry_sha256']=None
+        elif change=='wrong_sha':options['expected_registry_sha256']='changed'
+        elif change=='protocol_mismatch':options['protocol']=OLD_PROTOCOL
+        elif change=='implicit_old':options['registry_path']=None;options['expected_registry_sha256']=None
+        elif change=='capability_override':options['stage']='capability_pair'
+        elif change=='unknown_model':options['model_key']='unknown-model'
+>       with pytest.raises(ValueError):runner.main(output,Path(sys.executable),**options)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:30: TypeError
+_ test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-4b-q4_k_m] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_valid_new_registry_reache0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f60f8886440>
+model = 'qwen3-4b-q4_k_m'
+
+    @pytest.mark.parametrize('model',['qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'])
+    def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model):
+        calls=[]
+        def boundary(command,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=boundary,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory')
+        monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        output=tmp_path/'owned-output';expected=sha256(REGISTRY.read_bytes()).hexdigest()
+>       with pytest.raises(BoundaryReached):runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key=model,
+            registry_path=REGISTRY,expected_registry_sha256=expected)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:42: TypeError
+_ test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-32b-q4_k_m] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-291/test_valid_new_registry_reache1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f60f8841420>
+model = 'qwen3-32b-q4_k_m'
+
+    @pytest.mark.parametrize('model',['qwen3-4b-q4_k_m','qwen3-32b-q4_k_m'])
+    def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model):
+        calls=[]
+        def boundary(command,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=boundary,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory')
+        monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        output=tmp_path/'owned-output';expected=sha256(REGISTRY.read_bytes()).hexdigest()
+>       with pytest.raises(BoundaryReached):runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key=model,
+            registry_path=REGISTRY,expected_registry_sha256=expected)
+E       TypeError: main() got an unexpected keyword argument 'registry_path'
+
+tests/test_model_scale_runner_registry.py:42: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[no_sha]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[wrong_sha]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[protocol_mismatch]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[implicit_old]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[capability_override]
+FAILED tests/test_model_scale_runner_registry.py::test_bad_registry_contract_rejected_before_output_or_provider[unknown_model]
+FAILED tests/test_model_scale_runner_registry.py::test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-4b-q4_k_m]
+FAILED tests/test_model_scale_runner_registry.py::test_valid_new_registry_reaches_controlled_provider_boundary[qwen3-32b-q4_k_m]
+8 failed in 0.07s
