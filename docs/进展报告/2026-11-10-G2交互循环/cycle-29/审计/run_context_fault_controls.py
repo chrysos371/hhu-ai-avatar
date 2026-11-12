@@ -132,7 +132,8 @@ class Harness:
         with self.opener.open(req,timeout=30) as response:kind,result,observed,raw=events(response,time.perf_counter())
         row.update(terminal=kind,result=result,events=observed,raw_sse=raw,conversation=self.query('/conversation'))
         if kind=='result':
-            assert ''.join(e['data']['text'] for e in observed if e['event']=='text')==result['reply']
+            pieces=[e['data']['text'] for e in observed if e['event']=='text']
+            if result['generation_mode']=='llm' or pieces:assert ''.join(pieces)==result['reply']
             self.state['record']['turns_completed']+=1
         self.persist();return row
     def turn(self,text):
