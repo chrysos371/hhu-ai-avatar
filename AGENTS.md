@@ -3,6 +3,12 @@
 > 本文件为在此仓库工作的 AI 编码助手（Codex / Claude Code 等）提供项目上下文。
 > 开始任何改动前，请先读完本文件，并阅读 `docs/技术选型与模块重写计划.md`。
 
+## 2026-11-12 第二十九轮阶段A完成/B设计（优先）
+
+阶段A有效context-baseline-v2完成3OS/6真实HTTP-SSE/12受控HTTP模型请求（6认知6生成），4.701328s、全退出0、各45实际Avatar模块绑150源。第三生成同进程先前4角色消息各1，重启各0，SQL/API都6条；只确认角色消息未接续，不称全部记忆丢失/真实模型质量/本轮浏览器DOM验收。SQL导出全表重建、SDK/SSE/API/源ID独立核验通过。首before夹具19位ID/cleanup覆盖错误失败、坏ID注入负控与有效v2分开保留；C29-001已修，C29-002稳定交互缺口待推进。
+
+A31项数据/元数据已封于工作目录001/阶段A证据清单.json（base=repository，源Python按descriptor.source_ref核历史Git，允许下一阶段改生产代码）；两A冻结分别failed/completed retirement，原始数据/描述符不改。旧C21-C28封不回写（C28为43）。B已先登记设计与10类必要控制于工作目录002/设计与验收.md、completed-context-recovery-protocol.json，目前未实现。拟当前user来源与scope观察同事务中只读当前revision可验证已完成连续对，默认18历史，规范控制/角色/未知/取消/损坏处截断；恢复源所有user+assistant ID须加入新回复删除依赖，跨session不能漏跟踪。默认Web接线，CLI/实验identity/profile/task/literal候选保持旧路径；不重放旧动作/旧分析。先纯读选择红绿再接线、全量/实际OS与故障验证，最终MD/HTML封全轮。C19-001/P1等仍开放，固定计划路线不再调优。Goal active，spinner-bot指定SSH小步即时提交/逐次等待推送；阶段B先CPU受控，GPU若需按实际余量UUID/同组最多4/单提供方，不固定6–7、不设整轮墙钟截止。
+
 ## 2026-11-12 第二十九轮启动（优先）
 
 C28已封43证据，旧C21-C28不得回写。固定计划机制已拒绝/停止同批提示调优。C29登记实际HTTP/独立OS重启的LLM短期上下文现状审计；当前仅代码观察，未运行。阶段A同进程三回合正控/先二回合后重启再三，共三应用进程/六回合，受控loopback HTTP提供方，不是真实LLM或GPU。记录实际SDK messages、认证conversation、SQL稳定源ID/session、实际worker模块路径/SHA和进程退出；正控必须先过。阶段B隐私/角色/取消/旧动作/窗口/混合写入方与恢复设计待A数据另登记，加载上下文不得执行旧动作。C19-001/P1、C26-003等开放，不以新工程通过关闭语义问题。过程写cycle-29；Goal active，spinner-bot指定SSH，小步即时提交/逐次等待推送；不设整轮截止，GPU若需按实际余量UUID/同组最多4/单提供方，不固定6–7。

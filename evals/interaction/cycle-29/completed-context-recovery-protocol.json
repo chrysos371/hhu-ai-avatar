@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "scope": "bounded_completed_web_context_recovery",
+  "phase": "design_and_required_controls_before_implementation",
+  "baseline_evidence": "docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/工作目录/001-上下文重启现状/阶段A证据清单.json",
+  "default_web_only": true,
+  "experimental_generation_flags_keep_legacy_context_path": true,
+  "current_source_transaction_required": true,
+  "current_revision_required": true,
+  "strict_completed_pairs_only": true,
+  "unknown_or_corrupt_gap_policy": "stop; never skip backward over gap",
+  "speaker_control_pair_is_boundary": true,
+  "historical_side_effect_replay": false,
+  "source_dependency_ids": "all restored user and assistant IDs, including old sessions",
+  "default_max_history_messages": 18,
+  "controls": [
+    "same_and_new_os_baseline_replay",
+    "privacy_revision_and_redaction",
+    "cross_session_response_dependency_redaction",
+    "speaker_scope_and_control_fence",
+    "cancelled_orphan_tail",
+    "corrupt_result_or_references",
+    "untracked_writer_fail_closed",
+    "bounded_window_unique_sources_repeated_restart",
+    "no_old_action_replay_new_action_positive",
+    "transaction_privacy_interleaving"
+  ],
+  "actual_llm_required_for_engineering_controls": false,
+  "wall_clock_experiment_deadline": null,
+  "general_semantic_release_approved": false
+}
