@@ -1,0 +1,210 @@
+FFFFFFFFFFFF                                                             [100%]
+=================================== FAILURES ===================================
+_________ test_historical_default_remains_selectable_without_override __________
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_historical_default_remain0'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_historical_default_remain0/evals/interaction/cycle-26/models.json'))
+
+    def test_historical_default_remains_selectable_without_override(registries):
+        root,old,_=registries
+>       data,pinned,path=provider.load_registry(None,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:25: AttributeError
+________ test_explicit_new_registry_requires_and_preserves_raw_identity ________
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_explicit_new_registry_req0'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_explicit_new_registry_req0/evals/interaction/cycle-26/models.json'))
+
+    def test_explicit_new_registry_requires_and_preserves_raw_identity(registries):
+        root,_,new=registries;expected=sha256(new.read_bytes()).hexdigest()
+>       data,pinned,path=provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:31: AttributeError
+______________________ test_unpinned_override_is_rejected ______________________
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_unpinned_override_is_reje0'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_unpinned_override_is_reje0/evals/interaction/cycle-26/models.json'))
+
+    def test_unpinned_override_is_rejected(registries):
+        root,_,new=registries
+        with pytest.raises(ValueError,match='requires expected registry SHA'):
+>           provider.load_registry(new,root=root)
+E           AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:38: AttributeError
+_____________ test_changed_registry_is_rejected_before_json_parse ______________
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_changed_registry_is_rejec0'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_changed_registry_is_rejec0/evals/interaction/cycle-26/models.json'))
+
+    def test_changed_registry_is_rejected_before_json_parse(registries):
+        root,_,new=registries;expected=sha256(new.read_bytes()).hexdigest();new.write_text('{malformed')
+        with pytest.raises(ValueError,match='Registry identity changed'):
+>           provider.load_registry(new,expected_sha256=expected,root=root)
+E           AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:44: AttributeError
+___ test_malformed_or_escaping_registry_cannot_authorize_a_model[duplicate] ____
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg0'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg0/evals/interaction/cycle-26/models.json'))
+change = 'duplicate'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+____ test_malformed_or_escaping_registry_cannot_authorize_a_model[bad_hash] ____
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg1'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg1/evals/interaction/cycle-26/models.json'))
+change = 'bad_hash'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+__ test_malformed_or_escaping_registry_cannot_authorize_a_model[bad_revision] __
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg2'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg2/evals/interaction/cycle-26/models.json'))
+change = 'bad_revision'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+__ test_malformed_or_escaping_registry_cannot_authorize_a_model[escaped_file] __
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg3'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg3/evals/interaction/cycle-26/models.json'))
+change = 'escaped_file'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+__ test_malformed_or_escaping_registry_cannot_authorize_a_model[bool_memory] ___
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg4'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg4/evals/interaction/cycle-26/models.json'))
+change = 'bool_memory'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+__ test_malformed_or_escaping_registry_cannot_authorize_a_model[zero_memory] ___
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg5'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg5/evals/interaction/cycle-26/models.json'))
+change = 'zero_memory'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+_ test_malformed_or_escaping_registry_cannot_authorize_a_model[metadata_escape] _
+
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg6'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_malformed_or_escaping_reg6/evals/interaction/cycle-26/models.json'))
+change = 'metadata_escape'
+
+    @pytest.mark.parametrize('change',['duplicate','bad_hash','bad_revision','escaped_file','bool_memory','zero_memory','metadata_escape'])
+    def test_malformed_or_escaping_registry_cannot_authorize_a_model(registries,change):
+        root,_,new=registries;model=spec()
+        if change=='bad_hash':model['sha256']='unknown'
+        elif change=='bad_revision':model['revision']='unknown'
+        elif change=='escaped_file':model['file']='../fixture.gguf'
+        elif change=='bool_memory':model['required_free_mib']=True
+        elif change=='zero_memory':model['required_free_mib']=0
+        elif change=='metadata_escape':model['metadata']='../outside.json'
+        models=[model,model] if change=='duplicate' else [model]
+        new.write_text(json.dumps({'models':models}));expected=sha256(new.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=expected,root=root)
+E       AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:58: AttributeError
+______________ test_external_registry_path_is_not_a_project_input ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-288/test_external_registry_path_is0')
+registries = (PosixPath('/tmp/pytest-of-root/pytest-288/test_external_registry_path_is0'), PosixPath('/tmp/pytest-of-root/pytest-28...'), PosixPath('/tmp/pytest-of-root/pytest-288/test_external_registry_path_is0/evals/interaction/cycle-26/models.json'))
+
+    def test_external_registry_path_is_not_a_project_input(tmp_path,registries):
+        root,_,_=registries;outside=root.parent/'external-model-registry.json';outside.write_text(json.dumps({'models':[spec()]}))
+        with pytest.raises(ValueError,match='inside the project'):
+>           provider.load_registry(outside,expected_sha256=sha256(outside.read_bytes()).hexdigest(),root=root)
+E           AttributeError: module 'serve_local_model_eval' has no attribute 'load_registry'
+
+tests/test_native_model_registry.py:64: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_native_model_registry.py::test_historical_default_remains_selectable_without_override
+FAILED tests/test_native_model_registry.py::test_explicit_new_registry_requires_and_preserves_raw_identity
+FAILED tests/test_native_model_registry.py::test_unpinned_override_is_rejected
+FAILED tests/test_native_model_registry.py::test_changed_registry_is_rejected_before_json_parse
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[duplicate]
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[bad_hash]
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[bad_revision]
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[escaped_file]
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[bool_memory]
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[zero_memory]
+FAILED tests/test_native_model_registry.py::test_malformed_or_escaping_registry_cannot_authorize_a_model[metadata_escape]
+FAILED tests/test_native_model_registry.py::test_external_registry_path_is_not_a_project_input
+12 failed in 0.11s
