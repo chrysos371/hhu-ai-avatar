@@ -1,0 +1,13 @@
+Ready revision before qwen3-4b-q4_k_m {'index': 0, 'uuid': 'GPU-81550800-367d-1855-0f35-c61c274edfdf', 'free_mib': 40441, 'utilization_percent': 0}
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py", line 178, in <module>
+    RevisionAudit(args).run()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py", line 137, in run
+    self.relay=NativeRelay(metadata['url']);relay_thread=threading.Thread(target=self.relay.serve_forever,daemon=True);relay_thread.start();self.workflow();self.verify()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py", line 97, in workflow
+    control=self.turn(self.protocol['native_after_forget_turns'][0]);assert control['analysis_mode']==control['generation_mode']=='rules_speaker_control';self.emotion('confirmed')
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py", line 140, in turn
+    row=self.finish(self.begin(text));assert row['terminal']=='result';return row['result']
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/run_readonly_analysis_cost.py", line 156, in finish
+    assert ''.join(e['data']['text'] for e in observed if e['event']=='text')==result['reply'];self.state['record']['turns_completed']+=1
+AssertionError
