@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "scope": "actual_native_web_os_restart_context_use_development",
+  "backend": "cuda",
+  "registry": "evals/interaction/cycle-26/model-scale-registry.json",
+  "models": [
+    "qwen3-4b-q4_k_m",
+    "qwen3-32b-q4_k_m"
+  ],
+  "arms": [
+    "optout_restart",
+    "recovered_restart"
+  ],
+  "case_arm_orders": [
+    [
+      "optout_restart",
+      "recovered_restart"
+    ],
+    [
+      "recovered_restart",
+      "optout_restart"
+    ],
+    [
+      "optout_restart",
+      "recovered_restart"
+    ],
+    [
+      "recovered_restart",
+      "optout_restart"
+    ],
+    [
+      "optout_restart",
+      "recovered_restart"
+    ],
+    [
+      "recovered_restart",
+      "optout_restart"
+    ]
+  ],
+  "cases": [
+    {
+      "id": "scene_token",
+      "turns": [
+        "桌边抽屉的标签代号是ZK-5831。请只确认读到。",
+        "窗帘是灰绿色，桌面还放着两本书。请只确认。",
+        "前面抽屉标签的代号是什么？只回答代号；没有资料则回答无法确认。"
+      ],
+      "expected": "ZK-5831",
+      "metric": "source_exact"
+    },
+    {
+      "id": "object_owner",
+      "turns": [
+        "资料写明：小岚持有蓝卡，季青持有橙卡。请只确认。",
+        "两张卡属于同一份虚构活动登记表，不代表真实操作。请只确认。",
+        "蓝卡由谁持有？只回答姓名；没有资料则回答无法确认。"
+      ],
+      "expected": "小岚",
+      "metric": "source_exact"
+    },
+    {
+      "id": "route_correction",
+      "turns": [
+        "路线顺序是青松站、石桥站、枫林站。请只确认。",
+        "更正：第二站改为竹园站，其他不变。请只确认。",
+        "按更正后的路线，第二站是哪一站？只回答站名；没有资料则回答无法确认。"
+      ],
+      "expected": "竹园站",
+      "forbidden": "石桥站",
+      "metric": "source_exact"
+    },
+    {
+      "id": "literal_quote",
+      "turns": [
+        "纸条原文是：“等通知后再确定，不要提前答应。”请只确认读到，不要改写。",
+        "纸条属于一份虚构活动安排，不代表已执行任何操作。请只确认。",
+        "原样引用先前纸条的整句原文，不加解释；没有资料则回答无法确认。"
+      ],
+      "expected": "等通知后再确定，不要提前答应。",
+      "metric": "source_exact"
+    },
+    {
+      "id": "corrected_budget",
+      "turns": [
+        "排版预算上限为370元，场地预算上限为640元。请只确认。",
+        "更正：场地预算上限改为590元，排版不变。请只确认。",
+        "更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。"
+      ],
+      "expected": "960",
+      "forbidden": "1010",
+      "metric": "derived_exact",
+      "source_answers": [
+        "370",
+        "590"
+      ]
+    },
+    {
+      "id": "missing_contact",
+      "turns": [
+        "这份活动档案编号为LM-2479，资料没有给出联系电话。请只确认。",
+        "档案仅作为虚构讨论材料，没有外部查询或发送权限。请只确认。",
+        "这份活动档案的联系电话是什么？没有资料则回答无法确认。"
+      ],
+      "metric": "missing_abstention"
+    }
+  ],
+  "app_turns_per_model": 36,
+  "expected_app_processes_per_model": 24,
+  "warmups": [
+    false,
+    true
+  ],
+  "expected_model_http_calls_per_model": 74,
+  "restart_after_turn": 2,
+  "source_role_window_expected_at_probe": {
+    "optout_restart": 0,
+    "recovered_restart": 4
+  },
+  "partition": "new_preregistered_development_synthetic_cases_not_independent_human_validation",
+  "gold_sent_as_scoring_metadata": false,
+  "same_current_message_and_same_setup_text_between_arms": true,
+  "source_control": "same final production source, only explicit recover_context bool differs; both arms actual OS restart",
+  "confound_policy": "retain all cases; if target/source answer appears in non-history prompt such as extracted fact, record nonisolated and do not claim role-history causal effect for that pair; do not silently filter or retune",
+  "grading": "strict normalized exact, target present, forbidden old value, correct missing-information abstention and raw same-agent source review separate; schema success not semantics",
+  "normalization": "strip whitespace and only matching outer quote pairs, then terminal punctuation for short exact answers; literal quote preserves internal punctuation",
+  "missing_abstention_patterns": [
+    "无法确认",
+    "无法确定",
+    "没有提供",
+    "未提供",
+    "不知道",
+    "不清楚",
+    "资料不足",
+    "未给出",
+    "没有给出"
+  ],
+  "production_activation_authorized": false,
+  "prospective_execution_authorized": false,
+  "fixed_generation": {
+    "temperature": 0,
+    "seed": 42,
+    "context": 8192,
+    "max_tokens_cap": 512,
+    "thinking": false,
+    "concurrent_sequences": 1
+  },
+  "steps": "4B then32B serial;32B gated on same-freeze complete4B source/trace/OS cleanup engineering, not answer quality; no same-batch prompt tuning",
+  "lifecycle": "record actual GPU UUID/free/utilization,owned provider PID,CUDA memory,actual worker modules,raw SDK request/response relay/SSE/SQL snapshots and exports;close only owned workers/provider",
+  "wall_clock_experiment_deadline": null,
+  "general_semantics_or_physical_device_approved": false
+}
