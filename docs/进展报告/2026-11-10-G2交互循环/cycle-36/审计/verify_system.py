@@ -51,7 +51,10 @@ def main():
             p=WORK/(group+'-browser-records')/(which+'.json'); data=read(p)
             assert data['completed'] and data['failure'] is None and not data['errors']
             assert data['noReloadNavigationOrUiPrivacyNoticeAfterErasure'] and data['nativeOrGpuClaim'] is False
-            assert data['prepared']['user_arousal']==.4 and data['fragment']['confirmation_status']=='source_backed'
+            assert data['prepared']['user_arousal']==.4
+            listing = [row for call in data['calls'] if call['path'].startswith('/memory?q=')
+                       for row in call['response']['data'] if row['id']==data['fragment']['id']]
+            assert len(listing)==1 and listing[0]['confirmation_status']=='source_backed'
             assert any(s['source_message_id']==data['prepared']['conversation']['user_message_id'] for s in data['fragment']['sources'])
             before=data['beforeApi']; after=data['afterApi']; auto=after.get('automatic',after.get('emotion'))
             assert auto['valence']==auto['arousal']==0 and after['context']['revision']==before['context']['revision']+1
