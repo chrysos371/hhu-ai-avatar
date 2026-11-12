@@ -56,6 +56,7 @@ def required_inputs():
         or n.startswith(str((BASE/'审计').relative_to(ROOT))+'/') and n.endswith('.py')}
     selected.update((str(REFERENCE.relative_to(ROOT)),str(RUNTIME.relative_to(ROOT))))
     selected.update(str(p.relative_to(ROOT)) for p in (BASE/'审计/工作目录/001-工具调用调查').glob('*') if p.name in ('gguf-template.json','embedded-chat-template.jinja','content-fixed-controls.log'))
+    selected.update(str((WORK/name).relative_to(ROOT)) for name in ('native-admission.json','handoff-admission.json'))
     selected.update(m['metadata'] for m in read(REGISTRY)['models'])
     regress=BASE/'审计/工作目录/004-当前软件与浏览器'
     selected.update(str(p.relative_to(ROOT)) for p in regress.glob('wire-python-final*'))
