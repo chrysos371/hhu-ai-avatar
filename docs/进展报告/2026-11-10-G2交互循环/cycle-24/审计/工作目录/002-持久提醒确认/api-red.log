@@ -1,0 +1,219 @@
+FFFFFFFFFFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+_________ test_http_replay_explicit_ack_and_legacy_claim_compatibility _________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab76e1120>, <avatar.web.AvatarHTTPServer object at 0x7f3ab7807d60>)
+
+    def test_http_replay_explicit_ack_and_legacy_claim_compatibility(api_v1):
+        request, server = api_v1; rid = seed(server)
+        assert len(request('/api/v1/reminders/due', {})[1]['data']) == 1
+        assert request('/api/v1/reminders/due', {})[1]['data'] == []
+        code, body = request('/api/v1/reminders/deliveries/pending', {})
+>       assert code == 200
+E       assert 404 == 200
+
+tests/test_reminder_delivery_api.py:24: AssertionError
+______________ test_pending_rejects_get_and_unknown_fields[None] _______________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758670>, <avatar.web.AvatarHTTPServer object at 0x7f3ab7763b20>)
+payload = None
+
+    @pytest.mark.parametrize('payload', [None,{'extra':1}])
+    def test_pending_rejects_get_and_unknown_fields(api_v1, payload):
+        request, server = api_v1; seed(server)
+        assert request('/api/v1/reminders/deliveries/pending',payload)[0] in (404,422)
+>       assert request('/api/v1/reminders/deliveries/pending?extra=1',{})[0] == 422
+E       assert 404 == 422
+
+tests/test_reminder_delivery_api.py:43: AssertionError
+____________ test_pending_rejects_get_and_unknown_fields[payload1] _____________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab77589d0>, <avatar.web.AvatarHTTPServer object at 0x7f3ab7786110>)
+payload = {'extra': 1}
+
+    @pytest.mark.parametrize('payload', [None,{'extra':1}])
+    def test_pending_rejects_get_and_unknown_fields(api_v1, payload):
+        request, server = api_v1; seed(server)
+        assert request('/api/v1/reminders/deliveries/pending',payload)[0] in (404,422)
+>       assert request('/api/v1/reminders/deliveries/pending?extra=1',{})[0] == 422
+E       assert 404 == 422
+
+tests/test_reminder_delivery_api.py:43: AssertionError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload0] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758820>, <avatar.web.AvatarHTTPServer object at 0x7f3ab7792980>)
+payload = {}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload1] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758c10>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77842e0>)
+payload = {'instance_id': 'wrong', 'revision': 0}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload2] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7759360>, <avatar.web.AvatarHTTPServer object at 0x7f3ab7790b20>)
+payload = {'instance_id': True, 'revision': 0}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload3] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab77595a0>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77849a0>)
+payload = {'revision': 0}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload4] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab77597e0>, <avatar.web.AvatarHTTPServer object at 0x7f3ab7763100>)
+payload = {'revision': True}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload5] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7759900>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77b9c60>)
+payload = {'revision': -1}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload6] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758ee0>, <avatar.web.AvatarHTTPServer object at 0x7f3ab777a710>)
+payload = {'revision': 1.5}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload7] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758b80>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77b99c0>)
+payload = {'revision': '0'}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload8] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758790>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77861d0>)
+payload = {'revision': 9223372036854775808}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload9] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7758ca0>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77b8310>)
+payload = {'revision': 0, 'extra': 1}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:52: TypeError
+______________ test_auth_revision_and_deleted_delivery_are_fenced ______________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f3ab7759120>, <avatar.web.AvatarHTTPServer object at 0x7f3ab77872b0>)
+
+    def test_auth_revision_and_deleted_delivery_are_fenced(api_v1):
+        request, server = api_v1; rid = seed(server)
+        assert request('/api/v1/reminders/deliveries/pending',{},token=False)[0] == 403
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+>       event = pending['items'][0]['delivery_id']
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_reminder_delivery_api.py:63: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_delivery_api.py::test_http_replay_explicit_ack_and_legacy_claim_compatibility
+FAILED tests/test_reminder_delivery_api.py::test_pending_rejects_get_and_unknown_fields[None]
+FAILED tests/test_reminder_delivery_api.py::test_pending_rejects_get_and_unknown_fields[payload1]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload0]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload1]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload2]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload3]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload4]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload5]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload6]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload7]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload8]
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload9]
+FAILED tests/test_reminder_delivery_api.py::test_auth_revision_and_deleted_delivery_are_fenced
+14 failed in 8.06s
