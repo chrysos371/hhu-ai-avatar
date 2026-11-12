@@ -1,0 +1,72 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第30轮系统审计与推进报告：真实模型重启历史利用对照</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>第30轮系统审计与推进报告：真实模型重启历史利用对照</h1><p class="meta">2026-11-12 · spinner-bot · 原生CUDA / Web / 独立OS</p><p class="verdict">两个模型都利用了重启恢复的历史；严格格式仍有失败，整体语义质量未获批准。</p>
+<section><h2>结论与适用范围</h2>
+<p>在相同最终产品源码、真实Web/独立OS重启和固定CUDA推理配置下，4B与32B各完成六开发任务的显式关闭恢复/默认恢复对照。每模型36应用回合、24应用进程、74原生调用；合计72回合、48应用进程、148调用（含4预热），全部stop、应用与两个提供方退出0并清理。</p>
+<p>两模型严格任务分均为关闭恢复1/6、恢复5/6。默认恢复的五个有答案任务内容均正确（same-agent来源审阅），唯一严格失败为预算题额外输出算式；两臂缺资料弃答都正确。关闭恢复的五次未知符合其缺少历史的条件，不能把它们称为错误、模型质量差或不诚实。</p>
+<p>12个任务对的准备回复、第三system和当前消息均逐字相同；实际第三生成只相差历史角色消息0/4，答案或计算输入未进入非历史system。这提供有限开发场景下历史窗口可用且被利用的因果证据。六个合成开发任务不是独立真人/一般质量验收，未证明整体代际跃迁；C19-001/P1、任务与归属、物理设备和多日继续开放。</p>
+</section>
+<section><h2>实验资源与严格结果</h2>
+<p>两模型串行，均实际选择GPU0同UUID GPU-81550800-367d-1855-0f35-c61c274edfdf，启动余量40441MiB/0%。索引由运行时余量选择，不固定后续设备。固定C26注册表GGUF/revision/SHA，temperature0/seed42/context8192/cap512/thinkingFalse/单序列。总耗时包含文件核验、加载、两个预热、应用启动与清理，不能直接作为原生生成延迟或模型纯参数规模效应。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>模型</th><th>关闭严格</th><th>恢复严格</th><th>恢复已提供内容</th><th>缺资料弃答</th><th>分配MiB</th><th>采证总秒</th></tr></thead><tbody>
+<tr><td>4b</td><td>1/6</td><td>5/6</td><td>5/5（same-agent）</td><td>两臂各1/1</td><td>4096</td><td>85.635790</td></tr>
+<tr><td>32b</td><td>1/6</td><td>5/6</td><td>5/5（same-agent）</td><td>两臂各1/1</td><td>21042</td><td>204.369448</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>逐题原始恢复答案</h2>
+<p>代号、人物持卡、更正路线、纸条原文、更正后预算及联系电话缺资料为新预登记开发材料，gold未作为评分元数据发送给模型，答案本身只存在自然准备消息。除预登记的外层引号/句末标点归一化外，没有修改原文或事后放宽严格分。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>任务</th><th>4B原回复</th><th>32B原回复</th><th>判定</th></tr></thead><tbody>
+<tr><td>scene_token</td><td>ZK-5831</td><td>ZK-5831</td><td>两模型严格通过</td></tr>
+<tr><td>object_owner</td><td>小岚。</td><td>小岚</td><td>两模型严格通过</td></tr>
+<tr><td>route_correction</td><td>竹园站。</td><td>竹园站</td><td>两模型严格通过</td></tr>
+<tr><td>literal_quote</td><td>“等通知后再确定，不要提前答应。”</td><td>“等通知后再确定，不要提前答应。”</td><td>两模型严格通过</td></tr>
+<tr><td>corrected_budget</td><td>370 + 590 = 960</td><td>590 + 370 = 960</td><td>内容算对，仅数字格式未满足</td></tr>
+<tr><td>missing_contact</td><td>无法确认，活动档案中未提供联系电话。</td><td>无法确认。</td><td>两模型严格通过</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>来源、隐私与版本核验</h2>
+<p>309项源码/协议/注册表/模型元数据/CPU控制输入在输出创建前经过git archive历史字节门槛；运行前后工作树指纹也验证。每个应用实际模块路径/SHA、SQL稳定ID/session、认证conversation API、SSE终态、历史source依赖和SQL全表导出重建均独立绑定。恢复第三对的新回复跟踪所有旧user与assistant源；无提醒或动作回执行，未执行外部动作。</p>
+<p>实际SDK经透明loopback中继，原请求/响应字节全部保留，request-body SHA与原生trace、response-format/schema SHA及grammar标志逐条一致。SDK compact JSON不重新序列化当作原始身份；预热手工sender另行按其实际JSON绑定。中继缓冲完整上游响应后转发，不以此实验声明原生首字或实时流式延迟。</p>
+<p>两模型的72条完整应用回复（含48条准备确认）都做same-agent来源span审阅，绑定实际reply SHA和source ID；本小样本未观察无据外发或身体经历声称，不能据此关闭旧通用P1。原始4B和32B数据、两次独立核验、12任务对和72span另有绑定，执行冻结已completed-retirement，不在本六题继续调提示。</p>
+<p>本轮没有修改产品src、tests或scripts。当前完整1769/1/116.63s@24f4529、552输入及默认Chromium15/16可选跳过@d631302为C29已封产品回归，没有冒称本轮再次运行；新审计程序有CPU控制、错SHA/先行4B门槛、真实原生/OS独立核验。前端153仍C24历史快照，包CYNSx0Ec不变。</p>
+</section>
+<section><h2>发现与处理</h2>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>编号</th><th>优先级</th><th>事实</th><th>结论</th></tr></thead><tbody>
+<tr><td>C30-001</td><td>P2 / 审计工具</td><td>初冻结新增version JSON不在source_ref，历史Git门槛于任何模型运行前拒绝</td><td>已修；旧清单unused-retirement，v2全部309历史字节/实际负控与原生数据通过</td></tr>
+<tr><td>C30-002</td><td>P2 / 原生交付</td><td>两模型预算均算对960，但输出额外算式，未满足只回答数字</td><td>开放；严格分不改，不在本批调提示，不把格式失配叫算术错误，也不因32B更大宣称已解决</td></tr>
+</tbody></table></div>
+<p><a href="问题/001-冻结来源引用缺少同批新增元数据.md">001 单项记录</a></p>
+<p><a href="问题/002-预算回复额外算式违反只答数字.md">002 单项记录</a></p>
+</section>
+<section><h2>后续假设与优先级</h2>
+<p>事后原生trace分解（不是预登记端到端提速终点）：4B认知36次共27.943970s，普通生成36次共8.832711s；32B分别73.689897s与37.952601s，预热另计。可以据此登记新的只读问题认知调用成本研究，尚无省略分析后的质量/延迟收益数据。现有Web已启用保守fast_analysis，仅限锚定科普问句，本轮六场景未命中；不能把该旧路径当作新成果。</p>
+<p>下一轮先新登记只读句式/事实与情绪保护反例、shadow路由和独立来源任务，再决定是否做有限成本对照。若候选错误跳过个人事实/情绪或损害任务答案则拒绝，不复用本六题当独立验证，不自动切默认或重启C28固定计划路线。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>优先级</th><th>工作</th><th>证据要求</th></tr></thead><tbody>
+<tr><td>P1</td><td>能力/回执诚实性与归属/任务充分性</td><td>保留原失败和来源审查；本轮小样本零观察不关闭通用问题</td></tr>
+<tr><td>P2</td><td>只读问题分析成本的独立新假设</td><td>先冻结保护反例/样本，再看漏事实、情绪、答案与实际回合延迟，不预报提速</td></tr>
+<tr><td>P2</td><td>严格格式交付</td><td>保留预算格式失败；新机制与独立保护集，不靠同批修提示改分</td></tr>
+<tr><td>P2</td><td>真人设备/正式形象/多日</td><td>真实来源与目标设备测量，软件/合成和短测不替代</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>证据入口</h2>
+<p><a href="../进展.md">过程进展</a></p>
+<p><a href="../计划.md">预登记计划</a></p>
+<p><a href="../实验/native-context-4b/evaluation.json">原始4B数据</a></p>
+<p><a href="../实验/native-context-32b/evaluation.json">原始32B数据</a></p>
+<p><a href="../实验/native-context-4b/provider-trace.jsonl">4B原生trace</a></p>
+<p><a href="../实验/native-context-32b/provider-trace.jsonl">32B原生trace</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/4b-independent-binding.json">4B独立绑定</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/32b-independent-binding.json">32B独立绑定</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/4b-source-aware-review.json">4B全部回复来源审阅</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/32b-source-aware-review.json">32B全部回复来源审阅</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/双臂逐轮来源核验.json">两臂/72span/事后耗时核验</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/relay-cpu-controls.json">CPU中继正反控制</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/native-preflight-controls.json">实际进程前置负控</a></p>
+<p><a href="工作目录/001-真实模型重启历史利用/initial-freeze-historical-binding-rejection.json">初版历史绑定拒绝</a></p>
+<p><a href="../../../../../evals/interaction/cycle-30/native-context-use-protocol.json">固定开发协议</a></p>
+<p><a href="../../../../../evals/interaction/cycle-30/native-context-use-v2-freeze.json">v2执行冻结</a></p>
+<p><a href="../../../../../evals/interaction/cycle-30/native-context-use-v2-retirement.json">v2完成retirement</a></p>
+<p><a href="../../../../../evals/interaction/cycle-30/native-context-use-retirement.json">初版unused-retirement</a></p>
+<p><a href="../../cycle-29/审计/工作目录/003-独立进程故障边界/full-python-unverified-fix-binding.json">C29完整产品回归绑定</a></p>
+<p><a href="../../cycle-29/审计/工作目录/005-浏览器回归/default-browser-binding.json">C29浏览器绑定</a></p>
+<p><a href="../../cycle-29/审计/系统审计与推进报告.md">C29系统报告</a></p>
+</section>
+</main></body></html>
