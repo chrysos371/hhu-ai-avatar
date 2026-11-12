@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "scope": "controlled_os_context_privacy_transaction_interleaving",
+  "provider_kind": "controlled_loopback_fixture",
+  "actual_llm_or_gpu": false,
+  "app_turns": 2,
+  "expected_results": 1,
+  "expected_cancelled": 1,
+  "expected_app_processes": 2,
+  "schedule": [
+    "setup one complete private fake context pair and linked fragment",
+    "stop setup app and start fresh app with explicit delegated timing wrappers",
+    "construct external writer connection before arming schedule",
+    "real context reader delegates to production read in current-source BEGIN IMMEDIATE; hold after returned window",
+    "external forget actual SQLite BEGIN IMMEDIATE trace fires but cannot finish while source transaction holds lock",
+    "release reader; current source transaction commits; boundary wrapper waits until external forget commits",
+    "real revision checkpoint cancels continuation before cognitive/generation HTTP request"
+  ],
+  "assertions": [
+    "window read really held transaction and included old stable IDs",
+    "writer BEGIN intent observed before reader released; writer not finished at that point",
+    "forget revision increments and redacts source and derived reply",
+    "cancelled terminal and no current-turn model calls or assistant row",
+    "all owned OS processes and writer thread close; raw artifacts/source hashes bound"
+  ],
+  "timing_wrappers": "audit worker monkeypatches ConversationContextStore.read and BoundaryPolicy.assess, both delegate production methods, no altered returned content or exceptions; explicit runtime metadata, not natural uninstrumented run",
+  "wall_clock_experiment_deadline": null
+}
