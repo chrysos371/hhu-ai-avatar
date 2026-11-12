@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "date": "2026-11-13",
+  "scope": "bounded explicit trusted reminder read controls; not general natural-language or model quality",
+  "commands": {
+    "status": "outer whitespace, optional 请, 查询/查看提醒, optional 编号/#, 1-19 ASCII digits in [1,2^63-1], optional 号/状态 and one terminal 。！？!?",
+    "conditions": "outer whitespace, optional 请, 查询/查看提醒运行条件 or 查询/查看提醒送达条件, one optional terminal 。！？!?",
+    "invalid_prefix": "a standalone unquoted 查询/查看提醒 prefix with malformed remainder is a controlled syntax error, not a model or partial operation",
+    "non_commands": "quotes/fiction/writing wrappers or unrelated prefixes do not grant a read route; mixed role exit does not authorize an old request"
+  },
+  "authority": {
+    "current_source": "positive int source id, actual user role/content/session and current nonnegative revision in one SQL snapshot",
+    "scope": "runtime current_user and independent turn_tools_allowed true; role/unverified/mixed authorization denied",
+    "readonly_business": "no reminder INSERT/UPDATE/DELETE, due claim, delivery queue insertion or ACK, action receipt or external tool; chat source/reply log remains normal",
+    "legacy_records": "current reminder row can be read even when no visible current-revision creation receipt; do not invent actor/history from row",
+    "time_scope": "state as observed at query snapshot, not guarantee of immutable future state"
+  },
+  "baseline_probes": [
+    {
+      "id": "status_due",
+      "text": "查询提醒编号1",
+      "setup": "direct synthetic SQL row due60seconds ago; no queue/receipt",
+      "required_new_mode": "rules_reminder_query",
+      "required_business_unchanged": true
+    },
+    {
+      "id": "conditions_due",
+      "text": "查看提醒送达条件",
+      "setup": "direct synthetic SQL row due60seconds ago; no queue/receipt",
+      "required_new_mode": "rules_reminder_query",
+      "required_business_unchanged": true
+    },
+    {
+      "id": "invalid_id_due",
+      "text": "查询提醒编号0",
+      "setup": "direct synthetic SQL row due60seconds ago; no queue/receipt",
+      "required_new_mode": "rules_reminder_query",
+      "required_business_unchanged": true
+    }
+  ],
+  "engineering_controls": [
+    "all three reminder states active/cancelled/completed",
+    "missing id has no never-existed/history claim",
+    "claim marker and client ACK distinct, ACK never human reading",
+    "legacy current row without receipt",
+    "query of past-due row leaves notified_at/delivery/receipts unchanged; later explicit poll still claims normally",
+    "conditions state server processing/UI polling required, stopped service no automatic delivery and no external channels",
+    "range/ASCII/quotes/mixed/forged command vs actual source",
+    "current source role/content/session/revision and runtime scope mismatch",
+    "privacy change/cancellation between snapshot and publish no visible/stored old reply",
+    "caller-owned transaction remains owned and no hidden commit",
+    "LLM configured and unconfigured: explicit controls send zero cognitive/generation requests",
+    "real HTTP/SSE user/assistant logs, result mode, conversation stored text and reminder state projection",
+    "ordinary/noncommand existing reminder delivery behavior preserved"
+  ],
+  "assessment": "synthetic controlled engineering and actual API data; no human/model generalization or physical delivery approval",
+  "native_calls_required_for_deterministic_path": 0,
+  "production_change_decision": "only after actual baseline gap evidence and scoped controls; no generic typed-plan promotion",
+  "later_model_work": "general free wording/local domain routing and conditional schemas remain separately gated"
+}
