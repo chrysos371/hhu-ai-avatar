@@ -1,0 +1,855 @@
+{
+  "scope": "maintained_default_browser_state_privacy_regression",
+  "page": "emotion",
+  "completed": true,
+  "failure": null,
+  "head": "ad29f936cbaedf2b9f297d90991becfb9057bc27",
+  "fixedObservationMs": 1000,
+  "calls": [
+    {
+      "path": "/emotion",
+      "status": 200,
+      "response": {
+        "data": {
+          "context": {
+            "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+            "revision": 4
+          },
+          "automatic": {
+            "valence": 0,
+            "arousal": 0
+          },
+          "user_observation": {
+            "valence": 0,
+            "arousal": 0
+          },
+          "effective": {
+            "valence": 0,
+            "arousal": 0
+          },
+          "override": {
+            "id": 1,
+            "data": {
+              "arousal": 0,
+              "reason": "浏览器表达覆盖测试",
+              "valence": 0
+            },
+            "starts_at": 1794496608.575916,
+            "expires_at": 1794497208.575916
+          },
+          "recent_observations": [
+            {
+              "timestamp": 1794496636.1072721,
+              "strategy": "answer",
+              "route": "normal",
+              "valence": 0,
+              "arousal": 0,
+              "context_revision": 4
+            },
+            {
+              "timestamp": 1794496639.6270468,
+              "strategy": "answer",
+              "route": "normal",
+              "valence": 0,
+              "arousal": 0,
+              "context_revision": 4
+            }
+          ]
+        },
+        "error": null,
+        "request_id": "f6b099dbc25606b47f91b735"
+      }
+    },
+    {
+      "path": "/emotion/draft",
+      "status": 201,
+      "response": {
+        "data": {
+          "draft_id": 9,
+          "operation_type": "emotion.override",
+          "diff": [
+            {
+              "field": "expression_override",
+              "before": {
+                "id": 1,
+                "data": {
+                  "arousal": 0,
+                  "reason": "浏览器表达覆盖测试",
+                  "valence": 0
+                },
+                "starts_at": 1794496608.575916,
+                "expires_at": 1794497208.575916
+              },
+              "after": {
+                "clear": true,
+                "reason": "C36隔离默认回归前的覆盖"
+              }
+            }
+          ],
+          "warnings": [
+            "只覆盖角色表达，不修改用户观测或自动状态；到期后自动恢复。"
+          ],
+          "expires_at": 1794497240.0781765,
+          "confirmation_token": "[ephemeral fixture capability omitted]"
+        },
+        "error": null,
+        "request_id": "f4f2f3041d60edb1b8fd46a9"
+      }
+    },
+    {
+      "path": "/operations/9/confirm",
+      "status": 200,
+      "response": {
+        "data": {
+          "audit_id": 7,
+          "draft_id": 9,
+          "result": {
+            "version": 2,
+            "active": null
+          }
+        },
+        "error": null,
+        "request_id": "3afa95f338e1392acfe51d5f"
+      }
+    },
+    {
+      "path": "/chat",
+      "status": 200,
+      "response": {
+        "data": {
+          "conversation": {
+            "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+            "revision": 4,
+            "user_message_id": 12,
+            "assistant_message_id": 13
+          },
+          "knowledge_sources": [],
+          "knowledge_retrieval_degraded": false,
+          "task": null,
+          "delivery_check": {
+            "initial_issues": [],
+            "remaining_issues": [],
+            "repair_attempted": false,
+            "repair_succeeded": false,
+            "repair_mode": null,
+            "repair_error": null,
+            "literal_composition_enabled": false,
+            "literal_plan_version": null,
+            "draft_generation_mode": "llm",
+            "stream_buffered": false
+          },
+          "boundary": {
+            "route": "normal",
+            "guarded": false,
+            "output_adjustment": null
+          },
+          "speaker_attribution": {
+            "scope": "current_user",
+            "persistent_facts_allowed": true,
+            "turn_tools_allowed": true,
+            "version": 1,
+            "general_coreference_verified": false
+          },
+          "speaker_tool_blocked": false,
+          "reply": "第一句已经生成。第二句继续说明。第三句完成交付。",
+          "emotion": "中性",
+          "valence": 0.05,
+          "arousal": -0.2,
+          "style": "温柔共情·沉稳·安抚",
+          "speech_rate": "-10%",
+          "speech_pitch": "-6Hz",
+          "mouth_intensity": 0.5,
+          "strategy": "empathize",
+          "analysis_mode": "llm",
+          "generation_mode": "llm",
+          "identity_grounding": false,
+          "profile_grounding": {
+            "enabled": false,
+            "action": null,
+            "scope": "profile_lookup_declaration_and_copied_preference",
+            "version": 2,
+            "semantic_verifier": false,
+            "stream_buffered": false
+          },
+          "user_emotion": "生气/焦躁",
+          "user_valence": -0.6,
+          "user_arousal": 0.4,
+          "audio_path": null,
+          "lip_sync_frames": null,
+          "lipsync_error": null,
+          "energy": 0.6,
+          "recalled_ids": [
+            3
+          ],
+          "reminder": null,
+          "reminder_error": null,
+          "due_reminders": [],
+          "conversation_summary": {
+            "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+            "kind": "source_excerpts",
+            "items": [],
+            "characters": 2,
+            "max_characters": 1600
+          },
+          "sources": [],
+          "tool_calls": [],
+          "web_error": null,
+          "action_receipts": {
+            "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+            "revision": 4,
+            "items": [],
+            "has_more": false,
+            "next_after_id": null,
+            "scope": "current_visible_local_sql_receipts",
+            "notification_delivery_verified": false
+          },
+          "trace": {
+            "recalled_memories": [
+              {
+                "id": 3,
+                "content": "名字: 缓存小岚",
+                "status": "active"
+              }
+            ],
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "decision": {
+              "strategy": "empathize",
+              "style": "温柔共情·沉稳·安抚",
+              "user_emotion": "生气/焦躁",
+              "emotion": "中性",
+              "user_valence": -0.6,
+              "user_arousal": 0.4,
+              "valence": 0.05,
+              "arousal": -0.2,
+              "analysis_mode": "llm",
+              "generation_mode": "llm",
+              "identity_grounding": false,
+              "profile_grounding": {
+                "enabled": false,
+                "action": null,
+                "scope": "profile_lookup_declaration_and_copied_preference",
+                "version": 2,
+                "semantic_verifier": false,
+                "stream_buffered": false
+              }
+            },
+            "guard": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "verifier": {
+              "available": false,
+              "reason": "未配置通用语义验证器",
+              "delivery_check": {
+                "initial_issues": [],
+                "remaining_issues": [],
+                "repair_attempted": false,
+                "repair_succeeded": false,
+                "repair_mode": null,
+                "repair_error": null,
+                "literal_composition_enabled": false,
+                "literal_plan_version": null,
+                "draft_generation_mode": "llm",
+                "stream_buffered": false
+              }
+            },
+            "tool_calls": []
+          }
+        },
+        "error": null,
+        "request_id": "f7dce75f74b9094eff6cdddc"
+      }
+    },
+    {
+      "path": "/memory?q=%E7%BC%93%E5%AD%98%E5%B0%8F%E5%B2%9A",
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": 3,
+            "content": "名字: 缓存小岚",
+            "memory_type": "user_profile",
+            "category": "user",
+            "importance": 0.9,
+            "last_accessed": 1794496640.4206939,
+            "created_at": 1794496640.4206939,
+            "status": "active",
+            "valid_from": 1794496640.4206939,
+            "valid_to": null,
+            "predecessor_id": 2,
+            "profile_key": "名字",
+            "preference_object": null,
+            "preference_polarity": null,
+            "embedding_model": null,
+            "embedding_dim": null,
+            "bad_hits": 0,
+            "strength": 1,
+            "confirmation_status": "source_backed"
+          }
+        ],
+        "error": null,
+        "request_id": "5903a53b425c07da56d15a7e"
+      }
+    },
+    {
+      "path": "/memory/3",
+      "status": 200,
+      "response": {
+        "data": {
+          "id": 3,
+          "content": "名字: 缓存小岚",
+          "memory_type": "user_profile",
+          "category": "user",
+          "importance": 0.9,
+          "last_accessed": 1794496640.4206939,
+          "created_at": 1794496640.4206939,
+          "status": "active",
+          "valid_from": 1794496640.4206939,
+          "valid_to": null,
+          "predecessor_id": 2,
+          "profile_key": "名字",
+          "preference_object": null,
+          "preference_polarity": null,
+          "embedding_model": null,
+          "embedding_dim": null,
+          "bad_hits": 0,
+          "tags": [],
+          "sources": [
+            {
+              "id": 2,
+              "fragment_id": 3,
+              "source_message_id": 12,
+              "evidence": "我叫缓存小岚",
+              "created_at": 1794496640.4209845,
+              "role": "user",
+              "message_content": "我叫缓存小岚，我很难过。",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "message_created_at": 1794496640.1015995
+            }
+          ]
+        },
+        "error": null,
+        "request_id": "9cf5f1b38e2cd774efa5bb27"
+      }
+    },
+    {
+      "path": "/emotion",
+      "status": 200,
+      "response": {
+        "data": {
+          "context": {
+            "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+            "revision": 4
+          },
+          "automatic": {
+            "valence": 0.049912463188277335,
+            "arousal": -0.19964985275310934
+          },
+          "user_observation": {
+            "valence": -0.6,
+            "arousal": 0.4
+          },
+          "effective": {
+            "valence": 0.049912463188277335,
+            "arousal": -0.19964985275310934
+          },
+          "override": null,
+          "recent_observations": [
+            {
+              "timestamp": 1794496636.1072721,
+              "strategy": "answer",
+              "route": "normal",
+              "valence": 0,
+              "arousal": 0,
+              "context_revision": 4
+            },
+            {
+              "timestamp": 1794496639.6270468,
+              "strategy": "answer",
+              "route": "normal",
+              "valence": 0,
+              "arousal": 0,
+              "context_revision": 4
+            },
+            {
+              "timestamp": 1794496640.5516276,
+              "strategy": "empathize",
+              "route": "normal",
+              "valence": 0.05,
+              "arousal": -0.2,
+              "context_revision": 4
+            }
+          ]
+        },
+        "error": null,
+        "request_id": "6249a0a6d9fc710af67e9800"
+      }
+    },
+    {
+      "path": "/memory/batch-draft",
+      "status": 201,
+      "response": {
+        "data": {
+          "draft_id": 10,
+          "operation_type": "memory.batch",
+          "diff": [
+            {
+              "field": "memory.3",
+              "before": "名字: 缓存小岚",
+              "after": "forget"
+            }
+          ],
+          "warnings": [
+            "彻底删除记忆3及其3个相关版本，不可撤销；共享原话与相关助手回复会脱敏；旧记录无法追踪来源的助手内容将保守清理。"
+          ],
+          "expires_at": 1794497241.1968873,
+          "confirmation_token": "[ephemeral fixture capability omitted]"
+        },
+        "error": null,
+        "request_id": "9564d3fff47f18ec55c69c48"
+      }
+    },
+    {
+      "path": "/operations/10/confirm",
+      "status": 200,
+      "response": {
+        "data": {
+          "audit_id": 8,
+          "draft_id": 10,
+          "result": {
+            "actions": [
+              {
+                "action": "forget",
+                "old_id": 3,
+                "new_id": null
+              }
+            ]
+          }
+        },
+        "error": null,
+        "request_id": "3dd8797d834fa6449b432552"
+      }
+    },
+    {
+      "path": "/emotion",
+      "status": 200,
+      "response": {
+        "data": {
+          "context": {
+            "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+            "revision": 5
+          },
+          "automatic": {
+            "valence": 0,
+            "arousal": 0
+          },
+          "user_observation": {
+            "valence": 0,
+            "arousal": 0
+          },
+          "effective": {
+            "valence": 0,
+            "arousal": 0
+          },
+          "override": null,
+          "recent_observations": []
+        },
+        "error": null,
+        "request_id": "178dbc05b50033ea3791e52f"
+      }
+    },
+    {
+      "path": "/conversation",
+      "status": 200,
+      "response": {
+        "data": {
+          "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+          "revision": 5,
+          "items": [
+            {
+              "id": 1,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496614.3382723,
+              "text": "你好",
+              "redacted": false
+            },
+            {
+              "id": 2,
+              "role": "assistant",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496614.8166616,
+              "text": "此条内容已删除。",
+              "redacted": true
+            },
+            {
+              "id": 3,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496629.1608155,
+              "text": "请解释云为什么会移动，fixture-long",
+              "redacted": false
+            },
+            {
+              "id": 4,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496630.1615343,
+              "text": "请解释云为什么会移动，fixture-long",
+              "redacted": false
+            },
+            {
+              "id": 5,
+              "role": "assistant",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496631.6048176,
+              "text": "此条内容已删除。",
+              "redacted": true
+            },
+            {
+              "id": 6,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496632.696839,
+              "text": "请解释云为什么会移动，fixture-long",
+              "redacted": false
+            },
+            {
+              "id": 7,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496635.713862,
+              "text": "你好",
+              "redacted": false
+            },
+            {
+              "id": 8,
+              "role": "assistant",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496636.10509,
+              "text": "此条内容已删除。",
+              "redacted": true
+            },
+            {
+              "id": 9,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496637.1626337,
+              "text": "你好",
+              "redacted": false
+            },
+            {
+              "id": 10,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496639.2309384,
+              "text": "你好",
+              "redacted": false
+            },
+            {
+              "id": 11,
+              "role": "assistant",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496639.6241167,
+              "text": "此条内容已删除。",
+              "redacted": true
+            },
+            {
+              "id": 12,
+              "role": "user",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496640.1015995,
+              "text": "此条内容已删除。",
+              "redacted": true
+            },
+            {
+              "id": 13,
+              "role": "assistant",
+              "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+              "created_at": 1794496640.548707,
+              "text": "此条内容已删除。",
+              "redacted": true
+            }
+          ],
+          "has_more": false,
+          "next_before_id": null
+        },
+        "error": null,
+        "request_id": "fde4c3b26e714e60692f74ea"
+      }
+    }
+  ],
+  "errors": [],
+  "versionRequests": [
+    "?instance_id=state-bootstrap&revision=0",
+    "?instance_id=cf406ccbcaf34c3dccc8b92e30f5fa08&revision=4",
+    "?instance_id=cf406ccbcaf34c3dccc8b92e30f5fa08&revision=5"
+  ],
+  "nativeOrGpuClaim": false,
+  "noReloadNavigationOrUiPrivacyNoticeAfterErasure": true,
+  "prepared": {
+    "conversation": {
+      "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+      "revision": 4,
+      "user_message_id": 12,
+      "assistant_message_id": 13
+    },
+    "knowledge_sources": [],
+    "knowledge_retrieval_degraded": false,
+    "task": null,
+    "delivery_check": {
+      "initial_issues": [],
+      "remaining_issues": [],
+      "repair_attempted": false,
+      "repair_succeeded": false,
+      "repair_mode": null,
+      "repair_error": null,
+      "literal_composition_enabled": false,
+      "literal_plan_version": null,
+      "draft_generation_mode": "llm",
+      "stream_buffered": false
+    },
+    "boundary": {
+      "route": "normal",
+      "guarded": false,
+      "output_adjustment": null
+    },
+    "speaker_attribution": {
+      "scope": "current_user",
+      "persistent_facts_allowed": true,
+      "turn_tools_allowed": true,
+      "version": 1,
+      "general_coreference_verified": false
+    },
+    "speaker_tool_blocked": false,
+    "reply": "第一句已经生成。第二句继续说明。第三句完成交付。",
+    "emotion": "中性",
+    "valence": 0.05,
+    "arousal": -0.2,
+    "style": "温柔共情·沉稳·安抚",
+    "speech_rate": "-10%",
+    "speech_pitch": "-6Hz",
+    "mouth_intensity": 0.5,
+    "strategy": "empathize",
+    "analysis_mode": "llm",
+    "generation_mode": "llm",
+    "identity_grounding": false,
+    "profile_grounding": {
+      "enabled": false,
+      "action": null,
+      "scope": "profile_lookup_declaration_and_copied_preference",
+      "version": 2,
+      "semantic_verifier": false,
+      "stream_buffered": false
+    },
+    "user_emotion": "生气/焦躁",
+    "user_valence": -0.6,
+    "user_arousal": 0.4,
+    "audio_path": null,
+    "lip_sync_frames": null,
+    "lipsync_error": null,
+    "energy": 0.6,
+    "recalled_ids": [
+      3
+    ],
+    "reminder": null,
+    "reminder_error": null,
+    "due_reminders": [],
+    "conversation_summary": {
+      "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+      "kind": "source_excerpts",
+      "items": [],
+      "characters": 2,
+      "max_characters": 1600
+    },
+    "sources": [],
+    "tool_calls": [],
+    "web_error": null,
+    "action_receipts": {
+      "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+      "revision": 4,
+      "items": [],
+      "has_more": false,
+      "next_after_id": null,
+      "scope": "current_visible_local_sql_receipts",
+      "notification_delivery_verified": false
+    },
+    "trace": {
+      "recalled_memories": [
+        {
+          "id": 3,
+          "content": "名字: 缓存小岚",
+          "status": "active"
+        }
+      ],
+      "knowledge_sources": [],
+      "knowledge_retrieval_degraded": false,
+      "decision": {
+        "strategy": "empathize",
+        "style": "温柔共情·沉稳·安抚",
+        "user_emotion": "生气/焦躁",
+        "emotion": "中性",
+        "user_valence": -0.6,
+        "user_arousal": 0.4,
+        "valence": 0.05,
+        "arousal": -0.2,
+        "analysis_mode": "llm",
+        "generation_mode": "llm",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        }
+      },
+      "guard": {
+        "route": "normal",
+        "guarded": false,
+        "output_adjustment": null
+      },
+      "verifier": {
+        "available": false,
+        "reason": "未配置通用语义验证器",
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "llm",
+          "stream_buffered": false
+        }
+      },
+      "tool_calls": []
+    }
+  },
+  "fragment": {
+    "id": 3,
+    "content": "名字: 缓存小岚",
+    "memory_type": "user_profile",
+    "category": "user",
+    "importance": 0.9,
+    "last_accessed": 1794496640.4206939,
+    "created_at": 1794496640.4206939,
+    "status": "active",
+    "valid_from": 1794496640.4206939,
+    "valid_to": null,
+    "predecessor_id": 2,
+    "profile_key": "名字",
+    "preference_object": null,
+    "preference_polarity": null,
+    "embedding_model": null,
+    "embedding_dim": null,
+    "bad_hits": 0,
+    "tags": [],
+    "sources": [
+      {
+        "id": 2,
+        "fragment_id": 3,
+        "source_message_id": 12,
+        "evidence": "我叫缓存小岚",
+        "created_at": 1794496640.4209845,
+        "role": "user",
+        "message_content": "我叫缓存小岚，我很难过。",
+        "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+        "message_created_at": 1794496640.1015995
+      }
+    ]
+  },
+  "beforeDom": [
+    "P 0.05 / A -0.20",
+    "P 0.05 / A -0.20",
+    "P -0.60 / A 0.40"
+  ],
+  "beforeApi": {
+    "context": {
+      "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+      "revision": 4
+    },
+    "automatic": {
+      "valence": 0.049912463188277335,
+      "arousal": -0.19964985275310934
+    },
+    "user_observation": {
+      "valence": -0.6,
+      "arousal": 0.4
+    },
+    "effective": {
+      "valence": 0.049912463188277335,
+      "arousal": -0.19964985275310934
+    },
+    "override": null,
+    "recent_observations": [
+      {
+        "timestamp": 1794496636.1072721,
+        "strategy": "answer",
+        "route": "normal",
+        "valence": 0,
+        "arousal": 0,
+        "context_revision": 4
+      },
+      {
+        "timestamp": 1794496639.6270468,
+        "strategy": "answer",
+        "route": "normal",
+        "valence": 0,
+        "arousal": 0,
+        "context_revision": 4
+      },
+      {
+        "timestamp": 1794496640.5516276,
+        "strategy": "empathize",
+        "route": "normal",
+        "valence": 0.05,
+        "arousal": -0.2,
+        "context_revision": 4
+      }
+    ]
+  },
+  "afterApi": {
+    "context": {
+      "instance_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+      "revision": 5
+    },
+    "automatic": {
+      "valence": 0,
+      "arousal": 0
+    },
+    "user_observation": {
+      "valence": 0,
+      "arousal": 0
+    },
+    "effective": {
+      "valence": 0,
+      "arousal": 0
+    },
+    "override": null,
+    "recent_observations": []
+  },
+  "sourceAfter": {
+    "id": 12,
+    "role": "user",
+    "session_id": "cf406ccbcaf34c3dccc8b92e30f5fa08",
+    "created_at": 1794496640.1015995,
+    "text": "此条内容已删除。",
+    "redacted": true
+  },
+  "sampleMs": 1036.0052980000037,
+  "fixedDom": [
+    "P 0.00 / A 0.00",
+    "P 0.00 / A 0.00",
+    "P 0.00 / A 0.00"
+  ],
+  "form": {
+    "valence": "0",
+    "arousal": "0"
+  }
+}
