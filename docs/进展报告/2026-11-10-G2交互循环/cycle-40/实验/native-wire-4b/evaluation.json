@@ -1,0 +1,121 @@
+{
+  "scope": "standalone_native_tool_wire_diagnostic_not_Avatar_or_business_execution",
+  "head": "8cc692fc72503528c5f875163559ab00751855be",
+  "freeze_sha256": "c97dbb02ddca0cd84682ac2033d6a36521b4d254c16e0973715afb108130566c",
+  "frozen_source_ref": "4cb6c6daf5e7d6cdbd7969684db7469786e4177a",
+  "model_id": "qwen3-4b-q4_k_m",
+  "provider_command": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/bin/python",
+    "/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_eval.py",
+    "--enable-tools",
+    "--model",
+    "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf",
+    "--model-key",
+    "qwen3-4b-q4_k_m",
+    "--metadata",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-26/model-metadata-4b.json",
+    "--ready",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/实验/native-wire-4b/provider-ready.json",
+    "--trace",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-40/实验/native-wire-4b/provider-trace.jsonl",
+    "--backend",
+    "cuda",
+    "--registry",
+    "/data/Users/zrh/repo/hhu-ai-avatar/evals/interaction/cycle-40/model-registry.json",
+    "--expected-registry-sha256",
+    "b834d3be073957be725fcedb49dd2fdc0837df8d06c610042585d7410152ac7d"
+  ],
+  "completed": false,
+  "failure": "AssertionError: unexpected SDK retry/missing request",
+  "native_calls": 2,
+  "Avatar_application_turns": 0,
+  "business_reads_or_writes": 0,
+  "synthetic_tool_result_fixtures_only": true,
+  "groups": [],
+  "warmups": [
+    {
+      "phase": "warmup",
+      "repetition": 0,
+      "case": "1",
+      "request_ordinal": 1,
+      "result": {
+        "role": "assistant",
+        "content": "预热完成。"
+      },
+      "error": null,
+      "seconds": 0.17722973303170875
+    }
+  ],
+  "cleanup_passed": true,
+  "provider_pid": 3879714,
+  "provider_exit_code": 0,
+  "gpu_processes_after_cleanup": "3819354, GPU-81550800-367d-1855-0f35-c61c274edfdf, 976\n3819365, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 994\n3819375, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 988\n3819386, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 994\n",
+  "provider_proc_present_after_cleanup": false,
+  "native_raw_stop_count": 2,
+  "wire_selection_exact_count": 0,
+  "wire_selection_total": 0,
+  "synthetic_fixture_followups": 0,
+  "request_trace_identity_matched": false,
+  "engineering_passed": false,
+  "wire_expected_gate_passed": false,
+  "overall_seconds_including_load_and_proof": 25.61640494997846,
+  "source_current_after_execution": true,
+  "actual_project_modules": {
+    "avatar": {
+      "file": "src/avatar/__init__.py",
+      "sha256": "7d335c23c07f1fa8c74a6f285088b3b72cd2ef7ee9edf27d38d75e63a76bbcbf"
+    },
+    "avatar.paths": {
+      "file": "src/avatar/paths.py",
+      "sha256": "8da6ef193a36b10097b34fbf807cf16cf573826647161508a1c9e4dbb3570276"
+    },
+    "avatar.config": {
+      "file": "src/avatar/config.py",
+      "sha256": "f9d70d57f5c278262cb653b81de06557d66744f0b93c9873f51882044ff19c2a"
+    },
+    "avatar.brain.analysis_protocol": {
+      "file": "src/avatar/brain/analysis_protocol.py",
+      "sha256": "9759cda7c1d4623937cdd4a32e1f1d50482be6298f72f0b35ab3ad59dd81bd50"
+    },
+    "avatar.cancellation": {
+      "file": "src/avatar/cancellation.py",
+      "sha256": "5cd827f61d4abd84cdf69608fec050b6fad3328f5ac3d916ea28874f82a2e5aa"
+    },
+    "avatar.brain.response_review": {
+      "file": "src/avatar/brain/response_review.py",
+      "sha256": "27d78eb0d80626f16fc274c92d8c648728a0d9ea8f3f24b0b305a3e8a3a80256"
+    },
+    "avatar.brain.llm": {
+      "file": "src/avatar/brain/llm.py",
+      "sha256": "0f4edce4f10451aef22fc9922792da99406685351f580e67002c8c54d74cca08"
+    },
+    "avatar.brain.embeddings": {
+      "file": "src/avatar/brain/embeddings.py",
+      "sha256": "cdd8f2c1e4fe3f6430d3d6b0c7b188920087a0cb1aa6649ed1f077afb971812b"
+    },
+    "avatar.brain.preferences": {
+      "file": "src/avatar/brain/preferences.py",
+      "sha256": "efbe6c72e8bfacf1e6739f04bca9a2d8f5ab1f06d9d987c0a8d45166fe590fdb"
+    },
+    "avatar.brain.memory": {
+      "file": "src/avatar/brain/memory.py",
+      "sha256": "fa3f0d735a0288a682faecdfa27e1c682dc4d85f21ce8a8371f66824170dec14"
+    },
+    "avatar.brain.emotion": {
+      "file": "src/avatar/brain/emotion.py",
+      "sha256": "64669a099e511857a2f0da5a12ccf62a1a2a33d938de40405362a603a7b9f000"
+    },
+    "avatar.brain": {
+      "file": "src/avatar/brain/__init__.py",
+      "sha256": "e8dc8adf83884467906008638449ae8d2f6d67ff85fc287b6afe53a5666f041b"
+    }
+  },
+  "artifacts_sha256": {
+    "provider.log": "953d773c218b31f3cf4b34c8dde9bbf56b4abd1a1b255f1c54907ca771f48d1a",
+    "provider-ready.json": "674eb060b3daa2c55d2ef722dea76442b5171ec32aa2c86dc6a6b6842d7baed7",
+    "provider-kernel-proof.json": "875a753c0f73f900faccbed36ed341a1922ba4a21b2dfd082c6997af7eb58337",
+    "request-wire.jsonl": "8f4592c80499ce3c97eef08e60f4e3ebdc1d7dd7a8570e193937583d5bc03ae7",
+    "response-wire.jsonl": "d465c263d9f6b67ccb2d89ecd45fd915160c6568781d087afd245b00417c50a8",
+    "provider-trace.jsonl": "c902b46c95024a03bb1d0e951ebd6b6ef31735bd1ed45acc2818bd441240d9f6"
+  }
+}
