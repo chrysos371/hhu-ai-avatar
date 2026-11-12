@@ -19,7 +19,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from avatar.gpu_resources import select_available_gpu
-from avatar.lab.native_tool_wire import ToolWireError, request_tools, adapt_completion
+from avatar.lab.native_tool_wire import ToolWireError, request_tools, adapt_completion, template_messages
 
 
 def sha(path):
@@ -195,17 +195,22 @@ def main():
                 self.send_json(413,{'error':{'message':'invalid request length'}});return
             raw_request=self.rfile.read(length)
             data=json.loads(raw_request)
-            try:
-                tools=request_tools(data,enabled=args.enable_tools)
-            except ToolWireError as error:
-                self.send_json(400,{'error':{'message':str(error)}});return
             with guard:
+                try:
+                    messages=template_messages(data['messages'])
+                    tools=request_tools(data,enabled=args.enable_tools)
+                    prompt=template.render(messages=messages,tools=tools,add_generation_prompt=True,
+                        enable_thinking=False,bos_token='',eos_token='')
+                    if not prompt.endswith('<think>\n\n</think>\n\n'):
+                        raise ToolWireError('unexpected generation template suffix')
+                except Exception as error:
+                    trace.write(json.dumps({'kind':'request_rejected','native_inference_started':False,
+                        **trace_request_metadata(data,raw_request,grammar_enabled=False),
+                        'messages':data.get('messages'),'error_type':type(error).__name__,
+                        'error':str(error)[:240]},ensure_ascii=False)+'\n');trace.flush()
+                    self.send_json(400,{'error':{'message':'unsupported evaluation request: '+str(error)[:160]}});return
                 counter[0]+=1
                 identifier=f'eval-{counter[0]}'
-                messages=[{'tool_calls': [], 'reasoning_content': None} | message for message in data['messages']]
-                prompt=template.render(messages=messages,tools=tools,add_generation_prompt=True,
-                    enable_thinking=False,bos_token='',eos_token='')
-                assert prompt.endswith('<think>\n\n</think>\n\n')
                 grammar=None
                 if data.get('response_format'):
                     response=data['response_format']

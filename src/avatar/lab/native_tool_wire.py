@@ -74,3 +74,26 @@ def adapt_completion(text, native_finish_reason, tools, identifier):
     message={'role':'assistant','content':None,'tool_calls':[{'id':'call_'+identifier,'type':'function',
         'function':{'name':value['name'],'arguments':json.dumps(value['arguments'],ensure_ascii=False,separators=(',',':'))}}]}
     return message,'tool_calls'
+
+
+def template_messages(messages):
+    """Normalize SDK's absent/null assistant tool content without editing wire.
+
+    The embedded text-only Jinja template requires a string. Missing ordinary
+    user/system/tool content remains an error rather than an invented message.
+    """
+    if not isinstance(messages,list) or not messages:
+        raise ToolWireError('messages must be a nonempty list')
+    result=[]
+    for original in messages:
+        if not isinstance(original,dict) or original.get('role') not in ('system','user','assistant','tool'):
+            raise ToolWireError('unsupported template message role')
+        message={'tool_calls':[],'reasoning_content':None}|original
+        content=message.get('content')
+        if content is None and message['role']=='assistant' and message.get('tool_calls'):
+            content=''
+        if not isinstance(content,str):
+            raise ToolWireError('text content required except assistant tool calls')
+        message['content']=content
+        result.append(message)
+    return result

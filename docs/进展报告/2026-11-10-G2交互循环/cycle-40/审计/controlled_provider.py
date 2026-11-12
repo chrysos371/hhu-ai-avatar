@@ -17,7 +17,7 @@ from avatar.paths import environment_python,project_data_root
 from probe_structured_provider import environment
 
 PROTOCOL=json.loads((ROOT/'evals/interaction/cycle-40/native-tool-wire-protocol.json').read_text())
-OUT=BASE/'审计/工作目录/002-受控HTTP交接'
+OUT=BASE/'审计/工作目录/002-受控HTTP交接'/sys.argv[1]
 
 
 def digest(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -25,6 +25,8 @@ def digest(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def run_one(enabled):
     group=OUT/('opt-in' if enabled else 'default');group.mkdir(parents=True,exist_ok=False)
+    sources=['scripts/serve_local_model_eval.py','src/avatar/lab/native_tool_wire.py','src/avatar/brain/llm.py',str(Path(__file__).relative_to(ROOT)),str((BASE/'审计/controlled_worker.py').relative_to(ROOT))]
+    (group/'execution-inputs.json').write_text(json.dumps({'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'source_sha256':{n:digest(ROOT/n) for n in sources}},ensure_ascii=False,indent=2)+'\n')
     http=[];sdk=[]
     with tempfile.TemporaryDirectory(prefix='c40-wire-',dir=project_data_root()/'tmp') as temporary,(group/'worker.log').open('x') as log:
         python=environment_python(native=True)
@@ -59,14 +61,20 @@ def run_one(enabled):
                 raw_request(base|{'stream':True},400)
                 raw_request(base|{'response_format':{'type':'json_object'}},400)
                 raw_request(base,500);raw_request(base,500)
+            raw_request({'messages':[{'role':'user'}]},400)
             raw_request({'model':'fixture','messages':[{'role':'user','content':'你好'}]},200)
         finally:
             (group/'stop').touch()
             try:exit_code=worker.wait(timeout=15)
             except subprocess.TimeoutExpired:
                 worker.terminate();worker.wait(timeout=10);raise
+            finally:
+                (group/'worker-exit.json').write_text(json.dumps({'pid':worker.pid,'exit_code':worker.poll(),'process_alive':worker.poll() is None})+'\n')
         assert exit_code==0,(group/'worker.log').read_text()
-    rows=[json.loads(line) for line in (group/'provider-trace.jsonl').read_text().splitlines()]
+    all_rows=[json.loads(line) for line in (group/'provider-trace.jsonl').read_text().splitlines()]
+    rejected=[r for r in all_rows if r.get('kind')=='request_rejected']
+    rows=[r for r in all_rows if r.get('id')]
+    assert len(rejected)==(3 if enabled else 2) and all(r['native_inference_started'] is False for r in rejected)
     cleanup=json.loads((group/'worker-cleanup.json').read_text())
     assert len(rows)==cleanup['scripted_model_calls']==(5 if enabled else 1)
     if enabled:
@@ -76,7 +84,7 @@ def run_one(enabled):
         assert all(r['outcome']=='ToolWireError' and r['wire_message'] is None for r in rows[2:4])
         assert rows[2]['response'].startswith('准备查询。') and rows[3]['finish_reason']=='length'
     assert cleanup['all_models_servers_closed'] and cleanup['native_or_GPU_calls']==0
-    result={'verified':True,'scope':'scripted model/fake GPU resources; actual HTTP, SDK, Jinja and provider handler only','native_or_GPU_calls':0,'scripted_completion_calls':len(rows),'HTTP_cases':http,'SDK_messages':sdk,'provider_trace_sha256':digest(group/'provider-trace.jsonl'),'provider_source_sha256':digest(ROOT/'scripts/serve_local_model_eval.py'),'wire_adapter_sha256':digest(ROOT/'src/avatar/lab/native_tool_wire.py'),'controller_sha256':digest(__file__),'worker_sha256':digest(BASE/'审计/controlled_worker.py'),'all_servers_models_closed':True,'worker_exit_code':exit_code}
+    result={'verified':True,'scope':'scripted model/fake GPU resources; actual HTTP, SDK, Jinja and provider handler only','native_or_GPU_calls':0,'scripted_completion_calls':len(rows),'pre_inference_rejections':len(rejected),'HTTP_cases':http,'SDK_messages':sdk,'provider_trace_sha256':digest(group/'provider-trace.jsonl'),'provider_source_sha256':digest(ROOT/'scripts/serve_local_model_eval.py'),'wire_adapter_sha256':digest(ROOT/'src/avatar/lab/native_tool_wire.py'),'controller_sha256':digest(__file__),'worker_sha256':digest(BASE/'审计/controlled_worker.py'),'all_servers_models_closed':True,'worker_exit_code':exit_code}
     (group/'evaluation.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     print(group.name+': actual HTTP/SDK controlled proof passed; scripted completions='+str(len(rows))+';0 native/GPU')
 

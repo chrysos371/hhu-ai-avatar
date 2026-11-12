@@ -86,3 +86,23 @@ def test_followup_requires_opt_in_and_current_registry():
     history=[{'role':'assistant','tool_calls':[{'id':'call_x'}]},{'role':'tool','tool_call_id':'call_x','content':'{}'}]
     with pytest.raises(ToolWireError):request_tools({'tools':TOOLS,'messages':history})
     assert request_tools({'tools':TOOLS,'messages':history},enabled=True)==TOOLS
+
+
+@pytest.mark.parametrize('content',[{}, {'content':None}])
+def test_sdk_omitted_or_null_tool_content_normalizes_without_mutating_wire(content):
+    from avatar.lab.native_tool_wire import template_messages
+    original={'role':'assistant','tool_calls':[{'id':'call_x'}]}|content
+    before=deepcopy(original)
+    assert template_messages([original])[0]['content']==''
+    assert original==before
+
+
+def test_existing_plain_template_text_and_defaults_are_unchanged():
+    from avatar.lab.native_tool_wire import template_messages
+    assert template_messages([{'role':'user','content':'原文。'}])==[{'role':'user','content':'原文。','tool_calls':[],'reasoning_content':None}]
+
+
+@pytest.mark.parametrize('message',[{'role':'user'},{'role':'system','content':None},{'role':'tool','content':None},{'role':'user','content':{}},{'role':'assistant'}])
+def test_missing_ordinary_content_is_not_silently_invented(message):
+    from avatar.lab.native_tool_wire import template_messages
+    with pytest.raises(ToolWireError):template_messages([message])
