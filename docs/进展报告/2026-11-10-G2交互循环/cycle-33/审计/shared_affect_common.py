@@ -15,7 +15,7 @@ MODELS=('qwen3-4b-q4_k_m','qwen3-32b-q4_k_m');ARMS=('current_analysis','lab_read
 
 def source_paths():
     paths=old_paths()|{PROTOCOL,RUNTIME,'evals/interaction/cycle-31/readonly-affect-whitebox-supplement.json'}
-    paths.update(str((OLD32/name).relative_to(ROOT)) for name in ('state_common.py','state_policy.py','serve_state_eval.py','证据清单.json'))
+    paths.update(str((OLD32/name).relative_to(ROOT)) for name in ('state_common.py','state_policy.py','serve_state_eval.py','run_state_replay.py','证据清单.json'))
     paths.update(str((BASE/'审计'/name).relative_to(ROOT)) for name in ('shared_affect_common.py','shared_affect_worker.py','shared_snapshot.py','probe_shared_cpu.py','run_shared_affect.py'))
     paths.update(str((BASE/'审计/工作目录/001-共享历史隐含情绪'/name).relative_to(ROOT)) for name in ('shared-cpu-controls.json','shared-cpu-controls.log','cpu-control-version.json'))
     return paths

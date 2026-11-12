@@ -15,6 +15,7 @@ import time
 from urllib.request import build_opener,ProxyHandler
 from shared_affect_common import ROOT,BASE,OLD31,OLD32,PROTOCOL,REGISTRY,RUNTIME,MODELS,ARMS,digest,verify_freeze,verify_historical_binding,verify_backend
 from shared_snapshot import backup_pair,logical_dump
+from run_state_replay import send_raw
 from run_readonly_analysis_cost import CostContext
 from run_native_context_use import NativeContext,parse_wire,normalize
 from context_native_relay import NativeRelay
@@ -105,6 +106,10 @@ class SharedAffect(CostContext):
             'turns':[],'checks':[],'snapshots':[],'external_operations':[],'complete':False,'owned_runtime_dir':str(self.temporary),'probe_skipped':False}
         self.report['cases'].append(self.case);self.state=None;start=len(self.relay.rows);self.persist()
         try:
+            if role=='probe':
+                self.snapshot('initial');initial=logical_dump(self.db)
+                assert digest_bytes(initial)==group['backup']['initial_logical_dump_sha256']
+                (self.folder/'initial-database_dump.sql').write_text(initial)
             self.start()
             for text in texts:
                 result=self.turn(text);assert result['generation_mode']=='llm'
@@ -123,7 +128,7 @@ class SharedAffect(CostContext):
                 assert len(snapshot['memory_messages'])==6
                 aid=result['conversation']['assistant_message_id'];sources={r['source_id'] for r in snapshot['memory_response_context'] if r['message_id']==aid and r['source_type']=='message'}
                 assert {m['id'] for m in snapshot['memory_messages'] if m['id']!=aid}<=sources
-                self.case.update(strict_code_correct=normalize(result['reply'],literal=True)==case['expected_code'],probe_messages=generation['request']['messages'])
+                self.case.update(strict_code_correct=result['reply'].strip()==case['expected_code'],probe_messages=generation['request']['messages'])
             else:assert len(snapshot['memory_messages'])==4
             assert not snapshot['memory_reminders'] and not snapshot['memory_action_receipts']
             self.case.update(probe_skipped=skipped,analysis_rows=analysis_rows,model_requests=rows,complete=True)
@@ -158,3 +163,77 @@ class SharedAffect(CostContext):
             strict_code_correct=[probes[arm]['strict_code_correct'] for arm in ARMS],complete=True)
         save(folder/'group-completed.json',group);self.persist()
         print(identifier,'skip',group['actual_candidate_skipped'],'different_fields',group['differing_fields'],'strict',group['strict_code_correct'],flush=True)
+    def run(self):
+        registry,registry_sha,_=load_registry(ROOT/REGISTRY,expected_sha256=self.frozen['sha256'][REGISTRY]);spec=next(m for m in registry['models'] if m['model_id']==self.args.model)
+        ready=self.args.output/'provider-ready.json';trace=self.args.output/'provider-trace.jsonl'
+        command=[str(self.args.provider_python),str(OLD32/'serve_state_eval.py'),'--state-policy','logical_reset',
+            '--backend-runtime-identity',str(ROOT/RUNTIME),'--expected-backend-runtime-sha256',self.frozen['sha256'][RUNTIME],
+            '--model',str(ROOT/'models'/self.args.model.replace('-q4_k_m','-gguf')/spec['file']),'--model-key',self.args.model,
+            '--metadata',str(ROOT/spec['metadata']),'--ready',str(ready),'--trace',str(trace),'--backend','cuda','--registry',str(ROOT/REGISTRY),'--expected-registry-sha256',registry_sha]
+        self.report['provider_command']=command;process=None;relay_thread=None;started=time.monotonic();self.persist()
+        try:
+            with (self.args.output/'provider.log').open('x') as log:
+                self.verify();process=subprocess.Popen(command,cwd=ROOT,env=environment(self.args.provider_python),stdout=log,stderr=subprocess.STDOUT);self.report['provider_pid']=process.pid;self.persist()
+                while True:
+                    if process.poll() is not None:raise RuntimeError('Shared affect native provider exited before readiness')
+                    if ready.exists():
+                        try:metadata=json.loads(ready.read_text());break
+                        except json.JSONDecodeError:pass
+                    time.sleep(.1)
+                validate_provider_identity(metadata,{'models_registry':REGISTRY,'models_registry_sha256':registry_sha,'provider_backend':'cuda'})
+                assert metadata['pid']==process.pid and metadata['model_id']==self.args.model
+                assert metadata['provider_source_sha256']==self.frozen['sha256'][str((OLD32/'serve_state_eval.py').relative_to(ROOT))]
+                assert metadata['resource_selector_sha256']==self.frozen['sha256']['src/avatar/gpu_resources.py']
+                assert metadata['backend_runtime_identity_sha256']==self.frozen['sha256'][RUNTIME] and metadata['backend_runtime_files_verified']==54 and metadata['model_context_memory_present']
+                for method in metadata['state_method_sources'].values():assert self.backend['files_sha256'][method['path']]==method['file_sha256']
+                for key,value in {'n_gpu_layers':-1,'n_ctx':8192,'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'concurrent_sequences':1,'repeat_penalty':1.0,'top_p':1.0,'top_k':0,'state_policy':'logical_reset'}.items():assert metadata['configuration'][key]==value
+                self.report['provider_ready']=metadata;self.persist();print('Ready shared affect',self.args.model,metadata['chosen_gpu'],flush=True)
+                for index,stream in enumerate(self.protocol['warmups']):
+                    self.verify();payload={'model':self.args.model,'messages':[{'role':'user','content':'请回答：你好。'}],'stream':stream,'temperature':0,'max_tokens':16}
+                    row={'role':'warmup','warmup_index':index};self.report['warmups'].append(row);self.report['requests'].append(row);self.persist()
+                    try:send_raw(metadata['url'],json.dumps(payload,ensure_ascii=False),row)
+                    finally:self.persist()
+                    assert row['finish_reason']=='stop'
+                self.relay=NativeRelay(metadata['url']);relay_thread=threading.Thread(target=self.relay.serve_forever,daemon=True);relay_thread.start()
+                for rep,orders in enumerate(self.protocol['case_arm_orders'],1):
+                    for case,order in zip(self.protocol['cases'],orders,strict=True):self.run_group(case,rep,order)
+                self.verify()
+        except BaseException as error:self.report['failure']=repr(error);raise
+        finally:
+            for state in self.states:
+                try:self.stop(state)
+                except BaseException as error:self.report['cleanup_errors'].append({'pid':state['process'].pid,'error':repr(error)})
+            if relay_thread:self.relay.shutdown();relay_thread.join(10);self.relay.server_close()
+            if process is not None:
+                if process.poll() is None:process.terminate()
+                try:self.report['provider_exit']=process.wait(timeout=60)
+                except subprocess.TimeoutExpired:process.kill();self.report['provider_exit']=process.wait();self.report['provider_forced_cleanup']=True
+                for _ in range(100):
+                    raw=gpu_processes()
+                    if not any(line.split(',')[0].strip()==str(process.pid) for line in raw.splitlines()):break
+                    time.sleep(.1)
+                self.report['gpu_processes_after']=raw;closeout=self.args.output/'provider-closeout.json';marker=json.loads(closeout.read_text()) if closeout.exists() else None
+                self.report['provider_closeout']=marker
+                valid=(marker and marker['pid']==process.pid and marker['state_policy']=='logical_reset' and marker['model_closed'] and marker['server_closed']
+                    and marker['backend_runtime_identity_sha256']==self.frozen['sha256'][RUNTIME] and marker['runtime_files_verified_after']==54)
+                self.report['cleanup_passed']=bool(valid and self.report['provider_exit']==0 and not self.report.get('provider_forced_cleanup') and not self.report['cleanup_errors']
+                    and not any(line.split(',')[0].strip()==str(process.pid) for line in raw.splitlines()))
+            self.report['seconds']=time.monotonic()-started;self.persist()
+        try:
+            skipped=validate_calls(self.report);self.report['native_trace_sha256']=digest(trace)
+            assert len(self.report['workers'])==144 and len(self.report['cases'])==144 and len(self.report['groups'])==48 and all(g['complete'] for g in self.report['groups'])
+            assert all(c['complete'] for c in self.report['cases']) and all(w['exit_code']==0 and not w['forced_cleanup'] for w in self.report['workers']) and self.report['cleanup_passed']
+            assert sum(len(c['turns']) for c in self.report['cases'])==192
+            self.verify();verify_backend(ROOT/RUNTIME,self.frozen['sha256'][RUNTIME])
+            self.report.update(actual_candidate_skips=skipped,engineering_passed=True,completed=True);self.persist()
+        except BaseException as error:self.report['failure']=repr(error);self.persist();raise
+        print('Complete shared affect',self.args.model,'192app turns/144OS/48pairs; actual native',len(self.report['requests']),'skips',skipped,'semantic approval false',flush=True)
+
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--model',required=True,choices=MODELS);parser.add_argument('--output',required=True,type=Path)
+    parser.add_argument('--freeze',required=True,type=Path);parser.add_argument('--expected-freeze-sha256',required=True);parser.add_argument('--provider-python',required=True,type=Path)
+    parser.add_argument('--prior-4b',type=Path);parser.add_argument('--prior-4b-sha256');args=parser.parse_args()
+    if not __debug__:raise ValueError('Run without Python optimization')
+    signal.signal(signal.SIGTERM,lambda signum,frame:(_ for _ in ()).throw(KeyboardInterrupt('Owned shared affect experiment interrupted')))
+    SharedAffect(args).run()
