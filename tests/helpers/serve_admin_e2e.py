@@ -11,6 +11,7 @@ import signal
 import threading
 import wave
 import sys
+import time
 from hashlib import sha256
 
 # npm starts this helper with cwd=frontend. Shared editable environments may
@@ -24,6 +25,7 @@ import avatar.brain.memory
 import avatar.brain.reminders
 from avatar.config import config
 from avatar.brain.memory import MemoryStore
+from avatar.brain.reminders import ReminderStore
 from avatar.web import create_server
 from avatar.lab.transport_fixture import controlled_provider
 
@@ -49,7 +51,16 @@ print('Browser fixture runtime: '+json.dumps(runtime_binding, ensure_ascii=False
 root = Path(__file__).resolve().parents[3]
 folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=root / "runtime/tmp")
 provider_context = ExitStack()
-if os.getenv('AVATAR_E2E_LLM_PROVIDER'):
+reminder_delivery_case = os.getenv('AVATAR_E2E_REMINDER_DELIVERY_CASE')
+if reminder_delivery_case:
+    if reminder_delivery_case not in ('normal_claim', 'response_drop_after_commit', 'navigation_before_response'):
+        raise ValueError('Unknown reminder delivery fixture case')
+    if os.getenv('AVATAR_E2E_LLM_PROVIDER') or os.getenv('AVATAR_E2E_REAL_ASR_MODEL'):
+        raise ValueError('Reminder delivery fixture must not load real models')
+    provider_url = 'http://127.0.0.1:1/v1'
+    config.llm.api_key = ''
+    config.llm.model = 'disabled-reminder-delivery-fixture'
+elif os.getenv('AVATAR_E2E_LLM_PROVIDER'):
     evidence = json.loads(Path(os.environ['AVATAR_E2E_LLM_PROVIDER']).read_text())
     provider_url = evidence['url']
     parsed = urlsplit(provider_url)
@@ -70,6 +81,21 @@ config.embedding.model = ""
 memory = MemoryStore(str(Path(folder.name) / "browser.db"))
 if os.getenv("AVATAR_E2E_EMPTY_PROFILE") != "1":
     memory.remember_user("名字", "浏览器测试原名")
+if reminder_delivery_case:
+    now = time.time()
+    store = ReminderStore(memory)
+    original = store.create('提醒我明天下午3点到期投递实验提醒', now=now)
+    with memory.transaction():
+        memory._conn.execute('UPDATE memory_reminders SET due_at=? WHERE id=?', (now - 60, original['id']))
+    if os.getenv('AVATAR_E2E_EVIDENCE_DIR'):
+        evidence_dir = Path(os.environ['AVATAR_E2E_EVIDENCE_DIR'])
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        with (evidence_dir / 'fixture-seed.json').open('x') as stream:
+            json.dump({'case': reminder_delivery_case, 'original_store_create': original,
+                'controlled_sql': [dict(r) for r in memory._conn.execute('SELECT * FROM memory_reminders')],
+                'llm_enabled': False, 'scope': 'Controlled due timestamp, no natural wait or dialog creation claim.'},
+                stream, ensure_ascii=False, indent=2)
+            stream.write('\n')
 memory.close()
 server = create_server(
     str(Path(folder.name) / "browser.db"), port=18765, legacy_writes=False,
