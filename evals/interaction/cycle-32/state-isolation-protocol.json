@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "scope": "native_retained_wire_state_isolation_regression_replay",
+  "partition": "known C31 regression wire replay, not independent quality validation",
+  "backend": "cuda",
+  "registry": "evals/interaction/cycle-26/model-scale-registry.json",
+  "models": [
+    "qwen3-4b-q4_k_m",
+    "qwen3-32b-q4_k_m"
+  ],
+  "state_policies": [
+    "reuse",
+    "logical_reset",
+    "memory_clear_reset"
+  ],
+  "policy_orders": {
+    "qwen3-4b-q4_k_m": [
+      "reuse",
+      "logical_reset",
+      "memory_clear_reset"
+    ],
+    "qwen3-32b-q4_k_m": [
+      "memory_clear_reset",
+      "logical_reset",
+      "reuse"
+    ]
+  },
+  "chain_orders": [
+    [
+      "without_extra_cognitive",
+      "with_extra_cognitive"
+    ],
+    [
+      "with_extra_cognitive",
+      "without_extra_cognitive"
+    ],
+    [
+      "without_extra_cognitive",
+      "with_extra_cognitive"
+    ]
+  ],
+  "repetitions": 3,
+  "chains": [
+    "without_extra_cognitive",
+    "with_extra_cognitive"
+  ],
+  "fixtures": "evals/interaction/cycle-32/retained-material-wire-fixtures.json",
+  "fixtures_sha256": "cdec1aa76b14ce70d30440e6ab1b4bddc4bef9004a5d5c5663b33d3e35cecd7a",
+  "backend_runtime_identity": "evals/interaction/cycle-32/backend-runtime-identity.json",
+  "backend_runtime_identity_sha256": "b0b39e7556929b3effe3a83bf6a290150fec4fccd7ded183e52b510cb6f0204f",
+  "fixed_generation": {
+    "temperature": 0,
+    "seed": 42,
+    "context": 8192,
+    "max_tokens_cap": 512,
+    "thinking": false,
+    "concurrent_sequences": 1
+  },
+  "warmups": [
+    false,
+    true
+  ],
+  "diagnostic_calls_per_policy": 33,
+  "model_http_calls_per_policy": 35,
+  "model_http_calls_per_model": 105,
+  "providers_per_model": 3,
+  "target_generations_per_policy": 6,
+  "app_turns": 0,
+  "avatar_or_sql_run": false,
+  "raw_sender_policy": "forward exact archived C31 SDK UTF-8 bytes, no reserialization or model-visible scoring/state metadata",
+  "policy_definitions": {
+    "reuse": "existing native implementation without explicit reset intervention",
+    "logical_reset": "Llama.reset before every actual completion, including warmups; record logical token counts before/after",
+    "memory_clear_reset": "require a non-null owned model context memory, call _ctx.kv_cache_clear then Llama.reset before every completion; trace method calls/counters; no general physical-state guarantee"
+  },
+  "primary_observations": [
+    "per-policy/chain final raw replies and unique counts across3 repeats",
+    "same final SDK raw SHA and native prompt SHA acrossall6 final requests/policy",
+    "within-repeat final reply equality with/without extra cognitive",
+    "logical token counts and actual reset/clear calls consistent with policy",
+    "historical93/formula pattern reproduction status, not required to pass engineering"
+  ],
+  "resource_policy": "one owned provider at a time; same model policies pinned to same runtime-selected GPU UUID with real headroom checked each launch; use retained original model GPU UUID only if currently admissible, otherwise explicitly record historical hardware difference; never stop foreign jobs",
+  "32b_gate": "completed same-freeze4B all three policies engineering/105 calls/stop/source/runtime/cleanup,not output quality",
+  "interpretation": "neither token reset nor clear assumed to fix; record negative/nonreproduction outcomes and do not choose favourable repeats. No global deterministic or root-cause claim from this one source task. Prior C31 binaries not retrospectively hashed.",
+  "production_activation_authorized": false,
+  "prospective_execution_authorized": false,
+  "wall_clock_experiment_deadline": null
+}
