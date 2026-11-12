@@ -56,6 +56,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         raise ValueError('Current-default execution freeze requires development stage')
     if execution_freeze is not None and candidate != 'v1':
         raise ValueError('Current-default execution freeze cannot select a lab candidate')
+    if execution_freeze is not None and (partition != 'development' or candidate_freeze is not None or pair_protocol is not None):
+        raise ValueError('Current-default execution cannot select candidate inputs or prospective partition')
     if registry_path != default_registry and execution_freeze is None:
         raise ValueError('Custom registry requires a current-default execution freeze')
     def verify_development_inputs(selected_model=None):
