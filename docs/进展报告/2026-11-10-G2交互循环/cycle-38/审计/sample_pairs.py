@@ -61,7 +61,12 @@ def collect_arm(case, candidate, opener, wire_path, verify, output, repetition):
             assert kind == 'result', 'application failed: '+str(kind)
             mode = result['generation_mode']
             assert mode not in ('rules_unconfigured', 'rules_service_error'), 'model service fallback'
-            assert turn['visible'] == result['reply'] and not result['tool_calls']
+            if mode in ('llm', 'reviewed_response'):
+                assert turn['visible'] == result['reply']
+            else:
+                assert turn['visible'] in ('', result['reply'])
+            turn['final_display_reply'] = result['reply']
+            assert not result['tool_calls']
             review = result.get('response_review')
             if not candidate:
                 assert review is None

@@ -1,19 +1,24 @@
 """Deterministic scripted plans exercise sampler/wire plumbing, NOT model quality."""
+import argparse
+import re
+import subprocess
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import re
 import threading
 from urllib.request import ProxyHandler, build_opener
 
-from native_common import ROOT, BASE, PROTOCOL, WORK, read
+from native_common import ROOT, BASE, PROTOCOL, WORK, read, digest
 from native_wire_relay import NativeWireRelay, parse_wire
 from sample_pairs import collect_arm
 from avatar.brain.facts import _mask_quoted
 from avatar.config import config
 
 
-def main():
-    output = BASE/'审计/工作目录/002-工程全量/controlled-sampler-preflight'
+def main(tag):
+    assert re.fullmatch(r"[a-z0-9_-]+", tag)
+    output = BASE/('审计/工作目录/002-工程全量/controlled-sampler-preflight-'+tag)
     output.mkdir(exist_ok=False)
     protocol = read(PROTOCOL)
     routes = {text: (case, route) for case in protocol['development_cases']
@@ -64,7 +69,9 @@ def main():
     original = config.llm.base_url, config.llm.api_key, config.llm.model, config.embedding.model
     report = {'scope': 'scripted_plan_HTTP_SSE_SQL_wire_plumbing_only_NOT_native_classification',
         'native_or_gpu_calls': 0, 'arms': [], 'completed': False, 'failure': None,
-        'fixture_requests': [], 'provider_closed': False}
+        'fixture_requests': [], 'provider_closed': False,
+        'execution_head': subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
+        'source_sha256': {str(p.relative_to(ROOT)): digest(p) for p in [Path(__file__), Path(__file__).with_name('sample_pairs.py'), ROOT/'src/avatar/lab/typed_capability_gate.py', PROTOCOL]}}
     try:
         with NativeWireRelay(f'http://127.0.0.1:{provider.server_port}/v1', output/'wire.jsonl', actual_native=False) as relay:
             config.llm.base_url, config.llm.api_key, config.llm.model = relay.url, 'local-eval-only', 'controlled-cpu-fixture'
@@ -105,4 +112,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--tag', required=True)
+    main(parser.parse_args().tag)

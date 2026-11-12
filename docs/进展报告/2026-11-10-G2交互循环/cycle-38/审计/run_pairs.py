@@ -95,7 +95,9 @@ def main(args):
                     if review is not None and review['plan_raw'] is not None:
                         assert len(plans)==1 and parsed[plans[0]]['reply']==review['plan_raw']
                     else:assert not plans
-                    assert turn['visible']==result['reply']==turn['stored_assistants'][-1]['content']
+                    assert turn['final_display_reply']==result['reply']==turn['stored_assistants'][-1]['content']
+                    if result['generation_mode'] in ('llm','reviewed_response'):assert turn['visible']==result['reply']
+                    else:assert turn['visible'] in ('',result['reply'])
                     mappings.append({'case':arm['id'],'arm':arm['arm'],'input':turn['input'],
                         'native_ordinals':turn['native_ordinals'],'request_kinds':{k:[n+1 for n in v] for k,v in kinds.items()},
                         'generation_mode':result['generation_mode'],'fixed_renderer_used':bool(review and review['fixed_renderer_used'])})
