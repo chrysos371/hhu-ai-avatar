@@ -114,7 +114,7 @@ def resolve_query(store, command, text, context, *, checkpoint=None):
                         'status': row['status'], 'service_claim_recorded': row['notified_at'] is not None,
                         'client_ack_recorded': row['client_ack'] is not None}
                     ack = '已记录客户端确认，但不代表已阅读。' if row['client_ack'] is not None else '尚无客户端确认记录。'
-                    reply = (f'编号{row["id"]}「{row["title"]}」：{labels[row["status"]]}，时间为{due}（北京时间）。'
+                    reply = (f'编号{row["id"]}「{row["title"]}」：记录状态为{labels[row["status"]]}，提醒时间为{due}（北京时间）。'
                         + ack + '提醒需程序运行并处理到期事项，网页接收需在线轮询。')
                 except (ValueError, OverflowError, OSError):
                     metadata['state_error'] = 'stored_reminder_state_unavailable'

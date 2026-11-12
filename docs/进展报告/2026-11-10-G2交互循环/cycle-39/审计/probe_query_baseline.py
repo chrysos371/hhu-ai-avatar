@@ -1,4 +1,6 @@
 """Observe original explicit-query coverage and due-claim side effects, no model."""
+import argparse
+import re
 from contextlib import closing
 import hashlib
 import json
@@ -28,14 +30,17 @@ def projection(memory):
         for name in ['memory_reminders','memory_reminder_deliveries','memory_action_receipts']}
 
 
-def main():
-    out=BASE/'审计/工作目录/001-状态查询调查/baseline'
+def main(tag=""):
+    assert not tag or re.fullmatch(r"[a-z0-9_-]+",tag)
+    out=BASE/('审计/工作目录/001-状态查询调查/baseline'+('-'+tag if tag else ''))
     out.mkdir(exist_ok=False)
     protocol=ROOT/'evals/interaction/cycle-39/explicit-reminder-query-protocol.json'
-    report={'scope':'actual_Avatar_SQL_no_model_original_coverage_observation_not_old_design_fault_or_quality_score',
+    report={'scope':'actual_Avatar_SQL_no_model_same_material_query_contract_probe_not_quality_score', 'tag':tag,
         'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'source_sha256':{p:digest(ROOT/p) for p in ['src/avatar/main.py','src/avatar/brain/reminders.py',str(protocol.relative_to(ROOT)),str(Path(__file__).relative_to(ROOT))]},
         'cases':[],'native_or_GPU_calls':0,'completed':False}
+    helper=ROOT/'src/avatar/brain/reminder_queries.py'
+    if helper.exists():report['source_sha256'][str(helper.relative_to(ROOT))]=digest(helper)
     try:
         for case in json.loads(protocol.read_text())['baseline_probes']:
             with tempfile.TemporaryDirectory(prefix='c39-baseline-',dir=project_data_root(ROOT)/'tmp') as folder:
@@ -62,8 +67,10 @@ def main():
         report['completed']=True
     finally:
         (out/'evaluation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-    print('C39 original baseline:',len(report['cases']),'actual Avatar results;',sum(c['new_query_mode_present'] for c in report['cases']),'new query modes;',sum(c['business_unchanged'] for c in report['cases']),'unchanged business projections;0model/GPU')
+    print('C39 same-material probe ['+tag+']:',len(report['cases']),'actual Avatar results;',sum(c['new_query_mode_present'] for c in report['cases']),'new query modes;',sum(c['business_unchanged'] for c in report['cases']),'unchanged business projections;0model/GPU')
 
 
 if __name__=='__main__':
-    main()
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--tag',default='')
+    main(parser.parse_args().tag)
