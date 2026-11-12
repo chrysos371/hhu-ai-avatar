@@ -119,6 +119,8 @@ class LabReadSession:
     def __init__(self, memory, session_id, *, checkpoint=None):
         if not isinstance(session_id, str) or not session_id:
             raise ValueError('a real lab session identifier is required')
+        if memory._conn.in_transaction:
+            raise Cancelled('lab startup requires released caller transaction')
         self.memory = memory
         self.reminders = ReminderStore(memory)  # startup schema, before any read
         self.speaker = SpeakerContextStore(memory)
