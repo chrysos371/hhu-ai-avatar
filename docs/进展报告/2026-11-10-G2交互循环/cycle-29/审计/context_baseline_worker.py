@@ -15,6 +15,7 @@ def main(args):
     db=args.db.resolve();temporary=(ROOT.parent/'runtime/tmp').resolve()
     if not db.is_relative_to(temporary) or not db.parent.name.startswith('c29-context-'):raise ValueError('Use owned C29 temporary DB only')
     if args.ready.exists() or args.runtime_out.exists():raise ValueError('Use fresh worker evidence paths')
+    os.environ['NO_PROXY']='127.0.0.1,localhost';os.environ['no_proxy']='127.0.0.1,localhost'
     sys.path.insert(0,str(ROOT/'src'))
     from avatar.config import config
     config.llm.base_url=args.provider_url;config.llm.api_key='local-c29-fixture-only';config.llm.model='c29-controlled'
