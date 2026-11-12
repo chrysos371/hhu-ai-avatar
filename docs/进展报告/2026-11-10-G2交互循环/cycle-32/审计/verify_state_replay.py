@@ -41,7 +41,7 @@ def verify(path):
         for ordinal,(row,actual) in enumerate(zip(rows,native,strict=True)):
             calls+=1;raw=row['raw_request_json'];request=json.loads(raw)
             assert request==row['request'] and digest_bytes(raw)==row['request_sha256']==actual['request_body_sha256']
-            assert row['provider_call_id']==actual['id'] and row['reply']==actual['reply'] and row['finish_reason']==actual['finish_reason']=='stop'
+            assert row['provider_call_id']==actual['id'] and row['reply']==actual['response'] and row['finish_reason']==actual['finish_reason']=='stop'
             assert row['status']==200 and row['outcome']=='completed' and row['http_roundtrip_seconds']>0
             body=row['raw_http_body'];assert digest_bytes(body)==row['response_body_sha256']
             if request['stream']:
@@ -52,7 +52,7 @@ def verify(path):
                 assert [c['choices'][0]['finish_reason'] for c in chunks if c['choices'][0]['finish_reason'] is not None]==['stop']
             else:
                 decoded=json.loads(body);assert decoded['id']==actual['id'] and decoded['choices'][0]['finish_reason']=='stop';reply=decoded['choices'][0]['message']['content']
-            assert reply==row['reply'] and actual['messages']==request['messages']
+            assert reply==row['reply'] and actual['messages']==request['messages'] and actual['stream']==request['stream'] and actual['outcome']=='completed'
             fmt=request.get('response_format');schema=fmt.get('json_schema',{}).get('schema') if fmt else None
             canonical=lambda value:sha256(json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest() if value is not None else None
             assert actual['response_format']==fmt and actual['response_format_sha256']==canonical(fmt) and actual['response_schema_sha256']==canonical(schema) and actual['grammar_enabled']==bool(fmt)
