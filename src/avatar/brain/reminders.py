@@ -10,7 +10,9 @@ CHINA = timezone(timedelta(hours=8))
 _DATE = r'(?:\d{4}年\d{1,2}月\d{1,2}[日号]|今天|明天|后天|(?:下周|这周|周|星期)[一二三四五六日天])'
 _CHINESE_CLOCK = r'[零〇一二两三四五六七八九十]+'
 _TIME = (rf'(?P<period>早上|上午|下午|晚上|中午)?(?P<hour>\d{{1,2}}|{_CHINESE_CLOCK})[点时]'
-         rf'(?:(?P<half>半)|(?P<minute>\d{{1,2}})分?|(?P<chinese_minute>{_CHINESE_CLOCK})分(?!钟))?')
+         rf'(?:(?P<half>半)(?!个?(?:小时|分钟))|'
+         rf'(?P<minute>\d+)(?:分(?!钟)|(?![\d分A-Za-z_]))|'
+         rf'(?P<chinese_minute>{_CHINESE_CLOCK})分(?!钟))?')
 
 
 def _clock_number(value: str) -> int:
@@ -40,6 +42,10 @@ def parse_reminder(text: str, *, now: float | None = None) -> dict | None:
     title = body[parsed.end():].strip(' ，。！!') if parsed else ''
     if not parsed or not title or re.search(_DATE, title):
         raise ValueError('请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。')
+    # Bare quantities/durations are not a task. Keep duration or identifier
+    # prefixes with their actual task instead of consuming them as clock fields.
+    if re.fullmatch(rf'(?:\d+|{_CHINESE_CLOCK})(?:小时|分钟)?|半(?:个)?(?:小时|分钟)', title):
+        raise ValueError('请提供一个明确事项。')
     current = datetime.fromtimestamp(time.time() if now is None else now, CHINA)
     date_text = parsed['date']
     if '年' in date_text:

@@ -68,3 +68,65 @@ def test_actual_http_invalid_clock_has_neither_business_nor_receipt_success(api_
     assert '已设置提醒' not in result['reply']
     with closing(MemoryStore(server.db_path)) as memory:
         assert memory._conn.execute('SELECT COUNT(*) FROM memory_reminders').fetchone()[0]==0
+
+
+@pytest.mark.parametrize('clock,hour,minute,title', [
+    ('上午九点5分钟呼吸练习', 9, 0, '5分钟呼吸练习'),
+    ('上午9点5分钟呼吸练习', 9, 0, '5分钟呼吸练习'),
+    ('上午9点15分钟复习', 9, 0, '15分钟复习'),
+    ('上午九点半小时复习', 9, 0, '半小时复习'),
+    ('上午9点半小时复习', 9, 0, '半小时复习'),
+    ('上午九点半个小时复习', 9, 0, '半个小时复习'),
+    ('上午九点半分钟准备', 9, 0, '半分钟准备'),
+    ('上午9点3D打印练习', 9, 0, '3D打印练习'),
+    ('上午九点3D打印练习', 9, 0, '3D打印练习'),
+    ('上午九点5G模块复核', 9, 0, '5G模块复核'),
+    ('上午9点2FA备份', 9, 0, '2FA备份'),
+    ('上午9点5分3D打印练习', 9, 5, '3D打印练习'),
+    ('上午九点半3D打印练习', 9, 30, '3D打印练习'),
+    ('上午9点15分15分钟复习', 9, 15, '15分钟复习'),
+    ('上午9点15复习', 9, 15, '复习'),
+    ('上午九点十五分复习', 9, 15, '复习'),
+    ('上午九点，3D打印练习', 9, 0, '3D打印练习'),
+])
+def test_clock_boundaries_preserve_duration_and_identifier_titles(clock,hour,minute,title):
+    value=parse_reminder('提醒我明天'+clock,now=NOW)
+    assert value=={'title':title,'due_at':datetime(2026,11,2,hour,minute,tzinfo=CHINA).timestamp()}
+
+
+@pytest.mark.parametrize('clock', [
+    '上午9点半小时',
+    '上午九点半分钟',
+    '上午九点半个小时',
+    '上午9点5分钟',
+    '上午九点五分钟',
+    '上午九点三十',
+    '上午9点123分复习',
+    '上午九点123复习',
+])
+def test_pure_duration_quantity_and_long_out_of_range_minute_need_clarification(clock):
+    with pytest.raises(ValueError):parse_reminder('提醒我明天'+clock,now=NOW)
+
+
+@pytest.mark.parametrize('title',['5分钟呼吸练习','半小时复习','3D打印练习'])
+def test_actual_http_keeps_title_and_time_in_sql_and_receipt(api_v1,title):
+    request,server=api_v1
+    result=request('/api/v1/chat',{'text':'提醒我明天上午九点'+title})[1]['data']
+    assert result['reminder_error'] is None and result['reminder']['title']==title
+    due=datetime.fromtimestamp(result['reminder']['due_at'],CHINA)
+    assert (due.hour,due.minute)==(9,0)
+    receipt=result['action_receipts']['items'];assert len(receipt)==1
+    assert receipt[0]['source_message_id']==result['conversation']['user_message_id']
+    with closing(MemoryStore(server.db_path)) as memory:
+        rows=memory._conn.execute('SELECT * FROM memory_reminders').fetchall()
+        assert len(rows)==1 and rows[0]['title']==title and rows[0]['due_at']==result['reminder']['due_at']
+
+
+@pytest.mark.parametrize('title',['5分钟','半小时','三十'])
+def test_actual_http_missing_task_has_no_business_or_receipt_write(api_v1,title):
+    request,server=api_v1
+    result=request('/api/v1/chat',{'text':'提醒我明天上午九点'+title})[1]['data']
+    assert result['reminder'] is None and result['reminder_error'] and not result['action_receipts']['items']
+    assert '已设置提醒' not in result['reply']
+    with closing(MemoryStore(server.db_path)) as memory:
+        assert memory._conn.execute('SELECT COUNT(*) FROM memory_reminders').fetchone()[0]==0
