@@ -19,7 +19,9 @@
     "scope": "current_user only; fictional/unverified/mixed exit denied; future-turn real_actions_for_new_turn cannot authorize old mixed turn",
     "pending_or_later_source": "deny on changed revision/content/session/role/redacted/deleted/newer user source or persisted control mismatch",
     "read_transaction": "private BEGIN/rollback for reads or caller transaction preserved; no write/commit on execute/publish",
-    "inference": "never hold owned read transaction across model work; publication rechecks source/epoch/cancellation"
+    "inference": "never hold owned read transaction across model work; publication rechecks source/epoch/cancellation",
+    "entry_requires_no_active_transaction": "begin_turn owns and commits its source/control transaction; refuses an already active caller transaction",
+    "publish_requires_no_active_transaction": "execute may preserve caller transaction, but publish refuses until it is released, so fresh authority can be observed outside an old SQLite snapshot"
   },
   "argument_basis": {
     "max_source_characters": 2000,
