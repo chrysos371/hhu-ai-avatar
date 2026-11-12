@@ -23,7 +23,7 @@ def digest(path):return sha256(path.read_bytes()).hexdigest()
 
 def required_paths(root=ROOT):
     base={PROTOCOL,REGISTRY,'scripts/native_evidence_plan.py','scripts/probe_native_evidence_plans.py',
-          'scripts/probe_structured_provider.py','scripts/evaluate_native_output_audit.py','scripts/serve_local_model_eval.py'}
+          'scripts/probe_structured_provider.py','scripts/evaluate_native_output_audit.py','scripts/serve_local_model_eval.py','src/avatar/gpu_resources.py'}
     base.update(str(p.relative_to(root)) for folder in ('src','tests') for p in (root/folder).rglob('*.py'))
     base.update('evals/interaction/cycle-26/model-metadata-'+label+'.json' for label in ('4b','14b','32b'))
     return base
@@ -44,13 +44,45 @@ def verify_freeze(path,expected,model,root=ROOT):
     return frozen
 
 
+def validate_protocol(protocol):
+    if (protocol.get('scope')!='standalone_native_source_atom_content_diagnostic' or protocol.get('backend')!='cuda'
+            or protocol.get('registry')!=REGISTRY or protocol.get('models')!=list(MODELS)
+            or protocol.get('production_activation_authorized') is not False or protocol.get('prospective_execution_authorized') is not False
+            or protocol.get('gold_sent_to_model') is not False or protocol.get('same_messages_between_arms') is not True
+            or protocol.get('diagnostic_requests_per_model')!=24 or protocol.get('arms')!=['plain','plan']
+            or protocol.get('warmups')!=[False,True] or any(type(v) is not bool for v in protocol.get('warmups',[]))
+            or len(protocol.get('cases',[]))!=12 or len(protocol.get('arm_orders',[]))!=12
+            or len({c['id'] for c in protocol['cases']})!=12
+            or any(sorted(order)!=['plain','plan'] for order in protocol['arm_orders'])):raise ValueError('Unexpected fixed protocol contract')
+    for case in protocol['cases']:render(case['gold'],case['context'])
+
+
+def validate_rows(rows,protocol,model):
+    validate_protocol(protocol)
+    expected=[]
+    for index,stream in enumerate(protocol['warmups']):
+        value={'model':model,'messages':[{'role':'user','content':'请回答：你好。'}],'stream':stream,'temperature':0,'max_tokens':16}
+        expected.append((value,{'role':'warmup','warmup_index':index},None))
+    for case,order in zip(protocol['cases'],protocol['arm_orders']):
+        for arm in order:expected.append((payload(case,arm,model),{'role':'source_atom_diagnostic','case':case['id'],'arm':arm},case))
+    if len(rows)!=len(expected):raise ValueError('Diagnostic request schedule incomplete')
+    for row,(value,identity,case) in zip(rows,expected):
+        if row.get('request')!=value or row.get('finish_reason')!='stop' or any(row.get(k)!=v for k,v in identity.items()):raise ValueError('Diagnostic request schedule changed')
+        if identity.get('arm')=='plan':
+            grade=grade_plan(row['reply'],case)
+            if any(row.get(k)!=v for k,v in grade.items()):raise ValueError('Stored plan grade differs from raw reply')
+
+
 def prior_gate(path,expected,prior_sha):
     if path is None or not prior_sha or digest(path)!=prior_sha:raise ValueError('32B requires pinned completed4B evidence')
     prior=json.loads(path.read_text());trace=path.parent/'provider-trace.jsonl'
     if (prior.get('freeze_sha256')!=expected or prior.get('model_id')!=MODELS[0] or not prior.get('completed')
-            or not prior.get('engineering_passed') or not prior.get('cleanup_passed')
+            or not prior.get('engineering_passed') or not prior.get('cleanup_passed') or prior.get('provider_exit')!=0
             or prior.get('native_trace_sha256')!=digest(trace) or len(prior.get('requests',[]))!=26):raise ValueError('4B evidence incomplete')
     validate_trace(prior['requests'],[json.loads(x) for x in trace.read_text().splitlines()],require_request_identity=True)
+    validate_rows(prior['requests'],json.loads((ROOT/PROTOCOL).read_text()),MODELS[0])
+    plans=[row for row in prior['requests'] if row.get('arm')=='plan']
+    if len(plans)!=12 or not all(row['declared_schema_valid'] for row in plans):raise ValueError('4B actual schema evidence incomplete')
 
 
 def grade_plan(text,case):
@@ -69,10 +101,7 @@ def run(args):
     frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model)
     if args.model==MODELS[1]:prior_gate(args.prior_4b,args.expected_freeze_sha256,args.prior_4b_sha256)
     protocol=json.loads((ROOT/PROTOCOL).read_text())
-    if (len(protocol['cases'])!=12 or len(protocol['arm_orders'])!=12 or protocol['warmups']!=[False,True]
-            or any(sorted(order)!=['plain','plan'] for order in protocol['arm_orders'])):raise ValueError('Unexpected fixed protocol dimensions')
-    # Gold is checked offline and never included in payload().
-    for case in protocol['cases']:render(case['gold'],case['context'])
+    validate_protocol(protocol)
     registry,registry_sha,_=load_registry(ROOT/REGISTRY,expected_sha256=frozen['sha256'][REGISTRY])
     spec=next(m for m in registry['models'] if m['model_id']==args.model)
     args.output.mkdir(parents=True,exist_ok=False)
@@ -132,6 +161,7 @@ def run(args):
         report['seconds']=time.monotonic()-started;save()
     try:
         calls=[json.loads(line) for line in trace.read_text().splitlines()];validate_trace(report['requests'],calls,require_request_identity=True)
+        validate_rows(report['requests'],protocol,args.model)
         report['native_trace_sha256']=digest(trace)
         for row in report['requests']:row['native_trace_matched']=True
         plans=[r for r in report['requests'] if r.get('arm')=='plan']
