@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 
 const token = 'mission-control-disposable-e2e-token';
 const scenario = process.env.AVATAR_E2E_REMINDER_DELIVERY_CASE;
+const labelOnly = process.env.AVATAR_E2E_REMINDER_LABEL_ONLY === '1';
 test('reminder claim response and actual page presentation baseline', async ({ page }, info) => {
   test.skip(!scenario, 'explicit isolated reminder delivery baseline only');
   test.setTimeout(0);
@@ -21,7 +22,7 @@ test('reminder claim response and actual page presentation baseline', async ({ p
   const inputs = [...files('src'), ...files('../src/avatar').filter(p => p.endsWith('.py')), ...files('dist'),
     'e2e/reminder-delivery-audit.spec.ts', '../tests/helpers/serve_admin_e2e.py'];
   const report: Record<string, unknown> = {
-    case: scenario, scope: 'Actual Chromium/HTTP/SQLite, controlled response faults and real page poll timer; no model/physical notification/human perception.',
+    case: scenario, phase: labelOnly ? 'claim-label-only' : 'original-baseline', scope: 'Actual Chromium/HTTP/SQLite, controlled response faults and real page poll timer; no model/physical notification/human perception.',
     head: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), completed: false,
     sourceSha256: Object.fromEntries(inputs.map(p => [p, createHash('sha256').update(readFileSync(p)).digest('hex')])),
     virtualClock: false,
@@ -100,7 +101,8 @@ test('reminder claim response and actual page presentation baseline', async ({ p
     save();
     await page.reload();
     await expect(row()).toBeVisible();
-    await expect(row()).toContainText('本机已提示');
+    await expect(row()).toContainText(labelOnly ? '已标记到期，显示未确认' : '本机已提示');
+    if (labelOnly) await expect(row()).not.toContainText('本机已提示');
     await expect(notice()).toHaveCount(0);
     await expect.poll(() => upstream.length, { timeout: 30000 }).toBe(2);
     await expect.poll(() => fulfilled, { timeout: 15000 }).toBe(2);
