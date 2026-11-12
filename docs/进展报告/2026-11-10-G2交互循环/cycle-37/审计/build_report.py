@@ -1,0 +1,62 @@
+"""Render the measured C37 current-default baseline and scoped repair audit."""
+import json
+from pathlib import Path
+from render_report import render
+from verify_system import BASE, WORK, digest, read
+
+out = BASE / '审计'
+proof = read(out / '收尾核验/system-evidence.json')
+assert proof['verified']
+sections = [
+ {'title': '当前默认基线：工程完成，语义阻塞仍在', 'paragraphs': [
+ '本轮完成预登记12场景/24回合×4B/32B×3固定重复，共144个实际应用结果、264次真实CUDA native调用（含12次预热），全部stop；120个模型生成回合与24个框架回合分开。材料为代理新编措辞的开发集，题类与既有问题相关，不是外部盲测或独立人类金标。默认配置、所有旧候选关闭；温度0、seed42、n_ctx8192、max_tokens512、thinking=false。',
+ '每组独立provider OS，组内12场景共用provider与采样OS，但各场景独立SQLite与HTTP服务；沿用原隐式缓存策略，没有物理清零或逐场景OS重启主张。透明代理保留SDK原请求/响应字节与SHA，完整缓冲流式响应，采证总耗时不能当首字/推理速度。工程proof先4B三组准入后32B；6个provider及6个sampler退出且GPU清理核平。',
+ '全部六组启动按当时40441MiB空闲/0%选择GPU0，UUID GPU-81550800-367d-1855-0f35-c61c274edfdf；这是实际资源选择，不把6–7写成永久限制。同模型三重复24条应用回复、44笔SDK请求body SHA、44段native文本均相同；HTTP原响应包含唯一ID，不能说全HTTP字节相同。相关重复不增加独立语义样本数。',
+ '逐来源/原文span代理审阅显示：4B每重复20模型回合中6个明确无依据动作回合，32B每重复仍有2个；完成、未来承诺、电话提议重叠与合法写作/引用/小说/用户重发建议分别记录。更少反例只是本材料整链观测，认知与生成模型同时改变，不是容量因果或模型推广依据。发送者来源、草稿新增背景与未同意状态仍有交付失败。'],
+ 'table': (['组', '实际应用 / native', '20模型回合中的明确无依据外部动作'],
+ [[r['group'], '24 / 44（含2预热）', str(r['findings']['unique_clear_unsupported_external_action_turns'])+'；4框架回合另列'] for r in proof['semantic_agent_reviews']]),
+ 'links': [('预登记协议', '../../../../../evals/interaction/cycle-37/current-default-capability-protocol.json'), ('模型注册与固定来源', '../../../../../evals/interaction/cycle-37/model-registry.json'), ('原328输入冻结', '工作目录/001-默认能力基线/execution-freeze.json'), ('4B三组工程门槛', '工作目录/001-默认能力基线/4b-three-run-gate.json'), ('32B三组工程proof', '工作目录/001-默认能力基线/32b-three-run-engineering-proof.json'), ('实际重复一致数', '工作目录/001-默认能力基线/fixed_order_repeatability.json'), ('自有资源退出', '工作目录/001-默认能力基线/native-resource-closeout.json')]
+ + [(r['group']+'原样本', '../实验/'+r['group']+'/sample/native-output.json') for r in proof['semantic_agent_reviews']]
+ + [(r['group']+'逐span审阅', '工作目录/002-语义审阅/'+r['group']+'-span-review.json') for r in proof['semantic_agent_reviews']]},
+ {'title': '提醒能力补齐与标题边界修复', 'paragraphs': [
+ '原固定预检实际运行到第16个结果发现“明天上午九点”无法建提醒：SQL0对期望1，系统要求补充，没有假装成功。新增有界中文小时/带分分钟/半点，保留数字兼容与原材料；103相关控制、原24回合复测以及1880/1 Python等通过后才冻结原生输入。常用中文数词转换仅作用于时间字段，畸形/越界/无事项仍拒绝，不是完整自然语言时间系统。',
+ '原生阶段同时只读审计发现已有数字兼容语法吞标题：9点5分钟呼吸练习被移为09:05/“钟呼吸练习”，半小时与3D也类似。原12个开发控制6/12匹配，数字小时旧版本也有同根反例。六组及独立工程复核结束、原328 current明确退役后才改源，保留全部旧输入/原始样本，后续不能用旧current检查认证新源码。',
+ '修后保留完整分钟时长/半小时/ASCII数字词标题，不误移期；显式分/半点和旧无分15复习正控保持。纯数词/纯时长不当事项。新增31控制（17兼容正控、8拒绝、6实际HTTP/SQL/回执正负控），相关134通过；原12矩阵12/12。原无分分钟仍有语言歧义，推荐以逗号分隔事项，未声明一般口语全覆盖。',
+ '离线预检共64个实际结果＝首失败阶段16＋中文钟点后24＋标题修后24，0native；与144原生应用分账。首次失败前9场景有SQL完整转储，第10失败场景保留HTTP与提醒查询，不能补造未生成的完整dump。当前完整回归独立执行；browser期间仅证据提交使HEAD变化，实际页面HEAD与runner HEAD的431输入均核Git等价。'],
+ 'table': (['检查', '实测结果', '版本 / 限制'], [
+ ['定向提醒回归', '134 passed；原矩阵6/12→12/12', '有限开发控制；不是模型或盲测分数'],
+ ['当前完整Python', '1911 passed /1 skipped；129.63秒', '相对1880新增31；431当前输入稳定'],
+ ['当前前端', '192 passed /37文件', '组件代码未改；非性能或语义提升'],
+ ['当前默认浏览器', '17 passed /16 optional skipped；42.0秒', '实际8模块/协议/5bundle，2页固定1秒红删'],
+ ['type / lint / build', '通过', '5bundle与此前相同；不是新native质量验收']]),
+ 'links': [('限定提醒语法', '../../../../记忆工作台与提醒.md'), ('标题原始矩阵', '工作目录/003-钟点标题边界审计/before-repair-matrix.json'), ('修后矩阵', '工作目录/004-标题边界修复/after-repair-matrix.json'), ('134相关log', '工作目录/004-标题边界修复/targeted-first.log'), ('当前Python绑定', '工作目录/001-默认能力基线/title-boundary-python-final-binding.json'), ('当前浏览器绑定', '工作目录/001-默认能力基线/title-boundary-browser-final-binding.json'), ('当前24回合HTTP/SQL', '工作目录/001-默认能力基线/application-preflight-title-boundary/evaluation.json'), ('原生阶段退役', '工作目录/001-默认能力基线/native-phase-retirement.json')]},
+ {'title': '系统审计：三项限定关闭，四项语义开放', 'paragraphs': [
+ '独立收尾将历史原生与当前修复严格分开：328冻结输入逐项核原Git，退役后其中仅reminders.py与其测试变化；8份前后回归绑定逐一核431历史Git输入/历史driver/log，当前4份再核现有字节与实际browser身份。原native原证重建复用既有verify_group，显式换成历史Git源身份适配器，原wire/schema/SSE/存储检查保留；不冒称另一个独立wire解析实现或新current-native门槛。',
+ '全部6份审阅绑定样本/evaluation SHA与Unicode codepoint原文位置，重复注释只在原文一致后复用、来源分别核验。35旧封存（C3–C36共34cycle的5938项＋迁移88项＝6026项）均保持，9集中数据入口有效，未回写任何旧报告。',
+ '本轮7项是工程缺口、已有根问题的新反例及工具问题的单项跟踪数量，不等于7个全新根因。C37-003继承C19-001/P1；6与2不是总体出错率。原型fixture缺finish metadata造成6过2失败，修测试夹具后9通过，原log/源码副本保留，未放宽严格原生采证。'],
+ 'table': (['单项', '优先级 / 当前状态', '结论与下一门槛'], [
+ ['C37-001 wire测试夹具', 'P3 限定关闭', 'owned完整JSON/SSE夹具9通过；原失败保留'],
+ ['C37-002 中文钟点', 'P2 限定关闭', '原提醒0→1；有限语法/真实回执'],
+ ['C37-003 无依据外发完成与承诺', 'P1 开放', '4B每组6、32B每组2；旧v4仍拒绝'],
+ ['C37-004 已有发送者来源仍否认/回避', 'P2 开放', '实际prompt有用户我刚发；非历史没发送或KV结论'],
+ ['C37-005 标题前缀吞食与移期', 'P2 限定关闭', '12矩阵/134相关/1911完整/24HTTP复测'],
+ ['C37-006 草稿背景与正文前缀', 'P2 开放', '未提供≠已证现实为假；保留原句≠全交付通过'],
+ ['C37-007 未同意弱化为未定时间', 'P2 开放', '交付未明确尚未同意，未声称文本明确说已同意']]),
+ 'links': [(p.stem, '问题单/'+p.name) for p in sorted((out/'问题单').glob('*.md'))] + [('历史/当前系统证据', '收尾核验/system-evidence.json'), ('复核程序及适配说明', 'verify_system.py'), ('完整过程进展', '../进展.md')]},
+ {'title': '下一循环：可执行能力与来源约束的隔离研究', 'paragraphs': [
+ 'P1优先。先审既有能力/回执/说话者机制与C19–C23拒绝记录，研究从自由生成“是否已做”转向可验证的类型化能力/执行状态与来源绑定。用户自述、请求、助手旧声称、真实工具回执要有不同类型；引用/小说/代写和真实本地提醒必须保留。此处是待实验的设计方向，没有声称已实现或已有效。',
+ '不把被拒旧v4提示换名字推广，不在C37已见题同批调词后冒称独立通过；先固定开发/分离保护输入、成功与拒绝门槛，再实验隔离候选。若输出来自框架确定性路由，明确记规则/框架收益，不当原生生成模型质量提高。32B暂不替换默认配置，C31 analysis-skip等候选继续关闭。',
+ 'P2随后推进发送者归属、素材忠实与未同意状态交付；再评估跨OS PAD持续性与隐私因果，真人自由对话/物理设备ASR、中文口型/ü/声调及多日稳定仍需独立验收。本轮工程与固定材料基线不足以批准整体代际跃迁；持续Goal active，封存后进入下一循环。GPU仍按启动实际余量/UUID，最多同组4空闲卡，不停他人进程、不设整轮墙钟截止。'],
+ 'table': (['次序', '工作', '继续 / 停止门槛'], [
+ ['P1', '类型化能力与来源/执行状态的隔离原型', '真实回执绑定、全链无依据声称减少且合法任务不退化；原始失败全保留'],
+ ['P2', '发送者/草稿/未同意交付分离评估', '逐来源与保护正文/状态检查，不用仅关键词二元打分'],
+ ['P2', '跨OS PAD、真人/设备、语音形象体验', '独立数据和真实设备证据；不以合成工程回归替代'],
+ ['持续', '小步提交、原数据/单项问题/MD与HTML审计', '封存不可回写，源码变化后用新绑定；Goal保持active']]),
+ 'links': [('远期路线', '../../远期目标与验收路线.md'), ('C23拒绝记录', '../../cycle-23/审计/系统审计与推进报告.md'), ('C36封存报告', '../../cycle-36/审计/系统审计与推进报告.md')]}
+]
+meta = render(out, 'C37 当前默认实模基线与提醒边界：系统审计', '2026-11-13｜持续Goal active｜spinner-bot',
+ '144实际应用 /264真实native；当前1911/1、192、17/16通过；3项限定关闭、4项语义开放，不批准模型切换或整体代际跃迁。',
+ sections, BASE.parent/'cycle-36/审计/系统审计与推进报告.html')
+meta.update(proof_sha256=digest(out/'收尾核验/system-evidence.json'), builder_sha256=digest(Path(__file__)), renderer_sha256=digest(out/'render_report.py'))
+(out/'report-render-metadata.json').write_text(json.dumps(meta, ensure_ascii=False, indent=2)+'\n')
+print('C37 rendered', meta['tables'], 'tables', meta['links'], 'links')
