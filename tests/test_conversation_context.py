@@ -185,3 +185,12 @@ def test_derived_reply_with_nontext_source_cannot_be_restored_even_outside_windo
     latest=completed(memory,'最新场景。','引用旧源的回复。',extra_sources=[first[0]])
     memory._conn.execute('UPDATE memory_messages SET content=? WHERE id=?',(b'broken-source',first[0]));memory._conn.commit()
     with current(memory) as options:assert read(memory,options,limit_messages=2).messages==()
+
+
+@pytest.mark.parametrize('bad_content',[b'broken-fragment',''])
+def test_broken_fragment_dependency_is_not_validated_merely_by_existence(memory,bad_content):
+    uid,aid,_=completed(memory)
+    fragment=memory.remember('有效的历史事实。',source_message_id=uid)
+    memory._conn.execute('INSERT INTO memory_response_context VALUES (?,?,?)',(aid,'fragment',fragment))
+    memory._conn.execute('UPDATE memory_fragments SET content=? WHERE id=?',(bad_content,fragment));memory._conn.commit()
+    with current(memory) as options:assert read(memory,options).messages==()
