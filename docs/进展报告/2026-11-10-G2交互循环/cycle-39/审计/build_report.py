@@ -1,0 +1,56 @@
+"""C39 explicit-query contract: measured SQL/UI improvement, scoped limitations."""
+import json
+from pathlib import Path
+from render_report import render
+from verify_system import BASE, WORK, REGRESS, BROWSER, digest, read
+
+out=BASE/'审计'
+proof=read(out/'收尾核验/system-evidence.json')
+assert proof['verified']
+comparison=read(WORK/'before-after-comparison.json')
+sections=[
+ {'title':'明确命令直接交付真实提醒状态','paragraphs':[
+ 'C38的通用typed plan曾把本地提醒误当外部消息，候选拒绝。本轮先推进一个可验证的本地状态域：新增明确编号状态/运行条件的只读命令，实际查询SQLite与固定运行契约，直接规则交付，不让模型猜测。命令包括“查询提醒编号1”“查看提醒#1状态”“查看提醒送达条件”“查询提醒运行条件”，可加请、外层空白与一个结尾标点。编号为1到9223372036854775807的ASCII数字、最多19位。',
+ '当前user原文/角色/session/revision及独立真人权限在同一只读快照核验；角色/未知范围不走真人提醒读取，混合角色退出不授权此分支。引用/写作前缀不触发读命令，明确查询前缀的非法/越界/混合内容提示合法格式而不回到模型猜测；旧精确“查看提醒”Web列表别名沿用原路径。普通对话/创建/取消与显式投递轮询维持各自已有行为。',
+ '查询不创建、取消、完成、认领或ACK提醒，不写投递队列/业务回执、不调用认知/生成模型或联网工具；聊天源与答复仍正常写入。记录状态、认领标记、客户端确认与真人阅读分开，completed只表示记录被标记完成，不证明真人做过事项。状态是读取时快照，不保证未来永不改变；没有当前回执也不能否认合法持久记录。',
+ '先登记三材料，再原版/实现后各实际Avatar/SQLite执行。原版都进入NoModel示例回复，既有普通对话claim_due使到期记录被认领、队列与认领回执各新增1；原管理list_with_delivery正控不写。实现后3/3固定query mode且业务投影不变、队列/回执均0。种子为直接合成SQL到期60秒、相同标题/状态/无队列回执，实际时钟不同，不称两运行DB字节相同。它是有限能力缺口补齐，不把旧普通聊天轮询写成原设计故障或原生模型质量分数。'],
+ 'table':(['原材料','原模式/业务变化','实现后模式/业务变化'],[[r['input'],r['before_mode']+'；queue/receipt各1',r['after_mode']+'；query纯读、queue/receipt各0'] for r in comparison['rows']]),
+ 'links':[('先登记语法/源权限/负控','../../../../../evals/interaction/cycle-39/explicit-reminder-query-protocol.json'),('限定命令说明','../../../../记忆工作台与提醒.md'),('原3实际结果/SQL','工作目录/001-状态查询调查/baseline/evaluation.json'),('新3实际结果/SQL','工作目录/001-状态查询调查/baseline-read-control/evaluation.json'),('原文/源版本/SQL前后比较','工作目录/001-状态查询调查/before-after-comparison.json'),('可信读服务源码','../../../../../src/avatar/brain/reminder_queries.py')]},
+ {'title':'当前软件与浏览器：59新控制、完整回归通过','paragraphs':[
+ '新增38服务控制与21流程控制共59，覆盖三状态/legacy无回执、缺失/损坏记录、源码/角色/混合/伪造参数、调用方事务、取消、到期查询不认领且后续poll仍工作、配置与未配置模型均零请求、旧列表别名与写作守卫、实际HTTP-SSE/SQL等。最终定向148包含旧C34情绪版本等回归，不把148全部当新用例。',
+ '完整Python2017/1较历史1958新增59，最终131.09秒；前端192、type/lint/build通过，436输入前后稳定并核Git/driver/log。两次完整2017执行的源阶段分别保留，不能加成4034个独立样本。生产前端bundle仍5个，未因只新增e2e变更；9实际模块含新查询服务，C39查询及C36隐私两协议SHA与bundle匹配。',
+ '新默认Chromium18通过/16可选跳过，42.5秒；比历史17多1维护用例，不是语义分数增长。新维护用例先公开回到现实控制，再public draft/confirm创建同一2099年1月1日10时未来记录，两条协议驱动UI查询，核DOM/最终/存储/目标记录前后相同。专项与完整各2UI查询＋1源控制，首失败准备另1源控制/0query，完整另2个旧PAD来源准备，共9个有原record的维护范围应用结果；不是全suite总调用数，6个独立SQL probe另计，单测调用也不混分母。'],
+ 'table':(['检查','新实测','身份与解释'],[
+ ['新服务/主流程','38＋21＝59新控制；相关148 passed','NoModel/配置Spy/真实HTTP；不证明自由措辞能力'],
+ ['完整Python','2017 passed/1 skipped；131.09秒','436当前输入/Git/driver/log；两次回归分开'],
+ ['前端/type/lint/build','192 passed及其余通过','5bundle未变；无推理性能主张'],
+ ['默认浏览器','18 passed/16 optional skipped；42.5秒','新增1用例；9模块/2协议/5bundle匹配'],
+ ['维护记录','4UI query＋3源控制＋2隐私准备＝9','首日期失败保留；不是全suite或独立人评分母']]),
+ 'links':[('当前Python绑定','工作目录/002-当前软件与浏览器/query-final-python-final-binding.json'),('当前Python log','工作目录/002-当前软件与浏览器/query-final-python-final.log'),('完整浏览器log','工作目录/002-当前软件与浏览器/query-final-browser-final.log'),('专项query record','工作目录/003-浏览器准备修正/date-fixed-browser-records/query.json'),('完整query record','工作目录/002-当前软件与浏览器/full-browser-records/query.json'),('完整情绪隐私record','工作目录/002-当前软件与浏览器/full-browser-records/emotion.json'),('完整概览隐私record','工作目录/002-当前软件与浏览器/full-browser-records/dashboard.json')]},
+ {'title':'系统审计：三个限定问题已闭合，失败不删除','paragraphs':[
+ '新增读分支最初放在原认知try/finally前，追加非零既有自动状态的控制后，公开forget在读后推进revision0→1，答复取消且无可见/assistant，但SDK emotion epoch仍0。实际1失败/1通过；网页已有读取时版本屏障，未将其包装为已发生网页泄漏。有限修复把读取/checkpoint移入原finally范围，仍在模型/自动认领前；forget同步版本/清失效自动值，同版本取消保留合法已完成观测，提醒/manual override不撤销。',
+ '首浏览器用未支持的2099-01-01准备日期，API正确422，尚未进入query，仅源控制1次。诊断原parse函数同日期中文2099年1月1日成功，仅修测试格式，不扩产品日期语法；新tag专项与完整通过。原log/record/trace/绑定均留存，不冒称首次整体通过。',
+ '独立收尾重建9份436输入绑定、9模块/协议/5bundle、6份SQLdump的内存SQLite及UI/最终/存储/两页1秒隐私边界。红测新test当时处dirty worktree，实际HEAD仍5ed88b36，其精确字节后核到71e0771b，不事后发明执行HEAD；早期开发控制日志不作为当前完整源码凭证，最终2017/436才是新执行身份保证。',
+ '37历史seal为C3–C38共36cycle的6366项＋迁移88项＝6454项，全部字节未变，9集中数据入口有效。3问题为本轮有限能力/新分支SDK/测试准备跟踪，不代表全项目所有历史语义问题已解。C38候选与一般外发/自由措辞保证仍开放。'],
+ 'table':(['跟踪','优先级/状态','证据与修正'],[
+ ['C39-001 显式状态/条件无纯读路径','P2 限定关闭','原0/3→新3/3；SQL/队列/回执不变；配置模型零请求'],
+ ['C39-002 早期query取消绕过情绪收尾','P2 限定关闭','1红/1正控→148过；全2017过，同版取消不误清'],
+ ['C39-003 新e2e准备日期不合法','P3 限定关闭','原422/0query保存，同日期改中文，专项/完整过']]),
+ 'links':[(p.stem,'问题单/'+p.name) for p in sorted((out/'问题单').glob('*.md'))]+[('红测原log','工作目录/001-状态查询调查/query-emotion-epoch-red.log'),('原源码指纹','工作目录/001-状态查询调查/query-emotion-red-source.json'),('首浏览器准备失败','工作目录/003-浏览器准备修正/first-browser-query-evidence.json'),('完整系统证据','收尾核验/system-evidence.json'),('复核程序','verify_system.py'),('全过程进展','../进展.md')]},
+ {'title':'继续推进：可信状态域与通用交互分开验收','paragraphs':[
+ '本轮建立有限显式状态读取能力，没有把任意提醒问题都变成可靠回答。例如C38那句自由措辞的服务退出问题不因本轮前缀命令存在就自动修复；更没有保证真人已收到/读到通知。系统未安装后台任务或外部短信/邮件/电话通道；所有新确定性路径0native/GPU，CPU/脚本/浏览器数据不冒称真人、物理设备或一般模型验收。',
+ '下一循环先查现有本地read工具注册、来源/权限交接和实际提供方tool-call支持，再登记隔离的本地状态工具/可信交付对照。考虑如何让真实状态域被自然问题访问，同时仍把源权限、只读副作用、计划语义、模型原稿与程序答复分开；这仍需新数据验证，不能说已实现、通用路由已解决或继续加提示就会有效。',
+ '旧v4/C38和C31等候选保持隔离。跨OS PAD、自由对话/物理麦克风ASR、中文口型/ü/声调及多日运行仍独立开放；本轮兼容浏览器的合成音频测试不能当新真人语音验收。持续Goal active，封存后另建循环，不把局部工程提高宣传为整体代际跃迁；GPU按实际余量/UUID、同组最多4空闲卡，无整轮墙钟截止，不动他人任务。'],
+ 'table':(['优先级','下一推进点','门槛'],[
+ ['P1','真实本地状态工具与来源/只读副作用边界','先核注册/当前源/实际接口，再登记隔离对照；不凭用户请求/旧助手自称当回执'],
+ ['P1','自然问题到可信状态域的路由/交付','错域、写作/引用/否定、真实提醒均需保护；失败停推广'],
+ ['P2','通用计划schema/源结构与不确定交付','显式读取成功不证明自由生成可靠；规则/模型收益分账'],
+ ['持续','听/演/记与设备/PAD/多日','实际独立数据＋小步提交/过程/MD/HTML审计，不回写封存']]),
+ 'links':[('远期目标与验收路线','../../远期目标与验收路线.md'),('C38真实失败与拒绝','../../cycle-38/审计/系统审计与推进报告.md'),('本轮计划','../计划.md')]}
+]
+meta=render(out,'C39 显式提醒只读查询：真实状态交付与系统审计','2026-11-13｜持续Goal active｜spinner-bot',
+ '原三材料0→3固定纯读；当前2017/1、192、18/16通过；3问题限定关闭，0native，通用语义与物理送达仍开放。',sections,
+ BASE.parent/'cycle-38/审计/系统审计与推进报告.html')
+meta.update(proof_sha256=digest(out/'收尾核验/system-evidence.json'),builder_sha256=digest(Path(__file__)),renderer_sha256=digest(out/'render_report.py'))
+(out/'report-render-metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
+print('C39 rendered',meta['tables'],'tables',meta['links'],'links')
