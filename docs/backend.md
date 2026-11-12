@@ -30,6 +30,10 @@ LLM与规则事实批次在SQLite写事务开始、逐项写入和批次结束�
 
 所有接口沿用现有访问token。客户端确认只证明提交被服务记录，不证明真人已读；多页面在确认前可同时显示，不保证恰好一次感知。提醒是独立合法业务记录，沿用既有隐私删除后的保留合同；旧revision确认不能借此继续。删除提醒清理关联事件，状态和过期过滤防止失效提示。数据与故障边界见[C24审计](进展报告/2026-11-10-G2交互循环/cycle-24/审计/系统审计与推进报告.md)。
 
+## 本地研究提供方trace（2026-11-12）
+
+`scripts/serve_local_model_eval.py`是loopback评测提供方。trace新增`request_body_sha256`（实际接收HTTP字节）、完整`response_format`、`response_format_sha256`和`response_schema_sha256`（UTF-8、键排序、无额外空白canonical JSON摘要），以及`grammar_enabled`。保留的`analysis`字段只表示grammar存在，不能当作认知分析/回复用途。采证器须记录实际用途，并以原生id/messages/response及wire/format/schema绑定，不能直接复用按`not analysis`筛选的普通回复关联器。成功输出的格式约束不保证草稿忠实性；本轮未实现/启用新的默认语义候选。数据分原两模型与修后独立4B两个阶段，见[C25审计](进展报告/2026-11-10-G2交互循环/cycle-25/审计/系统审计与推进报告.md)。
+
 ## 当前处理链路
 
 `用户消息落库 → 有证据的事实抽取与时间解析 → 原子更新当前记忆/历史 → 用户情绪观测 → 角色状态与回应策略 → 当前记忆混合召回 → 回复落库`
