@@ -576,19 +576,19 @@ class Avatar:
         reminder_query = (parse_query(user_text)
                           if boundary.reply is None and control is None else None)
         query_reply = None
-        if (reminder_query is not None and self.speaker_scope.scope == 'current_user'
-                and self.speaker_scope.allows_actions):
-            query_reply = resolve_query(self.reminders, reminder_query, user_text,
-                QuerySource(self._current_message_id, self.session_id, turn_context_revision,
-                            self.speaker_scope.scope, self.speaker_scope.allows_actions),
-                checkpoint=checkpoint_context)
-            # The read snapshot has released. An external privacy writer may
-            # now be visible; never publish a result from the old source epoch.
-            checkpoint_context()
         if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
         try:
+            if (reminder_query is not None and self.speaker_scope.scope == 'current_user'
+                    and self.speaker_scope.allows_actions):
+                query_reply = resolve_query(self.reminders, reminder_query, user_text,
+                    QuerySource(self._current_message_id, self.session_id, turn_context_revision,
+                                self.speaker_scope.scope, self.speaker_scope.allows_actions),
+                    checkpoint=checkpoint_context)
+                # The read snapshot has released. An external privacy writer may
+                # now be visible; never publish a result from the old source epoch.
+                checkpoint_context()
             if boundary.reply is not None:
                 self.emotion.update(user_text)
             elif control is not None:
