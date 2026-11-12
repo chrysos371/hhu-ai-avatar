@@ -119,6 +119,49 @@ class EmotionEngine:
         self._energy_tick = self._last_tick
         self._observation_text = ""
         self._has_observation = False
+        self._context_revision: int | None = None
+
+    @property
+    def context_revision(self) -> int | None:
+        """Privacy revision supporting the automatic observation and role state."""
+        return self._context_revision
+
+    @staticmethod
+    def _validate_revision(revision: int) -> None:
+        if type(revision) is not int or revision < 0:
+            raise ValueError('Emotion context revision must be a nonnegative integer')
+
+    def bind_context_revision(self, revision: int) -> bool:
+        """Clear automatic state when its source revision is unknown or stale.
+
+        Keep the configured clock and decay policy. A normal message at the
+        same revision retains live mood and activity, including observations
+        completed before a subsequent generation cancellation.
+        """
+        self._validate_revision(revision)
+        if self._context_revision == revision:
+            return False
+        now = self._clock()
+        self._state = EmotionState()
+        self.user_state = EmotionState()
+        self._last_tick = now
+        self._energy = .5
+        self._energy_tick = now
+        self._observation_text = ""
+        self._has_observation = False
+        self._context_revision = revision
+        return True
+
+    def mark_context_revision(self, revision: int) -> None:
+        """Tag an observation with its original turn revision, without clearing.
+
+        Callers checkpoint that original revision after updating emotion. If a
+        reentrant correction happened during the update, this old tag ensures
+        the next synchronized read rejects the observation rather than treating
+        it as a value derived from the corrected context.
+        """
+        self._validate_revision(revision)
+        self._context_revision = revision
 
     @property
     def energy(self) -> float:
