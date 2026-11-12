@@ -12,8 +12,8 @@ MODELS=('qwen3-4b-q4_k_m','qwen3-32b-q4_k_m');PHASES=('before','after')
 
 def source_paths(phase):
     paths=old_paths()|{PROTOCOL,str((OLD33/'证据清单.json').relative_to(ROOT))}
-    paths.update(str((BASE/'审计'/name).relative_to(ROOT)) for name in ('revision_common.py','revision_worker.py','probe_revision_http.py','run_native_revision.py'))
-    paths.update(str((BASE/'审计/工作目录/001-自动情绪版本失效'/name).relative_to(ROOT)) for name in ('controlled-http-before.json','controlled-http-before.log','before-control-version.json'))
+    paths.update(str((BASE/'审计'/name).relative_to(ROOT)) for name in ('revision_common.py','revision_worker.py','probe_revision_http.py','run_native_revision.py','revision_sse.py','probe_revision_sse_cpu.py'))
+    paths.update(str((BASE/'审计/工作目录/001-自动情绪版本失效'/name).relative_to(ROOT)) for name in ('controlled-http-before.json','controlled-http-before.log','before-control-version.json','sse-cpu-controls.json','sse-cpu-controls.log','sse-control-version.json'))
     if phase=='after':
         paths.update(str((BASE/'审计/工作目录/001-自动情绪版本失效'/name).relative_to(ROOT)) for name in ('controlled-http-after.json','controlled-http-after.log','after-control-version.json'))
         paths.update(str((BASE/'审计/工作目录/002-系统回归'/name).relative_to(ROOT)) for name in ('full-python-binding.json','default-browser-binding.json'))

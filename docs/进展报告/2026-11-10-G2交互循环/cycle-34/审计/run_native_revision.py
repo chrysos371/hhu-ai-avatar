@@ -11,7 +11,7 @@ import sys
 import tempfile
 import threading
 import time
-from urllib.request import build_opener,ProxyHandler
+from urllib.request import Request,build_opener,ProxyHandler
 from revision_common import ROOT,BASE,OLD33,OLD32,PROTOCOL,REGISTRY,RUNTIME,MODELS,PHASES,digest,verify_freeze,verify_historical_binding,verify_backend
 from run_shared_affect import SharedAffect
 from run_native_context_use import NativeContext,parse_wire
@@ -21,6 +21,8 @@ from probe_structured_provider import environment,validate_trace,gpu_processes
 from evaluate_native_output_audit import validate_provider_identity
 from serve_local_model_eval import load_registry
 from avatar.brain.memory import MemoryStore
+from run_context_baseline import events
+from revision_sse import validate_result_delta
 
 
 def validate_calls(report):
@@ -58,12 +60,21 @@ class RevisionAudit(SharedAffect):
         self.folder=args.output/'application';self.folder.mkdir();self.temporary=Path(tempfile.mkdtemp(prefix='c34-emotion-'+args.phase+'-',dir=ROOT.parent/'runtime/tmp'));self.db=self.temporary/'owned.db'
         self.case={'id':'c34_'+args.phase+'_'+args.model,'turns':[],'checks':[],'snapshots':[],'external_operations':[],'emotions':{},'complete':False,'owned_runtime_dir':str(self.temporary)}
         self.report={'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'output':str(args.output.resolve()),'phase':args.phase,'model_id':args.model,
-            'scope':self.protocol['scope'],'freeze_sha256':args.expected_freeze_sha256,'frozen_inputs':self.frozen,'actual_llm_or_gpu':True,'cases':[self.case],
+            'scope':self.protocol['scope'],'freeze_path':str(args.freeze.resolve()),'freeze_sha256':args.expected_freeze_sha256,'frozen_inputs':self.frozen,'actual_llm_or_gpu':True,'cases':[self.case],
             'workers':[],'http_calls':[],'requests':[],'warmups':[],'cleanup_errors':[],'completed':False,'engineering_passed':False,'cleanup_passed':False,'failure':None,
             'provider_pid':None,'provider_exit':None,'production_candidate_activation_authorized':False,'general_semantic_or_human_quality_approved':False}
         if args.before is not None:self.report.update(before_path=str(args.before.resolve()),before_sha256=args.before_sha256)
         self.states=[];self.state=None;self.ready=None;self.opener=build_opener(ProxyHandler({}));self.persist()
     def verify(self):verify_freeze(self.args.freeze,self.args.expected_freeze_sha256,self.args.model,phase=self.args.phase)
+    def finish(self,row):
+        request=Request(self.ready['base_url']+'/turns/'+row['job_id']+'/events',headers={'X-Avatar-Token':self.ready['token']})
+        with self.opener.open(request,timeout=60) as response:kind,result,observed,raw=events(response,time.perf_counter())
+        row.update(terminal=kind,result=result,events=observed,raw_sse=raw,client_terminal_ns=time.monotonic_ns())
+        row['submit_to_terminal_seconds']=(row['client_terminal_ns']-row['client_submit_started_ns'])/1e9
+        row['conversation']=self.query('/conversation');self.persist()
+        if kind=='result':
+            row['audit_sse_delivery']=validate_result_delta(result,observed);self.state['record']['turns_completed']+=1
+        self.persist();return row
     def start(self,optout=False):
         assert not optout;self.verify();ready=self.temporary/'worker-ready.json';runtime=self.folder/'worker-runtime.json'
         command=[sys.executable,str(BASE/'审计/revision_worker.py'),'--phase',self.args.phase,'--db',str(self.db),'--ready',str(ready),'--runtime-out',str(runtime),
