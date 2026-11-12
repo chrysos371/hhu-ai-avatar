@@ -1,3 +1,5 @@
+import type { StateContext } from './statePrivacy';
+
 export type OperationType =
   | "persona.update"
   | "emotion.override"
@@ -73,6 +75,7 @@ export interface ChatEvent {
   arousal: number;
 }
 export interface Dashboard {
+  context: StateContext;
   counts: Record<string, number>;
   persona_version: number;
   emotion: { valence: number; arousal: number; label: string };
@@ -96,6 +99,7 @@ export interface Health {
   last_error: string | null;
 }
 export interface EmotionInfo {
+  context: StateContext;
   automatic: { valence: number; arousal: number };
   effective: { valence: number; arousal: number };
   user_observation: { valence: number; arousal: number };

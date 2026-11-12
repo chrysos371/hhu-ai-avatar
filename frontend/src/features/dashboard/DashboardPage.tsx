@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   ArrowUpRight,
   BookOpen,
@@ -7,15 +6,12 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { apiRequest, formatTime } from "../../lib/api";
+import { formatTime } from "../../lib/api";
+import { usePrivateStateQuery } from "../../lib/usePrivateStateQuery";
 import type { Dashboard } from "../../lib/types";
 import { PageHeading, QueryState } from "../../components/QueryState";
 export function DashboardPage() {
-  const query = useQuery({
-    queryKey: ["dashboard"],
-    queryFn: () => apiRequest<Dashboard>("/dashboard"),
-    refetchInterval: 15000,
-  });
+  const query = usePrivateStateQuery<Dashboard>("dashboard", 15000);
   const d = query.data;
   return (
     <section>
