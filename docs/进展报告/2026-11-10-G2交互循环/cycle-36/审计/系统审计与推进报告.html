@@ -1,0 +1,62 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C36 日常隐私回归：覆盖收敛与系统审计</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C36 日常隐私回归：覆盖收敛与系统审计</h1><p class="meta">2026-11-12｜持续Goal active｜spinner-bot</p><p class="verdict">默认浏览器17通过/16可选跳过；6维护页面回合，3条fixture HTTP控制；4问题关闭，0native/GPU；下一步新材料语义基线。</p>
+<section><h2>从专项修复进入日常防退化</h2>
+<p>C35已封142项并修复两页旧状态缓存。本轮把其核心来源红删/固定1秒DOM边界纳入默认Playwright套件，新增两页各1用例。最新完整默认从历史15通过增至17通过，16项可选测试仍跳过；这是覆盖增加，不是模型能力分数增长。</p>
+<p>准备使用真实应用HTTP与隔离SQLite，精确两条合成输入由受控HTTP provider返回已知非零认知响应。其余认知及生成响应维持原fixture，三条直接HTTP正反控留证。真实规则提取名字来源，独立API草案/确认遗忘，新API0与conversation红删、context revision递增、固定1000ms后DOM/预填/事件0；无reload/navigation或前端隐私事件帮助。C36以公开API回执核红删，未额外导出SQL快照，不能误写成新增独立SQL转储。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>当前新执行</th><th>结果</th><th>身份与限制</th></tr></thead><tbody>
+<tr><td>Python完整</td><td>1835 passed /1 skipped；121.92s</td><td>426输入稳定及历史Git核验</td></tr>
+<tr><td>前端完整</td><td>192 passed /37文件</td><td>本轮新增为e2e，组件单测数量未增加</td></tr>
+<tr><td>默认Chromium完整</td><td>17 passed /16 optional skipped；40.8s</td><td>原15＋两页；8实际模块/协议/5bundle匹配</td></tr>
+<tr><td>type/lint/build</td><td>通过；5个bundle与C35相同</td><td>仅改测试/fixture；不是性能比较</td></tr>
+</tbody></table></div>
+<p><a href="../../../../../evals/interaction/cycle-36/maintained-state-privacy-protocol.json">固定协议</a></p>
+<p><a href="../../../../../frontend/e2e/state-privacy.spec.ts">默认维护测试</a></p>
+<p><a href="收尾核验/system-evidence.json">独立证据复核</a></p>
+<p><a href="工作目录/001-日常浏览器回归/full-browser-final.log">完整浏览器log</a></p>
+</section>
+<section><h2>全部实际页面执行账</h2>
+<p>有实际页面执行的三组各两页，共6个chat准备回合。首次JSON收集失败0用例；ESM修后2用例均过但runner遗漏身份字段造成整体失败，独立侧证证明实际身份相同；witness修后及完整套件各2用例与严格采证均过。所有记录保留，重复维护回归不当独立泛化样本。</p>
+<p>另3条为直接受控provider HTTP检查，不是Avatar回合。默认套件其他用例的调用没有混入这6条维护边界分母。0native/GPU；analysis_mode=llm指本地受控HTTP transport，不是实际模型质量证据。固定窗后只读DOM快照断言，不重试到后续10/15秒轮询才通过。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>实际组</th><th>页面</th><th>采样ms / 旧DOM / 来源</th></tr></thead><tbody>
+<tr><td>esm-fixed</td><td>emotion</td><td>1042.33 / 无旧值 / 已红删</td></tr>
+<tr><td>esm-fixed</td><td>dashboard</td><td>1055.66 / 无旧值 / 已红删</td></tr>
+<tr><td>witness-fixed</td><td>emotion</td><td>1047.13 / 无旧值 / 已红删</td></tr>
+<tr><td>witness-fixed</td><td>dashboard</td><td>1052.44 / 无旧值 / 已红删</td></tr>
+<tr><td>full</td><td>emotion</td><td>1041.65 / 无旧值 / 已红删</td></tr>
+<tr><td>full</td><td>dashboard</td><td>1048.16 / 无旧值 / 已红删</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/001-日常浏览器回归/esm-fixed-browser_targeted-final-binding.json">ESM后原整体失败绑定</a></p>
+<p><a href="工作目录/001-日常浏览器回归/esm-fixed-runtime-reconstruction.json">原运行身份独立侧证</a></p>
+<p><a href="工作目录/001-日常浏览器回归/witness-fixed-browser_targeted-final-binding.json">严格targeted绑定</a></p>
+<p><a href="工作目录/001-日常浏览器回归/full-browser-records/emotion.json">完整情绪记录</a></p>
+<p><a href="工作目录/001-日常浏览器回归/full-browser-records/dashboard.json">完整概览记录</a></p>
+<p><a href="工作目录/001-日常浏览器回归/controlled-analysis-exact-match.json">3条精确输入/生成HTTP控制</a></p>
+</section>
+<section><h2>系统审计与逐项修正</h2>
+<p>P2维护覆盖缺口关闭；3个工具P3均实际定位、修正与复核，原失败不改写。独立程序对7份执行绑定的426源逐一核Git archive与历史driver SHA，重建6条API/来源/DOM记录；前期缺runtime_matches字段不被事后改成原运行成功。</p>
+<p>34旧seal共5966项保持字节一致：33cycle共5878项＋迁移88项；9集中存储入口有效。后续改源时C35 current冻结仅作历史，不用其认证C36。当前状态由活动入口维护，封存报告不追改。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>单项</th><th>优先级</th><th>处理与证据</th></tr></thead><tbody>
+<tr><td>C36-000 专项未入默认</td><td>P2维护</td><td>新增两页默认测试；17/16完整通过</td></tr>
+<tr><td>C36-001 JSON ESM收集</td><td>P3工具</td><td>fs/URL读协议；原空收集保留；实际用例通过</td></tr>
+<tr><td>C36-002 targeted运行身份分支</td><td>P3工具</td><td>统一浏览器分支；旧记录独立侧证、新执行严格通过</td></tr>
+<tr><td>C36-003 list/inspect字段混用</td><td>P3工具</td><td>按同fragment id联列表source_backed与inspect来源；原数据不变，复核通过</td></tr>
+</tbody></table></div>
+<p><a href="问题单/C36-000-专项边界未纳入日常默认浏览器回归.md">C36-000-专项边界未纳入日常默认浏览器回归</a></p>
+<p><a href="问题单/C36-001-Playwright收集JSON导入失败.md">C36-001-Playwright收集JSON导入失败</a></p>
+<p><a href="问题单/C36-002-定向浏览器未写运行身份判定.md">C36-002-定向浏览器未写运行身份判定</a></p>
+<p><a href="问题单/C36-003-复核误用列表专属状态字段.md">C36-003-复核误用列表专属状态字段</a></p>
+<p><a href="verify_system.py">系统独立复核程序</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+</section>
+<section><h2>后续方向与未批准范围</h2>
+<p>本轮收敛维护回归后直接回到C19-001/P1。C19–C23能力提示/来源/回执候选曾在已知题改善但仍有无依据外部联系提议、主体与保护原文问题，整体拒绝；C26–C28格式机制也未获一般语义批准。不能把旧v4提示换名字重新宣传，也不在旧算式/代号题上继续调参当泛化。</p>
+<p>下一循环先审当前默认与真实工具注册/本轮结构化回执，预登记新材料开发集及分离保护集，固定模型/运行库/真实请求、未改默认基线先行。需要GPU时按启动实际余量/UUID选择，同组最多4张，不固定6–7；不停止他人进程、不静默CPU替代，没有整轮墙钟截止。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>方向</th><th>下一门槛</th><th>当前结论</th></tr></thead><tbody>
+<tr><td>P1动作诚实与一般交付</td><td>新材料真实模型基线→隔离候选→分离评测与逐来源审阅</td><td>旧候选不推广；没有新语义质量结论</td></tr>
+<tr><td>跨OS PAD与隐私</td><td>保留已修失效边界，再单独设计持久化因果对照</td><td>文本恢复不等于数值连续；未实现新持久化</td></tr>
+<tr><td>真人/物理设备/多日</td><td>真实输入与目标设备、口型校准、持续运行独立验收</td><td>仍开放；本轮没有整体代际跃迁批准</td></tr>
+</tbody></table></div>
+<p><a href="../../远期目标与验收路线.md">远期验收路线</a></p>
+<p><a href="../../cycle-35/审计/系统审计与推进报告.md">C35封存报告</a></p>
+<p><a href="../../cycle-23/审计/系统审计与推进报告.md">C23候选拒绝历史</a></p>
+</section>
+</main></body></html>
