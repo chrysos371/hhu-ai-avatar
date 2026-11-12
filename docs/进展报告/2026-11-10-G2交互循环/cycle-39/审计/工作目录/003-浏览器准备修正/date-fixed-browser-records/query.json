@@ -1,0 +1,1915 @@
+{
+  "scope": "C39 maintained explicit reminder query browser control",
+  "head": "29e0b3e967f18bf8fd5b2b5dcbaac8c7f6c53d6d",
+  "completed": true,
+  "failure": null,
+  "calls": [
+    {
+      "path": "/chat",
+      "status": 200,
+      "response": {
+        "data": {
+          "conversation": {
+            "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+            "revision": 0,
+            "user_message_id": 1,
+            "assistant_message_id": 2
+          },
+          "knowledge_sources": [],
+          "knowledge_retrieval_degraded": false,
+          "task": null,
+          "delivery_check": {
+            "initial_issues": [],
+            "remaining_issues": [],
+            "repair_attempted": false,
+            "repair_succeeded": false,
+            "repair_mode": null,
+            "repair_error": null,
+            "literal_composition_enabled": false,
+            "literal_plan_version": null,
+            "draft_generation_mode": "rules_speaker_control",
+            "stream_buffered": false
+          },
+          "boundary": {
+            "route": "normal",
+            "guarded": false,
+            "output_adjustment": null
+          },
+          "speaker_attribution": {
+            "scope": "current_user",
+            "persistent_facts_allowed": true,
+            "turn_tools_allowed": false,
+            "version": 1,
+            "general_coreference_verified": false
+          },
+          "speaker_tool_blocked": false,
+          "reply": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+          "emotion": "中性",
+          "valence": 0,
+          "arousal": 0,
+          "style": "自然随和",
+          "speech_rate": "+0%",
+          "speech_pitch": "+0Hz",
+          "mouth_intensity": 0.75,
+          "strategy": "answer",
+          "analysis_mode": "rules_speaker_control",
+          "generation_mode": "rules_speaker_control",
+          "identity_grounding": false,
+          "profile_grounding": {
+            "enabled": false,
+            "action": null,
+            "scope": "profile_lookup_declaration_and_copied_preference",
+            "version": 2,
+            "semantic_verifier": false,
+            "stream_buffered": false
+          },
+          "user_emotion": "中性",
+          "user_valence": 0,
+          "user_arousal": 0,
+          "audio_path": null,
+          "lip_sync_frames": null,
+          "lipsync_error": null,
+          "energy": 0.525,
+          "recalled_ids": [],
+          "reminder": null,
+          "reminder_error": null,
+          "due_reminders": [],
+          "conversation_summary": {
+            "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+            "kind": "source_excerpts",
+            "items": [],
+            "characters": 2,
+            "max_characters": 1600
+          },
+          "sources": [],
+          "tool_calls": [],
+          "web_error": null,
+          "speaker_control": {
+            "version": 1,
+            "command": "confirm_real",
+            "scope": "current_user",
+            "revision": 0,
+            "source_message_id": 1,
+            "real_actions_executed": false
+          },
+          "action_receipts": {
+            "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+            "revision": 0,
+            "items": [],
+            "has_more": false,
+            "next_after_id": null,
+            "scope": "current_visible_local_sql_receipts",
+            "notification_delivery_verified": false
+          },
+          "trace": {
+            "recalled_memories": [],
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "decision": {
+              "strategy": "answer",
+              "style": "自然随和",
+              "user_emotion": "中性",
+              "emotion": "中性",
+              "user_valence": 0,
+              "user_arousal": 0,
+              "valence": 0,
+              "arousal": 0,
+              "analysis_mode": "rules_speaker_control",
+              "generation_mode": "rules_speaker_control",
+              "identity_grounding": false,
+              "profile_grounding": {
+                "enabled": false,
+                "action": null,
+                "scope": "profile_lookup_declaration_and_copied_preference",
+                "version": 2,
+                "semantic_verifier": false,
+                "stream_buffered": false
+              }
+            },
+            "guard": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "verifier": {
+              "available": false,
+              "reason": "未配置通用语义验证器",
+              "delivery_check": {
+                "initial_issues": [],
+                "remaining_issues": [],
+                "repair_attempted": false,
+                "repair_succeeded": false,
+                "repair_mode": null,
+                "repair_error": null,
+                "literal_composition_enabled": false,
+                "literal_plan_version": null,
+                "draft_generation_mode": "rules_speaker_control",
+                "stream_buffered": false
+              }
+            },
+            "tool_calls": []
+          }
+        },
+        "error": null,
+        "request_id": "70e04d177a8de3223e827dd7"
+      }
+    },
+    {
+      "path": "/reminders",
+      "status": 201,
+      "response": {
+        "data": {
+          "draft_id": 1,
+          "operation_type": "memory.batch",
+          "diff": [
+            {
+              "field": "reminder.create",
+              "before": null,
+              "after": {
+                "action": "reminder.create",
+                "text": "提醒我2099年1月1日上午十点，C39浏览器只读查询控制。",
+                "resolved_at": 1794505762.89763,
+                "resolved_due_at": 4070916000
+              }
+            }
+          ],
+          "warnings": [],
+          "expires_at": 1794506362.8981624,
+          "confirmation_token": "[fixture confirmation capability omitted]"
+        },
+        "error": null,
+        "request_id": "e66277d3def25f098a245990"
+      }
+    },
+    {
+      "path": "/operations/1/confirm",
+      "status": 200,
+      "response": {
+        "data": {
+          "audit_id": 1,
+          "draft_id": 1,
+          "result": {
+            "actions": [
+              {
+                "action": "reminder.create",
+                "result": {
+                  "id": 1,
+                  "title": "C39浏览器只读查询控制",
+                  "due_at": 4070916000,
+                  "created_at": 1794505762.89763,
+                  "status": "active",
+                  "notified_at": null
+                }
+              }
+            ]
+          }
+        },
+        "error": null,
+        "request_id": "1f176db10c00bd7fde4ef54f"
+      }
+    },
+    {
+      "path": "/reminders",
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": 1,
+            "title": "C39浏览器只读查询控制",
+            "due_at": 4070916000,
+            "created_at": 1794505762.89763,
+            "status": "active",
+            "notified_at": null,
+            "delivery_acknowledged_at": null
+          }
+        ],
+        "error": null,
+        "request_id": "16e9ccfc6d5f3b103e91727f"
+      }
+    },
+    {
+      "path": "/turns/9ebb3ac2-170d-45e4-8818-358a87367919",
+      "status": 200,
+      "response": {
+        "data": {
+          "job_id": "9ebb3ac2-170d-45e4-8818-358a87367919",
+          "status": "completed",
+          "created_at": 1794505763.617482,
+          "result": {
+            "conversation": {
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "revision": 0,
+              "user_message_id": 3,
+              "assistant_message_id": 4
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_reminder_query",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+            "emotion": "中性",
+            "valence": 0,
+            "arousal": 0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_reminder_query",
+            "generation_mode": "rules_reminder_query",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0,
+            "user_arousal": 0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.55,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null,
+            "reminder_query": {
+              "version": 1,
+              "kind": "status",
+              "source_message_id": 3,
+              "revision": 0,
+              "observed_at": 1794505763.629066,
+              "business_mutations": false,
+              "reminder_id": 1,
+              "exists": true,
+              "state": {
+                "id": 1,
+                "title": "C39浏览器只读查询控制",
+                "due_at": 4070916000,
+                "status": "active",
+                "service_claim_recorded": false,
+                "client_ack_recorded": false
+              },
+              "requires_running_server": true,
+              "web_requires_active_client_polling": true,
+              "external_delivery_channels": [],
+              "human_reading_verified": false
+            },
+            "action_receipts": {
+              "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "revision": 0,
+              "items": [],
+              "has_more": false,
+              "next_after_id": null,
+              "scope": "current_visible_local_sql_receipts",
+              "notification_delivery_verified": false
+            },
+            "trace": {
+              "recalled_memories": [],
+              "knowledge_sources": [],
+              "knowledge_retrieval_degraded": false,
+              "decision": {
+                "strategy": "answer",
+                "style": "自然随和",
+                "user_emotion": "中性",
+                "emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "valence": 0,
+                "arousal": 0,
+                "analysis_mode": "rules_reminder_query",
+                "generation_mode": "rules_reminder_query",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                }
+              },
+              "guard": {
+                "route": "normal",
+                "guarded": false,
+                "output_adjustment": null
+              },
+              "verifier": {
+                "available": false,
+                "reason": "未配置通用语义验证器",
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_reminder_query",
+                  "stream_buffered": false
+                }
+              },
+              "tool_calls": []
+            }
+          }
+        },
+        "error": null,
+        "request_id": "434e858c9a525569bbf42a00"
+      }
+    },
+    {
+      "path": "/conversation",
+      "status": 200,
+      "response": {
+        "data": {
+          "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "revision": 0,
+          "items": [
+            {
+              "id": 1,
+              "role": "user",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505762.836057,
+              "text": "回到现实。",
+              "redacted": false
+            },
+            {
+              "id": 2,
+              "role": "assistant",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505762.8481474,
+              "text": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+              "redacted": false,
+              "result": {
+                "conversation": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "user_message_id": 1,
+                  "assistant_message_id": 2
+                },
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "task": null,
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_speaker_control",
+                  "stream_buffered": false
+                },
+                "boundary": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "speaker_attribution": {
+                  "scope": "current_user",
+                  "persistent_facts_allowed": true,
+                  "turn_tools_allowed": false,
+                  "version": 1,
+                  "general_coreference_verified": false
+                },
+                "speaker_tool_blocked": false,
+                "reply": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+                "emotion": "中性",
+                "valence": 0,
+                "arousal": 0,
+                "style": "自然随和",
+                "speech_rate": "+0%",
+                "speech_pitch": "+0Hz",
+                "mouth_intensity": 0.75,
+                "strategy": "answer",
+                "analysis_mode": "rules_speaker_control",
+                "generation_mode": "rules_speaker_control",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                },
+                "user_emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "audio_path": null,
+                "lip_sync_frames": null,
+                "lipsync_error": null,
+                "energy": 0.525,
+                "recalled_ids": [],
+                "reminder": null,
+                "reminder_error": null,
+                "due_reminders": [],
+                "conversation_summary": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "kind": "source_excerpts",
+                  "items": [],
+                  "characters": 2,
+                  "max_characters": 1600
+                },
+                "sources": [],
+                "tool_calls": [],
+                "web_error": null,
+                "speaker_control": {
+                  "version": 1,
+                  "command": "confirm_real",
+                  "scope": "current_user",
+                  "revision": 0,
+                  "source_message_id": 1,
+                  "real_actions_executed": false
+                },
+                "action_receipts": {
+                  "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "items": [],
+                  "has_more": false,
+                  "next_after_id": null,
+                  "scope": "current_visible_local_sql_receipts",
+                  "notification_delivery_verified": false
+                },
+                "trace": {
+                  "recalled_memories": [],
+                  "knowledge_sources": [],
+                  "knowledge_retrieval_degraded": false,
+                  "decision": {
+                    "strategy": "answer",
+                    "style": "自然随和",
+                    "user_emotion": "中性",
+                    "emotion": "中性",
+                    "user_valence": 0,
+                    "user_arousal": 0,
+                    "valence": 0,
+                    "arousal": 0,
+                    "analysis_mode": "rules_speaker_control",
+                    "generation_mode": "rules_speaker_control",
+                    "identity_grounding": false,
+                    "profile_grounding": {
+                      "enabled": false,
+                      "action": null,
+                      "scope": "profile_lookup_declaration_and_copied_preference",
+                      "version": 2,
+                      "semantic_verifier": false,
+                      "stream_buffered": false
+                    }
+                  },
+                  "guard": {
+                    "route": "normal",
+                    "guarded": false,
+                    "output_adjustment": null
+                  },
+                  "verifier": {
+                    "available": false,
+                    "reason": "未配置通用语义验证器",
+                    "delivery_check": {
+                      "initial_issues": [],
+                      "remaining_issues": [],
+                      "repair_attempted": false,
+                      "repair_succeeded": false,
+                      "repair_mode": null,
+                      "repair_error": null,
+                      "literal_composition_enabled": false,
+                      "literal_plan_version": null,
+                      "draft_generation_mode": "rules_speaker_control",
+                      "stream_buffered": false
+                    }
+                  },
+                  "tool_calls": []
+                }
+              }
+            },
+            {
+              "id": 3,
+              "role": "user",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505763.6260898,
+              "text": "查询提醒编号1",
+              "redacted": false
+            },
+            {
+              "id": 4,
+              "role": "assistant",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505763.630815,
+              "text": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+              "redacted": false,
+              "result": {
+                "conversation": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "user_message_id": 3,
+                  "assistant_message_id": 4
+                },
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "task": null,
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_reminder_query",
+                  "stream_buffered": false
+                },
+                "boundary": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "speaker_attribution": {
+                  "scope": "current_user",
+                  "persistent_facts_allowed": true,
+                  "turn_tools_allowed": true,
+                  "version": 1,
+                  "general_coreference_verified": false
+                },
+                "speaker_tool_blocked": false,
+                "reply": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+                "emotion": "中性",
+                "valence": 0,
+                "arousal": 0,
+                "style": "自然随和",
+                "speech_rate": "+0%",
+                "speech_pitch": "+0Hz",
+                "mouth_intensity": 0.75,
+                "strategy": "answer",
+                "analysis_mode": "rules_reminder_query",
+                "generation_mode": "rules_reminder_query",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                },
+                "user_emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "audio_path": null,
+                "lip_sync_frames": null,
+                "lipsync_error": null,
+                "energy": 0.55,
+                "recalled_ids": [],
+                "reminder": null,
+                "reminder_error": null,
+                "due_reminders": [],
+                "conversation_summary": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "kind": "source_excerpts",
+                  "items": [],
+                  "characters": 2,
+                  "max_characters": 1600
+                },
+                "sources": [],
+                "tool_calls": [],
+                "web_error": null,
+                "reminder_query": {
+                  "version": 1,
+                  "kind": "status",
+                  "source_message_id": 3,
+                  "revision": 0,
+                  "observed_at": 1794505763.629066,
+                  "business_mutations": false,
+                  "reminder_id": 1,
+                  "exists": true,
+                  "state": {
+                    "id": 1,
+                    "title": "C39浏览器只读查询控制",
+                    "due_at": 4070916000,
+                    "status": "active",
+                    "service_claim_recorded": false,
+                    "client_ack_recorded": false
+                  },
+                  "requires_running_server": true,
+                  "web_requires_active_client_polling": true,
+                  "external_delivery_channels": [],
+                  "human_reading_verified": false
+                },
+                "action_receipts": {
+                  "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "items": [],
+                  "has_more": false,
+                  "next_after_id": null,
+                  "scope": "current_visible_local_sql_receipts",
+                  "notification_delivery_verified": false
+                },
+                "trace": {
+                  "recalled_memories": [],
+                  "knowledge_sources": [],
+                  "knowledge_retrieval_degraded": false,
+                  "decision": {
+                    "strategy": "answer",
+                    "style": "自然随和",
+                    "user_emotion": "中性",
+                    "emotion": "中性",
+                    "user_valence": 0,
+                    "user_arousal": 0,
+                    "valence": 0,
+                    "arousal": 0,
+                    "analysis_mode": "rules_reminder_query",
+                    "generation_mode": "rules_reminder_query",
+                    "identity_grounding": false,
+                    "profile_grounding": {
+                      "enabled": false,
+                      "action": null,
+                      "scope": "profile_lookup_declaration_and_copied_preference",
+                      "version": 2,
+                      "semantic_verifier": false,
+                      "stream_buffered": false
+                    }
+                  },
+                  "guard": {
+                    "route": "normal",
+                    "guarded": false,
+                    "output_adjustment": null
+                  },
+                  "verifier": {
+                    "available": false,
+                    "reason": "未配置通用语义验证器",
+                    "delivery_check": {
+                      "initial_issues": [],
+                      "remaining_issues": [],
+                      "repair_attempted": false,
+                      "repair_succeeded": false,
+                      "repair_mode": null,
+                      "repair_error": null,
+                      "literal_composition_enabled": false,
+                      "literal_plan_version": null,
+                      "draft_generation_mode": "rules_reminder_query",
+                      "stream_buffered": false
+                    }
+                  },
+                  "tool_calls": []
+                }
+              }
+            }
+          ],
+          "has_more": false,
+          "next_before_id": null
+        },
+        "error": null,
+        "request_id": "99159b926ededc7c6c806ede"
+      }
+    },
+    {
+      "path": "/turns/a62ef9fc-6474-4297-a048-fd72cd23f287",
+      "status": 200,
+      "response": {
+        "data": {
+          "job_id": "a62ef9fc-6474-4297-a048-fd72cd23f287",
+          "status": "completed",
+          "created_at": 1794505763.8463044,
+          "result": {
+            "conversation": {
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "revision": 0,
+              "user_message_id": 5,
+              "assistant_message_id": 6
+            },
+            "knowledge_sources": [],
+            "knowledge_retrieval_degraded": false,
+            "task": null,
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_reminder_query",
+              "stream_buffered": false
+            },
+            "boundary": {
+              "route": "normal",
+              "guarded": false,
+              "output_adjustment": null
+            },
+            "speaker_attribution": {
+              "scope": "current_user",
+              "persistent_facts_allowed": true,
+              "turn_tools_allowed": true,
+              "version": 1,
+              "general_coreference_verified": false
+            },
+            "speaker_tool_blocked": false,
+            "reply": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+            "emotion": "中性",
+            "valence": 0,
+            "arousal": 0,
+            "style": "自然随和",
+            "speech_rate": "+0%",
+            "speech_pitch": "+0Hz",
+            "mouth_intensity": 0.75,
+            "strategy": "answer",
+            "analysis_mode": "rules_reminder_query",
+            "generation_mode": "rules_reminder_query",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            },
+            "user_emotion": "中性",
+            "user_valence": 0,
+            "user_arousal": 0,
+            "audio_path": null,
+            "lip_sync_frames": null,
+            "lipsync_error": null,
+            "energy": 0.575,
+            "recalled_ids": [],
+            "reminder": null,
+            "reminder_error": null,
+            "due_reminders": [],
+            "conversation_summary": {
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "kind": "source_excerpts",
+              "items": [],
+              "characters": 2,
+              "max_characters": 1600
+            },
+            "sources": [],
+            "tool_calls": [],
+            "web_error": null,
+            "reminder_query": {
+              "version": 1,
+              "kind": "conditions",
+              "source_message_id": 5,
+              "revision": 0,
+              "observed_at": 1794505763.856748,
+              "business_mutations": false,
+              "reminder_id": null,
+              "exists": null,
+              "state": null,
+              "requires_running_server": true,
+              "web_requires_active_client_polling": true,
+              "external_delivery_channels": [],
+              "human_reading_verified": false
+            },
+            "action_receipts": {
+              "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "revision": 0,
+              "items": [],
+              "has_more": false,
+              "next_after_id": null,
+              "scope": "current_visible_local_sql_receipts",
+              "notification_delivery_verified": false
+            },
+            "trace": {
+              "recalled_memories": [],
+              "knowledge_sources": [],
+              "knowledge_retrieval_degraded": false,
+              "decision": {
+                "strategy": "answer",
+                "style": "自然随和",
+                "user_emotion": "中性",
+                "emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "valence": 0,
+                "arousal": 0,
+                "analysis_mode": "rules_reminder_query",
+                "generation_mode": "rules_reminder_query",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                }
+              },
+              "guard": {
+                "route": "normal",
+                "guarded": false,
+                "output_adjustment": null
+              },
+              "verifier": {
+                "available": false,
+                "reason": "未配置通用语义验证器",
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_reminder_query",
+                  "stream_buffered": false
+                }
+              },
+              "tool_calls": []
+            }
+          }
+        },
+        "error": null,
+        "request_id": "cd03e03c18ba0df22972495c"
+      }
+    },
+    {
+      "path": "/conversation",
+      "status": 200,
+      "response": {
+        "data": {
+          "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "revision": 0,
+          "items": [
+            {
+              "id": 1,
+              "role": "user",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505762.836057,
+              "text": "回到现实。",
+              "redacted": false
+            },
+            {
+              "id": 2,
+              "role": "assistant",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505762.8481474,
+              "text": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+              "redacted": false,
+              "result": {
+                "conversation": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "user_message_id": 1,
+                  "assistant_message_id": 2
+                },
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "task": null,
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_speaker_control",
+                  "stream_buffered": false
+                },
+                "boundary": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "speaker_attribution": {
+                  "scope": "current_user",
+                  "persistent_facts_allowed": true,
+                  "turn_tools_allowed": false,
+                  "version": 1,
+                  "general_coreference_verified": false
+                },
+                "speaker_tool_blocked": false,
+                "reply": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+                "emotion": "中性",
+                "valence": 0,
+                "arousal": 0,
+                "style": "自然随和",
+                "speech_rate": "+0%",
+                "speech_pitch": "+0Hz",
+                "mouth_intensity": 0.75,
+                "strategy": "answer",
+                "analysis_mode": "rules_speaker_control",
+                "generation_mode": "rules_speaker_control",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                },
+                "user_emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "audio_path": null,
+                "lip_sync_frames": null,
+                "lipsync_error": null,
+                "energy": 0.525,
+                "recalled_ids": [],
+                "reminder": null,
+                "reminder_error": null,
+                "due_reminders": [],
+                "conversation_summary": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "kind": "source_excerpts",
+                  "items": [],
+                  "characters": 2,
+                  "max_characters": 1600
+                },
+                "sources": [],
+                "tool_calls": [],
+                "web_error": null,
+                "speaker_control": {
+                  "version": 1,
+                  "command": "confirm_real",
+                  "scope": "current_user",
+                  "revision": 0,
+                  "source_message_id": 1,
+                  "real_actions_executed": false
+                },
+                "action_receipts": {
+                  "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "items": [],
+                  "has_more": false,
+                  "next_after_id": null,
+                  "scope": "current_visible_local_sql_receipts",
+                  "notification_delivery_verified": false
+                },
+                "trace": {
+                  "recalled_memories": [],
+                  "knowledge_sources": [],
+                  "knowledge_retrieval_degraded": false,
+                  "decision": {
+                    "strategy": "answer",
+                    "style": "自然随和",
+                    "user_emotion": "中性",
+                    "emotion": "中性",
+                    "user_valence": 0,
+                    "user_arousal": 0,
+                    "valence": 0,
+                    "arousal": 0,
+                    "analysis_mode": "rules_speaker_control",
+                    "generation_mode": "rules_speaker_control",
+                    "identity_grounding": false,
+                    "profile_grounding": {
+                      "enabled": false,
+                      "action": null,
+                      "scope": "profile_lookup_declaration_and_copied_preference",
+                      "version": 2,
+                      "semantic_verifier": false,
+                      "stream_buffered": false
+                    }
+                  },
+                  "guard": {
+                    "route": "normal",
+                    "guarded": false,
+                    "output_adjustment": null
+                  },
+                  "verifier": {
+                    "available": false,
+                    "reason": "未配置通用语义验证器",
+                    "delivery_check": {
+                      "initial_issues": [],
+                      "remaining_issues": [],
+                      "repair_attempted": false,
+                      "repair_succeeded": false,
+                      "repair_mode": null,
+                      "repair_error": null,
+                      "literal_composition_enabled": false,
+                      "literal_plan_version": null,
+                      "draft_generation_mode": "rules_speaker_control",
+                      "stream_buffered": false
+                    }
+                  },
+                  "tool_calls": []
+                }
+              }
+            },
+            {
+              "id": 3,
+              "role": "user",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505763.6260898,
+              "text": "查询提醒编号1",
+              "redacted": false
+            },
+            {
+              "id": 4,
+              "role": "assistant",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505763.630815,
+              "text": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+              "redacted": false,
+              "result": {
+                "conversation": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "user_message_id": 3,
+                  "assistant_message_id": 4
+                },
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "task": null,
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_reminder_query",
+                  "stream_buffered": false
+                },
+                "boundary": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "speaker_attribution": {
+                  "scope": "current_user",
+                  "persistent_facts_allowed": true,
+                  "turn_tools_allowed": true,
+                  "version": 1,
+                  "general_coreference_verified": false
+                },
+                "speaker_tool_blocked": false,
+                "reply": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+                "emotion": "中性",
+                "valence": 0,
+                "arousal": 0,
+                "style": "自然随和",
+                "speech_rate": "+0%",
+                "speech_pitch": "+0Hz",
+                "mouth_intensity": 0.75,
+                "strategy": "answer",
+                "analysis_mode": "rules_reminder_query",
+                "generation_mode": "rules_reminder_query",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                },
+                "user_emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "audio_path": null,
+                "lip_sync_frames": null,
+                "lipsync_error": null,
+                "energy": 0.55,
+                "recalled_ids": [],
+                "reminder": null,
+                "reminder_error": null,
+                "due_reminders": [],
+                "conversation_summary": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "kind": "source_excerpts",
+                  "items": [],
+                  "characters": 2,
+                  "max_characters": 1600
+                },
+                "sources": [],
+                "tool_calls": [],
+                "web_error": null,
+                "reminder_query": {
+                  "version": 1,
+                  "kind": "status",
+                  "source_message_id": 3,
+                  "revision": 0,
+                  "observed_at": 1794505763.629066,
+                  "business_mutations": false,
+                  "reminder_id": 1,
+                  "exists": true,
+                  "state": {
+                    "id": 1,
+                    "title": "C39浏览器只读查询控制",
+                    "due_at": 4070916000,
+                    "status": "active",
+                    "service_claim_recorded": false,
+                    "client_ack_recorded": false
+                  },
+                  "requires_running_server": true,
+                  "web_requires_active_client_polling": true,
+                  "external_delivery_channels": [],
+                  "human_reading_verified": false
+                },
+                "action_receipts": {
+                  "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "items": [],
+                  "has_more": false,
+                  "next_after_id": null,
+                  "scope": "current_visible_local_sql_receipts",
+                  "notification_delivery_verified": false
+                },
+                "trace": {
+                  "recalled_memories": [],
+                  "knowledge_sources": [],
+                  "knowledge_retrieval_degraded": false,
+                  "decision": {
+                    "strategy": "answer",
+                    "style": "自然随和",
+                    "user_emotion": "中性",
+                    "emotion": "中性",
+                    "user_valence": 0,
+                    "user_arousal": 0,
+                    "valence": 0,
+                    "arousal": 0,
+                    "analysis_mode": "rules_reminder_query",
+                    "generation_mode": "rules_reminder_query",
+                    "identity_grounding": false,
+                    "profile_grounding": {
+                      "enabled": false,
+                      "action": null,
+                      "scope": "profile_lookup_declaration_and_copied_preference",
+                      "version": 2,
+                      "semantic_verifier": false,
+                      "stream_buffered": false
+                    }
+                  },
+                  "guard": {
+                    "route": "normal",
+                    "guarded": false,
+                    "output_adjustment": null
+                  },
+                  "verifier": {
+                    "available": false,
+                    "reason": "未配置通用语义验证器",
+                    "delivery_check": {
+                      "initial_issues": [],
+                      "remaining_issues": [],
+                      "repair_attempted": false,
+                      "repair_succeeded": false,
+                      "repair_mode": null,
+                      "repair_error": null,
+                      "literal_composition_enabled": false,
+                      "literal_plan_version": null,
+                      "draft_generation_mode": "rules_reminder_query",
+                      "stream_buffered": false
+                    }
+                  },
+                  "tool_calls": []
+                }
+              }
+            },
+            {
+              "id": 5,
+              "role": "user",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505763.8541236,
+              "text": "查看提醒送达条件",
+              "redacted": false
+            },
+            {
+              "id": 6,
+              "role": "assistant",
+              "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+              "created_at": 1794505763.8577032,
+              "text": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+              "redacted": false,
+              "result": {
+                "conversation": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "user_message_id": 5,
+                  "assistant_message_id": 6
+                },
+                "knowledge_sources": [],
+                "knowledge_retrieval_degraded": false,
+                "task": null,
+                "delivery_check": {
+                  "initial_issues": [],
+                  "remaining_issues": [],
+                  "repair_attempted": false,
+                  "repair_succeeded": false,
+                  "repair_mode": null,
+                  "repair_error": null,
+                  "literal_composition_enabled": false,
+                  "literal_plan_version": null,
+                  "draft_generation_mode": "rules_reminder_query",
+                  "stream_buffered": false
+                },
+                "boundary": {
+                  "route": "normal",
+                  "guarded": false,
+                  "output_adjustment": null
+                },
+                "speaker_attribution": {
+                  "scope": "current_user",
+                  "persistent_facts_allowed": true,
+                  "turn_tools_allowed": true,
+                  "version": 1,
+                  "general_coreference_verified": false
+                },
+                "speaker_tool_blocked": false,
+                "reply": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+                "emotion": "中性",
+                "valence": 0,
+                "arousal": 0,
+                "style": "自然随和",
+                "speech_rate": "+0%",
+                "speech_pitch": "+0Hz",
+                "mouth_intensity": 0.75,
+                "strategy": "answer",
+                "analysis_mode": "rules_reminder_query",
+                "generation_mode": "rules_reminder_query",
+                "identity_grounding": false,
+                "profile_grounding": {
+                  "enabled": false,
+                  "action": null,
+                  "scope": "profile_lookup_declaration_and_copied_preference",
+                  "version": 2,
+                  "semantic_verifier": false,
+                  "stream_buffered": false
+                },
+                "user_emotion": "中性",
+                "user_valence": 0,
+                "user_arousal": 0,
+                "audio_path": null,
+                "lip_sync_frames": null,
+                "lipsync_error": null,
+                "energy": 0.575,
+                "recalled_ids": [],
+                "reminder": null,
+                "reminder_error": null,
+                "due_reminders": [],
+                "conversation_summary": {
+                  "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "kind": "source_excerpts",
+                  "items": [],
+                  "characters": 2,
+                  "max_characters": 1600
+                },
+                "sources": [],
+                "tool_calls": [],
+                "web_error": null,
+                "reminder_query": {
+                  "version": 1,
+                  "kind": "conditions",
+                  "source_message_id": 5,
+                  "revision": 0,
+                  "observed_at": 1794505763.856748,
+                  "business_mutations": false,
+                  "reminder_id": null,
+                  "exists": null,
+                  "state": null,
+                  "requires_running_server": true,
+                  "web_requires_active_client_polling": true,
+                  "external_delivery_channels": [],
+                  "human_reading_verified": false
+                },
+                "action_receipts": {
+                  "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+                  "revision": 0,
+                  "items": [],
+                  "has_more": false,
+                  "next_after_id": null,
+                  "scope": "current_visible_local_sql_receipts",
+                  "notification_delivery_verified": false
+                },
+                "trace": {
+                  "recalled_memories": [],
+                  "knowledge_sources": [],
+                  "knowledge_retrieval_degraded": false,
+                  "decision": {
+                    "strategy": "answer",
+                    "style": "自然随和",
+                    "user_emotion": "中性",
+                    "emotion": "中性",
+                    "user_valence": 0,
+                    "user_arousal": 0,
+                    "valence": 0,
+                    "arousal": 0,
+                    "analysis_mode": "rules_reminder_query",
+                    "generation_mode": "rules_reminder_query",
+                    "identity_grounding": false,
+                    "profile_grounding": {
+                      "enabled": false,
+                      "action": null,
+                      "scope": "profile_lookup_declaration_and_copied_preference",
+                      "version": 2,
+                      "semantic_verifier": false,
+                      "stream_buffered": false
+                    }
+                  },
+                  "guard": {
+                    "route": "normal",
+                    "guarded": false,
+                    "output_adjustment": null
+                  },
+                  "verifier": {
+                    "available": false,
+                    "reason": "未配置通用语义验证器",
+                    "delivery_check": {
+                      "initial_issues": [],
+                      "remaining_issues": [],
+                      "repair_attempted": false,
+                      "repair_succeeded": false,
+                      "repair_mode": null,
+                      "repair_error": null,
+                      "literal_composition_enabled": false,
+                      "literal_plan_version": null,
+                      "draft_generation_mode": "rules_reminder_query",
+                      "stream_buffered": false
+                    }
+                  },
+                  "tool_calls": []
+                }
+              }
+            }
+          ],
+          "has_more": false,
+          "next_before_id": null
+        },
+        "error": null,
+        "request_id": "8b6f8852e90fc1a04a33cd26"
+      }
+    },
+    {
+      "path": "/reminders",
+      "status": 200,
+      "response": {
+        "data": [
+          {
+            "id": 1,
+            "title": "C39浏览器只读查询控制",
+            "due_at": 4070916000,
+            "created_at": 1794505762.89763,
+            "status": "active",
+            "notified_at": null,
+            "delivery_acknowledged_at": null
+          }
+        ],
+        "error": null,
+        "request_id": "65ad506cd686ebcc5b216a31"
+      }
+    }
+  ],
+  "turns": [
+    {
+      "text": "查询提醒编号1",
+      "visible": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+      "result": {
+        "conversation": {
+          "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "revision": 0,
+          "user_message_id": 3,
+          "assistant_message_id": 4
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_reminder_query",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "编号1「C39浏览器只读查询控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+        "emotion": "中性",
+        "valence": 0,
+        "arousal": 0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_reminder_query",
+        "generation_mode": "rules_reminder_query",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0,
+        "user_arousal": 0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.55,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "reminder_query": {
+          "version": 1,
+          "kind": "status",
+          "source_message_id": 3,
+          "revision": 0,
+          "observed_at": 1794505763.629066,
+          "business_mutations": false,
+          "reminder_id": 1,
+          "exists": true,
+          "state": {
+            "id": 1,
+            "title": "C39浏览器只读查询控制",
+            "due_at": 4070916000,
+            "status": "active",
+            "service_claim_recorded": false,
+            "client_ack_recorded": false
+          },
+          "requires_running_server": true,
+          "web_requires_active_client_polling": true,
+          "external_delivery_channels": [],
+          "human_reading_verified": false
+        },
+        "action_receipts": {
+          "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "revision": 0,
+          "items": [],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        },
+        "trace": {
+          "recalled_memories": [],
+          "knowledge_sources": [],
+          "knowledge_retrieval_degraded": false,
+          "decision": {
+            "strategy": "answer",
+            "style": "自然随和",
+            "user_emotion": "中性",
+            "emotion": "中性",
+            "user_valence": 0,
+            "user_arousal": 0,
+            "valence": 0,
+            "arousal": 0,
+            "analysis_mode": "rules_reminder_query",
+            "generation_mode": "rules_reminder_query",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            }
+          },
+          "guard": {
+            "route": "normal",
+            "guarded": false,
+            "output_adjustment": null
+          },
+          "verifier": {
+            "available": false,
+            "reason": "未配置通用语义验证器",
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_reminder_query",
+              "stream_buffered": false
+            }
+          },
+          "tool_calls": []
+        }
+      }
+    },
+    {
+      "text": "查看提醒送达条件",
+      "visible": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+      "result": {
+        "conversation": {
+          "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "revision": 0,
+          "user_message_id": 5,
+          "assistant_message_id": 6
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_reminder_query",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+        "emotion": "中性",
+        "valence": 0,
+        "arousal": 0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_reminder_query",
+        "generation_mode": "rules_reminder_query",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0,
+        "user_arousal": 0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.575,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "kind": "source_excerpts",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "reminder_query": {
+          "version": 1,
+          "kind": "conditions",
+          "source_message_id": 5,
+          "revision": 0,
+          "observed_at": 1794505763.856748,
+          "business_mutations": false,
+          "reminder_id": null,
+          "exists": null,
+          "state": null,
+          "requires_running_server": true,
+          "web_requires_active_client_polling": true,
+          "external_delivery_channels": [],
+          "human_reading_verified": false
+        },
+        "action_receipts": {
+          "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+          "revision": 0,
+          "items": [],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        },
+        "trace": {
+          "recalled_memories": [],
+          "knowledge_sources": [],
+          "knowledge_retrieval_degraded": false,
+          "decision": {
+            "strategy": "answer",
+            "style": "自然随和",
+            "user_emotion": "中性",
+            "emotion": "中性",
+            "user_valence": 0,
+            "user_arousal": 0,
+            "valence": 0,
+            "arousal": 0,
+            "analysis_mode": "rules_reminder_query",
+            "generation_mode": "rules_reminder_query",
+            "identity_grounding": false,
+            "profile_grounding": {
+              "enabled": false,
+              "action": null,
+              "scope": "profile_lookup_declaration_and_copied_preference",
+              "version": 2,
+              "semantic_verifier": false,
+              "stream_buffered": false
+            }
+          },
+          "guard": {
+            "route": "normal",
+            "guarded": false,
+            "output_adjustment": null
+          },
+          "verifier": {
+            "available": false,
+            "reason": "未配置通用语义验证器",
+            "delivery_check": {
+              "initial_issues": [],
+              "remaining_issues": [],
+              "repair_attempted": false,
+              "repair_succeeded": false,
+              "repair_mode": null,
+              "repair_error": null,
+              "literal_composition_enabled": false,
+              "literal_plan_version": null,
+              "draft_generation_mode": "rules_reminder_query",
+              "stream_buffered": false
+            }
+          },
+          "tool_calls": []
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "nativeOrGpuClaim": false,
+  "sourceControl": {
+    "conversation": {
+      "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+      "revision": 0,
+      "user_message_id": 1,
+      "assistant_message_id": 2
+    },
+    "knowledge_sources": [],
+    "knowledge_retrieval_degraded": false,
+    "task": null,
+    "delivery_check": {
+      "initial_issues": [],
+      "remaining_issues": [],
+      "repair_attempted": false,
+      "repair_succeeded": false,
+      "repair_mode": null,
+      "repair_error": null,
+      "literal_composition_enabled": false,
+      "literal_plan_version": null,
+      "draft_generation_mode": "rules_speaker_control",
+      "stream_buffered": false
+    },
+    "boundary": {
+      "route": "normal",
+      "guarded": false,
+      "output_adjustment": null
+    },
+    "speaker_attribution": {
+      "scope": "current_user",
+      "persistent_facts_allowed": true,
+      "turn_tools_allowed": false,
+      "version": 1,
+      "general_coreference_verified": false
+    },
+    "speaker_tool_blocked": false,
+    "reply": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+    "emotion": "中性",
+    "valence": 0,
+    "arousal": 0,
+    "style": "自然随和",
+    "speech_rate": "+0%",
+    "speech_pitch": "+0Hz",
+    "mouth_intensity": 0.75,
+    "strategy": "answer",
+    "analysis_mode": "rules_speaker_control",
+    "generation_mode": "rules_speaker_control",
+    "identity_grounding": false,
+    "profile_grounding": {
+      "enabled": false,
+      "action": null,
+      "scope": "profile_lookup_declaration_and_copied_preference",
+      "version": 2,
+      "semantic_verifier": false,
+      "stream_buffered": false
+    },
+    "user_emotion": "中性",
+    "user_valence": 0,
+    "user_arousal": 0,
+    "audio_path": null,
+    "lip_sync_frames": null,
+    "lipsync_error": null,
+    "energy": 0.525,
+    "recalled_ids": [],
+    "reminder": null,
+    "reminder_error": null,
+    "due_reminders": [],
+    "conversation_summary": {
+      "session_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+      "kind": "source_excerpts",
+      "items": [],
+      "characters": 2,
+      "max_characters": 1600
+    },
+    "sources": [],
+    "tool_calls": [],
+    "web_error": null,
+    "speaker_control": {
+      "version": 1,
+      "command": "confirm_real",
+      "scope": "current_user",
+      "revision": 0,
+      "source_message_id": 1,
+      "real_actions_executed": false
+    },
+    "action_receipts": {
+      "instance_id": "b7281e1ba0bbb47f88f18824ddf2f822",
+      "revision": 0,
+      "items": [],
+      "has_more": false,
+      "next_after_id": null,
+      "scope": "current_visible_local_sql_receipts",
+      "notification_delivery_verified": false
+    },
+    "trace": {
+      "recalled_memories": [],
+      "knowledge_sources": [],
+      "knowledge_retrieval_degraded": false,
+      "decision": {
+        "strategy": "answer",
+        "style": "自然随和",
+        "user_emotion": "中性",
+        "emotion": "中性",
+        "user_valence": 0,
+        "user_arousal": 0,
+        "valence": 0,
+        "arousal": 0,
+        "analysis_mode": "rules_speaker_control",
+        "generation_mode": "rules_speaker_control",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        }
+      },
+      "guard": {
+        "route": "normal",
+        "guarded": false,
+        "output_adjustment": null
+      },
+      "verifier": {
+        "available": false,
+        "reason": "未配置通用语义验证器",
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_speaker_control",
+          "stream_buffered": false
+        }
+      },
+      "tool_calls": []
+    }
+  },
+  "before": {
+    "id": 1,
+    "title": "C39浏览器只读查询控制",
+    "due_at": 4070916000,
+    "created_at": 1794505762.89763,
+    "status": "active",
+    "notified_at": null,
+    "delivery_acknowledged_at": null
+  },
+  "after": {
+    "id": 1,
+    "title": "C39浏览器只读查询控制",
+    "due_at": 4070916000,
+    "created_at": 1794505762.89763,
+    "status": "active",
+    "notified_at": null,
+    "delivery_acknowledged_at": null
+  }
+}
