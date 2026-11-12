@@ -60,11 +60,15 @@ class BoundaryPolicy:
             elif other_risk:
                 self.risk = 'third_party_crisis'
         # Contacting someone is progress, not evidence that current risk ended.
-        connected = bool(re.search(r'(?:家人|朋友|室友|辅导员).{0,5}(?:已经)?(?:在身边|陪着我)', clean))
+        connected = bool(re.search(r'(?:家人|朋友|室友|辅导员|姐姐|哥哥|妹妹|弟弟|妈妈|爸爸|母亲|父亲)(?:现在|已经|此刻|就|正在|还|也|都|一直|仍然|在|了|已){0,8}(?:在身边|陪着我|陪我)', clean))
+        connected = connected and not (fictional or historical or re.search(r'电影里|假设|假如|要是|转述', clean))
         if self.risk == 'third_party_crisis' and re.search(r'已经联系.{0,8}(?:家人|朋友)', clean) and not other_risk:
             # Acknowledge handoff without discarding the unresolved risk state.
             return self._decision('recovery', '联系到他身边的人是重要的一步，请把具体担忧告诉他们，让他们确认现场情况。联系成功不代表危险解除；若可能有眼前危险，请联系对方所在地的紧急服务。')
-        if self.risk and ((denial and self.risk == 'crisis') or connected):
+        if self.risk == 'crisis' and connected and not denial:
+            # Support arriving is progress, not evidence that acute risk ended.
+            return self._decision('crisis', '有人在你身边了，这一步很重要。请直接告诉对方刚才发生了什么，让对方陪着你，继续与危险物保持距离。如果已经受伤、服药或仍可能马上行动，请让对方协助联系当地急救或紧急服务。')
+        if self.risk == 'crisis' and denial:
             # Never downgrade a simultaneous explicit current risk statement.
             if not self_risk:
                 self.risk = None

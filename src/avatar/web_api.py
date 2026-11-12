@@ -43,6 +43,12 @@ class V1API:
             except (ValueError, TypeError):
                 raise OperationError(422, "invalid_pagination") from None
 
+        if not post and path == '/skills':
+            from .skills import SkillRegistry
+            return 200, {'enabled':os.getenv('AVATAR_SKILLS_ENABLED','0')=='1', 'skills':SkillRegistry().catalog(), 'banter_enabled':os.getenv('AVATAR_BANTER_ENABLED','0')=='1', 'automatic_execution':False}
+        if not post and path == '/improvement':
+            from .lab.improvement import summary
+            return 200, summary()
         if not post and path == "/system":
             from .config import config
 

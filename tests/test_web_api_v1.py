@@ -184,3 +184,24 @@ def test_memory_correction_and_filter_api(api_v1):
     assert len(rows) == 1 and "小张" in rows[0]["content"]
     assert len(r("/api/v1/memory?history=1")[1]["data"]) == 2
     assert r("/api/v1/memory?since=NaN")[0] == 422
+
+
+def test_improvement_report_is_authenticated_readonly_and_has_no_raw_chat(api_v1, monkeypatch):
+    import avatar.lab.improvement as patrol
+    monkeypatch.setattr(patrol,'summary',lambda: {'available':True,'runs':[], 'issues':[], 'automatic_release':False})
+    request,_=api_v1
+    assert request('/api/v1/improvement',token=False)[0]==403
+    code,body=request('/api/v1/improvement')
+    assert code==200 and body['data']['automatic_release'] is False
+    assert 'reply' not in json.dumps(body)
+    assert request('/api/v1/improvement',{})[0]==404
+
+
+def test_skill_catalog_requires_auth_and_cannot_execute_or_edit_packs(api_v1):
+    request,_=api_v1
+    assert request('/api/v1/skills',token=False)[0]==403
+    code,body=request('/api/v1/skills')
+    assert code==200 and body['data']['automatic_execution'] is False
+    assert {s['id'] for s in body['data']['skills']}=={'study-coach','writing-editor','banter-coach'}
+    assert all(s['capabilities']==['context.read'] for s in body['data']['skills'])
+    assert request('/api/v1/skills',{'command':'run'})[0]==404

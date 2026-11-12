@@ -1,0 +1,91 @@
+{
+  "status": "evaluated_regressions_no_stable_net_gain_not_approved",
+  "model_id": "Qwen/Qwen3-14B",
+  "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+  "dtype": "bfloat16",
+  "attention": "sdpa",
+  "reply_adapter_only": true,
+  "supervision": "final-assistant-only; prior assistant mistakes are masked context, never targets",
+  "trainable_parameter_estimate_qv_r8": 5242880,
+  "stages": [
+    {
+      "id": "memory-save-reload",
+      "steps": 1,
+      "micro_batch": 1,
+      "max_length": 1024,
+      "training_samples": "1 consumed from available24; save and fresh-process reload passed",
+      "success": "finite loss, measured memory, adapter saved and separate-process reload verified; no quality claim",
+      "status": "completed"
+    },
+    {
+      "id": "targeted-pilot",
+      "maximum_steps": 12,
+      "single_pass": true,
+      "gradient_accumulation": 4,
+      "train_samples_planned": [
+        24,
+        48
+      ],
+      "dev_samples_planned": [
+        8,
+        16
+      ],
+      "actual_steps": "min(12, ceil(accepted_train_samples/4)); 24 examples means 6 updates, not 12",
+      "status": "completed_24_examples_six_steps_single_pass"
+    }
+  ],
+  "training_families": {
+    "correct_user_over_stale_assistant": 8,
+    "sender_recipient_and_role_transition": 8,
+    "unknown_facts_vs_draft_inventions": 8,
+    "legitimate_assistant_draft_reference": 8,
+    "relationship_and_ordinary_emotion_controls": 8,
+    "precise_delivery_with_verified_numbers": 8
+  },
+  "baseline_comparison": {
+    "4b": "unchanged reference and low-resource fallback",
+    "14b_base": "fixed backend, no style hint or adapter",
+    "14b_style_prompt": "same backend + fixed STYLE_HINT, no adapter",
+    "14b_style_lora": "same backend + same STYLE_HINT + reply-only LoRA",
+    "training_effect": "style_lora vs style_prompt; do not mix runtime prompt changes with adapter gains",
+    "analysis_adapter_leaks_required": 0
+  },
+  "resource_policy": {
+    "gpus": 1,
+    "require_entirely_idle_before_start": true,
+    "do_not_assume_inference_memory_equals_training": true,
+    "on_oom": "record failure, release own process; no automatic GPU takeover or unplanned quantization",
+    "wall_clock_cutoff": null,
+    "limits": "fixed steps, epochs and token limits"
+  },
+  "dataset_status": "24 train/12 dev newly AI-authored and AI-checked, not human approved; exported and 14B CPU preflight passed",
+  "provenance_requirement": "preserve approval_scope and not_full_human_checklist_approval; do not relabel as fully human reviewed or automatic-only to bypass current loader",
+  "trainer_gap": "AI-only targeted provenance now supported separately; old partial-human-preference manifests remain unsupported and were not reused",
+  "required_gates": [
+    "fresh exact/near and semantic-family overlap checks including original dev20, confirmation8 and draft controls",
+    "do not train any diagnostic input/output or entity-renamed copies",
+    "current-user corrections and previous draft references both preserved",
+    "separate dev split and future unseen acceptance cases",
+    "do not silently truncate corrections to fit length",
+    "all samples carry honest review provenance"
+  ],
+  "acceptance": [
+    "compare full dialogues, not only final turn",
+    "track sender/speaker and material fact errors separately from format",
+    "no new exclusive dependency, fabricated physical experience or privacy failure",
+    "do not degrade legitimate draft editing",
+    "math checked by independent oracle; do not claim general arithmetic learned from a few samples",
+    "training loss alone never approves deployment"
+  ],
+  "deployment_changed": false,
+  "DPO_OPD_started": false,
+  "prepared_dataset": "data/style-lab/targeted14b-export-20261111-01/sft.jsonl",
+  "prepared_dataset_approval_scope": "ai-authored-ai-checked-no-human-approval",
+  "next_stage": "backend provenance/role work independently; no same-recipe expansion or deployment",
+  "training_started": true,
+  "quality_approved": false,
+  "training_artifacts": "/data/Users/zyyh/hhu-ai-avatar-integration/data/style-lab/targeted14b-train-20261111-01",
+  "acceptance_evidence": "/data/Users/zyyh/hhu-ai-avatar-integration/data/style-lab/targeted14b-acceptance-20261111-01",
+  "backend_iteration": "source-role-draft iteration implemented and reviewed; remaining general model errors; no deployment",
+  "backend_evidence": "/data/Users/zyyh/hhu-ai-avatar-integration/data/style-lab/reply-context-regression-20261111-05"
+}

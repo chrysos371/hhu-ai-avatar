@@ -1,0 +1,11 @@
+[Unit]
+Description=zyyh Avatar bounded patrol every six hours
+
+[Timer]
+OnCalendar=*-*-* 02,08,14,20:15:00 Asia/Shanghai
+Persistent=true
+RandomizedDelaySec=180
+Unit=avatar-improvement-zyyh.service
+
+[Install]
+WantedBy=timers.target

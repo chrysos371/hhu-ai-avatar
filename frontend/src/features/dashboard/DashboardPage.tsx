@@ -10,11 +10,24 @@ import { Link } from "react-router-dom";
 import { apiRequest, formatTime } from "../../lib/api";
 import type { Dashboard } from "../../lib/types";
 import { PageHeading, QueryState } from "../../components/QueryState";
+const patrolLabels: Record<string,string> = {
+  unexpected_goodnight:"告别语境不符", verbatim_repeat:"重复上一轮回复",
+  possible_unwanted_advice:"疑似违背只倾听要求", possible_language_drift:"疑似语言漂移",
+  possible_physical_invitation:"疑似线下邀请", departure_question:"告别后继续追问",
+  invalid_json:"JSON格式错误", title_format:"标题格式错误",
+  generation_degraded:"模型降级", empty_reply:"空回复", call_error:"调用异常",
+  completed:"批次完成", completed_with_errors:"批次有异常", running:"正在巡检", interrupted:"运行中断",
+};
 export function DashboardPage() {
   const query = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => apiRequest<Dashboard>("/dashboard"),
     refetchInterval: 15000,
+  });
+  const patrol = useQuery({
+    queryKey: ["improvement"],
+    queryFn: () => apiRequest<{available:boolean; runs:{id:string;status:string;turns:number}[]; issues:{id:string;category:string;occurrences:number}[]}>("/improvement"),
+    refetchInterval: 60000,
   });
   const d = query.data;
   return (
@@ -24,6 +37,16 @@ export function DashboardPage() {
         description="观察当前状态、数据与最近事件。每一项指标都来自实际记录。"
         action={<span className="badge">认知工作区</span>}
       />
+      <article className="panel" style={{ marginBottom: 20 }}>
+        <h2>自动开发巡检</h2>
+        <p className="muted">合成场景的自动检查信号，不代表语义验收；不会自动训练或发布。</p>
+        {patrol.isPending && <p>正在读取巡检记录…</p>}
+        {patrol.isError && <p role="status">巡检记录暂时不可用。</p>}
+        {patrol.data && (!patrol.data.available ? <p>尚无巡检记录。</p> : <>
+          <p>最近批次：{patrolLabels[patrol.data.runs[0]?.status] || patrol.data.runs[0]?.status || "尚未执行"} · {patrol.data.runs[0]?.turns ?? 0}轮</p>
+          {patrol.data.issues?.length ? <ul>{patrol.data.issues.map(i=><li key={i.id}>{patrolLabels[i.category] || i.category}：{i.occurrences}次待定位信号</li>)}</ul> : <p>当前检查器未发现信号，仍需语义评估。</p>}
+        </>)}
+      </article>
       <QueryState query={query}>
         {d && (
           <>

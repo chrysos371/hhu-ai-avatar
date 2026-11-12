@@ -1,0 +1,14 @@
+[Unit]
+Description=zyyh Avatar synthetic development patrol
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/data/Users/zyyh/hhu-ai-avatar
+EnvironmentFile=/data/Users/zyyh/hhu-ai-avatar/.env
+Environment=TZ=Asia/Shanghai
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/data/Users/zyyh/envs/hhu-ai-avatar/bin/python -m avatar.lab.improvement run --max-turns 6 --daily-turns 24
+Nice=10
+UMask=0077
+TimeoutStartSec=15min

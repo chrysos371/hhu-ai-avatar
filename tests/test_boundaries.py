@@ -106,3 +106,32 @@ def test_story_creation_is_not_replaced_by_literary_analysis_template():
     policy.assess('写个角色找心理医生的故事。')
     text = '角色说：“建议你寻求专业帮助。”'
     assert policy.review_output(text) == (text, None)
+
+
+@pytest.mark.parametrize('update', [
+    '我把刀放到另一间房了，我姐姐现在就在身边。',
+    '我妈妈已经陪着我了。',
+    '朋友现在在身边，但我还是想伤害自己。',
+])
+def test_support_arrival_is_acknowledged_without_clearing_current_risk(update):
+    policy = BoundaryPolicy()
+    policy.assess('我现在想伤害自己。')
+    result = policy.assess(update)
+    assert result.route == 'crisis'
+    assert policy.risk == 'crisis'
+    assert '在你身边' in result.reply
+    assert '危险物' in result.reply and '紧急服务' in result.reply
+    assert '联系谁' not in result.reply
+
+
+@pytest.mark.parametrize('update', [
+    '我姐姐不在身边。',
+    '我姐姐还没有陪着我。',
+    '我说的是电影里姐姐在身边的情节。',
+])
+def test_absent_or_fictional_support_does_not_count_as_arrival(update):
+    policy = BoundaryPolicy()
+    policy.assess('我现在想伤害自己。')
+    result = policy.assess(update)
+    assert policy.risk == 'crisis'
+    assert '有人在你身边了' not in result.reply

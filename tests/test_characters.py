@@ -24,8 +24,8 @@ def library(tmp_path):
 def test_catalog_has_distinct_cards_and_actual_backend(library):
     lib,_,_=library
     rows=lib.catalog()
-    assert len(rows)==14 and len({c['id'] for c in rows})==14
-    assert len({c['persona']['core_identity'] for c in CARDS})==14
+    assert len(rows)==15 and len({c['id'] for c in rows})==15
+    assert len({c['persona']['core_identity'] for c in CARDS})==15
     assert all('backend_model' in c for c in rows)
     assert not (lib.root/'roles').exists()
 

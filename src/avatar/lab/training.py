@@ -17,7 +17,14 @@ from .common import (
     write_json,
 )
 from .data import evaluation_texts
-from .runner import gpu_lease, local_model
+from .runner import gpu_inventory, gpu_lease, local_model
+
+
+def require_idle_gpus(gpus):
+    """Recheck after slow disk hashing, before allocating any CUDA model memory."""
+    cards = gpu_inventory()
+    if any(i not in cards or cards[i]["used_mib"] != 0 for i in gpus):
+        raise ValueError("Training/reload requires entirely idle GPUs; retry after other tasks finish")
 
 
 def encode_record(tokenizer, row, max_length):
@@ -53,6 +60,10 @@ def encode_record(tokenizer, row, max_length):
 def load_data(data):
     data = Path(data)
     manifest = json.loads(data.with_name("manifest.json").read_text())
+    if manifest.get("purpose") == "experimental-targeted-pilot":
+        from .targeted import load
+
+        return load(data, manifest)
     if (
         manifest["purpose"] != "experimental-style-pilot"
         or manifest["adapter_scope"] != "reply-only"
@@ -109,6 +120,9 @@ def preflight(data, model_path, output, config):
                 destination.append(encode_record(tokenizer, row, cfg["max_length"]))
             except ValueError as exc:
                 rejected.append({"id": row["id"], "split": split, "reason": str(exc)})
+    if rejected and manifest["purpose"] == "experimental-targeted-pilot":
+        write_json(output / "rejected.json", rejected)
+        raise ValueError("Targeted pilot rejects silent sample dropping")
     write_json(output / "tokens.json", {"train": accepted, "dev": dev_tokens})
     tokenizer_hashes = {
         p.name: sha(p)
@@ -133,7 +147,8 @@ def preflight(data, model_path, output, config):
             sum(v != -100 for v in row["labels"]) for row in accepted
         ),
         "sequence_lengths": [len(r["input_ids"]) for r in accepted],
-        "human_reviewed": False,
+        "human_reviewed": manifest["human_reviewed"],
+        "dataset_approval_scope": manifest.get("approval_scope", "automatic-only"),
         "quality_approved": False,
         "supervision": "final-assistant-only; all prompt/history tokens masked",
         "adapters_in_analysis": False,
@@ -158,8 +173,10 @@ def train(data, lock_path, model_name, config, output, *, gpus):
         or not 1 <= cfg["gradient_accumulation_steps"] <= 16
     ):
         raise ValueError("Invalid pilot step configuration")
+    require_idle_gpus(gpus)
     with gpu_lease(list(gpus), 1):
         model_path = local_model(entry)
+        require_idle_gpus(gpus)
         import torch
         from transformers import AutoTokenizer, AutoModelForCausalLM
         from peft import LoraConfig, get_peft_model
@@ -181,11 +198,15 @@ def train(data, lock_path, model_name, config, output, *, gpus):
                     rejected.append(
                         {"id": row["id"], "split": split, "reason": "overlength"}
                     )
+        if rejected and data_manifest["purpose"] == "experimental-targeted-pilot":
+            raise ValueError("Targeted pilot rejects silent sample dropping")
         if not examples:
             raise ValueError("No trainable examples")
         output = new_output(output)
         manifest = {
-            "purpose": "experimental-style-pilot",
+            "purpose": data_manifest["purpose"],
+            "dataset_approval_scope": data_manifest.get("approval_scope", "automatic-only"),
+            "not_full_human_checklist_approval": data_manifest.get("not_full_human_checklist_approval", True),
             "quality_approved": False,
             "human_reviewed": False,
             "base_model_id": entry["repo"],
@@ -354,12 +375,14 @@ def verify_reload(data, lock_path, model_name, output, *, gpus):
         raise ValueError("Adapter hash mismatch")
     train_rows, _, _ = load_data(data)
     row = next(r for r in train_rows if r["id"] == manifest["probe_source_id"])
+    require_idle_gpus(gpus)
     with gpu_lease(list(gpus), 1):
+        path = local_model(entry)
+        require_idle_gpus(gpus)
         import torch
         from transformers import AutoTokenizer, AutoModelForCausalLM
         from peft import PeftModel
 
-        path = local_model(entry)
         tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True)
         model = PeftModel.from_pretrained(
             AutoModelForCausalLM.from_pretrained(

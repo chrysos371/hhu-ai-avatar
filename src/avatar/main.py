@@ -56,6 +56,8 @@ class Avatar:
         task_contract_enabled: bool = False,
         delivery_check_enabled: bool = False,
         grounding_prompt_enabled: bool = False,
+        reply_context_enabled: bool = True,
+        skills_enabled: Optional[bool] = None,
     ):
         if memory is None:
             if embedder is None and config.embedding.model:
@@ -88,6 +90,11 @@ class Avatar:
         self.task_contract_enabled = task_contract_enabled
         self.delivery_check_enabled = delivery_check_enabled
         self.grounding_prompt_enabled = grounding_prompt_enabled
+        self.skills_enabled = (os.getenv("AVATAR_SKILLS_ENABLED", "0") == "1") if skills_enabled is None else skills_enabled
+        self.skills_audit = {"enabled": self.skills_enabled, "selected": [], "reason": "not_used", "errors": [], "granted_tools": [], "prompt_chars": 0}
+        self.reply_context_enabled = reply_context_enabled
+        self.reply_context_audit = None
+        self._reply_context_plan = None
 
     # ------------------------------------------------------------------ 提示词
     def _admin_store(self):
@@ -135,7 +142,7 @@ class Avatar:
         decision_hint = f"{decision.persona_hint}。\n"
         hint_last = getattr(self, "decision_hint_last", False)
         return (
-            f"你是{managed.get('name',config.avatar_name)}，{managed.get('core_identity',config.avatar_persona)}。\n"
+            (f"你是{managed['name']}。\n" if managed else f"你是{config.avatar_name}，{config.avatar_persona}。\n") +
             f"{'' if hint_last else decision_hint}"
             f"{BOUNDARY_PROMPT}\n"
             f"{persona_data}"
@@ -158,10 +165,33 @@ class Avatar:
             f"{decision_hint if hint_last else ''}"
         )
 
+    def _assemble_reply_messages(self, system, history):
+        from .skills import select
+        skill_history = history
+        current = next((m['content'] for m in reversed(history) if m['role']=='user'), '')
+        if self.reply_context_enabled:
+            from .brain.reply_context import build_reply_context
+            plan = build_reply_context(history)
+            if plan.state['mode'] != 'conversation' and not (plan.state['mode']=='draft_edit' and plan.state['sender'] is None):
+                system += plan.prompt()
+            history = plan.history
+            self.reply_context_audit = plan.audit
+            self._reply_context_plan = plan
+        available = max(0, getattr(getattr(self, 'context_budget', None), 'system_chars', 16000)-len(system))
+        skill_prompt, self.skills_audit = select(current, skill_history[:-1], enabled=self.skills_enabled, budget=available)
+        system += skill_prompt
+        budget = getattr(self, 'context_budget', None)
+        if budget is not None and len(system) > budget.system_chars:
+            raise ValueError("Reply system context exceeds budget")
+        return [{"role": "system", "content": system}] + history
+
+    def _context_buffers_stream(self):
+        return (self.reply_context_enabled and self._reply_context_plan is not None
+                and self._reply_context_plan.state['mode'] != 'conversation')
+
     def _messages(self, decision: Decision, user_text: str = "") -> list[dict]:
-        return [
-            {"role": "system", "content": self._system_prompt(decision, user_text)}
-        ] + self.memory.get_short_term()
+        return self._assemble_reply_messages(self._system_prompt(decision, user_text),
+                                             self.memory.get_short_term())
 
     def _extract_facts(self, text: str) -> None:
         """从用户输入提取简单事实写入长期记忆（规则版，LLM 不可用时的回退）。"""
@@ -415,7 +445,10 @@ class Avatar:
     ) -> dict:
         """处理一条用户输入，返回回复 + 情绪 + 决策 + 音频路径。"""
         # 1. 短期记忆记下用户输入
+        self.skills_audit = {'enabled':self.skills_enabled,'selected':[],'reason':'not_used','errors':[],'granted_tools':[],'prompt_chars':0}
         self.analysis_status = 'skipped'
+        self.reply_context_audit = None
+        self._reply_context_plan = None
         self.reply_degraded = False
         self.memory.add_short_term("user", user_text)
         self._current_message_id = self.memory.add_message('user', user_text, self.session_id)
@@ -459,6 +492,19 @@ class Avatar:
         decision.temperature=_clamp(decision.temperature+managed.get('temperature_bias',0),0,1.5)
         effective=override['data'] if override else {'valence':self.emotion.state.valence,'arousal':self.emotion.state.arousal}
         web_result = {'sources': [], 'tool_calls': []}
+        context_inquiry = None
+        if self.reply_context_enabled and boundary.reply is None and reminder is None and not reminder_error and not use_web:
+            from .brain.reply_context import build_reply_context, grounded_inquiry
+            inquiry_plan = build_reply_context(self.memory.get_short_term())
+            context_inquiry = grounded_inquiry(inquiry_plan, [m['content'] for m in self.memory.get_short_term() if m['role']=='user'])
+            if context_inquiry:
+                self._reply_context_plan = inquiry_plan
+                self.reply_context_audit = inquiry_plan.audit
+        skill_reply = None
+        if boundary.reply is None and reminder is None and not reminder_error and not use_web:
+            from .skills.banter import source_guard
+            skill_reply, guard_audit = source_guard(user_text, self.memory.get_short_term()[:-1], enabled=self.skills_enabled)
+            if guard_audit is not None:self.skills_audit = guard_audit
         # 4. LLM 回复（无 key 降级）
         if boundary.reply is not None:
             reply = boundary.reply
@@ -473,6 +519,10 @@ class Avatar:
                 self.web_agent = WebAgent(memory_db_path=self.memory.db_path)
             web_result = self.web_agent.run(user_text, self.llm if self._llm_available else None)
             reply = web_result['reply']
+        elif skill_reply is not None:
+            reply = skill_reply
+        elif context_inquiry is not None:
+            reply = context_inquiry['reply']
         elif self._llm_available:
             try:
                 reply = self.llm.chat(
@@ -508,6 +558,37 @@ class Avatar:
                         repair_succeeded = True
                 except Exception:
                     logger.warning('任务修正失败，保留原回复与检查记录')
+        context_check = {'initial_issues': [], 'remaining_issues': [], 'repair_attempted': False,
+                         'repair_succeeded': False, 'blocked': False,
+                         'source_renderer': ({'rule': context_inquiry['rule'], 'source': context_inquiry['source']} if context_inquiry else None)}
+        if self._llm_available and not self.reply_degraded and self._reply_context_plan is not None and boundary.reply is None and not use_web:
+            from .brain.reply_context import inspect_reply, repair_request
+            plan = self._reply_context_plan
+            users = [m['content'] for m in self.memory.get_short_term() if m['role'] == 'user']
+            issues = inspect_reply(plan, reply, users)
+            context_check['initial_issues'] = issues
+            if issues:
+                context_check['repair_attempted'] = True
+                getattr(self, '_checkpoint', lambda: None)()
+                try:
+                    corrected = self.llm.chat(self._messages(decision, user_text) + [
+                        {'role': 'user', 'content': repair_request(plan, issues)}
+                    ], temperature=decision.temperature)
+                    if isinstance(corrected, str) and corrected.strip() and not inspect_reply(plan, corrected, users):
+                        reply = corrected
+                        context_check['repair_succeeded'] = True
+                except Exception:
+                    logger.warning('角色与来源校验重生成失败')
+                getattr(self, '_checkpoint', lambda: None)()
+                context_check['remaining_issues'] = inspect_reply(plan, reply, users)
+                if context_check['remaining_issues']:
+                    reply = '这段文字暂时还不能作为可靠的可发送正文，请再确认发送者、接收者和已确认的信息。'
+                    context_check['blocked'] = True
+                    self.reply_degraded = True
+        from .brain.reply_context import restore_time_qualifier
+        reply, time_repair = restore_time_qualifier(self._reply_context_plan, reply,
+            [m['content'] for m in self.memory.get_short_term() if m['role'] == 'user'])
+        context_check['time_qualifier_repair'] = time_repair
         output_adjustment = None
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
@@ -524,6 +605,9 @@ class Avatar:
                 reply, tts_path, decision.speech_rate, decision.speech_pitch
             )
         return {
+            "reply_context": self.reply_context_audit,
+            "context_check": context_check,
+            "generation_mode": ('skill_source_guard' if skill_reply is not None else 'grounded_user_inquiry' if context_inquiry else ('context_validation_failed' if context_check['blocked'] else ('llm' if self._reply_context_plan and not self.reply_degraded else 'rules'))),
             "knowledge_sources":[{'source_id':r['source_id'],'chunk_id':r['id'],'title':r['title'],'excerpt':r['content'][:600],'untrusted':True} for r in self._knowledge_context],
             "knowledge_retrieval_degraded":self._knowledge_degraded,
             "task": self.tasks.current.data() if self.tasks.current else None,

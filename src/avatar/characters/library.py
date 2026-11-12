@@ -16,10 +16,11 @@ CARD_MAP = {card['id']:card for card in CARDS}
 
 
 class CharacterLibrary:
-    def __init__(self, root=None, *, management_db=None, llm_factory=None):
+    def __init__(self, root=None, *, management_db=None, llm_factory=None, skills_enabled=None):
         self.root = Path(root) if root is not None else PROJECT/'data/characters'
         self.management_db = management_db
         self.llm_factory = llm_factory
+        self.skills_enabled = skills_enabled
 
     def card(self, key):
         if key not in CARD_MAP:raise ValueError('Unknown character')
@@ -125,7 +126,7 @@ class CharacterLibrary:
             factory = self.llm_factory or (lambda: create_llm(profile_id))
             engine=ConversationService(management_db=self.management_db,persona_db=path,llm_factory=factory,
                                        shared_facts=self.shared_facts(), owner_id='local-owner', character_id=key,
-                                       owns_llm=self.llm_factory is None)
+                                       owns_llm=self.llm_factory is None, skills_enabled=self.skills_enabled)
             reply=engine.respond(message,directory)
             conn=sqlite3.connect(directory/'memory.db')
             try:
