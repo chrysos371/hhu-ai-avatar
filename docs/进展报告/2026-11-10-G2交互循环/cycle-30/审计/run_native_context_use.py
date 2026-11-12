@@ -15,7 +15,7 @@ import tempfile
 import threading
 import time
 from urllib.request import build_opener,ProxyHandler
-from context_native_common import ROOT,BASE,OLD,PROTOCOL,REGISTRY,MODELS,ARMS,digest,verify_freeze
+from context_native_common import ROOT,BASE,OLD,PROTOCOL,REGISTRY,MODELS,ARMS,digest,verify_freeze,verify_historical_binding
 from context_native_relay import NativeRelay
 sys.path.insert(0,str(OLD));sys.path.insert(0,str(ROOT/'scripts'))
 from run_context_fault_controls import Harness
@@ -84,11 +84,11 @@ def prior_gate(args):
 
 class NativeContext(Harness):
     def __init__(self,args):
-        self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);prior_gate(args)
+        self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);verify_historical_binding(self.frozen);prior_gate(args)
         self.protocol=json.loads((ROOT/PROTOCOL).read_text());args.output.mkdir(parents=True,exist_ok=False)
         self.report={'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'model_id':args.model,
             'scope':self.protocol['scope'],'freeze_sha256':args.expected_freeze_sha256,'frozen_inputs':self.frozen,
-            'actual_llm_or_gpu':True,'cases':[],'workers':[],'http_calls':[],'requests':[],'warmups':[],
+            'historical_git_inputs_verified_before_output':True,'actual_llm_or_gpu':True,'cases':[],'workers':[],'http_calls':[],'requests':[],'warmups':[],
             'cleanup_errors':[],'completed':False,'failure':None,'engineering_passed':False,'semantic_approved':False,
             'cleanup_passed':False,'provider_pid':None,'provider_exit':None,'relay_buffers_full_response':True}
         self.opener=build_opener(ProxyHandler({}));self.states=[];self.state=None;self.ready=None;self.persist()

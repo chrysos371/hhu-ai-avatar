@@ -20,7 +20,7 @@ def source_paths():
     paths.update('evals/interaction/cycle-26/model-metadata-'+label+'.json' for label in ('4b','14b','32b'))
     paths.update(str((OLD/n).relative_to(ROOT)) for n in ('context_baseline_common.py','context_fault_common.py','run_context_baseline.py','run_context_fault_controls.py'))
     paths.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('context_native_common.py','context_native_worker.py','context_native_relay.py','run_native_context_use.py','probe_relay_controls.py'))
-    paths.update(str((BASE/'审计/工作目录/001-真实模型重启历史利用'/n).relative_to(ROOT)) for n in ('relay-cpu-controls.json','relay-cpu-controls.log'))
+    paths.update(str((BASE/'审计/工作目录/001-真实模型重启历史利用'/n).relative_to(ROOT)) for n in ('relay-cpu-controls.json','relay-cpu-controls.log','relay-control-version.json'))
     return paths
 
 
@@ -58,3 +58,15 @@ def runtime_modules():
             if not path.is_relative_to(ROOT/'src'):raise ValueError('Foreign Avatar runtime')
             result[name]={'path':str(path),'sha256':digest(path)}
     return result
+
+
+def verify_historical_binding(value):
+    """One batch before output/provider creation; hot-loop checks stay current SHA."""
+    import io
+    import subprocess
+    import tarfile
+    raw=subprocess.check_output(['git','archive','--format=tar',value['source_ref'],'--',*sorted(value['sha256'])],cwd=ROOT)
+    with tarfile.open(fileobj=io.BytesIO(raw),mode='r:') as archive:
+        actual={member.name:sha256(archive.extractfile(member).read()).hexdigest() for member in archive.getmembers() if member.isfile()}
+    if actual!=value['sha256']:raise ValueError('Historical native context source bytes differ')
+    return True
