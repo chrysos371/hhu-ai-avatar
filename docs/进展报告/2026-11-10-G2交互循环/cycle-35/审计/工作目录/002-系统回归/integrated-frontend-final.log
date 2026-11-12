@@ -1,0 +1,78 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ✓ src/lib/api.test.tsx (1 test) 20ms
+ ✓ src/features/chat/SpeechFrames.test.tsx (3 tests) 11ms
+ ✓ src/lib/statePrivacy.test.tsx (15 tests) 15ms
+ ✓ src/lib/actionReceipts.test.tsx (14 tests) 26ms
+ ✓ src/lib/speakerContext.test.tsx (19 tests) 12ms
+ ✓ src/lib/turns.test.tsx (2 tests) 22ms
+ ✓ src/features/chat/ChatTrace.test.tsx (2 tests) 105ms
+ ✓ src/lib/conversationWatch.test.tsx (19 tests) 39ms
+stderr | src/features/chat/SpeechRouteCleanup.test.tsx > keeps the owned audio during an ordinary rerender of the same chat
+Error: Not implemented: HTMLMediaElement.prototype.pause
+    at module.exports (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.pause (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:121:5)
+    at HTMLAudioElement.pause (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:160:34)
+    at /data/Users/zrh/repo/hhu-ai-avatar/frontend/src/features/chat/useSpeechPlayer.ts:53:24
+    at /data/Users/zrh/repo/hhu-ai-avatar/frontend/src/features/chat/useSpeechPlayer.ts:70:7
+    at Object.react_stack_bottom_frame (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:23965:13)
+    at runWithFiberInDEV (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+    at commitHookEffectListUnmount (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:11996:17)
+    at commitHookLayoutUnmountEffects (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:11872:11)
+    at commitDeletionEffectsOnFiber (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:12967:13) undefined
+Error: Not implemented: HTMLMediaElement.prototype.load
+    at module.exports (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLAudioElementImpl.load (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/nodes/HTMLMediaElement-impl.js:112:5)
+    at HTMLAudioElement.load (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/jsdom/lib/jsdom/living/generated/HTMLMediaElement.js:109:34)
+    at /data/Users/zrh/repo/hhu-ai-avatar/frontend/src/features/chat/useSpeechPlayer.ts:55:24
+    at /data/Users/zrh/repo/hhu-ai-avatar/frontend/src/features/chat/useSpeechPlayer.ts:70:7
+    at Object.react_stack_bottom_frame (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:23965:13)
+    at runWithFiberInDEV (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+    at commitHookEffectListUnmount (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:11996:17)
+    at commitHookLayoutUnmountEffects (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:11872:11)
+    at commitDeletionEffectsOnFiber (/data/Users/zrh/data/hhu-ai-avatar/frontend/node_modules/react-dom/cjs/react-dom-client.development.js:12967:13) undefined
+
+ ✓ src/features/chat/SpeechRouteCleanup.test.tsx (2 tests) 55ms
+ ✓ src/features/chat/ChatHistory.test.tsx (6 tests) 126ms
+ ✓ src/features/chat/PlaybackEvents.test.tsx (8 tests) 161ms
+ ✓ src/features/chat/recording.test.tsx (5 tests) 152ms
+ ✓ src/features/chat/LocalActionReceipts.test.tsx (7 tests) 239ms
+ ✓ src/features/reminders/useReminderDeliveries.test.tsx (8 tests) 59ms
+ ✓ src/lib/usePrivateStateQuery.test.tsx (17 tests) 297ms
+ ✓ src/features/chat/ChatWatch.test.tsx (4 tests) 361ms
+ ✓ src/features/chat/ChatContextHistory.test.tsx (8 tests) 395ms
+ ✓ src/features/chat/SpeechPlayer.test.tsx (4 tests) 216ms
+ ✓ src/components/AdminCommand.test.tsx (1 test) 127ms
+ ✓ src/features/tools/ToolsPage.test.tsx (1 test) 111ms
+ ✓ src/features/chat/VoiceInput.test.tsx (4 tests) 239ms
+ ✓ src/components/OperationConfirmDialog.test.tsx (5 tests) 280ms
+ ✓ src/features/knowledge/KnowledgePage.test.tsx (1 test) 221ms
+ ✓ src/app/AppShell.test.tsx (1 test) 212ms
+ ✓ src/features/reminders/RemindersPage.test.tsx (1 test) 228ms
+ ✓ src/features/persona/PersonaPage.test.tsx (1 test) 217ms
+ ✓ src/features/audit/AuditPage.test.tsx (1 test) 194ms
+ ✓ src/features/memory/MemoryPage.test.tsx (1 test) 285ms
+ ✓ src/features/dashboard/DashboardPage.test.tsx (4 tests) 289ms
+ ✓ src/features/chat/ChatPage.test.tsx (2 tests) 377ms
+   ✓ streams a reviewed draft then replaces it with the final traced reply  312ms
+ ✓ src/features/chat/ChatPrivacy.test.tsx (2 tests) 430ms
+   ✓ does not let a final result released after privacy clear repopulate chat or mutation cache  327ms
+ ✓ src/features/chat/ChatQueuedPrivacy.test.tsx (4 tests) 576ms
+ ✓ src/features/chat/ChatContextAdmission.test.tsx (5 tests) 578ms
+ ✓ src/features/chat/ChatSpeakerControls.test.tsx (3 tests) 620ms
+   ✓ sends an independent control from current_user and preserves the unsent draft  404ms
+ ✓ src/features/chat/FrameRendering.test.tsx (4 tests) 762ms
+ ✓ src/features/emotion/EmotionPage.test.tsx (6 tests) 426ms
+ ✓ src/features/chat/ChatCache.test.tsx (1 test) 5750ms
+   ✓ does not retain 40 completed chat mutation results after the page unmounts  5748ms
+
+ Test Files  37 passed (37)
+      Tests  192 passed (192)
+   Start at  22:07:20
+   Duration  8.17s (transform 9.81s, setup 8.22s, collect 34.63s, tests 14.24s, environment 18.33s, prepare 4.58s)
+
