@@ -64,6 +64,13 @@ class ReminderStore:
             title TEXT NOT NULL, due_at REAL NOT NULL, created_at REAL NOT NULL,
             status TEXT NOT NULL DEFAULT 'active', notified_at REAL
         )''')
+        # Metadata only: current titles stay in the original business table.
+        # No backfill: historical claims never become fabricated confirmations.
+        self.conn.execute('''CREATE TABLE IF NOT EXISTS memory_reminder_deliveries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reminder_id INTEGER NOT NULL UNIQUE,
+            created_at REAL NOT NULL, acknowledged_at REAL
+        )''')
         self.memory._commit()
 
     def create(self, text: str, *, now: float | None = None, checkpoint=None, receipt_context=None) -> dict:
@@ -100,13 +107,15 @@ class ReminderStore:
 
     def delete(self, reminder_id: int) -> None:
         with self.memory.transaction():
+            self.conn.execute('DELETE FROM memory_reminder_deliveries WHERE reminder_id=?', (reminder_id,))
             self.conn.execute('DELETE FROM memory_reminders WHERE id=?', (reminder_id,))
 
     def claim_due(self, *, now: float | None = None, checkpoint=None, receipt_context=None) -> list[dict]:
         """Atomically claim once across connections; no external notification side effects.
 
-        Delivery is at-most-once, not acknowledged delivery. Older than 24h stays
-        visible in the list but will not interrupt a later conversation.
+        This return value is at-most-once, not proof of display. The same
+        transaction enqueues a durable client event for pending_deliveries().
+        Older than 24h stays listed but will not interrupt a later conversation.
         """
         now = time.time() if now is None else now
         with self.memory.transaction():
@@ -119,7 +128,53 @@ class ReminderStore:
                 'AND due_at BETWEEN ? AND ? ORDER BY due_at,id', (now - 86400, now)).fetchall()
             for row in rows:
                 self.conn.execute('UPDATE memory_reminders SET notified_at=? WHERE id=?', (now, row['id']))
+                self.conn.execute(
+                    'INSERT INTO memory_reminder_deliveries(reminder_id,created_at) VALUES (?,?)',
+                    (row['id'], now))
                 if receipt_context is not None:
                     from .action_receipts import ActionReceiptStore
                     ActionReceiptStore(self.memory).record_reminder(receipt_context, 'reminder.claimed_due', row['id'])
             return [dict(row, notified_at=now) for row in rows]
+
+
+    def pending_deliveries(self, *, now: float | None = None) -> list[dict]:
+        """Replay eligible unacknowledged client events, including SDK claims.
+
+        Responses may repeat across pages/connections until explicit ACK. This
+        does not provide exactly-once perception or any external notification.
+        """
+        now = time.time() if now is None else now
+        with self.memory.transaction():
+            self.claim_due(now=now)
+            return [dict(row) for row in self.conn.execute(
+                "SELECT r.*,d.id AS delivery_id,d.created_at AS delivery_created_at "
+                "FROM memory_reminder_deliveries d JOIN memory_reminders r ON r.id=d.reminder_id "
+                "WHERE d.acknowledged_at IS NULL AND r.status='active' "
+                'AND r.due_at BETWEEN ? AND ? ORDER BY r.due_at,r.id', (now-86400,now))]
+
+    def acknowledge_delivery(self, delivery_id: int, *, expected_revision: int,
+                             now: float | None = None) -> dict:
+        """Record an explicit client acknowledgement, never a human-read proof.
+
+        Version check and first timestamp update share SQLite's writer lock.
+        A duplicate is idempotent while its reminder remains eligible.
+        """
+        if (type(delivery_id) is not int or not 0 < delivery_id <= 2**63-1
+                or type(expected_revision) is not int or not 0 <= expected_revision <= 2**63-1):
+            raise ValueError('invalid_delivery_ack')
+        now = time.time() if now is None else now
+        with self.memory.transaction():
+            if self.memory.context_revision != expected_revision:
+                raise ValueError('delivery_revision_changed')
+            row = self.conn.execute(
+                "SELECT d.* FROM memory_reminder_deliveries d "
+                "JOIN memory_reminders r ON r.id=d.reminder_id "
+                "WHERE d.id=? AND r.status='active' AND r.due_at BETWEEN ? AND ?",
+                (delivery_id, now-86400, now)).fetchone()
+            if row is None:
+                raise ValueError('delivery_not_pending')
+            if row['acknowledged_at'] is None:
+                self.conn.execute('UPDATE memory_reminder_deliveries SET acknowledged_at=? WHERE id=?',
+                                  (now, delivery_id))
+            return dict(self.conn.execute('SELECT * FROM memory_reminder_deliveries WHERE id=?',
+                                          (delivery_id,)).fetchone())
