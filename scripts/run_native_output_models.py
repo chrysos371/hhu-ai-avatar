@@ -9,6 +9,8 @@ import subprocess
 import sys
 import time
 
+from serve_local_model_eval import load_registry
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -28,11 +30,22 @@ def has_pid(raw, pid):
 
 def main(output, provider_python, stage='development', model_key=None, candidate_freeze=None,
          protocol=None, pair_protocol=None, candidate='v1', partition='development', backend='cuda',
-         expected_freeze_sha256=None):
+         expected_freeze_sha256=None, registry_path=None, expected_registry_sha256=None):
     if backend not in ('cuda', 'cpu_explicit') or backend != 'cuda' and stage != 'capability_pair':
         raise ValueError('Explicit CPU requires separately registered capability pairs')
     if expected_freeze_sha256 is not None and stage != 'capability_pair':
         raise ValueError('Expected freeze identity currently applies to capability pairs only')
+    registry, registry_sha256, registry_path = load_registry(registry_path, expected_sha256=expected_registry_sha256)
+    default_registry = ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
+    if stage != 'development' and registry_path != default_registry:
+        raise ValueError('Registry overrides currently require development stage')
+    selected_protocol = protocol if protocol is not None else (ROOT/'evals/interaction/cycle-15/native-output-protocol.json' if stage == 'development' else None)
+    if selected_protocol is not None:
+        declared = json.loads(selected_protocol.read_text()).get('models_registry')
+        if not isinstance(declared, str) or (ROOT/declared).resolve() != registry_path:
+            raise ValueError('Selected registry differs from selected protocol')
+    specifications = [m for m in registry['models'] if model_key is None or m['model_id'] == model_key]
+    if not specifications: raise ValueError('Unknown model key: '+str(model_key))
     frozen_sha = None
     if stage == 'capability_pair':
         if candidate_freeze is None or protocol is None or pair_protocol is None:
@@ -64,14 +77,12 @@ def main(output, provider_python, stage='development', model_key=None, candidate
         for path in [protocol, pair_protocol]:
             if path is not None and str(path.resolve().relative_to(ROOT)) not in frozen['sha256']:
                 raise ValueError('Selected protocol is not frozen')
-    output.mkdir(parents=True, exist_ok=False)
-    registry_path = ROOT/'evals/interaction/cycle-02/model-scale-protocol.json'
-    registry = json.loads(registry_path.read_text())
     paths = ['src/avatar/main.py', 'src/avatar/web.py', 'src/avatar/web_api.py',
              'src/avatar/brain/memory.py', 'src/avatar/brain/boundaries.py',
              'scripts/serve_local_model_eval.py', 'scripts/evaluate_native_output_audit.py',
              str(Path(__file__).resolve().relative_to(ROOT)),
-             'evals/interaction/cycle-15/native-output-protocol.json']
+             'evals/interaction/cycle-15/native-output-protocol.json', str(registry_path.relative_to(ROOT))]
+    paths += [m['metadata'] for m in registry['models'] if m.get('metadata')]
     if stage == 'development' and protocol is not None:
         paths.append(str(protocol.resolve().relative_to(ROOT)))
     if stage == 'capability_pair':
@@ -88,10 +99,14 @@ def main(output, provider_python, stage='development', model_key=None, candidate
     def fingerprint(): return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
     metadata_paths = {'qwen3-4b-q4_k_m': ROOT/'data/g2-cycle-02/gguf-metadata.json',
                       'qwen3-14b-q4_k_m': ROOT/'data/g2-cycle-02/qwen14b-gguf-metadata.json'}
-    specifications = [m for m in registry['models'] if model_key is None or m['model_id'] == model_key]
-    if not specifications: raise ValueError('Unknown model key: '+str(model_key))
+    metadata_paths.update({m['model_id']: ROOT/m['metadata'] for m in registry['models'] if m.get('metadata')})
+    if any(m['model_id'] not in metadata_paths for m in specifications):
+        raise ValueError('Selected model has no declared metadata input')
+    source_fingerprint = fingerprint()
+    output.mkdir(parents=True, exist_ok=False)
     report = {'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-              'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': fingerprint(),
+              'createdUtc': datetime.now(timezone.utc).isoformat(), 'sourceSha256': source_fingerprint,
+              'registry_path': str(registry_path.relative_to(ROOT)), 'registry_sha256': registry_sha256,
               'stage': stage, 'candidate': candidate, 'backend': backend, 'requested_models': [m['model_id'] for m in specifications],
               'candidateFreezeSha256': (frozen_sha if stage == 'capability_pair' else
                                        sha256(candidate_freeze.read_bytes()).hexdigest() if candidate_freeze else None),
@@ -117,7 +132,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             ready, trace = folder/'provider-ready.json', folder/'provider-trace.jsonl'
             command = [str(provider_python), str(ROOT/'scripts/serve_local_model_eval.py'), '--model', str(model_path),
                        '--model-key', key, '--metadata', str(metadata_paths[key]), '--ready', str(ready), '--trace', str(trace),
-                       '--backend', backend]
+                       '--backend', backend, '--registry', str(registry_path),
+                       '--expected-registry-sha256', registry_sha256]
             row = {'model_id': key, 'provider_command': command, 'provider_pid': None,
                    'gpu_before': gpu_snapshot(), 'processes_before': gpu_processes(),
                    'provider_ready': None, 'sampler_exit': None, 'provider_exit': None, 'cleanup_passed': False}
@@ -135,6 +151,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                             if metadata is not None: break
                         time.sleep(.1)
                     assert metadata['pid'] == process.pid
+                    if metadata.get('registry_sha256') != registry_sha256 or metadata.get('registry_path') != str(registry_path.relative_to(ROOT)):
+                        raise ValueError('Provider runtime registry differs from pinned selection')
                     row['provider_ready'] = metadata; save()
                     print(key, 'ready backend', backend, 'GPU', metadata['chosen_gpu']['index'] if metadata['chosen_gpu'] else None,
                           'pid', process.pid, flush=True)
@@ -187,7 +205,9 @@ if __name__ == '__main__':
     parser.add_argument('--provider-python', type=Path, required=True)
     parser.add_argument('--stage', choices=['development', 'prospective', 'capability_pair'], default='development')
     parser.add_argument('--partition', choices=['development', 'prospective'], default='development')
-    parser.add_argument('--model-key', choices=['qwen3-4b-q4_k_m', 'qwen3-14b-q4_k_m'])
+    parser.add_argument('--model-key')
+    parser.add_argument('--registry', type=Path)
+    parser.add_argument('--expected-registry-sha256')
     parser.add_argument('--candidate-freeze', type=Path)
     parser.add_argument('--protocol', type=Path)
     parser.add_argument('--pair-protocol', type=Path)
@@ -199,4 +219,5 @@ if __name__ == '__main__':
     # Make it absolute while preserving the requested venv entry point.
     main(options.output.resolve(), options.provider_python.expanduser().absolute(),
          options.stage, options.model_key, options.candidate_freeze, options.protocol, options.pair_protocol, options.candidate,
-         options.partition, options.backend, expected_freeze_sha256=options.expected_freeze_sha256)
+         options.partition, options.backend, expected_freeze_sha256=options.expected_freeze_sha256,
+         registry_path=options.registry, expected_registry_sha256=options.expected_registry_sha256)
