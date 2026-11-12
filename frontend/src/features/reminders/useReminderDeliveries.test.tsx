@@ -23,7 +23,7 @@ afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 it('never infers ACK from rendering; waits for explicit committed client confirmation', async () => {
   const ack = deferred(); let acknowledged = false;
-  const fetch = vi.fn((path: string, _options?: { body: string }) => path.endsWith('/ack') ? ack.promise : Promise.resolve(response(pending(acknowledged ? [] : [row]))));
+  const fetch = vi.fn((path: string, _options?: { body: string }) => { void _options; return path.endsWith('/ack') ? ack.promise : Promise.resolve(response(pending(acknowledged ? [] : [row]))); });
   vi.stubGlobal('fetch', fetch); const onAck = vi.fn();
   const { result, unmount } = renderHook(() => useReminderDeliveries(onAck)); await announce();
   expect(result.current.items).toEqual([row]); expect(fetch).toHaveBeenCalledTimes(1);
@@ -49,7 +49,7 @@ it('drops an old revision response even if its transport ignores abort', async (
 
 it('clears on metadata outage and rejects late ACK success until a new validated read', async () => {
   const ack = deferred(); const onAck = vi.fn();
-  const fetch = vi.fn((path: string, _options?: { body: string }) => path.endsWith('/ack') ? ack.promise : Promise.resolve(response(pending())));
+  const fetch = vi.fn((path: string, _options?: { body: string }) => { void _options; return path.endsWith('/ack') ? ack.promise : Promise.resolve(response(pending())); });
   vi.stubGlobal('fetch', fetch);
   const { result } = renderHook(() => useReminderDeliveries(onAck)); await announce();
   act(() => result.current.acknowledge(7)); await settle();
@@ -62,6 +62,7 @@ it('clears on metadata outage and rejects late ACK success until a new validated
 it('retains/reloads pending after a failed ACK and permits idempotent retry of the same event', async () => {
   let attempts = 0;
   const fetch = vi.fn((path: string, _options?: { body: string }) => {
+    void _options;
     if (path.endsWith('/ack')) { attempts += 1; return attempts === 1 ? Promise.reject(new Error('response lost')) : Promise.resolve(response({ acknowledged_at: 125 })); }
     return Promise.resolve(response(pending(attempts === 2 ? [] : [row])));
   });
