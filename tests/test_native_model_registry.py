@@ -62,3 +62,12 @@ def test_external_registry_path_is_not_a_project_input(tmp_path,registries):
     root,_,_=registries;outside=root.parent/'external-model-registry.json';outside.write_text(json.dumps({'models':[spec()]}))
     with pytest.raises(ValueError,match='inside the project'):
         provider.load_registry(outside,expected_sha256=sha256(outside.read_bytes()).hexdigest(),root=root)
+
+
+@pytest.mark.parametrize('change',['top_level','hash_type','revision_type'])
+def test_wrong_json_types_are_rejected_before_gpu(registries,change):
+    root,_,new=registries;model=spec()
+    if change=='hash_type':model['sha256']=None
+    if change=='revision_type':model['revision']=123
+    new.write_text(json.dumps([] if change=='top_level' else {'models':[model]}))
+    with pytest.raises(ValueError):provider.load_registry(new,expected_sha256=sha256(new.read_bytes()).hexdigest(),root=root)

@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import math
 import os
+import re
 from pathlib import Path
 import signal
 import subprocess
@@ -25,6 +26,42 @@ def sha(path):
         for block in iter(lambda: stream.read(8*1024*1024), b''):
             digest.update(block)
     return digest.hexdigest()
+
+
+def load_registry(path=None, *, expected_sha256=None, root=None):
+    """Bind a selected project registry before any model or CUDA construction."""
+    root = ROOT if root is None else Path(root)
+    default = root / 'evals/interaction/cycle-02/model-scale-protocol.json'
+    path = default if path is None else Path(path).resolve()
+    if not path.resolve().is_relative_to(root.resolve()):
+        raise ValueError('Model registry must be inside the project')
+    if path.resolve() != default.resolve() and expected_sha256 is None:
+        raise ValueError('Explicit override requires expected registry SHA')
+    raw = path.read_bytes(); identity = hashlib.sha256(raw).hexdigest()
+    if expected_sha256 is not None and identity != expected_sha256:
+        raise ValueError('Registry identity changed')
+    registry = json.loads(raw)
+    if not isinstance(registry, dict): raise ValueError('Invalid model registry')
+    models = registry.get('models')
+    if not isinstance(models, list) or not models:
+        raise ValueError('Invalid model registry')
+    ids = set()
+    for model in models:
+        if (not isinstance(model, dict) or not isinstance(model.get('model_id'), str)
+                or not re.fullmatch(r'[a-z0-9_-]+', model['model_id']) or model['model_id'] in ids
+                or not isinstance(model.get('file'), str) or Path(model['file']).name != model['file']
+                or not model['file'].endswith('.gguf')
+                or not isinstance(model.get('sha256'), str) or not re.fullmatch(r'[0-9a-f]{64}', model['sha256'])
+                or not isinstance(model.get('revision'), str) or not re.fullmatch(r'[0-9a-f]{40}', model['revision'])
+                or type(model.get('required_free_mib')) is not int or model['required_free_mib'] <= 0):
+            raise ValueError('Invalid or duplicate model specification')
+        if 'metadata' in model:
+            name = model['metadata']
+            if (not isinstance(name, str) or Path(name).is_absolute()
+                    or not (root / name).resolve().is_relative_to(root.resolve())):
+                raise ValueError('Model metadata must be a project input')
+        ids.add(model['model_id'])
+    return registry, identity, path
 
 
 def trace_request_metadata(data, raw_request, *, grammar_enabled):
@@ -64,12 +101,18 @@ def main():
     parser.add_argument('--ready', type=Path, required=True)
     parser.add_argument('--trace', type=Path, required=True)
     parser.add_argument('--backend', choices=['cuda', 'cpu_explicit'], default='cuda')
+    parser.add_argument('--registry', type=Path)
+    parser.add_argument('--expected-registry-sha256')
     args = parser.parse_args()
     if args.ready.exists() or args.trace.exists():
         raise ValueError('Use new evidence paths')
-    metadata = json.loads(args.metadata.read_text())
-    registry = json.loads(Path('evals/interaction/cycle-02/model-scale-protocol.json').read_text())
+    registry, registry_sha256, registry_path = load_registry(args.registry, expected_sha256=args.expected_registry_sha256)
+    metadata_raw = args.metadata.read_bytes()
+    metadata_sha256 = hashlib.sha256(metadata_raw).hexdigest()
+    metadata = json.loads(metadata_raw)
     specification = next(item for item in registry['models'] if item['model_id'] == args.model_key)
+    if specification.get('metadata') and args.metadata.resolve() != (ROOT / specification['metadata']).resolve():
+        raise ValueError('Metadata path differs from selected registry')
     assert metadata['path'] == specification['file']
     assert metadata['lfs']['oid'] == specification['sha256']
     if 'revision' in metadata:
@@ -119,6 +162,9 @@ def main():
         raise RuntimeError('No substantial model allocation on GPU; refusing unverified offload')
     if args.backend == 'cpu_explicit' and allocated:
         raise RuntimeError('Explicit CPU provider unexpectedly allocated GPU memory')
+
+    if sha(registry_path) != registry_sha256 or sha(args.metadata) != metadata_sha256:
+        raise ValueError('Registry or metadata changed while loading model')
 
     # Use the official template embedded in the hash-verified GGUF, with explicit thinking=False.
     template_text = model.metadata['tokenizer.chat_template']
@@ -207,7 +253,8 @@ def main():
     server.daemon_threads=True
     args.ready.write_text(json.dumps({'url':f'http://127.0.0.1:{server.server_port}/v1',
         'model_sha256':digest,'model_revision':specification['revision'],'model_id':args.model_key,
-        'registry_sha256':sha('evals/interaction/cycle-02/model-scale-protocol.json'),
+        'registry_sha256':registry_sha256, 'registry_path':str(registry_path.relative_to(ROOT)),
+        'metadata_sha256':metadata_sha256, 'metadata_path':str(args.metadata.resolve()),
         'gguf_general_name':model.metadata.get('general.name'),
         'template_sha256':hashlib.sha256(template_text.encode()).hexdigest(),
         'backend':args.backend, 'cpu_resources':cpu_resources,
