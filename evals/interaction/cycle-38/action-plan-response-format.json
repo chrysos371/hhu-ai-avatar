@@ -1,0 +1,53 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "avatar_lab_action_plan_v1",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route",
+        "actor",
+        "channel",
+        "source_message_id",
+        "evidence"
+      ],
+      "properties": {
+        "route": {
+          "type": "string",
+          "enum": [
+            "ordinary",
+            "unavailable_request",
+            "unavailable_status"
+          ]
+        },
+        "actor": {
+          "type": "string",
+          "enum": [
+            "assistant",
+            "user",
+            "other",
+            "unknown"
+          ]
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "none",
+            "message",
+            "email",
+            "phone",
+            "submission"
+          ]
+        },
+        "source_message_id": {
+          "type": "integer"
+        },
+        "evidence": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
