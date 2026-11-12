@@ -14,7 +14,7 @@
 - 单卡 4B/14B LoRA 试训入口：最终助手回复监督、历史全部 mask、r=8、q/v 投影、学习率 2e-5、最多 12 optimizer steps 且不超过一个 epoch、梯度检查点、保存与独立进程重载验证。32B 当前支持推理对照，不在此单卡训练器范围。
 - 自动机械回归与可选独立本地模型初审。机械检查不评价语义好坏，模型初审也不会自动批准数据、上线或启动再训练。
 
-所有公开原文、候选、隔离项、tokenized 数据和运行日志均保存在 `data/style-lab/`（Git 忽略），环境、模型和缓存均在 `/data/Users/zyyh/`。原始公开数据不提交仓库。
+本机当前环境、模型和缓存统一在 `/data/Users/zrh/data/hhu-ai-avatar/`，运行产物使用其artifacts/style-lab（仓库data/style-lab只是兼容入口），详见[数据布局](../../docs/本机数据布局.md)。下表是早期产物路径记录，是否存在需逐项核验；不借用其他用户目录，也不将迁移当新训练/下载。原始公开数据不提交仓库。
 
 ## 本轮有效产物
 
@@ -49,7 +49,7 @@ CUDA_VISIBLE_DEVICES='' ./scripts/companion_lab.sh preflight --data data/style-l
 
 ## GPU 空闲后的模型对照
 
-额外依赖沿用 `training/requirements-eval.txt` 和项目核心依赖，现有 `hhu-ai-avatar-train` 已具备。全新机器先在独立环境安装，脚本不自动安装。以下例子只有在选定卡空闲时才会通过；不会后台等待后自行占卡。
+额外依赖沿用 `training/requirements-eval.txt` 和项目核心依赖，原文训练环境描述为历史状态；当前本机仅迁移了普通/原生两个环境，未安装`hhu-ai-avatar-train`。全新机器先在独立环境安装，脚本不自动安装。以下例子只有在选定卡空闲时才会通过；不会后台等待后自行占卡。
 
 ```bash
 ./scripts/companion_lab.sh resources

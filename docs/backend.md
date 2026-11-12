@@ -1,5 +1,7 @@
 # 后端记忆、情绪与检索
 
+本机环境、模型、运行数据与缓存已迁至`/data/Users/zrh/data/hhu-ai-avatar`，代码仍在repo/hhu-ai-avatar。默认记忆库为集中根的artifacts/memory.db；旧data入口仅相对软链接。启动使用`./scripts/project-python -m avatar.web`，历史记录路径解析与完整位置见[本机数据布局](本机数据布局.md)。
+
 ## 原生提供方状态调查（C32，仅审计实验）
 
 重放C31旧SDK两链，4B与32B各reuse/logical reset/memory clear+reset三策略105原生调用，同模型固定实际GPU5 UUID、54运行文件前后绑定。安装0.3.19显式reset归零逻辑计数，底层clear只针对自建context，不保证全部物理状态一致。32B reuse三对相同最终wire/prompt下无额外认知算式83、有额外认知93；两种reset各六次均93。4B各策略值对但额外算式违反只答数字。未定位根因、不启用重置作为产品修复、C31候选仍隔离，见[C32系统报告](进展报告/2026-11-10-G2交互循环/cycle-32/审计/系统审计与推进报告.md)。该C32轮0 Avatar/SQL新回合；当前完整回归已在C34重跑，见下节。
