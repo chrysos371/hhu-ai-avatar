@@ -1,0 +1,41 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test reminder-query.spec.ts --output /data/Users/zrh/data/hhu-ai-avatar/tmp/c39-targeted-browser-results
+
+
+Running 1 test using 1 worker
+
+(node:3844909) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3844909) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/reminder-query.spec.ts:9:1 › explicit reminder reads deliver recorded state and conditions without changing the record (531ms)
+
+
+  1) e2e/reminder-query.spec.ts:9:1 › explicit reminder reads deliver recorded state and conditions without changing the record 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      20 |     if (logged.data?.confirmation_token) logged.data.confirmation_token = '[fixture confirmation capability omitted]';
+      21 |     report.calls.push({ path, status: response.status(), response: logged });
+    > 22 |     expect(response.ok()).toBe(true);
+         |                           ^
+      23 |     return body.data;
+      24 |   };
+      25 |   page.on('pageerror', error => report.errors.push(error.message));
+        at api (/data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/reminder-query.spec.ts:22:27)
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/reminder-query.spec.ts:29:19
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../data/hhu-ai-avatar/tmp/c39-targeted-browser-results/reminder-query-explicit-re-7e719-without-changing-the-record/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../data/hhu-ai-avatar/tmp/c39-targeted-browser-results/reminder-query-explicit-re-7e719-without-changing-the-record/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/reminder-query.spec.ts:9:1 › explicit reminder reads deliver recorded state and conditions without changing the record 

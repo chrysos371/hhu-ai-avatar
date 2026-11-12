@@ -1,0 +1,25 @@
+{
+  "scope": "browser_setup_date_format_only_not_read_query_failure",
+  "parser_sha256": "bd2ec65bef2b37b5e7dbbb930320d256b023a112887b10c6e7652049be95a3e5",
+  "test_source_sha256": "b75e15c1e052cebee5da6f6de6b39005aaf48f587fc809e1fd6a09d521178a99",
+  "actual_query_turns": 0,
+  "actual_source_control_turns": 1,
+  "public_setup_status": 422,
+  "same_intended_calendar_date_2099_01_01_10_00": true,
+  "cases": [
+    {
+      "input": "提醒我2099-01-01上午十点，C39浏览器只读查询控制。",
+      "result": null,
+      "error": "请明确一个日期、钟点和事项，例如：提醒我明天下午3点答辩。"
+    },
+    {
+      "input": "提醒我2099年1月1日上午十点，C39浏览器只读查询控制。",
+      "result": {
+        "title": "C39浏览器只读查询控制",
+        "due_at": 4070916000.0
+      },
+      "error": null
+    }
+  ],
+  "native_or_GPU_calls": 0
+}
