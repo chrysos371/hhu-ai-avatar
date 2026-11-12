@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "baseline": "02b4d5e",
+  "implementation": "afe9960",
+  "status": "registered_before_recovery_runs",
+  "models_enabled": false,
+  "gpu_required": false,
+  "browser_cases": [
+    "normal_claim",
+    "response_drop_after_commit",
+    "navigation_before_response",
+    "ack_response_drop_after_commit"
+  ],
+  "os_restart_cases": [
+    "unconsumed_pending_response",
+    "consumed_pending_control",
+    "committed_ack_response_unconsumed"
+  ],
+  "gates": [
+    "stable_event_id_until_explicit_ack",
+    "no_ack_on_render_reload_navigation",
+    "ack_committed_before_response_loss_survives_restart",
+    "old_server_instance_and_privacy_revision_rejected",
+    "no_replay_after_ack",
+    "source_runtime_bundle_binding",
+    "no_page_error_or_mobile_overflow",
+    "owned_process_cleanup_and_sql_integrity"
+  ],
+  "limits": "Fixed cases, no whole experiment wall deadline; bounded individual HTTP/startup/cleanup observations. Headless Chromium/client ACK does not prove human perception or physical notification."
+}

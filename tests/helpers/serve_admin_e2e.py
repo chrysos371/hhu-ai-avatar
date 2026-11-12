@@ -53,7 +53,7 @@ folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=root / "runtime/tm
 provider_context = ExitStack()
 reminder_delivery_case = os.getenv('AVATAR_E2E_REMINDER_DELIVERY_CASE')
 if reminder_delivery_case:
-    if reminder_delivery_case not in ('normal_claim', 'response_drop_after_commit', 'navigation_before_response'):
+    if reminder_delivery_case not in ('normal_claim', 'response_drop_after_commit', 'navigation_before_response', 'ack_response_drop_after_commit'):
         raise ValueError('Unknown reminder delivery fixture case')
     if os.getenv('AVATAR_E2E_LLM_PROVIDER') or os.getenv('AVATAR_E2E_REAL_ASR_MODEL'):
         raise ValueError('Reminder delivery fixture must not load real models')
