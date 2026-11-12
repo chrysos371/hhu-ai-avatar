@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+project_root="$(cd "$(dirname "$0")/.." && pwd)"
+source "$project_root/scripts/project_env.sh"
+environment_name=hhu-ai-avatar
+if [[ "${1:-}" == "--native" ]]; then environment_name=hhu-ai-avatar-llm; shift; fi
+python_bin="$asset_root/envs/$environment_name/bin/python"
+export PYTHONPATH="$project_root/src${PYTHONPATH:+:$PYTHONPATH}"
+if [[ "$environment_name" == "hhu-ai-avatar-llm" ]]; then
+  cuda_runtime=("$asset_root/envs/$environment_name"/lib/python*/site-packages/nvidia/cuda_runtime/lib)
+  export LD_LIBRARY_PATH="${cuda_runtime[0]}:$asset_root/runtime/gpu-libs/nvidia/cublas/lib:$asset_root/runtime/gpu-libs/nvidia/cudnn/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
+exec "$python_bin" "$@"

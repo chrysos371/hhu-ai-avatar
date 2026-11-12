@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
-asset_root="${HHU_AVATAR_DATA_ROOT:-$(python3 "$project_root/scripts/project_paths.py")}"
-export HHU_AVATAR_DATA_ROOT="$asset_root"
+source "$project_root/scripts/project_env.sh"
 python_bin="$asset_root/envs/hhu-ai-avatar-train/bin/python"
 if [[ ! -x "$python_bin" ]]; then python_bin="$asset_root/envs/hhu-ai-avatar/bin/python"; fi
 export PYTHONPATH="$project_root/src${PYTHONPATH:+:$PYTHONPATH}"

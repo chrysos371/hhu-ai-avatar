@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 const assets = process.env.HHU_AVATAR_DATA_ROOT
-  ?? execFileSync("python3", [resolve(__dirname, "../scripts/project_paths.py")], { encoding: "utf8" }).trim();
+  ?? execFileSync("python3", ["-B", resolve(__dirname, "../scripts/project_paths.py")], { encoding: "utf8" }).trim();
 const managedPython = resolve(assets, "envs/hhu-ai-avatar/bin/python");
 const python = existsSync(managedPython) ? JSON.stringify(managedPython) : "python3";
 export default defineConfig({

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
-asset_root="${HHU_AVATAR_DATA_ROOT:-$(python3 "$project_root/scripts/project_paths.py")}"
-export HHU_AVATAR_DATA_ROOT="$asset_root"
+source "$project_root/scripts/project_env.sh"
 local_node="$asset_root/runtime/node-npm/node_modules/node/bin"
 if [[ -x "$local_node/node" ]]; then export PATH="$local_node:$PATH"; fi
 node -e 'const [a,b]=process.versions.node.split(".").map(Number);if(a<22||(a===22&&b<12)){console.error("需要 Node.js 22.12+，请先准备本地工具链。");process.exit(1)}'
