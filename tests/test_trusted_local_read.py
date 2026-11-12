@@ -255,7 +255,7 @@ def test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot(
     with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
         if caller_snapshot:
             assert memory._conn.execute('PRAGMA journal_mode=WAL').fetchone()[0]=='wal'
-            assert writer._conn.execute('PRAGMA journal_mode').fetchone()[0]=='wal'
+            assert writer._conn.execute('PRAGMA journal_mode=WAL').fetchone()[0]=='wal'
         else:
             assert memory._conn.execute('PRAGMA journal_mode').fetchone()[0]=='delete'
         calls=[0];armed=[False]
