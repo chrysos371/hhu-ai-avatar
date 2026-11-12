@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "scope": "actual_http_os_restart_llm_context_baseline",
+  "provider": "controlled loopback HTTP fixture; no actual LLM or GPU",
+  "cases": [
+    {
+      "id": "same_instance",
+      "turns": [
+        "窗边有一只铜色风铃，标记C29-A。我们先聊这个场景。",
+        "场景里的地毯是蓝色，标记C29-B。继续聊这个场景。",
+        "请接着前面的场景，只用一句话回应。"
+      ],
+      "restart_after_turn": null
+    },
+    {
+      "id": "new_os_instance",
+      "turns": [
+        "窗边有一只铜色风铃，标记C29-A。我们先聊这个场景。",
+        "场景里的地毯是蓝色，标记C29-B。继续聊这个场景。",
+        "请接着前面的场景，只用一句话回应。"
+      ],
+      "restart_after_turn": 2
+    }
+  ],
+  "expected_app_processes": 3,
+  "desired_context": "Third ordinary generation request includes both earlier user and committed assistant messages exactly once, including after restart. Observe actual messages rather than reply semantics.",
+  "positive_control_required": "Same-instance third generation must show all four prior messages exactly once before interpreting restart difference.",
+  "persisted_history_check": "Record authenticated GET /conversation and SQLite stable IDs/session IDs separately from actual provider messages.",
+  "source_identity": "All production Python, protocol and fixture/driver committed hashes before and after, actual worker avatar module paths/SHA and owned PID/argv/exit records.",
+  "phase_B_not_yet_authorized_as_executed": "After baseline, separately preregister privacy/role/cancel/old-action/window/mixed-writer fault controls for any proposed restoration.",
+  "wall_clock_experiment_deadline": null,
+  "not_semantic_or_physical_acceptance": true
+}
