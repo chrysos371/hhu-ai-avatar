@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "scope": "automatic_emotion_privacy_revision_invalidation_engineering_regression",
+  "target_issue": "C33-004",
+  "source_cycle33_manifest_sha256": "5b4d59c03f036dafd99f22f981d8404c646461729a57ee8af87177c998d321de",
+  "phases": [
+    "before",
+    "after"
+  ],
+  "controlled_http_repetitions": 3,
+  "controlled_http_cases": [
+    "forget_completed_source",
+    "cancel_after_analysis"
+  ],
+  "primary_after_expectations": {
+    "forget_completed_source": {
+      "user_observation_nonzero_after_boundary": false,
+      "character_pad_nonzero_after_boundary": false,
+      "character_pad_nonzero_after_neutral": false
+    },
+    "cancel_after_analysis": {
+      "user_observation_nonzero_after_boundary": true,
+      "character_pad_nonzero_after_neutral": true
+    }
+  },
+  "positive_controls": [
+    "same revision live mood continuity",
+    "accepted input and completed observation after generation cancel retained",
+    "manual emotion override remains separately configured",
+    "ordinary context cursor changes do not reset automatic state"
+  ],
+  "required_faults": [
+    "external writer forget/correct",
+    "same Avatar public forget/correct",
+    "revision changes during in-flight analysis",
+    "legacy state and v1 emotion/dashboard diagnostic caches",
+    "unverified scope and rule fallback with no model",
+    "old unversioned diagnostic entries fail closed"
+  ],
+  "required_validation": [
+    "focused core/HTTP tests",
+    "matched actual loopback HTTP fake-method before/after controls, raw API/SSE/SQL retained",
+    "full Python suite and source identity before/after",
+    "default browser regression with modules and bundle binding",
+    "actual native4B then32B before/after known regression, separate source freezes and full raw SDK/native/runtime identity"
+  ],
+  "native_scope": "single known regression source, not independent quality or human emotion validation",
+  "native_fixed_source": [
+    "柜门标签写着AB-2738。这是本轮查询资料。",
+    "面试又没过，整个人像泄了气。"
+  ],
+  "native_after_forget_turns": [
+    "回到现实",
+    "这是一条中性的新请求。"
+  ],
+  "native_models": [
+    "qwen3-4b-q4_k_m",
+    "qwen3-32b-q4_k_m"
+  ],
+  "native_warmups": [
+    false,
+    true
+  ],
+  "native_expected_calls_per_model_phase": 8,
+  "native_app_turns_per_model_phase": 4,
+  "native_app_os_per_model_phase": 1,
+  "native_state_policy": "logical_reset",
+  "native_model_registry": "evals/interaction/cycle-26/model-scale-registry.json",
+  "native_runtime_identity": "evals/interaction/cycle-32/backend-runtime-identity.json",
+  "native_interpretation": "Observed nonzero preparatory state required to call reset boundary exercised; zero outcome kept as uninformative, not rerun or retuned. 32B gate engineering/identity/cleanup only, not affect score. No latency or semantic gain claim.",
+  "production_candidate_activation_authorized": false,
+  "cross_os_emotion_persistence_in_scope": false,
+  "cancel_rollback_in_scope": false,
+  "manual_override_deletion_in_scope": false,
+  "wall_clock_experiment_deadline": null
+}
