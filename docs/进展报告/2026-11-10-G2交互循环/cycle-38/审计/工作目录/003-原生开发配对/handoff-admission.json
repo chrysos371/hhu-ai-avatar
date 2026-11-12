@@ -1,0 +1,58 @@
+{
+  "verified": true,
+  "scope": "controller_name_and_child_argument_regression_only_not_model_quality",
+  "source_ref": "13e981a3223c0a6236fb4a9c9575b2c59295c6ae",
+  "verifier_sha256": "e972fd088e75473fdc1bbedae93eaa7112c8b24f15ebb0c59949e1c579bc1728",
+  "controller_sha256": "41f317dec3c1aad0cef3a8998726b8ba4ef7cba70aa5b3bddcd475a3d7350b31",
+  "sampler_sha256": "f9ca3fde77ddf2a69a07925835713e98293efcb80a2b2d137bcc452beb0adbf6",
+  "name_checker_sha256": "3e487d7b0599ec18eb86cca98b4058759754785aad5994b89a3d44452f3e6320",
+  "original_controller_ref": "26af0a3",
+  "original_undefined_globals": [
+    {
+      "scope": "main",
+      "name": "relay_metadata"
+    }
+  ],
+  "current_static_name_checks": {
+    "check_research_names.py": [],
+    "native_common.py": [],
+    "preflight_tools.py": [],
+    "prepare_native.py": [],
+    "run_pairs.py": [],
+    "run_regression.py": [],
+    "sample_pairs.py": [],
+    "verify_admission.py": [],
+    "verify_handoff.py": []
+  },
+  "actual_child_negative": {
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/sample_pairs.py",
+      "--provider",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/实验/paired-4b-r1/relay-provider-ready.json",
+      "--output",
+      "/data/Users/zrh/data/hhu-ai-avatar/tmp/c38-handoff-negative-afn5m6ot/not-created/sample",
+      "--wire",
+      "/data/Users/zrh/data/hhu-ai-avatar/tmp/c38-handoff-negative-afn5m6ot/not-created/wire.jsonl",
+      "--freeze",
+      "/data/Users/zrh/data/hhu-ai-avatar/tmp/c38-handoff-negative-afn5m6ot/wrong-parent.json",
+      "--expected-freeze-sha256",
+      "0000000000000000000000000000000000000000000000000000000000000000",
+      "--repetition",
+      "1"
+    ],
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/sample_pairs.py\", line 177, in <module>\n    main(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/sample_pairs.py\", line 111, in main\n    frozen = verify_source(args.freeze, args.expected_freeze_sha256)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/native_common.py\", line 72, in verify_source\n    raise ValueError('C38 execution descriptor bytes changed')\nValueError: C38 execution descriptor bytes changed\n",
+    "exit_code": 1,
+    "parsed_actual_repaired_controller_argv": true,
+    "rejected_before_provider_read_or_output": true
+  },
+  "previous_controlled_admission_sha256": "7b7034d98cf49451d54f5726692fab7f3928ecfa9c0056abda365f57c6f527c3",
+  "previous_freeze_retirement_sha256": "16ee696b1468c0b538ee27a3135b203031989b7245e4fd4d33d53e3ed790d6b2",
+  "native_requests_to_date": 0,
+  "GPU_provider_loads_to_date": 1,
+  "additional_native_or_GPU_loads_this_check": 0,
+  "old_owned_provider_absent": true,
+  "actual_gpu_processes_after": "",
+  "candidate_protocol_or_model_changes": false
+}
