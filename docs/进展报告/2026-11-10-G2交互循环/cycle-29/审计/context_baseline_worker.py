@@ -19,7 +19,7 @@ def main(args):
     sys.path.insert(0,str(ROOT/'src'))
     from avatar.config import config
     config.llm.base_url=args.provider_url;config.llm.api_key='local-c29-fixture-only';config.llm.model='c29-controlled'
-    config.embedding.model=''
+    config.embedding.model='';config.avatar_name='审计形象C29';config.avatar_persona='受控上下文连续性审计助手'
     from avatar.web import create_server
     server=create_server(str(db),port=0,legacy_writes=False,identity_grounding=False,profile_grounding=False,task_delivery_check=False,literal_composition=False)
     initial={'pid':os.getpid(),'base_url':f'http://127.0.0.1:{server.server_port}/api/v1','token':server.token,'session_id':server.session_id}
@@ -33,7 +33,7 @@ def main(args):
     finally:
         server.server_close();verify_freeze(args.freeze,args.expected_freeze_sha256)
         result={'pid':os.getpid(),'session_id':server.session_id,'module_sources':runtime_modules(),'short_term_after':server.short_term,
-                'context_revision_after':server.context_revision,'failure':failure,'provider_kind':'controlled_loopback_fixture','actual_llm_or_gpu':False}
+                'context_revision_after':server.context_revision,'failure':failure,'provider_kind':'controlled_loopback_fixture','actual_llm_or_gpu':False,'fixed_persona':'受控上下文连续性审计助手','embedding_disabled':True}
         with args.runtime_out.open('x') as out:json.dump(result,out,ensure_ascii=False,indent=2);out.write('\n')
 
 
