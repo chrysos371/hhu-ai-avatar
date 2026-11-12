@@ -11,7 +11,9 @@ from avatar.paths import project_data_root
 
 LINKS = {'data': 'artifacts', 'models': 'models', 'frontend/node_modules': 'frontend/node_modules',
     'frontend/dist': 'frontend/dist', 'frontend/test-results': 'frontend/test-results',
-    '.pytest_cache': 'cache/pytest', '.test-tmp': 'tmp/tests'}
+    '.pytest_cache': 'cache/pytest', '.test-tmp': 'tmp/tests',
+    '.runtime': 'tmp/legacy-checkout-runtime',
+    'src/hhu_ai_avatar.egg-info': 'cache/build-metadata/hhu_ai_avatar.egg-info'}
 
 
 def check_links(*, create=False):

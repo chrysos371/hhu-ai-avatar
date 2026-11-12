@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -26,9 +27,11 @@ def artifacts():
     return {str(path.relative_to(ROOT)): digest(path) for path in sorted((ROOT / 'frontend/dist').rglob('*')) if path.is_file()}
 
 
-def main(mode):
-    output = WORK / (mode + '-final-binding.json')
-    log = WORK / (mode + '-final.log')
+def main(mode, tag=''):
+    assert not tag or re.fullmatch(r'[a-z0-9_-]+', tag)
+    prefix = tag + '-' if tag else ''
+    output = WORK / (prefix + mode + '-final-binding.json')
+    log = WORK / (prefix + mode + '-final.log')
     assert not output.exists() and not log.exists()
     before = snapshot()
     commands = {'python': [sys.executable, '-m', 'pytest', 'tests/', '-q'],
@@ -36,7 +39,7 @@ def main(mode):
         'build': ['./scripts/frontend.sh', 'run', 'build'],
         'browser': ['./scripts/frontend.sh', 'run', 'e2e']}
     env = dict(os.environ)
-    runtime = WORK / 'browser-final-runtime.json'
+    runtime = WORK / (prefix + 'browser-final-runtime.json')
     if mode == 'browser':
         for key in list(env):
             if key.startswith('AVATAR_E2E_'):
@@ -74,4 +77,6 @@ def main(mode):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=('python', 'frontend', 'build', 'browser'))
-    main(parser.parse_args().mode)
+    parser.add_argument('--tag', default='', help='Fresh output namespace; never overwrite a previous run')
+    args = parser.parse_args()
+    main(args.mode, args.tag)
