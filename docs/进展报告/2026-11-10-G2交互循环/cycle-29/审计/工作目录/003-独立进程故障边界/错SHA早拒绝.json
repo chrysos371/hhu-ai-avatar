@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py",
+    "--output",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-29/实验/fault-wrong-sha-must-not-exist",
+    "--freeze",
+    "evals/interaction/cycle-29/context-fault-controls-freeze.json",
+    "--expected-freeze-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py\", line 253, in <module>\n    parser.add_argument('--expected-freeze-sha256',required=True);Harness(parser.parse_args()).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py\", line 72, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/context_fault_common.py\", line 16, in verify_freeze\n    if digest(path)!=expected:raise ValueError('Fault freeze identity changed')\nValueError: Fault freeze identity changed\n",
+  "output_created": false,
+  "passed": true
+}
