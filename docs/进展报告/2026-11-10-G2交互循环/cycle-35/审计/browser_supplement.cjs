@@ -70,7 +70,10 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
       const metadataGate = new Promise(resolve => releaseMetadata = resolve);
       await page.route('**/api/v1/conversation/changes?*', async route => {
         const bootstrap = new URL(route.request().url()).searchParams.get('instance_id') === 'state-bootstrap';
-        if (bootstrap || metadataMode === 'recover') return route.continue();
+        // Only the old watch is the declared broadcast fault. New revision waits
+        // must reach the service; aborting them would inject an extra outage.
+        if (bootstrap || metadataMode === 'recover'
+          || (broadcast && new URL(route.request().url()).searchParams.get('revision') !== '0')) return route.continue();
         heldMetadata++;
         await metadataGate;
         if (broadcast) { try { await route.abort(); } catch {} return; }
