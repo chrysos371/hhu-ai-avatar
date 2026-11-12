@@ -1,0 +1,48 @@
+{
+  "scope": "same_registered_explicit_command_coverage_and_readonly_business_contract_not_model_quality",
+  "before_sha256": "cb2ea2455db5b6ae75e6beffbcc88bbb5236f78d40520dd29be1058d5637a11c",
+  "after_sha256": "22e359f734200ef72ec5de8b1da2228841ec80ff70b9f8ff5777c4d08c091119",
+  "both_runtime_heads_and_exact_source_hashes_Git_verified": true,
+  "seed_equivalence": "same direct synthetic due60s setup/title/active/noqueue/noreceipt; actual wallclock timestamps differ, not byte-identical databases across runs",
+  "rows": [
+    {
+      "case": "status_due",
+      "input": "查询提醒编号1",
+      "before_mode": "rules_unconfigured",
+      "after_mode": "rules_reminder_query",
+      "before_business_unchanged": false,
+      "after_business_unchanged": true,
+      "before_queue_count": 1,
+      "after_queue_count": 0,
+      "before_receipt_count": 1,
+      "after_receipt_count": 0
+    },
+    {
+      "case": "conditions_due",
+      "input": "查看提醒送达条件",
+      "before_mode": "rules_unconfigured",
+      "after_mode": "rules_reminder_query",
+      "before_business_unchanged": false,
+      "after_business_unchanged": true,
+      "before_queue_count": 1,
+      "after_queue_count": 0,
+      "before_receipt_count": 1,
+      "after_receipt_count": 0
+    },
+    {
+      "case": "invalid_id_due",
+      "input": "查询提醒编号0",
+      "before_mode": "rules_unconfigured",
+      "after_mode": "rules_reminder_query",
+      "before_business_unchanged": false,
+      "after_business_unchanged": true,
+      "before_queue_count": 1,
+      "after_queue_count": 0,
+      "before_receipt_count": 1,
+      "after_receipt_count": 0
+    }
+  ],
+  "actual_Avatar_results": 6,
+  "native_or_GPU_calls": 0,
+  "does_not_reclassify_old_ordinary_due_claim_as_design_fault": true
+}

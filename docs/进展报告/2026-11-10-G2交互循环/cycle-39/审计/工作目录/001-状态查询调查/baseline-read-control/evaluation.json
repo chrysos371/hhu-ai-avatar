@@ -1,0 +1,467 @@
+{
+  "scope": "actual_Avatar_SQL_no_model_same_material_query_contract_probe_not_quality_score",
+  "tag": "read-control",
+  "head": "7c27a185735be1c3006a8e0e21fa25f17d5ed786",
+  "source_sha256": {
+    "src/avatar/main.py": "6c07179cefc047d5b797372006bd729f2e1a749083743e35a3b927910af39dc1",
+    "src/avatar/brain/reminders.py": "bd2ec65bef2b37b5e7dbbb930320d256b023a112887b10c6e7652049be95a3e5",
+    "evals/interaction/cycle-39/explicit-reminder-query-protocol.json": "b8eefb61d42349c590883ddb1d66792857e5b25de9adc2771ecf7e3878a4d38c",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-39/审计/probe_query_baseline.py": "2b6d55ec3148012e4833faea0e56ec5615a97aac1e723293b26b0746286004cb",
+    "src/avatar/brain/reminder_queries.py": "93e76059458e84e2b0b1af8ae8f701be9c893c3fc41fbf926bf23da1c4e0ac53"
+  },
+  "cases": [
+    {
+      "id": "status_due",
+      "input": "查询提醒编号1",
+      "direct_synthetic_sql_seed": true,
+      "before": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.22223,
+            "created_at": 1794501724.22223,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "after": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.22223,
+            "created_at": 1794501724.22223,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "existing_management_listing": [
+        {
+          "id": 1,
+          "title": "受控到期记录",
+          "due_at": 1794505264.22223,
+          "created_at": 1794501724.22223,
+          "status": "active",
+          "notified_at": null,
+          "delivery_acknowledged_at": null
+        }
+      ],
+      "new_query_mode_present": true,
+      "business_unchanged": true,
+      "result": {
+        "conversation": {
+          "session_id": "04b8d083d1f84aa6a13c01faf8a635a1",
+          "revision": 0,
+          "user_message_id": 1,
+          "assistant_message_id": 2
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_reminder_query",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "编号1「受控到期记录」：记录状态为有效，提醒时间为2026-11-13 01:41（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_reminder_query",
+        "generation_mode": "rules_reminder_query",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "04b8d083d1f84aa6a13c01faf8a635a1",
+          "kind": "disabled",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "reminder_query": {
+          "version": 1,
+          "kind": "status",
+          "source_message_id": 1,
+          "revision": 0,
+          "observed_at": 1794505324.2321649,
+          "business_mutations": false,
+          "reminder_id": 1,
+          "exists": true,
+          "state": {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.22223,
+            "status": "active",
+            "service_claim_recorded": false,
+            "client_ack_recorded": false
+          },
+          "requires_running_server": true,
+          "web_requires_active_client_polling": true,
+          "external_delivery_channels": [],
+          "human_reading_verified": false
+        },
+        "action_receipts": {
+          "instance_id": "04b8d083d1f84aa6a13c01faf8a635a1",
+          "revision": 0,
+          "items": [],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        }
+      },
+      "after_sql_dump_sha256": "526ed14c06f052a1d18ca052fa526ca08beebc7c9e3fd3bfab49d4c83e6ecf48"
+    },
+    {
+      "id": "conditions_due",
+      "input": "查看提醒送达条件",
+      "direct_synthetic_sql_seed": true,
+      "before": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.2528222,
+            "created_at": 1794501724.2528222,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "after": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.2528222,
+            "created_at": 1794501724.2528222,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "existing_management_listing": [
+        {
+          "id": 1,
+          "title": "受控到期记录",
+          "due_at": 1794505264.2528222,
+          "created_at": 1794501724.2528222,
+          "status": "active",
+          "notified_at": null,
+          "delivery_acknowledged_at": null
+        }
+      ],
+      "new_query_mode_present": true,
+      "business_unchanged": true,
+      "result": {
+        "conversation": {
+          "session_id": "c1c61e3a607c45a09de057fa65cb7962",
+          "revision": 0,
+          "user_message_id": 1,
+          "assistant_message_id": 2
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_reminder_query",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_reminder_query",
+        "generation_mode": "rules_reminder_query",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "c1c61e3a607c45a09de057fa65cb7962",
+          "kind": "disabled",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "reminder_query": {
+          "version": 1,
+          "kind": "conditions",
+          "source_message_id": 1,
+          "revision": 0,
+          "observed_at": 1794505324.253997,
+          "business_mutations": false,
+          "reminder_id": null,
+          "exists": null,
+          "state": null,
+          "requires_running_server": true,
+          "web_requires_active_client_polling": true,
+          "external_delivery_channels": [],
+          "human_reading_verified": false
+        },
+        "action_receipts": {
+          "instance_id": "c1c61e3a607c45a09de057fa65cb7962",
+          "revision": 0,
+          "items": [],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        }
+      },
+      "after_sql_dump_sha256": "fe6b004c5ee07d2e9b0f0ed92d894c9a1375cd16ac0e70499db1d4a6b1ae6791"
+    },
+    {
+      "id": "invalid_id_due",
+      "input": "查询提醒编号0",
+      "direct_synthetic_sql_seed": true,
+      "before": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.2689993,
+            "created_at": 1794501724.2689993,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "after": {
+        "memory_reminders": [
+          {
+            "id": 1,
+            "title": "受控到期记录",
+            "due_at": 1794505264.2689993,
+            "created_at": 1794501724.2689993,
+            "status": "active",
+            "notified_at": null
+          }
+        ],
+        "memory_reminder_deliveries": [],
+        "memory_action_receipts": []
+      },
+      "existing_management_listing": [
+        {
+          "id": 1,
+          "title": "受控到期记录",
+          "due_at": 1794505264.2689993,
+          "created_at": 1794501724.2689993,
+          "status": "active",
+          "notified_at": null,
+          "delivery_acknowledged_at": null
+        }
+      ],
+      "new_query_mode_present": true,
+      "business_unchanged": true,
+      "result": {
+        "conversation": {
+          "session_id": "8a6135405f184954b0947960c4bd0927",
+          "revision": 0,
+          "user_message_id": 1,
+          "assistant_message_id": 2
+        },
+        "knowledge_sources": [],
+        "knowledge_retrieval_degraded": false,
+        "task": null,
+        "delivery_check": {
+          "initial_issues": [],
+          "remaining_issues": [],
+          "repair_attempted": false,
+          "repair_succeeded": false,
+          "repair_mode": null,
+          "repair_error": null,
+          "literal_composition_enabled": false,
+          "literal_plan_version": null,
+          "draft_generation_mode": "rules_reminder_query",
+          "stream_buffered": false
+        },
+        "boundary": {
+          "route": "normal",
+          "guarded": false,
+          "output_adjustment": null
+        },
+        "speaker_attribution": {
+          "scope": "current_user",
+          "persistent_facts_allowed": true,
+          "turn_tools_allowed": true,
+          "version": 1,
+          "general_coreference_verified": false
+        },
+        "speaker_tool_blocked": false,
+        "reply": "请使用“查询提醒编号1”或“查看提醒送达条件”。提醒编号须为有效的正整数，且一条消息只包含一个查询。",
+        "emotion": "中性",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "style": "自然随和",
+        "speech_rate": "+0%",
+        "speech_pitch": "+0Hz",
+        "mouth_intensity": 0.75,
+        "strategy": "answer",
+        "analysis_mode": "rules_reminder_query",
+        "generation_mode": "rules_reminder_query",
+        "identity_grounding": false,
+        "profile_grounding": {
+          "enabled": false,
+          "action": null,
+          "scope": "profile_lookup_declaration_and_copied_preference",
+          "version": 2,
+          "semantic_verifier": false,
+          "stream_buffered": false
+        },
+        "user_emotion": "中性",
+        "user_valence": 0.0,
+        "user_arousal": 0.0,
+        "audio_path": null,
+        "lip_sync_frames": null,
+        "lipsync_error": null,
+        "energy": 0.525,
+        "recalled_ids": [],
+        "reminder": null,
+        "reminder_error": null,
+        "due_reminders": [],
+        "conversation_summary": {
+          "session_id": "8a6135405f184954b0947960c4bd0927",
+          "kind": "disabled",
+          "items": [],
+          "characters": 2,
+          "max_characters": 1600
+        },
+        "sources": [],
+        "tool_calls": [],
+        "web_error": null,
+        "reminder_query": {
+          "version": 1,
+          "kind": "invalid",
+          "source_message_id": 1,
+          "revision": 0,
+          "observed_at": 1794505324.270152,
+          "business_mutations": false,
+          "reminder_id": null,
+          "exists": null,
+          "state": null,
+          "requires_running_server": true,
+          "web_requires_active_client_polling": true,
+          "external_delivery_channels": [],
+          "human_reading_verified": false
+        },
+        "action_receipts": {
+          "instance_id": "8a6135405f184954b0947960c4bd0927",
+          "revision": 0,
+          "items": [],
+          "has_more": false,
+          "next_after_id": null,
+          "scope": "current_visible_local_sql_receipts",
+          "notification_delivery_verified": false
+        }
+      },
+      "after_sql_dump_sha256": "b30f3d60f0469ef0e7a7cc3587d8aaf8991c58cf87d747334a696f1621a9634f"
+    }
+  ],
+  "native_or_GPU_calls": 0,
+  "completed": true
+}
