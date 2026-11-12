@@ -42,13 +42,13 @@ def verify():
             request=row['request'];assert request['model']=='c29-controlled';text=request['messages'][-1]['content']
             assert request['messages'][-1]['role']=='user'
             (gen if row['kind']=='generation' else cog).setdefault(text,[]).append(row)
-            if row['kind']=='generation':
-                assert not request.get('response_format')
+            if request.get('stream'):
                 chunks=[json.loads(line[6:]) for line in row['raw_http_body'].splitlines() if line.startswith('data: ') and line!='data: [DONE]']
                 assert ''.join(c['choices'][0]['delta'].get('content','') for c in chunks)==row['reply']
+            else:assert json.loads(row['raw_http_body'])['choices'][0]['message']['content']==row['reply']
+            if row['kind']=='generation':assert not request.get('response_format')
             else:
                 assert request['response_format']['json_schema']['name']=='avatar_cognitive_analysis'
-                assert json.loads(row['raw_http_body'])['choices'][0]['message']['content']==row['reply']
                 assert request['messages'][1:]==[{'role':'user','content':text}]
         for turn in case['turns']:
             assert turn['app_pid'] in workers and workers[turn['app_pid']]['case']==case['id']
