@@ -1,0 +1,61 @@
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+..........F............................................................. [ 15%]
+........................................................................ [ 19%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+........................................................................ [ 31%]
+........................................................................ [ 35%]
+........................................................................ [ 39%]
+........................................................................ [ 43%]
+........................................................................ [ 47%]
+........................................................................ [ 51%]
+........................................................................ [ 55%]
+........................................................................ [ 59%]
+........................................................................ [ 63%]
+........................................................................ [ 67%]
+........................................................................ [ 70%]
+........................................................................ [ 74%]
+........................................................................ [ 78%]
+........................................................................ [ 82%]
+..............................s......................................... [ 86%]
+........................................................................ [ 90%]
+........................................................................ [ 94%]
+........................................................................ [ 98%]
+..........................                                               [100%]
+=================================== FAILURES ===================================
+_____________ test_supervisor_handoff_pins_expected_descriptor_sha _____________
+
+    def test_supervisor_handoff_pins_expected_descriptor_sha():
+        parent = ROOT / '.runtime/tmp'
+        parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='freeze-identity-', dir=parent) as name:
+            directory = Path(name)
+            freeze = directory / 'freeze.json'
+            frozen(freeze)
+            spec = {'candidate': 'source_capability_v4', 'candidate_freeze': str(freeze.relative_to(ROOT)),
+                    'protocol': str(PROTOCOL.relative_to(ROOT)), 'pair_protocol': str(PAIR.relative_to(ROOT)),
+                    'output': str((directory / 'unused-output').relative_to(ROOT)), 'backend': 'cuda',
+                    'partition': 'development', 'model_key': 'qwen3-4b-q4_k_m', 'provider_python': sys.executable}
+>           command, context = jobs.prepare(spec)
+
+tests/test_capability_freeze_identity.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/lab/run_frozen_capability_job.py:73: in prepare
+    freeze, protocol, pair, output = (local(name) for name in ('candidate_freeze', 'protocol', 'pair_protocol', 'output'))
+scripts/lab/run_frozen_capability_job.py:73: in <genexpr>
+    freeze, protocol, pair, output = (local(name) for name in ('candidate_freeze', 'protocol', 'pair_protocol', 'output'))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'candidate_freeze'
+
+    def local(name):
+        path = (ROOT/spec[name]).resolve()
+>       if not path.is_relative_to(ROOT): raise ValueError('Experiment path outside project')
+E       ValueError: Experiment path outside project
+
+scripts/lab/run_frozen_capability_job.py:71: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_capability_freeze_identity.py::test_supervisor_handoff_pins_expected_descriptor_sha
+1 failed, 1824 passed, 1 skipped in 125.23s (0:02:05)
