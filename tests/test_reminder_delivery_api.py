@@ -44,7 +44,7 @@ def test_pending_rejects_get_and_unknown_fields(api_v1, payload):
 
 
 @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
-    {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+    {'instance_id':'missing-revision'},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
     {'revision':0,'extra':1}])
 def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
     request, server = api_v1; seed(server)

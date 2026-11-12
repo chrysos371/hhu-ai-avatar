@@ -1,0 +1,23 @@
+......F....................................                              [100%]
+=================================== FAILURES ===================================
+__________ test_invalid_or_wrong_instance_ack_never_mutates[payload3] __________
+
+api_v1 = (<function api_v1.<locals>.request at 0x7f2d05a40820>, <avatar.web.AvatarHTTPServer object at 0x7f2d05a63e50>)
+payload = {'revision': 0}
+
+    @pytest.mark.parametrize('payload', [{},{'instance_id':'wrong','revision':0},{'instance_id':True,'revision':0},
+        {'revision':0},{'revision':True},{'revision':-1},{'revision':1.5},{'revision':'0'}, {'revision':2**63},
+        {'revision':0,'extra':1}])
+    def test_invalid_or_wrong_instance_ack_never_mutates(api_v1, payload):
+        request, server = api_v1; seed(server)
+        pending = request('/api/v1/reminders/deliveries/pending',{})[1]['data']
+        event = pending['items'][0]['delivery_id']
+        body = dict(payload)
+        if 'revision' in body and 'instance_id' not in body: body['instance_id'] = server.session_id
+>       assert request(f'/api/v1/reminders/deliveries/{event}/ack',body)[0] in (409,422)
+E       assert 200 in (409, 422)
+
+tests/test_reminder_delivery_api.py:55: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_delivery_api.py::test_invalid_or_wrong_instance_ack_never_mutates[payload3]
+1 failed, 42 passed in 14.09s

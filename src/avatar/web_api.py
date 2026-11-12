@@ -327,7 +327,7 @@ class V1API:
         if not post and path == "/summary":
             return 200, SummaryStore(self.memory).read(self.server.session_id)
         if not post and path == "/reminders":
-            return 200, ReminderStore(self.memory).list()
+            return 200, ReminderStore(self.memory).list_with_delivery()
         if post and path == "/reminders":
             return (
                 201,
@@ -370,6 +370,31 @@ class V1API:
                     },
                 ).data(),
             )
+        if post and path == '/reminders/deliveries/pending':
+            if query or data != {}:
+                raise OperationError(422, 'invalid_delivery_query')
+            store = ReminderStore(self.memory)
+            with self.memory.transaction():
+                items = store.pending_deliveries()
+                return 200, {'instance_id': self.server.session_id,
+                             'revision': self.memory.context_revision, 'items': items}
+        match = re.fullmatch(r'/reminders/deliveries/([0-9]+)/ack', path)
+        if post and match:
+            if (query or set(data) != {'instance_id', 'revision'}
+                    or type(data['instance_id']) is not str or not 1 <= len(data['instance_id']) <= 100
+                    or type(data['revision']) is not int or not 0 <= data['revision'] <= 2**63-1
+                    or len(match[1]) > 19 or not 0 < int(match[1]) <= 2**63-1):
+                raise OperationError(422, 'invalid_delivery_ack')
+            if data['instance_id'] != self.server.session_id:
+                raise OperationError(409, 'delivery_instance_changed', '服务已重启，请重新读取提醒。')
+            try:
+                result = ReminderStore(self.memory).acknowledge_delivery(
+                    int(match[1]), expected_revision=data['revision'])
+            except ValueError as error:
+                if str(error) not in ('delivery_revision_changed', 'delivery_not_pending'):
+                    raise
+                raise OperationError(409, str(error), '提醒或记忆版本已变化，请重新读取。') from None
+            return 200, result
         if post and path == "/reminders/due":
             return 200, ReminderStore(self.memory).claim_due()
         if not post and path == "/knowledge/sources":

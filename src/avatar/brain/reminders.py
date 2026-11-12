@@ -91,6 +91,13 @@ class ReminderStore:
     def list(self) -> list[dict]:
         return [dict(row) for row in self.conn.execute('SELECT * FROM memory_reminders ORDER BY id')]
 
+    def list_with_delivery(self) -> list[dict]:
+        """Management view; ACK is a client report, never proof of reading."""
+        return [dict(row) for row in self.conn.execute(
+            'SELECT r.*,d.acknowledged_at AS delivery_acknowledged_at '
+            'FROM memory_reminders r LEFT JOIN memory_reminder_deliveries d ON d.reminder_id=r.id '
+            'ORDER BY r.id')]
+
     def set_status(self, reminder_id: int, status: str, *, checkpoint=None, receipt_context=None) -> None:
         if status not in ('completed', 'cancelled'):
             raise ValueError('status must be completed or cancelled')
