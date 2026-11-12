@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py", line 253, in <module>
+    parser.add_argument('--expected-freeze-sha256',required=True);Harness(parser.parse_args()).run()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py", line 224, in run
+    self.start(expected['id']=='optout');getattr(self,expected['id'])();self.stop();self.snapshot('final')
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py", line 168, in scope
+    self.turn('真人风景C29REAL。');self.turn('我来扮演一个虚构角色。');self.turn('角色风景C29FICTION，我叫虚构甲。')
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py", line 139, in turn
+    row=self.finish(self.begin(text));assert row['terminal']=='result';return row['result']
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/run_context_fault_controls.py", line 135, in finish
+    assert ''.join(e['data']['text'] for e in observed if e['event']=='text')==result['reply']
+AssertionError
