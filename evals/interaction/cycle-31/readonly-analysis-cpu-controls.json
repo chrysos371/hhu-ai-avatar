@@ -1,0 +1,423 @@
+{
+  "version": 1,
+  "scope": "preregistered_development_shadow_guards",
+  "cases": [
+    {
+      "id": "eligible-01",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-02",
+      "text": "根据资料，绿票由谁保管？只回答姓名。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-03",
+      "text": "按照记录，调整后的终点是哪一站？只回答站名。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-04",
+      "text": "根据清单，更新后两种材料的数量合计是多少？只回答数字。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-05",
+      "text": "根据表格，哪一个箱子的容量更大？只回答箱子代号。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-06",
+      "text": "根据资料，这份说明的页码是多少？只回答数字，资料未给出则回答无法确认。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-07",
+      "text": "请根据文本，封面的颜色是什么？只回答颜色。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-08",
+      "text": "按照前文，第一项记录的代号是什么？仅回答代号。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-09",
+      "text": "根据记录，甲组的数量是多少？只输出数字。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-10",
+      "text": "根据预算，两项费用的合计是多少？只回答数字。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-11",
+      "text": "按照表格，最小的数值是哪一个？仅输出数字。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "eligible-12",
+      "text": "根据资料，样品的编号是什么？只回答编号。",
+      "expected": true,
+      "scope": "current_user",
+      "history": []
+    },
+    {
+      "id": "protected-01",
+      "text": "我叫许澄。根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "personal_or_claim"
+    },
+    {
+      "id": "protected-02",
+      "text": "我喜欢清单里的绿色。根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "personal_or_claim"
+    },
+    {
+      "id": "protected-03",
+      "text": "根据资料，今年21岁的人是谁？只回答姓名。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "personal_or_claim"
+    },
+    {
+      "id": "protected-04",
+      "text": "根据上文，喜欢咖啡的是谁？只回答姓名。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "personal_or_claim"
+    },
+    {
+      "id": "protected-05",
+      "text": "根据资料，我的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "personal_or_claim"
+    },
+    {
+      "id": "protected-06",
+      "text": "根据资料，I am nervous，这是什么代号？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "personal_or_claim"
+    },
+    {
+      "id": "protected-07",
+      "text": "根据资料，这件事让我很焦虑，代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "current_affect"
+    },
+    {
+      "id": "protected-08",
+      "text": "根据资料，心情难过时该看哪项？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "current_affect"
+    },
+    {
+      "id": "protected-09",
+      "text": "根据资料，这个情绪是什么意思？只回答词语。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "current_affect"
+    },
+    {
+      "id": "protected-10",
+      "text": "根据资料，很担心结果时该选哪项？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "current_affect"
+    },
+    {
+      "id": "protected-11",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "user",
+          "content": "我很难过。"
+        }
+      ],
+      "reason": "recent_affect"
+    },
+    {
+      "id": "protected-12",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "user",
+          "content": "看到安排有点焦虑。"
+        }
+      ],
+      "reason": "recent_affect"
+    },
+    {
+      "id": "protected-13",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "user",
+          "content": "这件事让我害怕。"
+        }
+      ],
+      "reason": "recent_affect"
+    },
+    {
+      "id": "protected-14",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "user",
+          "content": "我很开心。"
+        }
+      ],
+      "reason": "recent_affect"
+    },
+    {
+      "id": "protected-15",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "user",
+          "content": "心情有点复杂。"
+        }
+      ],
+      "reason": "recent_affect"
+    },
+    {
+      "id": "protected-16",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "user",
+          "content": "我不想听建议，只想说说。"
+        }
+      ],
+      "reason": "recent_affect"
+    },
+    {
+      "id": "protected-17",
+      "text": "根据资料，提醒我什么时候出发？只回答时间。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "action_or_control"
+    },
+    {
+      "id": "protected-18",
+      "text": "根据资料，发送给谁？只回答姓名。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "action_or_control"
+    },
+    {
+      "id": "protected-19",
+      "text": "根据记录，删除哪一个？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "action_or_control"
+    },
+    {
+      "id": "protected-20",
+      "text": "根据资料，保存哪一段？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "action_or_control"
+    },
+    {
+      "id": "protected-21",
+      "text": "根据资料，扮演谁？只回答姓名。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "action_or_control"
+    },
+    {
+      "id": "protected-22",
+      "text": "根据资料，预约哪一项？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "action_or_control"
+    },
+    {
+      "id": "protected-23",
+      "text": "根据资料，“提醒我”指什么？只回答词语。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "quoted_or_multiple"
+    },
+    {
+      "id": "protected-24",
+      "text": "根据资料，\"我叫谁\"里的名字是什么？只回答姓名。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "quoted_or_multiple"
+    },
+    {
+      "id": "protected-25",
+      "text": "根据资料，假如换个角色是谁？只回答姓名。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "quoted_or_multiple"
+    },
+    {
+      "id": "protected-26",
+      "text": "根据资料，引用哪句话？只回答原文。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "quoted_or_multiple"
+    },
+    {
+      "id": "protected-27",
+      "text": "先记住这条。根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "quoted_or_multiple"
+    },
+    {
+      "id": "protected-28",
+      "text": "根据上文，代号是什么？\n只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "quoted_or_multiple"
+    },
+    {
+      "id": "protected-29",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "fictional_character",
+      "history": [],
+      "reason": "scope"
+    },
+    {
+      "id": "protected-30",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "unverified",
+      "history": [],
+      "reason": "scope"
+    },
+    {
+      "id": "protected-31",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "ongoing_boundary",
+      "risk": "crisis"
+    },
+    {
+      "id": "protected-32",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "actual_current_rule_fact",
+      "rule_fact_candidates": [
+        {
+          "type": "名字",
+          "content": "顾禾"
+        }
+      ]
+    },
+    {
+      "id": "protected-33",
+      "text": "根据资料，代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "length"
+    },
+    {
+      "id": "protected-34",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [
+        {
+          "role": "assistant",
+          "content": "我很担心这件事。"
+        }
+      ],
+      "reason": "recent_assistant_affect"
+    },
+    {
+      "id": "protected-35",
+      "text": "根据资料，今天刚搬到新家，编号是什么？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "current_personal_event_without_pronoun"
+    },
+    {
+      "id": "protected-36",
+      "text": "根据资料，记住哪一条规则？只回答编号。",
+      "expected": false,
+      "scope": "current_user",
+      "history": [],
+      "reason": "remember_action"
+    }
+  ],
+  "eligible": 12,
+  "protected": 36,
+  "actual_llm_or_gpu": false
+}

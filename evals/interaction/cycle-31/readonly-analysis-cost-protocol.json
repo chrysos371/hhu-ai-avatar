@@ -1,0 +1,256 @@
+{
+  "version": 1,
+  "scope": "lab_readonly_analysis_cost_shadow_and_native_development",
+  "partition": "new synthetic development and protective controls, not independent-human validation",
+  "models": [
+    "qwen3-4b-q4_k_m",
+    "qwen3-32b-q4_k_m"
+  ],
+  "backend": "cuda",
+  "registry": "evals/interaction/cycle-26/model-scale-registry.json",
+  "arms": [
+    "current_analysis",
+    "lab_readonly_candidate"
+  ],
+  "repetitions": 3,
+  "cases": [
+    {
+      "id": "drawer_new_code",
+      "turns": [
+        "柜门贴着代号VW-4729。请只确认收到。",
+        "台灯是米白色，旁边放着一本薄册。请只确认。",
+        "根据上文，柜门标签的代号是什么？只回答代号。"
+      ],
+      "expected": "VW-4729",
+      "candidate_probe_eligible": true
+    },
+    {
+      "id": "green_ticket_owner",
+      "turns": [
+        "登记表记载：林苒保管绿票，向舟保管紫票。请只确认。",
+        "两张票用于一份虚构的活动清单，不代表实际操作。请只确认。",
+        "根据资料，绿票由谁保管？只回答姓名。"
+      ],
+      "expected": "林苒",
+      "candidate_probe_eligible": true
+    },
+    {
+      "id": "updated_destination",
+      "turns": [
+        "路线先到杏林站，再到白石站，终点为月湾站。请只确认。",
+        "调整：终点改为南溪站，前两站不变。请只确认。",
+        "按照记录，调整后的终点是哪一站？只回答站名。"
+      ],
+      "expected": "南溪站",
+      "forbidden": "月湾站",
+      "candidate_probe_eligible": true
+    },
+    {
+      "id": "updated_material_total",
+      "turns": [
+        "材料清单为纸板37张、卡纸28张。请只确认。",
+        "数量更新：卡纸改为46张，纸板不变。请只确认。",
+        "根据清单，更新后两种材料的数量合计是多少？只回答数字。"
+      ],
+      "expected": "83",
+      "forbidden": "65",
+      "candidate_probe_eligible": true
+    },
+    {
+      "id": "container_capacity",
+      "turns": [
+        "表格记录：甲箱容量18升，乙箱容量27升。请只确认。",
+        "这两项只是虚构的参数记录。请只确认。",
+        "根据表格，哪一个箱子的容量更大？只回答箱子代号。"
+      ],
+      "expected": "乙箱",
+      "candidate_probe_eligible": true
+    },
+    {
+      "id": "missing_reference",
+      "turns": [
+        "说明书代号是PQ-6158，资料未提供页码。请只确认。",
+        "这份说明仅用于虚构讨论，不引入新的资料。请只确认。",
+        "根据资料，这份说明的页码是多少？只回答数字，资料未给出则回答无法确认。"
+      ],
+      "metric": "missing_abstention",
+      "candidate_probe_eligible": true
+    },
+    {
+      "id": "personal_fact_protected",
+      "turns": [
+        "柜门贴着代号HF-3682。请只确认。",
+        "另一张桌上摆着一只灰色笔筒。请只确认。",
+        "我叫顾禾。根据上文，柜门标签的代号是什么？只回答代号。"
+      ],
+      "expected": "HF-3682",
+      "candidate_probe_eligible": false,
+      "expected_profile_name": "顾禾"
+    },
+    {
+      "id": "emotional_history_protected",
+      "turns": [
+        "清单中的文件代号为RT-9046。请只确认。",
+        "看到这些安排有点焦虑，我想缓一缓。请只确认听到。",
+        "根据上文，清单中的文件代号是什么？只回答代号。"
+      ],
+      "expected": "RT-9046",
+      "candidate_probe_eligible": false,
+      "protect_recent_user_emotion": true
+    }
+  ],
+  "case_arm_orders": [
+    [
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ]
+    ],
+    [
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ]
+    ],
+    [
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ],
+      [
+        "current_analysis",
+        "lab_readonly_candidate"
+      ],
+      [
+        "lab_readonly_candidate",
+        "current_analysis"
+      ]
+    ]
+  ],
+  "warmups": [
+    false,
+    true
+  ],
+  "app_turns_per_model": 144,
+  "expected_app_processes_per_model": 96,
+  "expected_model_http_calls_per_model": 272,
+  "expected_diagnostic_calls": {
+    "current_analysis": 144,
+    "lab_readonly_candidate": 126
+  },
+  "restart_after_turn": 2,
+  "context_recovery": true,
+  "expected_probe_history_role_messages": 4,
+  "hypothesis": "explicit conservative read-only source questions may not need a cognitive model call; unknown facts,personal facts,affect,actions,role/risk/quoted/multisentence boundaries preserve current path",
+  "candidate_scope": "audit worker delegated Avatar._analyze only; no default product activation, no generation/schema prompt changes",
+  "candidate_preregistered_guards": [
+    "strict current_user and no ongoing boundary risk",
+    "single <=200-char question beginning optional 请 then 根据/按照 + 上文/前文/资料/记录/清单/表格/文本/预算 and comma",
+    "single question mark; no earlier complete sentence/newline/quote; only explicit 只/仅回答/输出 instruction after question",
+    "reject personal pronouns/claims/preferences/age and action/control/role vocabulary",
+    "neutral deterministic current and recent six role-message emotion checks, plus explicit affect vocabulary guard",
+    "zero current supported rule facts with actual speaker context; otherwise delegate original analysis",
+    "always call existing _extract_facts and emotion.update with current revision/cancellation checks on eligible route"
+  ],
+  "native_quality_gates": [
+    "all expected full-analysis protected probes actually call cognitive model and preserve new 顾禾 source-bound profile",
+    "both arms real history source/SQL/SDK identity match,all generation calls remain real native",
+    "candidate cannot reduce strict/source content correctness or harm missing-information behavior in any paired task",
+    "protected profile and affect/decision observations compared; any unexplained difference rejects activation",
+    "no action/receipt side effect and no privacy/role permission weakening"
+  ],
+  "timing_endpoint": "client monotonic before real POST until terminal SSE, excludes source-fingerprint/progress writes and post-terminal conversation query; relay buffer common to both arms; native trace component times separate",
+  "performance_gate": "report18 eligible paired probes/model across3 fixed repeats, per-repeat and pooled median/p95; claim bounded local benefit only if candidate median improves >=15% with no quality/protection regression; no general speed claim",
+  "32b_gate": "same-freeze4B engineering+all protections+no source/strict regression; no fallback to alternate model or repeat tuning",
+  "stopping": "retain all failures; CPU development guard fixes may create new sources before native freeze; no prompt/task changes or same-batch native tuning; new freeze/output for engineering failures",
+  "production_activation_authorized": false,
+  "prospective_execution_authorized": false,
+  "missing_abstention_patterns": [
+    "无法确认",
+    "无法确定",
+    "没有提供",
+    "未提供",
+    "不知道",
+    "不清楚",
+    "资料不足",
+    "未给出",
+    "没有给出"
+  ],
+  "wall_clock_experiment_deadline": null
+}
