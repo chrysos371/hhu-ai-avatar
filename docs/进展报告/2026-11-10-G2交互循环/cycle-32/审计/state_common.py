@@ -41,6 +41,8 @@ def verify_freeze(path,expected,model=None):
                 or data.get('model_http_calls_per_model')!=105 or data.get('model_http_calls_per_policy')!=35
                 or data.get('production_activation_authorized') is not False or data.get('prospective_execution_authorized') is not False):raise ValueError('State replay execution contract mismatch')
     if model is not None and model not in MODELS:raise ValueError('Unexpected state replay model')
+    if any(sorted(protocol['policy_orders'].get(m,[]))!=sorted(POLICIES) for m in MODELS) or len(protocol['chain_orders'])!=3 or any(sorted(order)!=['with_extra_cognitive','without_extra_cognitive'] for order in protocol['chain_orders']):raise ValueError('State replay policy/chain schedule changed')
+    if protocol['warmups']!=[False,True] or protocol['diagnostic_calls_per_policy']!=33:raise ValueError('State replay warmup/count contract changed')
     if not source_paths()<=frozen.get('sha256',{}).keys():raise ValueError('State replay source inputs missing')
     for name,value in frozen['sha256'].items():
         path=ROOT/name
@@ -75,6 +77,7 @@ def validate_fixture_provenance(model):
     original=ROOT/entry['source_evaluation'];relative=str(original.relative_to(BASE.parent/'cycle-31'))
     if digest(original)!=entry['source_evaluation_sha256'] or json.loads(seal.read_text())[relative]!=entry['source_evaluation_sha256']:raise ValueError('Historical SDK source evidence changed')
     data=json.loads(original.read_text());group=next(c for c in data['cases'] if c['id']==entry['source_group']);actual=group['model_requests']
+    if data['model_id']!=model or data['provider_ready']['chosen_gpu']!=entry['source_gpu']:raise ValueError('Historical model/GPU fixture metadata mismatch')
     if len(actual)!=6:raise ValueError('Historical source chain changed')
     for row,source in zip(entry['requests'],actual,strict=True):
         if row['raw_request_json']!=source['raw_request_json'] or sha256(row['raw_request_json'].encode()).hexdigest()!=row['request_sha256']:raise ValueError('Replay payload is not retained SDK bytes')

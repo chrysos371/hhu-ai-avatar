@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "actual_llm_or_gpu": false,
+  "fake_owned_context": true,
+  "helper_sha256": "aa1e86a611296badfd0059f24981a3c5b91983fb834fc5909024d98371acd63f",
+  "policy_sha256": "bc5d47a5ec0b80e5f217cf6d5af72812dc2b689cb159b588a2948430cc44b626",
+  "controls": [
+    {
+      "control": "reuse",
+      "events": [],
+      "result": {
+        "policy": "reuse",
+        "logical_tokens_before_policy": 42,
+        "logical_tokens_after_policy": 42,
+        "explicit_logical_reset_called": false,
+        "explicit_context_memory_clear_called": false,
+        "library_internal_resets_not_counted": true,
+        "general_physical_state_guarantee": false
+      },
+      "passed": true
+    },
+    {
+      "control": "logical_reset",
+      "events": [
+        "reset"
+      ],
+      "result": {
+        "policy": "logical_reset",
+        "logical_tokens_before_policy": 42,
+        "logical_tokens_after_policy": 0,
+        "explicit_logical_reset_called": true,
+        "explicit_context_memory_clear_called": false,
+        "library_internal_resets_not_counted": true,
+        "general_physical_state_guarantee": false
+      },
+      "passed": true
+    },
+    {
+      "control": "memory_clear_reset",
+      "events": [
+        "clear",
+        "reset"
+      ],
+      "result": {
+        "policy": "memory_clear_reset",
+        "logical_tokens_before_policy": 42,
+        "logical_tokens_after_policy": 0,
+        "explicit_logical_reset_called": true,
+        "explicit_context_memory_clear_called": true,
+        "library_internal_resets_not_counted": true,
+        "general_physical_state_guarantee": false
+      },
+      "passed": true
+    },
+    {
+      "control": "unsupported_policy",
+      "rejected_before_mutation": true,
+      "passed": true
+    },
+    {
+      "control": "missing_owned_memory",
+      "rejected_before_mutation": true,
+      "passed": true
+    },
+    {
+      "control": "broken_reset",
+      "nonzero_counter_not_claimed_reset": true,
+      "passed": true
+    }
+  ]
+}
