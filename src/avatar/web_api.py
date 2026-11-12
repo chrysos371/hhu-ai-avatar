@@ -168,6 +168,7 @@ class V1API:
         if not post and path == "/dashboard":
             state = automatic_emotion_snapshot(self.server, self.memory)
             return 200, {
+                "context": state['context'],
                 "counts": self.store.system_counts(),
                 "persona_version": self.store.current_persona()["id"],
                 "emotion": {
@@ -253,6 +254,7 @@ class V1API:
             state = automatic_emotion_snapshot(self.server, self.memory)
             active = EmotionOverrideService(self.store).active()
             return 200, {
+                "context": state['context'],
                 "automatic": state['automatic'],
                 "user_observation": state['user_observation'],
                 "effective": (

@@ -66,7 +66,7 @@ def test_unknown_stale_and_bool_event_revisions_fail_closed_and_snapshots_are_co
         engine = EmotionEngine(clock=lambda: 0)
         engine.bind_context_revision(0)
         engine.observe(-.4, .3)
-        server = SimpleNamespace(state_lock=threading.RLock(), emotion=engine, chat_events=[
+        server = SimpleNamespace(session_id='snapshot-test', state_lock=threading.RLock(), emotion=engine, chat_events=[
             {'context_revision': 0, 'detail': {'value': 1}}, {'context_revision': True},
             {'context_revision': 1}, {'context_revision': '0'}, {'valence': -.9}])
         snapshot = automatic_emotion_snapshot(server, memory)
@@ -83,7 +83,7 @@ def test_unbound_engine_state_clears_before_first_api_snapshot():
     with closing(MemoryStore(':memory:')) as memory:
         engine = EmotionEngine(clock=lambda: 0)
         engine.observe(-.4, .3)
-        server = SimpleNamespace(state_lock=threading.RLock(), emotion=engine, chat_events=[])
+        server = SimpleNamespace(session_id='snapshot-test', state_lock=threading.RLock(), emotion=engine, chat_events=[])
         snapshot = automatic_emotion_snapshot(server, memory)
         assert snapshot['automatic'] == snapshot['user_observation'] == {'valence': 0, 'arousal': 0}
         assert snapshot['energy'] == .5

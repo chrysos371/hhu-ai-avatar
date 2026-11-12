@@ -1,0 +1,91 @@
+.............FF..........                                                [100%]
+=================================== FAILURES ===================================
+_ test_unknown_stale_and_bool_event_revisions_fail_closed_and_snapshots_are_copies _
+
+    def test_unknown_stale_and_bool_event_revisions_fail_closed_and_snapshots_are_copies():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = EmotionEngine(clock=lambda: 0)
+            engine.bind_context_revision(0)
+            engine.observe(-.4, .3)
+            server = SimpleNamespace(state_lock=threading.RLock(), emotion=engine, chat_events=[
+                {'context_revision': 0, 'detail': {'value': 1}}, {'context_revision': True},
+                {'context_revision': 1}, {'context_revision': '0'}, {'valence': -.9}])
+>           snapshot = automatic_emotion_snapshot(server, memory)
+
+tests/test_web_emotion_revision.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+server = namespace(state_lock=<unlocked _thread.RLock object owner=0 count=0 at 0x7f6f35767680>, emotion=<avatar.brain.emotion.EmotionEngine object at 0x7f6e95b61600>, chat_events=[{'context_revision': 0, 'detail': {'value': 1}}])
+memory = <avatar.brain.memory.MemoryStore object at 0x7f6e95b62a40>
+
+    def automatic_emotion_snapshot(server, memory):
+        """Reject unknown/stale automatic values and diagnostics before a read.
+    
+        The engine owns its revision. The conversation window's revision may have
+        advanced in a cancelled worker's finally without observing the new source.
+        Manual expression overrides are independent and remain managed separately.
+        """
+        with server.state_lock:
+            revision = memory.context_revision
+            server.emotion.bind_context_revision(revision)
+            server.chat_events[:] = [event for event in server.chat_events
+                if type(event.get('context_revision')) is int
+                and event['context_revision'] == revision]
+            state = server.emotion.state
+            user = server.emotion.user_state
+            return {
+>               'context': {'instance_id': server.session_id, 'revision': revision},
+                'automatic': {'valence': state.valence, 'arousal': state.arousal},
+                'user_observation': {'valence': user.valence, 'arousal': user.arousal},
+                'label': state.label(),
+                'energy': server.emotion.energy,
+                'events': deepcopy(server.chat_events),
+            }
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'session_id'
+
+src/avatar/web_state.py:21: AttributeError
+__________ test_unbound_engine_state_clears_before_first_api_snapshot __________
+
+    def test_unbound_engine_state_clears_before_first_api_snapshot():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = EmotionEngine(clock=lambda: 0)
+            engine.observe(-.4, .3)
+            server = SimpleNamespace(state_lock=threading.RLock(), emotion=engine, chat_events=[])
+>           snapshot = automatic_emotion_snapshot(server, memory)
+
+tests/test_web_emotion_revision.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+server = namespace(state_lock=<unlocked _thread.RLock object owner=0 count=0 at 0x7f6f357d7700>, emotion=<avatar.brain.emotion.EmotionEngine object at 0x7f6e95a960b0>, chat_events=[])
+memory = <avatar.brain.memory.MemoryStore object at 0x7f6e95a96170>
+
+    def automatic_emotion_snapshot(server, memory):
+        """Reject unknown/stale automatic values and diagnostics before a read.
+    
+        The engine owns its revision. The conversation window's revision may have
+        advanced in a cancelled worker's finally without observing the new source.
+        Manual expression overrides are independent and remain managed separately.
+        """
+        with server.state_lock:
+            revision = memory.context_revision
+            server.emotion.bind_context_revision(revision)
+            server.chat_events[:] = [event for event in server.chat_events
+                if type(event.get('context_revision')) is int
+                and event['context_revision'] == revision]
+            state = server.emotion.state
+            user = server.emotion.user_state
+            return {
+>               'context': {'instance_id': server.session_id, 'revision': revision},
+                'automatic': {'valence': state.valence, 'arousal': state.arousal},
+                'user_observation': {'valence': user.valence, 'arousal': user.arousal},
+                'label': state.label(),
+                'energy': server.emotion.energy,
+                'events': deepcopy(server.chat_events),
+            }
+E           AttributeError: 'types.SimpleNamespace' object has no attribute 'session_id'
+
+src/avatar/web_state.py:21: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_web_emotion_revision.py::test_unknown_stale_and_bool_event_revisions_fail_closed_and_snapshots_are_copies
+FAILED tests/test_web_emotion_revision.py::test_unbound_engine_state_clears_before_first_api_snapshot
+2 failed, 23 passed in 13.67s

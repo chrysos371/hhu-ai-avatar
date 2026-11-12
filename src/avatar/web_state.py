@@ -18,6 +18,7 @@ def automatic_emotion_snapshot(server, memory):
         state = server.emotion.state
         user = server.emotion.user_state
         return {
+            'context': {'instance_id': server.session_id, 'revision': revision},
             'automatic': {'valence': state.valence, 'arousal': state.arousal},
             'user_observation': {'valence': user.valence, 'arousal': user.arousal},
             'label': state.label(),
