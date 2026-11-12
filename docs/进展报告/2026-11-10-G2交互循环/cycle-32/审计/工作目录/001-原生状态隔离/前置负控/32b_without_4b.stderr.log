@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-32/审计/run_state_replay.py", line 214, in <module>
+    run(args)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-32/审计/run_state_replay.py", line 110, in run
+    frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);verify_historical_binding(frozen);fixture=validate_fixture_provenance(args.model);prior_gate(args)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-32/审计/run_state_replay.py", line 97, in prior_gate
+    if args.prior_4b is None or not args.prior_4b_sha256 or digest(args.prior_4b)!=args.prior_4b_sha256:raise ValueError('32B requires pinned same-freeze completed105-call4B state replay')
+ValueError: 32B requires pinned same-freeze completed105-call4B state replay
