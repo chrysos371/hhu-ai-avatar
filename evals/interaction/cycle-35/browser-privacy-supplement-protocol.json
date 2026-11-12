@@ -1,0 +1,60 @@
+{
+  "scope": "actual_chromium_controlled_privacy_boundary_supplement",
+  "primary_protocol": "evals/interaction/cycle-35/browser-state-privacy-protocol.json",
+  "provider": "offline_rules",
+  "input": "我很难过",
+  "repetitions_per_case": 1,
+  "cases": [
+    {
+      "id": "emotion_late_old_response",
+      "page": "emotion",
+      "control": "hold actual old state response; forget; attempt late fulfillment after fresh state"
+    },
+    {
+      "id": "dashboard_late_old_response",
+      "page": "dashboard",
+      "control": "hold actual old state response; forget; attempt late fulfillment after fresh state"
+    },
+    {
+      "id": "emotion_metadata503",
+      "page": "emotion",
+      "control": "hold watch metadata; external forget; inject HTTP503; verify hidden then recover"
+    },
+    {
+      "id": "dashboard_metadata403",
+      "page": "dashboard",
+      "control": "hold watch metadata; external forget; inject HTTP403; verify hidden then explicit retry"
+    },
+    {
+      "id": "emotion_manual_fields_override",
+      "page": "emotion",
+      "control": "confirmed independent override; keyboard edit P to zero, duration900/reason; forget must retain manual fields and unedited override A"
+    },
+    {
+      "id": "dashboard_same_revision_message",
+      "page": "dashboard",
+      "control": "ordinary neutral input advances cursor but not privacy revision; retain valid role state"
+    },
+    {
+      "id": "emotion_native_cross_window_broadcast",
+      "page": "emotion",
+      "control": "hold first tab watch; external forget; actual native BroadcastChannel from second same-origin page causes rebootstrap"
+    },
+    {
+      "id": "dashboard_actual_service_instance_restart",
+      "page": "dashboard",
+      "control": "close/recreate owned HTTP server same port/DB with same fixture token; actual new instance_id, cold automatic state; no OS restart claim"
+    }
+  ],
+  "fixed_primary_1s_observation_unchanged": true,
+  "controlled_faults_not_natural_failure_rates": true,
+  "separate_unit_only_controls": [
+    "malformed/mismatched state context",
+    "bootstrap 15s deadline with fake timer",
+    "query ignoring AbortSignal"
+  ],
+  "service_restart_token": "same synthetic test token deliberately carried to isolate instance namespace; no production token-rotation approval",
+  "require_source_redaction_except_same_revision_and_restart": true,
+  "no_native_gpu_or_general_semantics_claim": true,
+  "no_case_overwrite": true
+}
