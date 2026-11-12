@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import {
   CartesianGrid,
   Legend,
@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { apiRequest, formatTime } from "../../lib/api";
 import type { Draft, EmotionInfo } from "../../lib/types";
+import { usePrivateStateQuery } from "../../lib/usePrivateStateQuery";
 import {
   ErrorMessage,
   PageHeading,
@@ -19,24 +20,21 @@ import {
 } from "../../components/QueryState";
 import { useDraftDialog } from "../../components/OperationConfirmDialog";
 export function EmotionPage() {
-  const query = useQuery({
-    queryKey: ["emotion"],
-    queryFn: () => apiRequest<EmotionInfo>("/emotion"),
-    refetchInterval: 10000,
-  });
-  const [initialized, setInitialized] = useState(false);
-  const [valence, setValence] = useState(0);
-  const [arousal, setArousal] = useState(0);
+  const query = usePrivateStateQuery<EmotionInfo>("emotion", 10000);
+  const [prefill, setPrefill] = useState<{ epoch: number; valence: number; arousal: number } | null>(null);
+  const [editedValence, setEditedValence] = useState<number | null>(null);
+  const [editedArousal, setEditedArousal] = useState<number | null>(null);
+  const currentPrefill = prefill?.epoch === query.privacyEpoch ? prefill : null;
+  const valence = editedValence ?? currentPrefill?.valence ?? 0;
+  const arousal = editedArousal ?? currentPrefill?.arousal ?? 0;
   const [duration, setDuration] = useState(600);
   const [reason, setReason] = useState("");
   const op = useDraftDialog();
   useEffect(() => {
-    if (query.data && !initialized) {
-      setValence(query.data.effective.valence);
-      setArousal(query.data.effective.arousal);
-      setInitialized(true);
+    if (query.data && prefill?.epoch !== query.privacyEpoch) {
+      setPrefill({ epoch: query.privacyEpoch, ...query.data.effective });
     }
-  }, [query.data, initialized]);
+  }, [query.data, query.privacyEpoch, prefill?.epoch]);
   const create = useMutation({
     mutationFn: (params: unknown) =>
       apiRequest<Draft>("/emotion/draft", { method: "POST", body: params }),
@@ -106,7 +104,7 @@ export function EmotionPage() {
                       max={1}
                       step={0.05}
                       value={valence}
-                      onChange={(e) => setValence(Number(e.target.value))}
+                      onChange={(e) => setEditedValence(Number(e.target.value))}
                     />
                   </div>
                   <div className="field">
@@ -120,7 +118,7 @@ export function EmotionPage() {
                       max={1}
                       step={0.05}
                       value={arousal}
-                      onChange={(e) => setArousal(Number(e.target.value))}
+                      onChange={(e) => setEditedArousal(Number(e.target.value))}
                     />
                   </div>
                   <div className="field">

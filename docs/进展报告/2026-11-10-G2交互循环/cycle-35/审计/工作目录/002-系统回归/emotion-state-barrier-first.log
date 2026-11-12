@@ -1,0 +1,1001 @@
+
+> hhu-mission-control@0.1.0 test
+> vitest --run src/features/dashboard/DashboardPage.test.tsx src/features/emotion/EmotionPage.test.tsx src/lib/usePrivateStateQuery.test.tsx src/lib/statePrivacy.test.tsx
+
+
+ RUN  v3.2.4 /data/Users/zrh/repo/hhu-ai-avatar/frontend
+
+ ✓ src/lib/statePrivacy.test.tsx (15 tests) 22ms
+ ✓ src/lib/usePrivateStateQuery.test.tsx (17 tests) 238ms
+ ✓ src/features/dashboard/DashboardPage.test.tsx (4 tests) 241ms
+ ❯ src/features/emotion/EmotionPage.test.tsx (5 tests | 1 failed) 1401ms
+   ✓ invalidates both unedited automatic prefill values on a privacy revision change 117ms
+   ✓ preserves only truly edited expression fields, duration and reason while clearing automatic prefill 47ms
+   × keeps a confirmed manual override while automatic values and observations are cleared 1058ms
+     → Found multiple elements with the text: /P 0.00 \/ A 0.00/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"metric-number"[39m
+  [33mstyle[39m=[32m"font-size: 22px;"[39m
+[36m>[39m
+  [0mP [0m
+  [0m0.00[0m
+  [0m / A[0m
+  [0m [0m
+  [0m0.00[0m
+[36m</p>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"metric-number"[39m
+  [33mstyle[39m=[32m"font-size: 22px;"[39m
+[36m>[39m
+  [0mP [0m
+  [0m0.00[0m
+  [0m / A[0m
+  [0m [0m
+  [0m0.00[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"page-heading"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mMISSION CONTROL[0m
+          [36m</p>[39m
+          [36m<h1>[39m
+            [0m情绪干预[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"page-description"[39m
+          [36m>[39m
+            [0m有时限地调整角色表达。自动状态和用户观测保持独立，到期后恢复自动表达。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"badge"[39m
+        [36m>[39m
+          [0mPAD · P/A 两维[0m
+        [36m</span>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid three"[39m
+      [36m>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m自动状态[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"metric-number"[39m
+            [33mstyle[39m=[32m"font-size: 22px;"[39m
+          [36m>[39m
+            [0mP [0m
+            [0m0.00[0m
+            [0m / A[0m
+            [0m [0m
+            [0m0.00[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0m不因手动干预而改写[0m
+          [36m</small>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m实际表达[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"metric-number"[39m
+            [33mstyle[39m=[32m"font-size: 22px;"[39m
+          [36m>[39m
+            [0mP [0m
+            [0m0.60[0m
+            [0m / A[0m
+            [0m [0m
+            [0m-0.10[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0m当前存在已确认覆盖[0m
+          [36m</small>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m用户最近观测[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"metric-number"[39m
+            [33mstyle[39m=[32m"font-size: 22px;"[39m
+          [36m>[39m
+            [0mP [0m
+            [0m0.00[0m
+            [0m / A[0m
+            [0m [0m
+            [0m0.00[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0m不因手动干预而改写[0m
+          [36m</small>[39m
+        [36m</article>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid two"[39m
+        [33mstyle[39m=[32m"margin-top: 20px;"[39m
+      [36m>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m创建表达覆盖[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"notice"[39m
+          [36m>[39m
+            [0m覆盖 #[0m
+            [0m7[0m
+            [0m：[0m
+            [0m人工覆盖[0m
+            [36m<br />[39m
+            [0m到期 [0m
+            [0m2026/11/12 22:02:00[0m
+          [36m</p>[39m
+          [36m<form>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-valence"[39m
+              [36m>[39m
+                [0m愉悦度 P：[0m
+                [0m0.60[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m"override-valence"[39m
+                [33mmax[39m=[32m"1"[39m
+                [33mmin[39m=[32m"-1"[39m
+                [33mstep[39m=[32m"0.05"[39m
+                [33mtype[39m=[32m"range"[39m
+                [33mvalue[39m=[32m"0.6"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-arousal"[39m
+              [36m>[39m
+                [0m唤醒度 A：[0m
+                [0m-0.10[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m"override-arousal"[39m
+                [33mmax[39m=[32m"1"[39m
+                [33mmin[39m=[32m"-1"[39m
+                [33mstep[39m=[32m"0.05"[39m
+                [33mtype[39m=[32m"range"[39m
+                [33mvalue[39m=[32m"-0.1"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-duration"[39m
+              [36m>[39m
+                [0m持续秒数（30～86400）[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m"override-duration"[39m
+                [33mmax[39m=[32m"86400"[39m
+                [33mmin[39m=[32m"30"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mstep[39m=[32m"1"[39m
+                [33mtype[39m=[32m"number"[39m
+                [33mvalue[39m=[32m"600"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-reason"[39m
+              [36m>[39m
+                [0m干预原因[0m
+              [36m</label>[39m
+              [36m<textarea[39m
+                [33mid[39m=[32m"override-reason"[39m
+                [33mmaxlength[39m=[32m"500"[39m
+                [33mrequired[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"muted"[39m
+            [36m>[39m
+              [0m仅覆盖常规角色表达，安全路由优先；不将情绪数值当作心理诊断。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button"[39m
+                [33mdisabled[39m=[32m""[39m
+              [36m>[39m
+                [0m生成情绪草案[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button secondary"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m预览结束覆盖[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</form>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m近期表达趋势[0m
+          [36m</h2>[39m
+          [36m<small>[39m
+            [0m仅使用本次服务实际对话产生的观测。[0m
+          [36m</small>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"empty"[39m
+          [36m>[39m
+            [0m尚无本次服务的对话观测。[0m
+          [36m</p>[39m
+        [36m</article>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"page-heading"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"eyebrow"[39m
+            [36m>[39m
+              [0mMISSION CONTROL[0m
+            [36m</p>[39m
+            [36m<h1>[39m
+              [0m情绪干预[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"page-description"[39m
+            [36m>[39m
+              [0m有时限地调整角色表达。自动状态和用户观测保持独立，到期后恢复自动表达。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"badge"[39m
+          [36m>[39m
+            [0mPAD · P/A 两维[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid three"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m自动状态[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"metric-number"[39m
+              [33mstyle[39m=[32m"font-size: 22px;"[39m
+            [36m>[39m
+              [0mP [0m
+              [0m0.00[0m
+              [0m / A[0m
+              [0m [0m
+              [0m0.00[0m
+            [36m</p>[39m
+            [36m<small>[39m
+              [0m不因手动干预而改写[0m
+            [36m</small>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m实际表达[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"metric-number"[39m
+              [33mstyle[39m=[32m"font-size: 22px;"[39m
+            [36m>[39m
+              [0mP [0m
+              [0m0.60[0m
+              [0m / A[0m
+              [0m [0m
+              [0m-0.10[0m
+            [36m</p>[39m
+            [36m<small>[39m
+              [0m当前存在已确认覆盖[0m
+            [36m</small>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m用户最近观测[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"metric-number"[39m
+              [33mstyle[39m=[32m"font-size: 22px;"[39m
+            [36m>[39m
+              [0mP [0m
+              [0m0.00[0m
+              [0m / A[0m
+              [0m [0m
+              [0m0.00[0m
+            [36m</p>[39m
+            [36m<small>[39m
+              [0m不因手动干预而改写[0m
+            [36m</small>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid two"[39m
+          [33mstyle[39m=[32m"margin-top: 20px;"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m创建表达覆盖[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"notice"[39m
+            [36m>[39m
+              [0m覆盖 #[0m
+              [0m7[0m
+              [0m：[0m
+              [0m人工覆盖[0m
+              [36m<br />[39m
+              [0m到期 [0m
+              [0m2026/11/12 22:02:00[0m
+            [36m</p>[39m
+            [36m<form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-valence"[39m
+                [36m>[39m
+                  [0m愉悦度 P：[0m
+                  [0m0.60[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"override-valence"[39m
+                  [33mmax[39m=[32m"1"[39m
+                  [33mmin[39m=[32m"-1"[39m
+                  [33mstep[39m=[32m"0.05"[39m
+                  [33mtype[39m=[32m"range"[39m
+                  [33mvalue[39m=[32m"0.6"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-arousal"[39m
+                [36m>[39m
+                  [0m唤醒度 A：[0m
+                  [0m-0.10[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"override-arousal"[39m
+                  [33mmax[39m=[32m"1"[39m
+                  [33mmin[39m=[32m"-1"[39m
+                  [33mstep[39m=[32m"0.05"[39m
+                  [33mtype[39m=[32m"range"[39m
+                  [33mvalue[39m=[32m"-0.1"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-duration"[39m
+                [36m>[39m
+                  [0m持续秒数（30～86400）[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"override-duration"[39m
+                  [33mmax[39m=[32m"86400"[39m
+                  [33mmin[39m=[32m"30"[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mstep[39m=[32m"1"[39m
+                  [33mtype[39m=[32m"number"[39m
+                  [33mvalue[39m=[32m"600"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-reason"[39m
+                [36m>[39m
+                  [0m干预原因[0m
+                [36m</label>[39m
+                [36m<textarea[39m
+                  [33mid[39m=[32m"override-reason"[39m
+                  [33mmaxlength[39m=[32m"500"[39m
+                  [33mrequired[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"muted"[39m
+              [36m>[39m
+                [0m仅覆盖常规角色表达，安全路由优先；不将情绪数值当作心理诊断。[0m
+              [36m</p>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"button"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [0m生成情绪草案[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"button secondary"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m预览结束覆盖[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</form>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m近期表达趋势[0m
+            [36m</h2>[39m
+            [36m<small>[39m
+              [0m仅使用本次服务实际对话产生的观测。[0m
+            [36m</small>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"empty"[39m
+            [36m>[39m
+              [0m尚无本次服务的对话观测。[0m
+            [36m</p>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   ✓ does not refill cleared fields from an old response which ignores abort 86ms
+   ✓ keeps automatic/effective views distinct and requires a preview 91ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/emotion/EmotionPage.test.tsx > keeps a confirmed manual override while automatic values and observations are cleared
+TestingLibraryElementError: Found multiple elements with the text: /P 0.00 \/ A 0.00/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"metric-number"[39m
+  [33mstyle[39m=[32m"font-size: 22px;"[39m
+[36m>[39m
+  [0mP [0m
+  [0m0.00[0m
+  [0m / A[0m
+  [0m [0m
+  [0m0.00[0m
+[36m</p>[39m
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"metric-number"[39m
+  [33mstyle[39m=[32m"font-size: 22px;"[39m
+[36m>[39m
+  [0mP [0m
+  [0m0.00[0m
+  [0m / A[0m
+  [0m [0m
+  [0m0.00[0m
+[36m</p>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"page-heading"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"eyebrow"[39m
+          [36m>[39m
+            [0mMISSION CONTROL[0m
+          [36m</p>[39m
+          [36m<h1>[39m
+            [0m情绪干预[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"page-description"[39m
+          [36m>[39m
+            [0m有时限地调整角色表达。自动状态和用户观测保持独立，到期后恢复自动表达。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"badge"[39m
+        [36m>[39m
+          [0mPAD · P/A 两维[0m
+        [36m</span>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid three"[39m
+      [36m>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m自动状态[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"metric-number"[39m
+            [33mstyle[39m=[32m"font-size: 22px;"[39m
+          [36m>[39m
+            [0mP [0m
+            [0m0.00[0m
+            [0m / A[0m
+            [0m [0m
+            [0m0.00[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0m不因手动干预而改写[0m
+          [36m</small>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m实际表达[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"metric-number"[39m
+            [33mstyle[39m=[32m"font-size: 22px;"[39m
+          [36m>[39m
+            [0mP [0m
+            [0m0.60[0m
+            [0m / A[0m
+            [0m [0m
+            [0m-0.10[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0m当前存在已确认覆盖[0m
+          [36m</small>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m用户最近观测[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"metric-number"[39m
+            [33mstyle[39m=[32m"font-size: 22px;"[39m
+          [36m>[39m
+            [0mP [0m
+            [0m0.00[0m
+            [0m / A[0m
+            [0m [0m
+            [0m0.00[0m
+          [36m</p>[39m
+          [36m<small>[39m
+            [0m不因手动干预而改写[0m
+          [36m</small>[39m
+        [36m</article>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid two"[39m
+        [33mstyle[39m=[32m"margin-top: 20px;"[39m
+      [36m>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m创建表达覆盖[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"notice"[39m
+          [36m>[39m
+            [0m覆盖 #[0m
+            [0m7[0m
+            [0m：[0m
+            [0m人工覆盖[0m
+            [36m<br />[39m
+            [0m到期 [0m
+            [0m2026/11/12 22:02:00[0m
+          [36m</p>[39m
+          [36m<form>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-valence"[39m
+              [36m>[39m
+                [0m愉悦度 P：[0m
+                [0m0.60[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m"override-valence"[39m
+                [33mmax[39m=[32m"1"[39m
+                [33mmin[39m=[32m"-1"[39m
+                [33mstep[39m=[32m"0.05"[39m
+                [33mtype[39m=[32m"range"[39m
+                [33mvalue[39m=[32m"0.6"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-arousal"[39m
+              [36m>[39m
+                [0m唤醒度 A：[0m
+                [0m-0.10[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m"override-arousal"[39m
+                [33mmax[39m=[32m"1"[39m
+                [33mmin[39m=[32m"-1"[39m
+                [33mstep[39m=[32m"0.05"[39m
+                [33mtype[39m=[32m"range"[39m
+                [33mvalue[39m=[32m"-0.1"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-duration"[39m
+              [36m>[39m
+                [0m持续秒数（30～86400）[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mid[39m=[32m"override-duration"[39m
+                [33mmax[39m=[32m"86400"[39m
+                [33mmin[39m=[32m"30"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mstep[39m=[32m"1"[39m
+                [33mtype[39m=[32m"number"[39m
+                [33mvalue[39m=[32m"600"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mfor[39m=[32m"override-reason"[39m
+              [36m>[39m
+                [0m干预原因[0m
+              [36m</label>[39m
+              [36m<textarea[39m
+                [33mid[39m=[32m"override-reason"[39m
+                [33mmaxlength[39m=[32m"500"[39m
+                [33mrequired[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"muted"[39m
+            [36m>[39m
+              [0m仅覆盖常规角色表达，安全路由优先；不将情绪数值当作心理诊断。[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button"[39m
+                [33mdisabled[39m=[32m""[39m
+              [36m>[39m
+                [0m生成情绪草案[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button secondary"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m预览结束覆盖[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</form>[39m
+        [36m</article>[39m
+        [36m<article[39m
+          [33mclass[39m=[32m"panel"[39m
+        [36m>[39m
+          [36m<h2>[39m
+            [0m近期表达趋势[0m
+          [36m</h2>[39m
+          [36m<small>[39m
+            [0m仅使用本次服务实际对话产生的观测。[0m
+          [36m</small>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"empty"[39m
+          [36m>[39m
+            [0m尚无本次服务的对话观测。[0m
+          [36m</p>[39m
+        [36m</article>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"page-heading"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"eyebrow"[39m
+            [36m>[39m
+              [0mMISSION CONTROL[0m
+            [36m</p>[39m
+            [36m<h1>[39m
+              [0m情绪干预[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"page-description"[39m
+            [36m>[39m
+              [0m有时限地调整角色表达。自动状态和用户观测保持独立，到期后恢复自动表达。[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"badge"[39m
+          [36m>[39m
+            [0mPAD · P/A 两维[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid three"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m自动状态[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"metric-number"[39m
+              [33mstyle[39m=[32m"font-size: 22px;"[39m
+            [36m>[39m
+              [0mP [0m
+              [0m0.00[0m
+              [0m / A[0m
+              [0m [0m
+              [0m0.00[0m
+            [36m</p>[39m
+            [36m<small>[39m
+              [0m不因手动干预而改写[0m
+            [36m</small>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m实际表达[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"metric-number"[39m
+              [33mstyle[39m=[32m"font-size: 22px;"[39m
+            [36m>[39m
+              [0mP [0m
+              [0m0.60[0m
+              [0m / A[0m
+              [0m [0m
+              [0m-0.10[0m
+            [36m</p>[39m
+            [36m<small>[39m
+              [0m当前存在已确认覆盖[0m
+            [36m</small>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m用户最近观测[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"metric-number"[39m
+              [33mstyle[39m=[32m"font-size: 22px;"[39m
+            [36m>[39m
+              [0mP [0m
+              [0m0.00[0m
+              [0m / A[0m
+              [0m [0m
+              [0m0.00[0m
+            [36m</p>[39m
+            [36m<small>[39m
+              [0m不因手动干预而改写[0m
+            [36m</small>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid two"[39m
+          [33mstyle[39m=[32m"margin-top: 20px;"[39m
+        [36m>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m创建表达覆盖[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"notice"[39m
+            [36m>[39m
+              [0m覆盖 #[0m
+              [0m7[0m
+              [0m：[0m
+              [0m人工覆盖[0m
+              [36m<br />[39m
+              [0m到期 [0m
+              [0m2026/11/12 22:02:00[0m
+            [36m</p>[39m
+            [36m<form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-valence"[39m
+                [36m>[39m
+                  [0m愉悦度 P：[0m
+                  [0m0.60[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"override-valence"[39m
+                  [33mmax[39m=[32m"1"[39m
+                  [33mmin[39m=[32m"-1"[39m
+                  [33mstep[39m=[32m"0.05"[39m
+                  [33mtype[39m=[32m"range"[39m
+                  [33mvalue[39m=[32m"0.6"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-arousal"[39m
+                [36m>[39m
+                  [0m唤醒度 A：[0m
+                  [0m-0.10[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"override-arousal"[39m
+                  [33mmax[39m=[32m"1"[39m
+                  [33mmin[39m=[32m"-1"[39m
+                  [33mstep[39m=[32m"0.05"[39m
+                  [33mtype[39m=[32m"range"[39m
+                  [33mvalue[39m=[32m"-0.1"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-duration"[39m
+                [36m>[39m
+                  [0m持续秒数（30～86400）[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mid[39m=[32m"override-duration"[39m
+                  [33mmax[39m=[32m"86400"[39m
+                  [33mmin[39m=[32m"30"[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mstep[39m=[32m"1"[39m
+                  [33mtype[39m=[32m"number"[39m
+                  [33mvalue[39m=[32m"600"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"field"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"override-reason"[39m
+                [36m>[39m
+                  [0m干预原因[0m
+                [36m</label>[39m
+                [36m<textarea[39m
+                  [33mid[39m=[32m"override-reason"[39m
+                  [33mmaxlength[39m=[32m"500"[39m
+                  [33mrequired[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"muted"[39m
+              [36m>[39m
+                [0m仅覆盖常规角色表达，安全路由优先；不将情绪数值当作心理诊断。[0m
+              [36m</p>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"button"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [0m生成情绪草案[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"button secondary"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0m预览结束覆盖[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</form>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"panel"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0m近期表达趋势[0m
+            [36m</h2>[39m
+            [36m<small>[39m
+              [0m仅使用本次服务实际对话产生的观测。[0m
+            [36m</small>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"empty"[39m
+            [36m>[39m
+              [0m尚无本次服务的对话观测。[0m
+            [36m</p>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ waitForWrapper ../../../data/hhu-ai-avatar/frontend/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/features/emotion/EmotionPage.test.tsx:62:9
+     60|   value = { ...neutral(), override, effective: { valence: .6, arousal:…
+     61|   act(() => version.advance(value.context));
+     62|   await waitFor(() => expect(screen.getByText(/P 0.00 \/ A 0.00/)).toB…
+       |         ^
+     63|   expect(screen.getByText('当前存在已确认覆盖')).toBeInTheDocument();
+     64|   expect(screen.getByLabelText(/愉悦度 P/)).toHaveValue('0.6');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 40 passed (41)
+   Start at  21:56:58
+   Duration  3.17s (transform 429ms, setup 584ms, collect 1.23s, tests 1.90s, environment 1.55s, prepare 337ms)
+
