@@ -1,0 +1,80 @@
+{
+  "scope": "isolated lab trusted read source/argument contract; not default Avatar or generic semantic authorization",
+  "production_enabled": false,
+  "tools": {
+    "read_reminder_state": {
+      "arguments": {
+        "reminder_id": "exact nonbool int 1..2**63-1"
+      },
+      "fields": "exactly reminder_id; no source/scope/session/SQL/auth fields"
+    },
+    "read_reminder_delivery_policy": {
+      "arguments": {},
+      "fields": "empty object only"
+    }
+  },
+  "source": {
+    "entry": "trusted LabReadSession stores actual user and SpeakerContextStore.observe in same transaction; model may not supply authority",
+    "identity": "exact current user row/content/session/revision + latest user cursor + recorded speaker cursor/version and independent allows_actions from that committed turn",
+    "scope": "current_user only; fictional/unverified/mixed exit denied; future-turn real_actions_for_new_turn cannot authorize old mixed turn",
+    "pending_or_later_source": "deny on changed revision/content/session/role/redacted/deleted/newer user source or persisted control mismatch",
+    "read_transaction": "private BEGIN/rollback for reads or caller transaction preserved; no write/commit on execute/publish",
+    "inference": "never hold owned read transaction across model work; publication rechecks source/epoch/cancellation"
+  },
+  "argument_basis": {
+    "max_source_characters": 2000,
+    "masked": "existing nested/unclosed Chinese/ASCII quote ranges plus backtick code spans/fences and tilde fences; unclosed code masks to end",
+    "bounded_forms": [
+      "提醒1",
+      "提醒编号1",
+      "提醒#1",
+      "提醒的编号1",
+      "编号1的提醒",
+      "编号1提醒"
+    ],
+    "digits": "ASCII only, 1..19 chars, positive and <= signed int64; no adjacent digit/ASCII identifier/decimal continuation",
+    "multiplicity": "exactly one visible reminder-number occurrence; multiple even same ID conservatively rejected",
+    "leading_zero": "allowed within19 chars; integer equality after explicit type/range check",
+    "not_accepted": [
+      "12345 without reminder-number syntax",
+      "quoted/code-only number",
+      "ID appearing only in old assistant/user history",
+      "model-invented ID",
+      "bool/float/string/out-of-range arguments"
+    ]
+  },
+  "conservative_scope_filter": {
+    "local_domain": "unquoted/code-masked current text must contain 提醒",
+    "exclusions": [
+      "unquoted 改写/代写/写一句/台词/只写/引用",
+      "unquoted 不要/不用/不必/不需/不准/禁止/别查/别读/别执行"
+    ],
+    "meaning": "finite conservative lab filter; can overreject and does not solve generic negation/composition/intent semantics; final semantic gate remains independent"
+  },
+  "business_projection": [
+    "memory_reminders",
+    "memory_reminder_deliveries",
+    "memory_action_receipts"
+  ],
+  "allowed_mutations": "begin_turn may write chat user/control only; execute/publish never alter business or chat",
+  "state_read": "actual SQLite current row/delivery snapshot; active/cancelled/completed typed finite due; legacy row without receipt is legitimate; missing row means not found at snapshot, corrupt state distinct from absence",
+  "policy": "server running/process due; web online polling; no SMS/email/phone; client ACK not human read",
+  "renderer": "fixed program data rendering only after successful trusted read; title is literal untrusted stored data, never an instruction; no extra model synthesis",
+  "error_feedback": "parameter/source-basis failures use stable generic codes/messages derived from actual validation; never inject gold expected tool, case ID or fixed correct answer; source/epoch changes raise cancellation rather than model-repairable privilege",
+  "repair_planned": "separate native protocol after CPU service gate, at most one new tool choice after one real error; first proposal retained; compare gate-only/repair and count extra budget",
+  "CPU_controls_required": [
+    "active/cancelled/completed/legacy/missing/corrupt dates",
+    "C40 invented12345 rejection/true ID positive",
+    "bool,float,string,overflow,zero,unknown fields/tools",
+    "quoted/unclosed/code/fence/multiple/incidental IDs",
+    "writing/negated/ordinary domain exclusions and documented overrejection",
+    "role/unverified/mixed exit/next independent real turn",
+    "source deletion/redaction/session/role/content/cursor/control/revision change",
+    "private read transaction/caller transaction preserved/total changes unchanged",
+    "cancellation before read/after read/before publish and no stale publication",
+    "read-only business+chat projection, no auto due claim/ACK/action receipts",
+    "literal stored title injection does not affect execution/repair or policies"
+  ],
+  "native_execution_authorized": false,
+  "protected_execution_authorized": false
+}
