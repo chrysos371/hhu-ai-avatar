@@ -1,0 +1,112 @@
+{
+  "scope": "actual_subprocess_after_admission_negative_controls",
+  "actual_native_model_or_gpu": false,
+  "script_sha256": "d5f7d4bfb31b4925f6434ff74a548d208324a1699620badfb559ef07e2b858eb",
+  "freeze_sha256": "2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3",
+  "cases": [
+    {
+      "name": "missing_before",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py",
+        "--phase",
+        "after",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/001-自动情绪版本失效/native-after-freeze.json",
+        "--expected-freeze-sha256",
+        "2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "--output",
+        "/data/Users/zrh/repo/runtime/tmp/c34-after-reject-missing_before"
+      ],
+      "exit_code": 1,
+      "stdout": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 189, in <module>\n    RevisionAudit(args).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 58, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,phase=args.phase);verify_historical_binding(self.frozen);gate(args)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 52, in gate\n    if args.before is None or not args.before_sha256 or digest(args.before)!=args.before_sha256:raise ValueError('After requires pinned same-model completed before evidence')\nValueError: After requires pinned same-model completed before evidence\n",
+      "expected_rejection": "After requires pinned same-model completed before evidence",
+      "output_not_created": true
+    },
+    {
+      "name": "wrong_before_sha",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py",
+        "--phase",
+        "after",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/001-自动情绪版本失效/native-after-freeze.json",
+        "--expected-freeze-sha256",
+        "2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "--output",
+        "/data/Users/zrh/repo/runtime/tmp/c34-after-reject-wrong_before_sha",
+        "--before",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/实验/native-before-v2-4b/evaluation.json",
+        "--before-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "exit_code": 1,
+      "stdout": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 189, in <module>\n    RevisionAudit(args).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 58, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,phase=args.phase);verify_historical_binding(self.frozen);gate(args)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 52, in gate\n    if args.before is None or not args.before_sha256 or digest(args.before)!=args.before_sha256:raise ValueError('After requires pinned same-model completed before evidence')\nValueError: After requires pinned same-model completed before evidence\n",
+      "expected_rejection": "After requires pinned same-model completed before evidence",
+      "output_not_created": true
+    },
+    {
+      "name": "wrong_phase",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py",
+        "--phase",
+        "after",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/001-自动情绪版本失效/native-after-freeze.json",
+        "--expected-freeze-sha256",
+        "2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "--output",
+        "/data/Users/zrh/repo/runtime/tmp/c34-after-reject-wrong_phase",
+        "--phase",
+        "before"
+      ],
+      "exit_code": 1,
+      "stdout": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 189, in <module>\n    RevisionAudit(args).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 58, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,phase=args.phase);verify_historical_binding(self.frozen);gate(args)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/revision_common.py\", line 26, in verify_freeze\n    if phase not in PHASES or frozen.get('phase')!=phase:raise ValueError('Emotion revision phase mismatch')\nValueError: Emotion revision phase mismatch\n",
+      "expected_rejection": "Emotion revision phase mismatch",
+      "output_not_created": true
+    },
+    {
+      "name": "before_as_after_prior",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py",
+        "--phase",
+        "after",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/001-自动情绪版本失效/native-after-freeze.json",
+        "--expected-freeze-sha256",
+        "2d3dadd5a4343f1851a953f7d114bd09a62a8b49284a6226550b6e9fe410b6d3",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "--output",
+        "/data/Users/zrh/repo/runtime/tmp/c34-after-reject-before_as_after_prior",
+        "--model",
+        "qwen3-32b-q4_k_m",
+        "--prior-4b",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/实验/native-before-v2-4b/evaluation.json",
+        "--prior-4b-sha256",
+        "3bc866f828f2f0e544f430bb61338ae9e9fe0958df08b44a184dbf54df2ee42b"
+      ],
+      "exit_code": 1,
+      "stdout": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 189, in <module>\n    RevisionAudit(args).run()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 58, in __init__\n    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,phase=args.phase);verify_historical_binding(self.frozen);gate(args)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/run_native_revision.py\", line 50, in gate\n    prior=json.loads(args.prior_4b.read_text());assert prior['model_id']==MODELS[0] and prior['phase']==args.phase and prior['freeze_sha256']==args.expected_freeze_sha256 and prior['completed'] and prior['engineering_passed'] and prior['cleanup_passed'];validate_calls(prior)\nAssertionError\n",
+      "expected_rejection": "AssertionError",
+      "output_not_created": true
+    }
+  ]
+}
