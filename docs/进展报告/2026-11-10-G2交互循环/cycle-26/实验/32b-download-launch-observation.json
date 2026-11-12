@@ -1,0 +1,57 @@
+{
+  "observed_utc": "2026-11-12T01:52:02.519038+00:00",
+  "processes": [
+    {
+      "role": "pid",
+      "pid": 3231535,
+      "start_ticks": 38832118,
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "scripts/download_pinned_gguf.py",
+        "--metadata",
+        "evals/interaction/cycle-26/model-metadata-32b.json",
+        "--expected-metadata-sha256",
+        "31858671e18a31c28f2aeccba1000057705220a7277905b598156e7f366b524c",
+        "--target-dir",
+        "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-32b-gguf",
+        "--report",
+        "/data/Users/zrh/repo/runtime/model-downloads/cycle26-qwen3-32b-attempt01.json"
+      ]
+    },
+    {
+      "role": "curl_pid",
+      "pid": 3231541,
+      "start_ticks": 38832125,
+      "argv": [
+        "curl",
+        "--fail",
+        "--location",
+        "--proto",
+        "=https",
+        "--proto-redir",
+        "=https",
+        "--max-redirs",
+        "5",
+        "--retry",
+        "3",
+        "--retry-delay",
+        "2",
+        "--connect-timeout",
+        "30",
+        "--continue-at",
+        "-",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-32b-gguf/Qwen3-32B-Q4_K_M.gguf.part",
+        "https://huggingface.co/Qwen/Qwen3-32B-GGUF/resolve/938a7432affaec9157f883a87164e2646ae17555/Qwen3-32B-Q4_K_M.gguf?download=true&nonce=c076bbf0fe844f478e3ae246889a5bd2"
+      ]
+    }
+  ],
+  "runtime_report": "/data/Users/zrh/repo/runtime/model-downloads/cycle26-qwen3-32b-attempt01.json",
+  "exec_session_id": 92084,
+  "phase_observed": "downloading",
+  "partial_bytes_observed": 825200640,
+  "expected_bytes": 19762149024,
+  "metadata_sha256": "31858671e18a31c28f2aeccba1000057705220a7277905b598156e7f366b524c",
+  "completed": false,
+  "scope": "Launch observation only. Poll live process/session or inspect authoritative terminal state; do not infer continued liveness from this file."
+}
