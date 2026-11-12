@@ -1,0 +1,49 @@
+
+> hhu-mission-control@0.1.0 e2e
+> playwright test e2e/reminder-delivery-audit.spec.ts
+
+
+Running 1 test using 1 worker
+
+(node:3194552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3194552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/reminder-delivery-audit.spec.ts:9:1 › reminder claim response and actual page presentation baseline (16.9s)
+
+
+  1) e2e/reminder-delivery-audit.spec.ts:9:1 › reminder claim response and actual page presentation baseline 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: '总览', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('heading', { name: '总览', exact: true })[22m
+
+
+      76 |     if (scenario === 'navigation_before_response') {
+      77 |       await page.getByRole('link', { name: '总览', exact: true }).click();
+    > 78 |       await expect(page.getByRole('heading', { name: '总览', exact: true })).toBeVisible();
+         |                                                                            ^
+      79 |       report.navigatedBeforeResponseRelease = true;
+      80 |       release();
+      81 |       await expect.poll(() => fulfilled, { timeout: 15000 }).toBe(1);
+        at /data/Users/zrh/repo/hhu-ai-avatar/frontend/e2e/reminder-delivery-audit.spec.ts:78:76
+
+    Error Context: test-results/reminder-delivery-audit-re-f7139--page-presentation-baseline/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/reminder-delivery-audit-re-f7139--page-presentation-baseline/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/reminder-delivery-audit-re-f7139--page-presentation-baseline/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/reminder-delivery-audit.spec.ts:9:1 › reminder claim response and actual page presentation baseline 
