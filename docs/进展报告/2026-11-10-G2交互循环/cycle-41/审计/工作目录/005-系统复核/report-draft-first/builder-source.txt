@@ -1,0 +1,61 @@
+"""C41 source-read safety and no observed benefit from one real error repair."""
+import json
+from pathlib import Path
+from render_report import render
+from verify_system import BASE,WORK,read,digest
+
+out=BASE/'审计';proof=read(out/'收尾核验/system-evidence.json');assert proof['verified']
+sections=[
+ {'title':'有源只读服务：阻止无依据编号进入查询','paragraphs':[
+ 'C40真实4B已能输出原生工具调用，但服务退出问题三次都凭空选state(12345)。C41先建立独立lab读取会话：实际MemoryStore与SpeakerContextStore在同事务提交user/控制源，模型不能提供source_id/scope/session等权限字段；读取核原文、角色、session、revision、最新用户游标、持久控制与本回合独立权限。未来新回合的本人权限不能追认旧混合角色回合。',
+ '提醒编号须为非bool正整数、signed int64范围，并在当前未引用/非代码原文中以有限编号语法唯一出现；多个编号、旧助手自称、纯数字、模型凭空参数不提供依据。写作/否定/本地域是有限保守过滤，存在误拦及未覆盖语义，不能当通用理解。真实读取与发布分开核源；调用方已有读事务可保留，但发布前必须释放旧快照再复核。启动同样拒绝既有事务，避免存储初始化隐式commit。',
+ '本轮SQLite是每分支真实:memory:、直接合成播种的两行提醒，不是个人真实数据或磁盘重启验收：编号1为已取消旧记录，编号2为到期active未认领正控。模型只选工具，成功后程序按实际SQLite快照或固定运行契约答复；成功数据/标题不再送模型合成。不存在当前回执不否认合法记录，状态/认领/客户端ACK/真人阅读分开，不承诺服务退出投递。',
+ '真实实验9次参数拒绝均未进入编号12345的提醒SQL：6次来自3个共享首错在双分支分别校验，3次来自新增原生重选。它们不是9个独立模型失败样本。48分支业务/源后写均不变，12次实际状态SELECT（6查取消行、6查合法缺失999）与6次固定政策结果；到期active正控仍无认领/ACK/动作回执。程序安全阻断成立，服务退出问题仍未被正确回答。'],
+ 'table':(['配对层级','gate-only','single-repair'],[
+ ['共享首原生提案','同一24次的一个分支','同一24次的另一个分支；不加倍算native'],
+ ['首错参数拒绝','3次；无业务查询','3次；无业务查询'],
+ ['额外原生重选/再次拒绝','0 / 0','3 / 3；仍state(12345)'],
+ ['成功状态SQL/固定政策','6 / 3','6 / 3'],
+ ['最终预登记工具/无工具符合','21/24','21/24；未观察到修复收益']]),
+ 'links':[('先登记可信读契约','../../../../../evals/interaction/cycle-41/trusted-local-read-contract.json'),('有源服务源码','../../../../../src/avatar/lab/trusted_local_read.py'),('真实开发结果','../实验/development-v1/evaluation.json'),('正查询SQL样例','../实验/development-v1/repetition-1/state-1/single_repair.sql'),('错误被阻断SQL样例','../实验/development-v1/repetition-1/policy-exit/single_repair.sql')]},
+ {'title':'原生对照：29调用、48分支，有限反馈未修复','paragraphs':[
+ '先登记固定4B/温度0/seed42/8192上下文/每选择256token上限，8题重用C40、三重复。每题在两个实际已提交源的独立SQLite分支共享一个首proposal；gate-only失败即固定错误，single-repair仅对真实参数错误反馈后重选一次。错误只含实际code/message，不含gold工具/案例或伪成功，源/隐私/取消变化不可被修复成权限。',
+ '实际29 native＝2预热＋24首选＋3重选，全部stop，48 lab分支；0 Avatar应用回合。启动实时40441MiB空闲/0%选择GPU4、UUID aa1364f0...，实际分配4096MiB；PID/argv/maps/GPU/退出0及无残留核实。54安装库、8实际映射冻结库、18实际项目模块及594冻结输入/Git一致。SDK适配tool_calls与真实XML/stop分别记录，15适配调用不等于15次业务数据读取。',
+ '服务退出题三次首选和三次重选均state(12345)。初始24请求体SHA与native原稿逐项匹配C40复用材料，表明这个输入阶段没有新模型质量收益。两臂各21/24，unique材料仍8个；三重复同文不能当独立概率样本、人评或泛化证据。实际可见结果为18可信数据固定答复＋24无读取模型文字＋6固定失败答复，原始提案/错误/重选完整保留。',
+ '脚本正控7/8→8/8只证明代码可执行修复通路；真实模型同样机制没有改善。额外3次native未修复该组错误，不能拿脚本数据、原生成与程序答复混成模型提升。独立预写verifier首跑重建48SQLdump、29提示词、实际wire/SDK/来源/权限通过；开发门槛失败，8保护题未运行，默认产品不接lab。'],
+ 'table':(['实测项目','数量/结论','解释'],[
+ ['原生提供方','29＝2预热＋24共享首选＋3重选','全部stop/清理；采证总时含加载/哈希，不当纯推理速度'],
+ ['实际lab分支','48（24×2）','合成播种、真实内存SQLite；源写入和业务只读分账'],
+ ['无源模型提案/参数拒绝','6 native提案 / 9程序拒绝','共享首选双分支导致分母不同；0幽灵编号SQL'],
+ ['原生最终路线门槛','21/24 vs21/24','候选失败/保护未跑；不宣称模型或整体代际提升'],
+ ['独立核验','48 dump /29 prompt /24旧初始精确匹配','自动程序复核不等于独立盲人评']]),
+ 'links':[('预登记配对与保护协议','../../../../../evals/interaction/cycle-41/source-checked-read-repair-protocol.json'),('重复1','../实验/development-v1/repetition-1/evaluation.json'),('重复2','../实验/development-v1/repetition-2/evaluation.json'),('重复3','../实验/development-v1/repetition-3/evaluation.json'),('原native输出/适配','../实验/development-v1/provider-trace.jsonl'),('预写独立核验','工作目录/004-原生开发配对/development-verification.json')]},
+ {'title':'完整回归、负控和单项问题均留痕','paragraphs':[
+ '68新增服务控制涵盖三状态/合法legacy/缺失/损坏记录、ACK非已读、引用/代码/多编号/类型范围、真实源/角色/混合退出/新源/取消、私有或调用方事务、跨连接forget及启动边界；相关201通过。当前完整Python2138 passed/1 skipped（131.29秒），前端192、type/lint/build、默认Chromium18通过/16可选跳过。445输入与历史Git/前后稳定，默认浏览器9实际模块/C36隐私与C39查询两协议/5bundle核平；维护范围5应用结果另计，非全suite总调用。',
+ '8脚本正负控组共39 model接口尝试（1预设异常）、72 lab分支及72SQLdump重建、18状态SELECT，0 HTTP/SDK模型生成。另2次实际SDK SSE脚本HTTP流验证同客户端采集，首流功能正常但common模块新增冻结输入后旧全模块SHA被准入拒绝，保留并刷新当前绑定；不把脚本通路当真实模型效果。',
+ '001/002是ACK字段与journal准备错误，原2失败/64通过、1失败/66通过均保留。默认rollback journal实际阻止持读时writer完成commit；两连接显式WAL后外部forget完成，publish必须先释放旧读快照，释放后旧epoch取消。003是新增lab构造ReminderStore会提交caller待定事务的真实隐藏问题：红测与独立SQLite诊断显示True→False且rollback后行仍1；在任何schema操作前拒绝活动事务后修复，通用ReminderStore与默认Avatar未改。',
+ '005晚期汇总器把流式wire_message:null当字典，首系统汇总失败；保留原脚本/字段形状/log，None归一化后新tag全系统通过。原生/SQL/445软件输入不改；4工程限定关闭，004重选语义问题开放。初期契约native=false的CPU阶段状态保留，由后续明确准入与精确冻结描述符推进开发，保护仍未授权；阶段材料/算法/判据未改。39旧seal（38周期6555项＋迁移88＝6643）/9集中数据入口字节有效。'],
+ 'table':(['单项','状态','证据与范围'],[
+ ['C41-001/P3 ACK夹具字段','限定关闭','queued_at→created_at；当前ACK true仍不证明已读'],
+ ['C41-002/P3 journal假设','限定关闭','默认rollback与显式双WAL正反控通过，产品journal不改'],
+ ['C41-003/P2 lab启动隐式commit','限定关闭','红测/实际pending行复现；startup前置拒绝后201相关/2138完整通过'],
+ ['C41-004/P2 无源编号重复','开放','真实错误反馈后3/3仍12345，候选未过门槛'],
+ ['C41-005/P3 汇总空值处理','限定关闭','原Null流失败保留，新系统核验通过；不改变native数据']]),
+ 'links':[('完整Python绑定','工作目录/002-当前软件与浏览器/source-read-python-final-binding.json'),('完整浏览器绑定','工作目录/002-当前软件与浏览器/source-read-browser-final-binding.json'),('39脚本/72SQL负控汇总','工作目录/003-受控读取配对/controlled-summary.json'),('启动真实红测诊断','工作目录/001-来源与参数调查/startup-transaction-diagnosis.json'),('001问题','问题单/C41-001-客户端确认控制误用投递表字段.md'),('002问题','问题单/C41-002-旧快照控制误假设默认WAL模式.md'),('003问题','问题单/C41-003-读取会话初始化意外提交调用方事务.md'),('004问题','问题单/C41-004-真实工具错误反馈仍重复无源编号.md'),('005问题','问题单/C41-005-汇总审计未处理流式空适配消息.md'),('系统核验','收尾核验/system-evidence.json'),('全过程进展','../进展.md')]},
+ {'title':'下一循环：在调用前约束真正可用的工具','paragraphs':[
+ '当前问题不是缺少一次提醒状态查询的SQL能力，而是模型在没有来源编号时仍获知并反复选择要求编号的工具。下一步先登记来源可执行工具目录：无合法当前编号时状态工具是否应不可用，有编号时schema与执行器同时绑定真实源；运行政策工具仍不能被强制当成所有提醒问题的答案。不继续在同题追加重试次数或把拒绝数量当答对数量。',
+ '候选须比较同材料/实际源/真实SQLite、工具目录和参数绑定改变后的原生输出与程序结果，分别记录普通模型文字、不可用工具尝试、参数拒绝与可信数据答复。有限范围可解释规则与模型选择收益分账，开发题重用明确，新保护门槛独立；安全与语义都达到预登记要求后才考虑真正应用集成。',
+ 'C39显式真实查询仍是默认可用能力；C41只是隔离lab，后续接入要在自动claim_due之前正确分支，避免双写用户源，核Web/SDK/隐私/取消/队列并发与状态发布。不把本轮状态门槛当一般动作/来源/角色语义全部解决。跨OS PAD、自由对话/物理麦克风ASR、中文口型/ü/声调、多日稳定验收仍独立开放。持续Goal active，小步及时提交/串行推送，封存后新目录；GPU按实际余量/UUID单provider、同组最多4空闲卡，无整轮墙钟截止，不动他人进程。'],
+ 'table':(['优先级','推进方向','门槛'],[
+ ['P1','来源可执行工具目录/参数schema','先源权限/编号依据再展示可调用工具；执行端独立复核，保留原生非法尝试'],
+ ['P1','正确路线与不确定交付','有源参数≠正确意图；无读模型文字≠可信状态，错域/否定/写作独立保护'],
+ ['P2','真实应用集成','开发/新保护通过后，再在自动认领前适配、源不双写、实际SDK/HTTP/DOM复测'],
+ ['持续','听/思/演/记与设备/PAD/多日','独立实际数据分层验收，当前局部工程收益不冒称整体代际跃迁']]),
+ 'links':[('远期目标与验收路线','../../远期目标与验收路线.md'),('C40原始无源编号反例','../../cycle-40/审计/系统审计与推进报告.md'),('本轮计划','../计划.md')]}
+]
+meta=render(out,'C41 有源只读服务与一次错误修复对照','2026-11-13｜持续Goal active｜spinner-bot',
+ '29native/48SQL分支；9次无源参数被阻断；两臂均21/24，真实重选无收益/保护未跑。2138/1、192、18/16通过，4限定关闭/1开放，默认不启用。',sections,
+ BASE.parent/'cycle-40/审计/系统审计与推进报告.html')
+meta.update(proof_sha256=digest(out/'收尾核验/system-evidence.json'),builder_sha256=digest(Path(__file__)),renderer_sha256=digest(out/'render_report.py'))
+(out/'report-render-metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
+print('C41 rendered',meta['tables'],'tables',meta['links'],'links')
