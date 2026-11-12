@@ -2,6 +2,7 @@
 Run in the isolated llama-cpp-python environment. CPU requires explicit selection.
 """
 import argparse
+from copy import deepcopy
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -24,6 +25,24 @@ def sha(path):
         for block in iter(lambda: stream.read(8*1024*1024), b''):
             digest.update(block)
     return digest.hexdigest()
+
+
+def trace_request_metadata(data, raw_request, *, grammar_enabled):
+    """Record wire and canonical format identities without inferring call role."""
+    response_format = deepcopy(data.get('response_format'))
+    schema = None
+    if isinstance(response_format, dict):
+        description = response_format.get('json_schema')
+        if isinstance(description, dict):
+            schema = description.get('schema')
+    def canonical(value):
+        return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
+            separators=(',', ':')).encode()).hexdigest() if value is not None else None
+    return {'request_body_sha256': hashlib.sha256(raw_request).hexdigest(),
+            'response_format': response_format,
+            'response_format_sha256': canonical(response_format),
+            'response_schema_sha256': canonical(schema),
+            'grammar_enabled': grammar_enabled}
 
 
 def validate_cpu_headroom(evidence, required_free_mib):
@@ -125,7 +144,8 @@ def main():
             length=int(self.headers.get('Content-Length','0'))
             if not 0<length<=1024*1024:
                 self.send_json(413,{'error':{'message':'invalid request length'}});return
-            data=json.loads(self.rfile.read(length))
+            raw_request=self.rfile.read(length)
+            data=json.loads(raw_request)
             if data.get('tools'):
                 self.send_json(400,{'error':{'message':'tool evaluation not enabled'}});return
             with guard:
@@ -177,7 +197,9 @@ def main():
                     outcome=type(exc).__name__
                     if not stream:self.send_json(500,{'error':{'message':'local inference failed'}})
                 finally:
-                    trace.write(json.dumps({'id':identifier,'stream':stream,'analysis':grammar is not None,
+                    # Legacy analysis is a grammar flag, not a semantic role.
+                    trace.write(json.dumps({**trace_request_metadata(data, raw_request, grammar_enabled=grammar is not None),
+                        'id':identifier,'stream':stream,'analysis':grammar is not None,
                         'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),'messages':data['messages'],
                         'response':''.join(parts),'first_seconds':first,'total_seconds':time.monotonic()-started,
                         'usage':usage,'finish_reason':finish_reason,'outcome':outcome},ensure_ascii=False)+'\n');trace.flush()
