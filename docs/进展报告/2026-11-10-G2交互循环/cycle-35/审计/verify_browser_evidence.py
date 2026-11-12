@@ -23,7 +23,7 @@ def historical(path, expected):
         actual = {m.name: hashlib.sha256(archive.extractfile(m).read()).hexdigest() for m in archive if m.isfile()}
     assert actual == names
     for name, sha in names.items():
-        if name.startswith(str(BASE.relative_to(ROOT))):
+        if name.startswith(str(WORK.relative_to(ROOT)) + '/'):
             assert digest(ROOT / name) == sha, name  # Frozen evidence archives stay byte-identical.
     for entry in value['browser_bundle'].values():
         assert names[entry['archived_path']] == entry['sha256']
