@@ -1,0 +1,105 @@
+FFFFFF....F                                                              [100%]
+=================================== FAILURES ===================================
+_______ test_default_web_recovers_completed_cross_session_role_messages ________
+
+web_context = ('/tmp/pytest-of-root/pytest-315/test_default_web_recovers_comp0/history.db', <function web_context.<locals>.make at 0...要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '继续前面的场景。'}]])
+
+    def test_default_web_recovers_completed_cross_session_role_messages(web_context):
+        path,make,calls=web_context;first=make()
+        a=run_chat(first,'窗边有风铃C29-A。');b=run_chat(first,'地毯是蓝色C29-B。')
+        second=make();run_chat(second,'继续前面的场景。')
+>       assert calls[-1][1:-1]==[{'role':'user','content':'窗边有风铃C29-A。'},{'role':'assistant','content':a['reply']},
+                               {'role':'user','content':'地毯是蓝色C29-B。'},{'role':'assistant','content':b['reply']}]
+E       AssertionError: assert [] == [{'role': 'us...t': '受控回复2。'}]
+E         
+E         Right contains 4 more items, first extra item: {'role': 'user', 'content': '窗边有风铃C29-A。'}
+E         Use -v to get more diff
+
+tests/test_web_context_recovery.py:39: AssertionError
+______ test_recovered_old_session_sources_redact_new_reply_when_forgotten ______
+
+web_context = ('/tmp/pytest-of-root/pytest-315/test_recovered_old_session_sou0/history.db', <function web_context.<locals>.make at 0...要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '继续前面的场景。'}]])
+
+    def test_recovered_old_session_sources_redact_new_reply_when_forgotten(web_context):
+        path,make,calls=web_context;first=make();a=run_chat(first,'窗边的纸风车编号C29PRIVATE。')
+        uid=a['conversation']['user_message_id'];old_aid=a['conversation']['assistant_message_id']
+        with closing(MemoryStore(path)) as writer:fragment=writer.remember('纸风车编号C29PRIVATE。',source_message_id=uid)
+        second=make();b=run_chat(second,'继续前面的场景。');new_aid=b['conversation']['assistant_message_id']
+>       assert 'C29PRIVATE' in b['reply']
+E       AssertionError: assert 'C29PRIVATE' in '受控回复2。'
+
+tests/test_web_context_recovery.py:49: AssertionError
+___________ test_scope_control_fences_do_not_restore_other_role_text ___________
+
+web_context = ('/tmp/pytest-of-root/pytest-315/test_scope_control_fences_do_n0/history.db', <function web_context.<locals>.make at 0... 'assistant', 'content': '本轮已确认角色语境。角色对话不会写入你的个人资料，也不会执行真实提醒或联网操作。'}, {'role': 'user', 'content': '角色风景C29FICTION。'}]])
+
+    def test_scope_control_fences_do_not_restore_other_role_text(web_context):
+        path,make,calls=web_context;first=make();run_chat(first,'真人风景C29REAL。')
+        run_chat(first,'我来扮演一个虚构角色。');run_chat(first,'角色风景C29FICTION。')
+>       assert not any('C29REAL' in m['content'] for m in calls[-1])
+E       assert not True
+E        +  where True = any(<generator object test_scope_control_fences_do_not_restore_other_role_text.<locals>.<genexpr> at 0x7ffa31c31e70>)
+
+tests/test_web_context_recovery.py:64: AssertionError
+__________ test_restored_reminder_text_does_not_reexecute_old_action ___________
+
+web_context = ('/tmp/pytest-of-root/pytest-315/test_restored_reminder_text_do0/history.db', <function web_context.<locals>.make at 0...志；不要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '聊聊窗外。'}]])
+
+    def test_restored_reminder_text_does_not_reexecute_old_action(web_context):
+        path,make,calls=web_context;first=make();old=run_chat(first,'提醒我明天下午3点去图书馆。')
+        second=make();ordinary=run_chat(second,'聊聊窗外。')
+>       assert any(m['role']=='user' and m['content']=='提醒我明天下午3点去图书馆。' for m in calls[-1])
+E       assert False
+E        +  where False = any(<generator object test_restored_reminder_text_does_not_reexecute_old_action.<locals>.<genexpr> at 0x7ffa31c31fc0>)
+
+tests/test_web_context_recovery.py:74: AssertionError
+_ test_window_reserves_current_pair_and_repeated_restart_never_duplicates_sources _
+
+web_context = ('/tmp/pytest-of-root/pytest-315/test_window_reserves_current_p0/history.db', <function web_context.<locals>.make at 0...'这是风景编号C29-W1。'}, {'role': 'assistant', 'content': '受控回复2。'}, {'role': 'user', 'content': '这是风景编号C29-W2。'}, ...], ...])
+
+    def test_window_reserves_current_pair_and_repeated_restart_never_duplicates_sources(web_context):
+        path,make,calls=web_context;server=make()
+        for number in range(12):run_chat(server,f'这是风景编号C29-W{number}。')
+        for number in range(3):
+            server=make();run_chat(server,f'继续看风景{number}。');messages=calls[-1][1:]
+>           assert len(messages)==19 and messages[0]['role']=='user'
+E           AssertionError: assert (1 == 19)
+E            +  where 1 = len([{'role': 'user', 'content': '继续看风景0。'}])
+
+tests/test_web_context_recovery.py:86: AssertionError
+___________ test_explicit_optout_keeps_transient_context_on_restart ____________
+
+web_context = ('/tmp/pytest-of-root/pytest-315/test_explicit_optout_keeps_tra0/history.db', <function web_context.<locals>.make at 0x7ffa31c925f0>, [])
+
+    def test_explicit_optout_keeps_transient_context_on_restart(web_context):
+>       path,make,calls=web_context;first=make(recover_context=False);run_chat(first,'天气话题C29-OLD。')
+
+tests/test_web_context_recovery.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+kwargs = {'recover_context': False}
+
+    def make(**kwargs):
+>       server=create_server(path,port=0,**kwargs);servers.append(server);return server
+E       TypeError: create_server() got an unexpected keyword argument 'recover_context'
+
+tests/test_web_context_recovery.py:30: TypeError
+_____ test_recovery_flag_rejects_non_boolean_before_server_or_db_creation ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-315/test_recovery_flag_rejects_non0')
+
+    def test_recovery_flag_rejects_non_boolean_before_server_or_db_creation(tmp_path):
+        path=tmp_path/'must-not-exist.db'
+>       with pytest.raises(ValueError):create_server(str(path),port=0,recover_context=1)
+E       TypeError: create_server() got an unexpected keyword argument 'recover_context'
+
+tests/test_web_context_recovery.py:106: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_web_context_recovery.py::test_default_web_recovers_completed_cross_session_role_messages
+FAILED tests/test_web_context_recovery.py::test_recovered_old_session_sources_redact_new_reply_when_forgotten
+FAILED tests/test_web_context_recovery.py::test_scope_control_fences_do_not_restore_other_role_text
+FAILED tests/test_web_context_recovery.py::test_restored_reminder_text_does_not_reexecute_old_action
+FAILED tests/test_web_context_recovery.py::test_window_reserves_current_pair_and_repeated_restart_never_duplicates_sources
+FAILED tests/test_web_context_recovery.py::test_explicit_optout_keeps_transient_context_on_restart
+FAILED tests/test_web_context_recovery.py::test_recovery_flag_rejects_non_boolean_before_server_or_db_creation
+7 failed, 4 passed in 1.16s
