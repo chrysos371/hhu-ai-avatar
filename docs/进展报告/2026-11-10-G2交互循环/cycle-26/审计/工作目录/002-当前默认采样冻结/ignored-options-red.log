@@ -1,0 +1,109 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_current_defaults_rejects_ignored_candidate_or_partition_inputs[partition] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-302/test_current_defaults_rejects_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f07f9cd21a0>
+extra = 'partition'
+
+    @pytest.mark.parametrize('extra',['partition','candidate_freeze','pair_protocol'])
+    def test_current_defaults_rejects_ignored_candidate_or_partition_inputs(tmp_path,monkeypatch,extra):
+        from types import SimpleNamespace
+        freeze=tmp_path/'freeze.json';_,expected=frozen(freeze);output=tmp_path/'must-not-exist';calls=[]
+        placeholder=tmp_path/'candidate.json';placeholder.write_text('{}')
+        options={extra:'prospective' if extra=='partition' else placeholder}
+        class Dispatch(RuntimeError):pass
+        def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=forbidden,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory');monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        with pytest.raises(ValueError,match='Current-default execution'):
+>           runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-4b-q4_k_m',
+                registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest(),
+                execution_freeze=freeze,expected_execution_freeze_sha256=expected,**options)
+
+tests/test_model_scale_execution_freeze.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:165: in main
+    process = subprocess.Popen(command, cwd=ROOT, env=env, stdout=provider_log, stderr=subprocess.STDOUT)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_.../data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf', '--model-key', 'qwen3-4b-q4_k_m', ...],)
+kwargs = {'cwd': PosixPath('/data/Users/zrh/repo/hhu-ai-avatar'), 'env': {'SHELL': '/bin/bash', 'COLORTERM': '', 'CODEX_VERSION.../test_current_defaults_rejects_0/must-not-exist/qwen3-4b-q4_k_m/provider.log' mode='x' encoding='UTF-8'>, 'stderr': -2}
+
+>   def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+E   test_model_scale_execution_freeze.test_current_defaults_rejects_ignored_candidate_or_partition_inputs.<locals>.Dispatch: controlled attempted dispatch, no model/GPU
+
+tests/test_model_scale_execution_freeze.py:123: Dispatch
+_ test_current_defaults_rejects_ignored_candidate_or_partition_inputs[candidate_freeze] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-302/test_current_defaults_rejects_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f07f9cd3550>
+extra = 'candidate_freeze'
+
+    @pytest.mark.parametrize('extra',['partition','candidate_freeze','pair_protocol'])
+    def test_current_defaults_rejects_ignored_candidate_or_partition_inputs(tmp_path,monkeypatch,extra):
+        from types import SimpleNamespace
+        freeze=tmp_path/'freeze.json';_,expected=frozen(freeze);output=tmp_path/'must-not-exist';calls=[]
+        placeholder=tmp_path/'candidate.json';placeholder.write_text('{}')
+        options={extra:'prospective' if extra=='partition' else placeholder}
+        class Dispatch(RuntimeError):pass
+        def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=forbidden,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory');monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        with pytest.raises(ValueError,match='Current-default execution'):
+>           runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-4b-q4_k_m',
+                registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest(),
+                execution_freeze=freeze,expected_execution_freeze_sha256=expected,**options)
+
+tests/test_model_scale_execution_freeze.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:165: in main
+    process = subprocess.Popen(command, cwd=ROOT, env=env, stdout=provider_log, stderr=subprocess.STDOUT)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_.../data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf', '--model-key', 'qwen3-4b-q4_k_m', ...],)
+kwargs = {'cwd': PosixPath('/data/Users/zrh/repo/hhu-ai-avatar'), 'env': {'SHELL': '/bin/bash', 'COLORTERM': '', 'CODEX_VERSION.../test_current_defaults_rejects_1/must-not-exist/qwen3-4b-q4_k_m/provider.log' mode='x' encoding='UTF-8'>, 'stderr': -2}
+
+>   def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+E   test_model_scale_execution_freeze.test_current_defaults_rejects_ignored_candidate_or_partition_inputs.<locals>.Dispatch: controlled attempted dispatch, no model/GPU
+
+tests/test_model_scale_execution_freeze.py:123: Dispatch
+_ test_current_defaults_rejects_ignored_candidate_or_partition_inputs[pair_protocol] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-302/test_current_defaults_rejects_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f07f9cd3eb0>
+extra = 'pair_protocol'
+
+    @pytest.mark.parametrize('extra',['partition','candidate_freeze','pair_protocol'])
+    def test_current_defaults_rejects_ignored_candidate_or_partition_inputs(tmp_path,monkeypatch,extra):
+        from types import SimpleNamespace
+        freeze=tmp_path/'freeze.json';_,expected=frozen(freeze);output=tmp_path/'must-not-exist';calls=[]
+        placeholder=tmp_path/'candidate.json';placeholder.write_text('{}')
+        options={extra:'prospective' if extra=='partition' else placeholder}
+        class Dispatch(RuntimeError):pass
+        def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+        monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=forbidden,STDOUT=subprocess.STDOUT))
+        monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory');monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+        with pytest.raises(ValueError,match='Current-default execution'):
+>           runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-4b-q4_k_m',
+                registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest(),
+                execution_freeze=freeze,expected_execution_freeze_sha256=expected,**options)
+
+tests/test_model_scale_execution_freeze.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/run_native_output_models.py:165: in main
+    process = subprocess.Popen(command, cwd=ROOT, env=env, stdout=provider_log, stderr=subprocess.STDOUT)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scripts/serve_local_model_.../data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf', '--model-key', 'qwen3-4b-q4_k_m', ...],)
+kwargs = {'cwd': PosixPath('/data/Users/zrh/repo/hhu-ai-avatar'), 'env': {'SHELL': '/bin/bash', 'COLORTERM': '', 'CODEX_VERSION.../test_current_defaults_rejects_2/must-not-exist/qwen3-4b-q4_k_m/provider.log' mode='x' encoding='UTF-8'>, 'stderr': -2}
+
+>   def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+E   test_model_scale_execution_freeze.test_current_defaults_rejects_ignored_candidate_or_partition_inputs.<locals>.Dispatch: controlled attempted dispatch, no model/GPU
+
+tests/test_model_scale_execution_freeze.py:123: Dispatch
+=========================== short test summary info ============================
+FAILED tests/test_model_scale_execution_freeze.py::test_current_defaults_rejects_ignored_candidate_or_partition_inputs[partition]
+FAILED tests/test_model_scale_execution_freeze.py::test_current_defaults_rejects_ignored_candidate_or_partition_inputs[candidate_freeze]
+FAILED tests/test_model_scale_execution_freeze.py::test_current_defaults_rejects_ignored_candidate_or_partition_inputs[pair_protocol]
+3 failed, 19 deselected in 1.01s

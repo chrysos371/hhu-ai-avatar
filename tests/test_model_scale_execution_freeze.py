@@ -111,3 +111,20 @@ def test_current_defaults_freeze_cannot_select_a_lab_candidate(tmp_path):
             registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest(),
             execution_freeze=path,expected_execution_freeze_sha256=expected,candidate='source_bound_v2')
     assert not output.exists()
+
+
+@pytest.mark.parametrize('extra',['partition','candidate_freeze','pair_protocol'])
+def test_current_defaults_rejects_ignored_candidate_or_partition_inputs(tmp_path,monkeypatch,extra):
+    from types import SimpleNamespace
+    freeze=tmp_path/'freeze.json';_,expected=frozen(freeze);output=tmp_path/'must-not-exist';calls=[]
+    placeholder=tmp_path/'candidate.json';placeholder.write_text('{}')
+    options={extra:'prospective' if extra=='partition' else placeholder}
+    class Dispatch(RuntimeError):pass
+    def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
+    monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=forbidden,STDOUT=subprocess.STDOUT))
+    monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory');monkeypatch.setattr(runner,'gpu_processes',lambda:'')
+    with pytest.raises(ValueError,match='Current-default execution'):
+        runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-4b-q4_k_m',
+            registry_path=REGISTRY,expected_registry_sha256=sha256(REGISTRY.read_bytes()).hexdigest(),
+            execution_freeze=freeze,expected_execution_freeze_sha256=expected,**options)
+    assert calls==[] and not output.exists()
