@@ -8,7 +8,7 @@
 
 ## 本机代码与数据
 
-代码仍在`/data/Users/zrh/repo/hhu-ai-avatar`，所有本项目配套环境、模型、缓存、运行数据与7个历史工作树已集中到`/data/Users/zrh/data/hhu-ai-avatar`；repo根的envs/runtime/npm-cache和7旧工作树条目已移走。使用`./scripts/project-python`及`./scripts/frontend.sh`，详见[本机数据布局与历史路径映射](docs/本机数据布局.md)。用户要求的C35研发暂停继续有效。
+代码仍在`/data/Users/zrh/repo/hhu-ai-avatar`，所有本项目配套环境、模型、缓存、运行数据与7个历史工作树已集中到`/data/Users/zrh/data/hhu-ai-avatar`；repo根的envs/runtime/npm-cache和7旧工作树条目已移走。使用`./scripts/project-python`及`./scripts/frontend.sh`，详见[本机数据布局与历史路径映射](docs/本机数据布局.md)。迁后最终回归：Python1835通过/1跳过、前端183通过、默认浏览器15通过/16可选跳过，均有版本绑定；见[迁移总报告](docs/进展报告/2026-11-12-项目数据集中迁移/迁移报告.md) / [HTML](docs/进展报告/2026-11-12-项目数据集中迁移/迁移报告.html)。用户要求的C35研发暂停继续有效。
 
 ## 当前状态（2026-11-12）
 
