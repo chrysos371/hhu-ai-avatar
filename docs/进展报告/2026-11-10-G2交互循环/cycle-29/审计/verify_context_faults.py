@@ -49,7 +49,9 @@ def verify():
             if row['kind']=='generation':assert not request.get('response_format')
             else:
                 assert request['response_format']['json_schema']['name']=='avatar_cognitive_analysis'
-                assert request['messages'][1:]==[{'role':'user','content':text}]
+                assert 2<=len(request['messages'])<=8 and [m['role'] for m in request['messages'][1:]]==['user','assistant']*((len(request['messages'])-2)//2)+['user']
+        for text,native in gen.items():
+            if text in cog:assert cog[text][0]['request']['messages'][1:]==native[0]['request']['messages'][1:-1][-6:]+native[0]['request']['messages'][-1:]
         for turn in case['turns']:
             assert turn['app_pid'] in workers and workers[turn['app_pid']]['case']==case['id']
             kind,result,observed,raw=events(BytesIO(turn['raw_sse'].encode()),time.perf_counter())
