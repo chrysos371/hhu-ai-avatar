@@ -1,0 +1,60 @@
+..FFFF...............................................                    [100%]
+=================================== FAILURES ===================================
+_ test_external_mutation_is_checked_before_analysis_and_rules[\u8fd9\u662f\u4e2d\u6027\u8bf7\u6c42\u3002-forget] _
+
+avatar = <avatar.main.Avatar object at 0x7fb7c6d236a0>, operation = 'forget'
+text = '这是中性请求。'
+
+    @pytest.mark.parametrize('operation', ['forget', 'correct'])
+    @pytest.mark.parametrize('text', ['这是中性请求。', '回到现实'])
+    def test_external_mutation_is_checked_before_analysis_and_rules(avatar, operation, text):
+        fragment = prepare(avatar)
+>       with MemoryStore(avatar.memory.db_path) as writer:
+E       AttributeError: __enter__
+
+tests/test_avatar_emotion_revision.py:46: AttributeError
+_ test_external_mutation_is_checked_before_analysis_and_rules[\u8fd9\u662f\u4e2d\u6027\u8bf7\u6c42\u3002-correct] _
+
+avatar = <avatar.main.Avatar object at 0x7fb7c6dba8c0>, operation = 'correct'
+text = '这是中性请求。'
+
+    @pytest.mark.parametrize('operation', ['forget', 'correct'])
+    @pytest.mark.parametrize('text', ['这是中性请求。', '回到现实'])
+    def test_external_mutation_is_checked_before_analysis_and_rules(avatar, operation, text):
+        fragment = prepare(avatar)
+>       with MemoryStore(avatar.memory.db_path) as writer:
+E       AttributeError: __enter__
+
+tests/test_avatar_emotion_revision.py:46: AttributeError
+_ test_external_mutation_is_checked_before_analysis_and_rules[\u56de\u5230\u73b0\u5b9e-forget] _
+
+avatar = <avatar.main.Avatar object at 0x7fb7c6d23760>, operation = 'forget'
+text = '回到现实'
+
+    @pytest.mark.parametrize('operation', ['forget', 'correct'])
+    @pytest.mark.parametrize('text', ['这是中性请求。', '回到现实'])
+    def test_external_mutation_is_checked_before_analysis_and_rules(avatar, operation, text):
+        fragment = prepare(avatar)
+>       with MemoryStore(avatar.memory.db_path) as writer:
+E       AttributeError: __enter__
+
+tests/test_avatar_emotion_revision.py:46: AttributeError
+_ test_external_mutation_is_checked_before_analysis_and_rules[\u56de\u5230\u73b0\u5b9e-correct] _
+
+avatar = <avatar.main.Avatar object at 0x7fb7c6db93c0>, operation = 'correct'
+text = '回到现实'
+
+    @pytest.mark.parametrize('operation', ['forget', 'correct'])
+    @pytest.mark.parametrize('text', ['这是中性请求。', '回到现实'])
+    def test_external_mutation_is_checked_before_analysis_and_rules(avatar, operation, text):
+        fragment = prepare(avatar)
+>       with MemoryStore(avatar.memory.db_path) as writer:
+E       AttributeError: __enter__
+
+tests/test_avatar_emotion_revision.py:46: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_avatar_emotion_revision.py::test_external_mutation_is_checked_before_analysis_and_rules[\u8fd9\u662f\u4e2d\u6027\u8bf7\u6c42\u3002-forget]
+FAILED tests/test_avatar_emotion_revision.py::test_external_mutation_is_checked_before_analysis_and_rules[\u8fd9\u662f\u4e2d\u6027\u8bf7\u6c42\u3002-correct]
+FAILED tests/test_avatar_emotion_revision.py::test_external_mutation_is_checked_before_analysis_and_rules[\u56de\u5230\u73b0\u5b9e-forget]
+FAILED tests/test_avatar_emotion_revision.py::test_external_mutation_is_checked_before_analysis_and_rules[\u56de\u5230\u73b0\u5b9e-correct]
+4 failed, 49 passed in 8.82s

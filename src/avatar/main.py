@@ -261,6 +261,7 @@ class Avatar:
         self._current_message_id = None
         self._turn_facts = None
         self.speaker_scope.invalidate(self.memory.context_revision)
+        self.emotion.bind_context_revision(self.memory.context_revision)
         return result
 
     def forget_memory(self, fragment_id: int) -> None:
@@ -270,6 +271,7 @@ class Avatar:
         self._current_message_id = None
         self._turn_facts = None
         self.speaker_scope.invalidate(self.memory.context_revision)
+        self.emotion.bind_context_revision(self.memory.context_revision)
 
     def handle_memory_command(self, text: str):
         """Explicit local controls; no model inference or guessed deletion targets."""
@@ -518,6 +520,7 @@ class Avatar:
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
         self._turn_context_revision = turn_context_revision
+        self.emotion.bind_context_revision(turn_context_revision)
         if self._task_context_revision != turn_context_revision:
             self.tasks.current = None
             self._task_context_revision = turn_context_revision
@@ -572,23 +575,30 @@ class Avatar:
         if self.task_contract_enabled:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
-        if boundary.reply is not None:
-            self.emotion.update(user_text)
-        elif control is not None:
-            self.analysis_mode = 'rules_speaker_control'
-            self.emotion.update(user_text)
-        elif self.speaker_scope.scope == 'unverified':
-            # The response is a fixed confirmation boundary. No analysis output
-            # can be used here, so do not send this unknown-scope text to a model.
-            self.analysis_mode = 'rules_speaker_scope'
-            self.emotion.update(user_text)
-        elif use_web:
-            # Tool outputs never enter fact extraction; web turns only admit
-            # explicit claims in the current user's original message.
-            self._extract_facts(user_text)
-            self.emotion.update(user_text)
-        else:
-            self._analyze(user_text)
+        try:
+            if boundary.reply is not None:
+                self.emotion.update(user_text)
+            elif control is not None:
+                self.analysis_mode = 'rules_speaker_control'
+                self.emotion.update(user_text)
+            elif self.speaker_scope.scope == 'unverified':
+                # The response is a fixed confirmation boundary. No analysis output
+                # can be used here, so do not send this unknown-scope text to a model.
+                self.analysis_mode = 'rules_speaker_scope'
+                self.emotion.update(user_text)
+            elif use_web:
+                # Tool outputs never enter fact extraction; web turns only admit
+                # explicit claims in the current user's original message.
+                self._extract_facts(user_text)
+                self.emotion.update(user_text)
+            else:
+                self._analyze(user_text)
+        finally:
+            # An observation belongs to the original turn, even if a public
+            # correction reset shared state during the update. Clear late old
+            # deltas before exposing state or propagating cancellation.
+            self.emotion.mark_context_revision(turn_context_revision)
+            self.emotion.bind_context_revision(self.memory.context_revision)
         checkpoint_context()
         reminder = None
         reminder_error = None
