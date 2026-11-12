@@ -1,0 +1,2297 @@
+ggml_cuda_init: found 1 CUDA devices (Total VRAM: 40440 MiB):
+  Device 0: NVIDIA A100-PCIE-40GB, compute capability 8.0, VMM: yes, VRAM: 40440 MiB
+llama_model_load_from_file_impl: using device CUDA0 (NVIDIA A100-PCIE-40GB) (0000:b1:00.0) - 40015 MiB free
+llama_model_loader: loaded meta data with 28 key-value pairs and 707 tensors from /data/Users/zrh/repo/hhu-ai-avatar/models/qwen3-32b-gguf/Qwen3-32B-Q4_K_M.gguf (version GGUF V3 (latest))
+llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+llama_model_loader: - kv   0:                       general.architecture str              = qwen3
+llama_model_loader: - kv   1:                               general.type str              = model
+llama_model_loader: - kv   2:                               general.name str              = Qwen3 32B Awq Compatible Instruct
+llama_model_loader: - kv   3:                           general.finetune str              = awq-compatible-Instruct
+llama_model_loader: - kv   4:                           general.basename str              = Qwen3
+llama_model_loader: - kv   5:                         general.size_label str              = 32B
+llama_model_loader: - kv   6:                          qwen3.block_count u32              = 64
+llama_model_loader: - kv   7:                       qwen3.context_length u32              = 40960
+llama_model_loader: - kv   8:                     qwen3.embedding_length u32              = 5120
+llama_model_loader: - kv   9:                  qwen3.feed_forward_length u32              = 25600
+llama_model_loader: - kv  10:                 qwen3.attention.head_count u32              = 64
+llama_model_loader: - kv  11:              qwen3.attention.head_count_kv u32              = 8
+llama_model_loader: - kv  12:                       qwen3.rope.freq_base f32              = 1000000.000000
+llama_model_loader: - kv  13:     qwen3.attention.layer_norm_rms_epsilon f32              = 0.000001
+llama_model_loader: - kv  14:                 qwen3.attention.key_length u32              = 128
+llama_model_loader: - kv  15:               qwen3.attention.value_length u32              = 128
+llama_model_loader: - kv  16:                       tokenizer.ggml.model str              = gpt2
+llama_model_loader: - kv  17:                         tokenizer.ggml.pre str              = qwen2
+llama_model_loader: - kv  18:                      tokenizer.ggml.tokens arr[str,151936]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+llama_model_loader: - kv  19:                  tokenizer.ggml.token_type arr[i32,151936]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+llama_model_loader: - kv  20:                      tokenizer.ggml.merges arr[str,151387]  = ["Ġ Ġ", "ĠĠ ĠĠ", "i n", "Ġ t",...
+llama_model_loader: - kv  21:                tokenizer.ggml.eos_token_id u32              = 151645
+llama_model_loader: - kv  22:            tokenizer.ggml.padding_token_id u32              = 151643
+llama_model_loader: - kv  23:                tokenizer.ggml.bos_token_id u32              = 151643
+llama_model_loader: - kv  24:               tokenizer.ggml.add_bos_token bool             = false
+llama_model_loader: - kv  25:                    tokenizer.chat_template str              = {%- if tools %}\n    {{- '<|im_start|>...
+llama_model_loader: - kv  26:               general.quantization_version u32              = 2
+llama_model_loader: - kv  27:                          general.file_type u32              = 15
+llama_model_loader: - type  f32:  257 tensors
+llama_model_loader: - type q4_K:  385 tensors
+llama_model_loader: - type q6_K:   65 tensors
+print_info: file format = GGUF V3 (latest)
+print_info: file type   = Q4_K - Medium
+print_info: file size   = 18.40 GiB (4.82 BPW) 
+init_tokenizer: initializing tokenizer for type 2
+load: 0 unused tokens
+load: control token: 151660 '<|fim_middle|>' is not marked as EOG
+load: control token: 151659 '<|fim_prefix|>' is not marked as EOG
+load: control token: 151653 '<|vision_end|>' is not marked as EOG
+load: control token: 151648 '<|box_start|>' is not marked as EOG
+load: control token: 151646 '<|object_ref_start|>' is not marked as EOG
+load: control token: 151649 '<|box_end|>' is not marked as EOG
+load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+load: control token: 151655 '<|image_pad|>' is not marked as EOG
+load: control token: 151651 '<|quad_end|>' is not marked as EOG
+load: control token: 151647 '<|object_ref_end|>' is not marked as EOG
+load: control token: 151652 '<|vision_start|>' is not marked as EOG
+load: control token: 151654 '<|vision_pad|>' is not marked as EOG
+load: control token: 151656 '<|video_pad|>' is not marked as EOG
+load: control token: 151644 '<|im_start|>' is not marked as EOG
+load: control token: 151661 '<|fim_suffix|>' is not marked as EOG
+load: control token: 151650 '<|quad_start|>' is not marked as EOG
+load: printing all EOG tokens:
+load:   - 128247 ('</s>')
+load:   - 151643 ('<|endoftext|>')
+load:   - 151645 ('<|im_end|>')
+load:   - 151662 ('<|fim_pad|>')
+load:   - 151663 ('<|repo_name|>')
+load:   - 151664 ('<|file_sep|>')
+load: special tokens cache size = 27
+load: token to piece cache size = 0.9311 MB
+print_info: arch                  = qwen3
+print_info: vocab_only            = 0
+print_info: no_alloc              = 0
+print_info: n_ctx_train           = 40960
+print_info: n_embd                = 5120
+print_info: n_embd_inp            = 5120
+print_info: n_layer               = 64
+print_info: n_head                = 64
+print_info: n_head_kv             = 8
+print_info: n_rot                 = 128
+print_info: n_swa                 = 0
+print_info: is_swa_any            = 0
+print_info: n_embd_head_k         = 128
+print_info: n_embd_head_v         = 128
+print_info: n_gqa                 = 8
+print_info: n_embd_k_gqa          = 1024
+print_info: n_embd_v_gqa          = 1024
+print_info: f_norm_eps            = 0.0e+00
+print_info: f_norm_rms_eps        = 1.0e-06
+print_info: f_clamp_kqv           = 0.0e+00
+print_info: f_max_alibi_bias      = 0.0e+00
+print_info: f_logit_scale         = 0.0e+00
+print_info: f_attn_scale          = 0.0e+00
+print_info: n_ff                  = 25600
+print_info: n_expert              = 0
+print_info: n_expert_used         = 0
+print_info: n_expert_groups       = 0
+print_info: n_group_used          = 0
+print_info: causal attn           = 1
+print_info: pooling type          = -1
+print_info: rope type             = 2
+print_info: rope scaling          = linear
+print_info: freq_base_train       = 1000000.0
+print_info: freq_scale_train      = 1
+print_info: n_ctx_orig_yarn       = 40960
+print_info: rope_yarn_log_mul     = 0.0000
+print_info: rope_finetuned        = unknown
+print_info: model type            = 32B
+print_info: model params          = 32.76 B
+print_info: general.name          = Qwen3 32B Awq Compatible Instruct
+print_info: vocab type            = BPE
+print_info: n_vocab               = 151936
+print_info: n_merges              = 151387
+print_info: BOS token             = 151643 '<|endoftext|>'
+print_info: EOS token             = 151645 '<|im_end|>'
+print_info: EOT token             = 151645 '<|im_end|>'
+print_info: PAD token             = 151643 '<|endoftext|>'
+print_info: LF token              = 198 'Ċ'
+print_info: FIM PRE token         = 151659 '<|fim_prefix|>'
+print_info: FIM SUF token         = 151661 '<|fim_suffix|>'
+print_info: FIM MID token         = 151660 '<|fim_middle|>'
+print_info: FIM PAD token         = 151662 '<|fim_pad|>'
+print_info: FIM REP token         = 151663 '<|repo_name|>'
+print_info: FIM SEP token         = 151664 '<|file_sep|>'
+print_info: EOG token             = 128247 '</s>'
+print_info: EOG token             = 151643 '<|endoftext|>'
+print_info: EOG token             = 151645 '<|im_end|>'
+print_info: EOG token             = 151662 '<|fim_pad|>'
+print_info: EOG token             = 151663 '<|repo_name|>'
+print_info: EOG token             = 151664 '<|file_sep|>'
+print_info: max token length      = 256
+load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)
+load_tensors: layer   0 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   1 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   2 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   3 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   4 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   5 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   6 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   7 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   8 assigned to device CUDA0, is_swa = 0
+load_tensors: layer   9 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  10 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  11 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  12 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  13 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  14 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  15 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  16 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  17 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  18 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  19 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  20 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  21 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  22 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  23 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  24 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  25 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  26 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  27 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  28 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  29 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  30 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  31 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  32 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  33 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  34 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  35 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  36 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  37 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  38 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  39 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  40 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  41 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  42 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  43 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  44 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  45 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  46 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  47 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  48 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  49 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  50 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  51 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  52 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  53 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  54 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  55 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  56 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  57 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  58 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  59 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  60 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  61 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  62 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  63 assigned to device CUDA0, is_swa = 0
+load_tensors: layer  64 assigned to device CUDA0, is_swa = 0
+create_tensor: loading tensor token_embd.weight
+create_tensor: loading tensor output_norm.weight
+create_tensor: loading tensor output.weight
+create_tensor: loading tensor blk.0.attn_norm.weight
+create_tensor: loading tensor blk.0.attn_q.weight
+create_tensor: loading tensor blk.0.attn_k.weight
+create_tensor: loading tensor blk.0.attn_v.weight
+create_tensor: loading tensor blk.0.attn_output.weight
+create_tensor: loading tensor blk.0.attn_k_norm.weight
+create_tensor: loading tensor blk.0.attn_q_norm.weight
+create_tensor: loading tensor blk.0.ffn_norm.weight
+create_tensor: loading tensor blk.0.ffn_gate.weight
+create_tensor: loading tensor blk.0.ffn_down.weight
+create_tensor: loading tensor blk.0.ffn_up.weight
+create_tensor: loading tensor blk.1.attn_norm.weight
+create_tensor: loading tensor blk.1.attn_q.weight
+create_tensor: loading tensor blk.1.attn_k.weight
+create_tensor: loading tensor blk.1.attn_v.weight
+create_tensor: loading tensor blk.1.attn_output.weight
+create_tensor: loading tensor blk.1.attn_k_norm.weight
+create_tensor: loading tensor blk.1.attn_q_norm.weight
+create_tensor: loading tensor blk.1.ffn_norm.weight
+create_tensor: loading tensor blk.1.ffn_gate.weight
+create_tensor: loading tensor blk.1.ffn_down.weight
+create_tensor: loading tensor blk.1.ffn_up.weight
+create_tensor: loading tensor blk.2.attn_norm.weight
+create_tensor: loading tensor blk.2.attn_q.weight
+create_tensor: loading tensor blk.2.attn_k.weight
+create_tensor: loading tensor blk.2.attn_v.weight
+create_tensor: loading tensor blk.2.attn_output.weight
+create_tensor: loading tensor blk.2.attn_k_norm.weight
+create_tensor: loading tensor blk.2.attn_q_norm.weight
+create_tensor: loading tensor blk.2.ffn_norm.weight
+create_tensor: loading tensor blk.2.ffn_gate.weight
+create_tensor: loading tensor blk.2.ffn_down.weight
+create_tensor: loading tensor blk.2.ffn_up.weight
+create_tensor: loading tensor blk.3.attn_norm.weight
+create_tensor: loading tensor blk.3.attn_q.weight
+create_tensor: loading tensor blk.3.attn_k.weight
+create_tensor: loading tensor blk.3.attn_v.weight
+create_tensor: loading tensor blk.3.attn_output.weight
+create_tensor: loading tensor blk.3.attn_k_norm.weight
+create_tensor: loading tensor blk.3.attn_q_norm.weight
+create_tensor: loading tensor blk.3.ffn_norm.weight
+create_tensor: loading tensor blk.3.ffn_gate.weight
+create_tensor: loading tensor blk.3.ffn_down.weight
+create_tensor: loading tensor blk.3.ffn_up.weight
+create_tensor: loading tensor blk.4.attn_norm.weight
+create_tensor: loading tensor blk.4.attn_q.weight
+create_tensor: loading tensor blk.4.attn_k.weight
+create_tensor: loading tensor blk.4.attn_v.weight
+create_tensor: loading tensor blk.4.attn_output.weight
+create_tensor: loading tensor blk.4.attn_k_norm.weight
+create_tensor: loading tensor blk.4.attn_q_norm.weight
+create_tensor: loading tensor blk.4.ffn_norm.weight
+create_tensor: loading tensor blk.4.ffn_gate.weight
+create_tensor: loading tensor blk.4.ffn_down.weight
+create_tensor: loading tensor blk.4.ffn_up.weight
+create_tensor: loading tensor blk.5.attn_norm.weight
+create_tensor: loading tensor blk.5.attn_q.weight
+create_tensor: loading tensor blk.5.attn_k.weight
+create_tensor: loading tensor blk.5.attn_v.weight
+create_tensor: loading tensor blk.5.attn_output.weight
+create_tensor: loading tensor blk.5.attn_k_norm.weight
+create_tensor: loading tensor blk.5.attn_q_norm.weight
+create_tensor: loading tensor blk.5.ffn_norm.weight
+create_tensor: loading tensor blk.5.ffn_gate.weight
+create_tensor: loading tensor blk.5.ffn_down.weight
+create_tensor: loading tensor blk.5.ffn_up.weight
+create_tensor: loading tensor blk.6.attn_norm.weight
+create_tensor: loading tensor blk.6.attn_q.weight
+create_tensor: loading tensor blk.6.attn_k.weight
+create_tensor: loading tensor blk.6.attn_v.weight
+create_tensor: loading tensor blk.6.attn_output.weight
+create_tensor: loading tensor blk.6.attn_k_norm.weight
+create_tensor: loading tensor blk.6.attn_q_norm.weight
+create_tensor: loading tensor blk.6.ffn_norm.weight
+create_tensor: loading tensor blk.6.ffn_gate.weight
+create_tensor: loading tensor blk.6.ffn_down.weight
+create_tensor: loading tensor blk.6.ffn_up.weight
+create_tensor: loading tensor blk.7.attn_norm.weight
+create_tensor: loading tensor blk.7.attn_q.weight
+create_tensor: loading tensor blk.7.attn_k.weight
+create_tensor: loading tensor blk.7.attn_v.weight
+create_tensor: loading tensor blk.7.attn_output.weight
+create_tensor: loading tensor blk.7.attn_k_norm.weight
+create_tensor: loading tensor blk.7.attn_q_norm.weight
+create_tensor: loading tensor blk.7.ffn_norm.weight
+create_tensor: loading tensor blk.7.ffn_gate.weight
+create_tensor: loading tensor blk.7.ffn_down.weight
+create_tensor: loading tensor blk.7.ffn_up.weight
+create_tensor: loading tensor blk.8.attn_norm.weight
+create_tensor: loading tensor blk.8.attn_q.weight
+create_tensor: loading tensor blk.8.attn_k.weight
+create_tensor: loading tensor blk.8.attn_v.weight
+create_tensor: loading tensor blk.8.attn_output.weight
+create_tensor: loading tensor blk.8.attn_k_norm.weight
+create_tensor: loading tensor blk.8.attn_q_norm.weight
+create_tensor: loading tensor blk.8.ffn_norm.weight
+create_tensor: loading tensor blk.8.ffn_gate.weight
+create_tensor: loading tensor blk.8.ffn_down.weight
+create_tensor: loading tensor blk.8.ffn_up.weight
+create_tensor: loading tensor blk.9.attn_norm.weight
+create_tensor: loading tensor blk.9.attn_q.weight
+create_tensor: loading tensor blk.9.attn_k.weight
+create_tensor: loading tensor blk.9.attn_v.weight
+create_tensor: loading tensor blk.9.attn_output.weight
+create_tensor: loading tensor blk.9.attn_k_norm.weight
+create_tensor: loading tensor blk.9.attn_q_norm.weight
+create_tensor: loading tensor blk.9.ffn_norm.weight
+create_tensor: loading tensor blk.9.ffn_gate.weight
+create_tensor: loading tensor blk.9.ffn_down.weight
+create_tensor: loading tensor blk.9.ffn_up.weight
+create_tensor: loading tensor blk.10.attn_norm.weight
+create_tensor: loading tensor blk.10.attn_q.weight
+create_tensor: loading tensor blk.10.attn_k.weight
+create_tensor: loading tensor blk.10.attn_v.weight
+create_tensor: loading tensor blk.10.attn_output.weight
+create_tensor: loading tensor blk.10.attn_k_norm.weight
+create_tensor: loading tensor blk.10.attn_q_norm.weight
+create_tensor: loading tensor blk.10.ffn_norm.weight
+create_tensor: loading tensor blk.10.ffn_gate.weight
+create_tensor: loading tensor blk.10.ffn_down.weight
+create_tensor: loading tensor blk.10.ffn_up.weight
+create_tensor: loading tensor blk.11.attn_norm.weight
+create_tensor: loading tensor blk.11.attn_q.weight
+create_tensor: loading tensor blk.11.attn_k.weight
+create_tensor: loading tensor blk.11.attn_v.weight
+create_tensor: loading tensor blk.11.attn_output.weight
+create_tensor: loading tensor blk.11.attn_k_norm.weight
+create_tensor: loading tensor blk.11.attn_q_norm.weight
+create_tensor: loading tensor blk.11.ffn_norm.weight
+create_tensor: loading tensor blk.11.ffn_gate.weight
+create_tensor: loading tensor blk.11.ffn_down.weight
+create_tensor: loading tensor blk.11.ffn_up.weight
+create_tensor: loading tensor blk.12.attn_norm.weight
+create_tensor: loading tensor blk.12.attn_q.weight
+create_tensor: loading tensor blk.12.attn_k.weight
+create_tensor: loading tensor blk.12.attn_v.weight
+create_tensor: loading tensor blk.12.attn_output.weight
+create_tensor: loading tensor blk.12.attn_k_norm.weight
+create_tensor: loading tensor blk.12.attn_q_norm.weight
+create_tensor: loading tensor blk.12.ffn_norm.weight
+create_tensor: loading tensor blk.12.ffn_gate.weight
+create_tensor: loading tensor blk.12.ffn_down.weight
+create_tensor: loading tensor blk.12.ffn_up.weight
+create_tensor: loading tensor blk.13.attn_norm.weight
+create_tensor: loading tensor blk.13.attn_q.weight
+create_tensor: loading tensor blk.13.attn_k.weight
+create_tensor: loading tensor blk.13.attn_v.weight
+create_tensor: loading tensor blk.13.attn_output.weight
+create_tensor: loading tensor blk.13.attn_k_norm.weight
+create_tensor: loading tensor blk.13.attn_q_norm.weight
+create_tensor: loading tensor blk.13.ffn_norm.weight
+create_tensor: loading tensor blk.13.ffn_gate.weight
+create_tensor: loading tensor blk.13.ffn_down.weight
+create_tensor: loading tensor blk.13.ffn_up.weight
+create_tensor: loading tensor blk.14.attn_norm.weight
+create_tensor: loading tensor blk.14.attn_q.weight
+create_tensor: loading tensor blk.14.attn_k.weight
+create_tensor: loading tensor blk.14.attn_v.weight
+create_tensor: loading tensor blk.14.attn_output.weight
+create_tensor: loading tensor blk.14.attn_k_norm.weight
+create_tensor: loading tensor blk.14.attn_q_norm.weight
+create_tensor: loading tensor blk.14.ffn_norm.weight
+create_tensor: loading tensor blk.14.ffn_gate.weight
+create_tensor: loading tensor blk.14.ffn_down.weight
+create_tensor: loading tensor blk.14.ffn_up.weight
+create_tensor: loading tensor blk.15.attn_norm.weight
+create_tensor: loading tensor blk.15.attn_q.weight
+create_tensor: loading tensor blk.15.attn_k.weight
+create_tensor: loading tensor blk.15.attn_v.weight
+create_tensor: loading tensor blk.15.attn_output.weight
+create_tensor: loading tensor blk.15.attn_k_norm.weight
+create_tensor: loading tensor blk.15.attn_q_norm.weight
+create_tensor: loading tensor blk.15.ffn_norm.weight
+create_tensor: loading tensor blk.15.ffn_gate.weight
+create_tensor: loading tensor blk.15.ffn_down.weight
+create_tensor: loading tensor blk.15.ffn_up.weight
+create_tensor: loading tensor blk.16.attn_norm.weight
+create_tensor: loading tensor blk.16.attn_q.weight
+create_tensor: loading tensor blk.16.attn_k.weight
+create_tensor: loading tensor blk.16.attn_v.weight
+create_tensor: loading tensor blk.16.attn_output.weight
+create_tensor: loading tensor blk.16.attn_k_norm.weight
+create_tensor: loading tensor blk.16.attn_q_norm.weight
+create_tensor: loading tensor blk.16.ffn_norm.weight
+create_tensor: loading tensor blk.16.ffn_gate.weight
+create_tensor: loading tensor blk.16.ffn_down.weight
+create_tensor: loading tensor blk.16.ffn_up.weight
+create_tensor: loading tensor blk.17.attn_norm.weight
+create_tensor: loading tensor blk.17.attn_q.weight
+create_tensor: loading tensor blk.17.attn_k.weight
+create_tensor: loading tensor blk.17.attn_v.weight
+create_tensor: loading tensor blk.17.attn_output.weight
+create_tensor: loading tensor blk.17.attn_k_norm.weight
+create_tensor: loading tensor blk.17.attn_q_norm.weight
+create_tensor: loading tensor blk.17.ffn_norm.weight
+create_tensor: loading tensor blk.17.ffn_gate.weight
+create_tensor: loading tensor blk.17.ffn_down.weight
+create_tensor: loading tensor blk.17.ffn_up.weight
+create_tensor: loading tensor blk.18.attn_norm.weight
+create_tensor: loading tensor blk.18.attn_q.weight
+create_tensor: loading tensor blk.18.attn_k.weight
+create_tensor: loading tensor blk.18.attn_v.weight
+create_tensor: loading tensor blk.18.attn_output.weight
+create_tensor: loading tensor blk.18.attn_k_norm.weight
+create_tensor: loading tensor blk.18.attn_q_norm.weight
+create_tensor: loading tensor blk.18.ffn_norm.weight
+create_tensor: loading tensor blk.18.ffn_gate.weight
+create_tensor: loading tensor blk.18.ffn_down.weight
+create_tensor: loading tensor blk.18.ffn_up.weight
+create_tensor: loading tensor blk.19.attn_norm.weight
+create_tensor: loading tensor blk.19.attn_q.weight
+create_tensor: loading tensor blk.19.attn_k.weight
+create_tensor: loading tensor blk.19.attn_v.weight
+create_tensor: loading tensor blk.19.attn_output.weight
+create_tensor: loading tensor blk.19.attn_k_norm.weight
+create_tensor: loading tensor blk.19.attn_q_norm.weight
+create_tensor: loading tensor blk.19.ffn_norm.weight
+create_tensor: loading tensor blk.19.ffn_gate.weight
+create_tensor: loading tensor blk.19.ffn_down.weight
+create_tensor: loading tensor blk.19.ffn_up.weight
+create_tensor: loading tensor blk.20.attn_norm.weight
+create_tensor: loading tensor blk.20.attn_q.weight
+create_tensor: loading tensor blk.20.attn_k.weight
+create_tensor: loading tensor blk.20.attn_v.weight
+create_tensor: loading tensor blk.20.attn_output.weight
+create_tensor: loading tensor blk.20.attn_k_norm.weight
+create_tensor: loading tensor blk.20.attn_q_norm.weight
+create_tensor: loading tensor blk.20.ffn_norm.weight
+create_tensor: loading tensor blk.20.ffn_gate.weight
+create_tensor: loading tensor blk.20.ffn_down.weight
+create_tensor: loading tensor blk.20.ffn_up.weight
+create_tensor: loading tensor blk.21.attn_norm.weight
+create_tensor: loading tensor blk.21.attn_q.weight
+create_tensor: loading tensor blk.21.attn_k.weight
+create_tensor: loading tensor blk.21.attn_v.weight
+create_tensor: loading tensor blk.21.attn_output.weight
+create_tensor: loading tensor blk.21.attn_k_norm.weight
+create_tensor: loading tensor blk.21.attn_q_norm.weight
+create_tensor: loading tensor blk.21.ffn_norm.weight
+create_tensor: loading tensor blk.21.ffn_gate.weight
+create_tensor: loading tensor blk.21.ffn_down.weight
+create_tensor: loading tensor blk.21.ffn_up.weight
+create_tensor: loading tensor blk.22.attn_norm.weight
+create_tensor: loading tensor blk.22.attn_q.weight
+create_tensor: loading tensor blk.22.attn_k.weight
+create_tensor: loading tensor blk.22.attn_v.weight
+create_tensor: loading tensor blk.22.attn_output.weight
+create_tensor: loading tensor blk.22.attn_k_norm.weight
+create_tensor: loading tensor blk.22.attn_q_norm.weight
+create_tensor: loading tensor blk.22.ffn_norm.weight
+create_tensor: loading tensor blk.22.ffn_gate.weight
+create_tensor: loading tensor blk.22.ffn_down.weight
+create_tensor: loading tensor blk.22.ffn_up.weight
+create_tensor: loading tensor blk.23.attn_norm.weight
+create_tensor: loading tensor blk.23.attn_q.weight
+create_tensor: loading tensor blk.23.attn_k.weight
+create_tensor: loading tensor blk.23.attn_v.weight
+create_tensor: loading tensor blk.23.attn_output.weight
+create_tensor: loading tensor blk.23.attn_k_norm.weight
+create_tensor: loading tensor blk.23.attn_q_norm.weight
+create_tensor: loading tensor blk.23.ffn_norm.weight
+create_tensor: loading tensor blk.23.ffn_gate.weight
+create_tensor: loading tensor blk.23.ffn_down.weight
+create_tensor: loading tensor blk.23.ffn_up.weight
+create_tensor: loading tensor blk.24.attn_norm.weight
+create_tensor: loading tensor blk.24.attn_q.weight
+create_tensor: loading tensor blk.24.attn_k.weight
+create_tensor: loading tensor blk.24.attn_v.weight
+create_tensor: loading tensor blk.24.attn_output.weight
+create_tensor: loading tensor blk.24.attn_k_norm.weight
+create_tensor: loading tensor blk.24.attn_q_norm.weight
+create_tensor: loading tensor blk.24.ffn_norm.weight
+create_tensor: loading tensor blk.24.ffn_gate.weight
+create_tensor: loading tensor blk.24.ffn_down.weight
+create_tensor: loading tensor blk.24.ffn_up.weight
+create_tensor: loading tensor blk.25.attn_norm.weight
+create_tensor: loading tensor blk.25.attn_q.weight
+create_tensor: loading tensor blk.25.attn_k.weight
+create_tensor: loading tensor blk.25.attn_v.weight
+create_tensor: loading tensor blk.25.attn_output.weight
+create_tensor: loading tensor blk.25.attn_k_norm.weight
+create_tensor: loading tensor blk.25.attn_q_norm.weight
+create_tensor: loading tensor blk.25.ffn_norm.weight
+create_tensor: loading tensor blk.25.ffn_gate.weight
+create_tensor: loading tensor blk.25.ffn_down.weight
+create_tensor: loading tensor blk.25.ffn_up.weight
+create_tensor: loading tensor blk.26.attn_norm.weight
+create_tensor: loading tensor blk.26.attn_q.weight
+create_tensor: loading tensor blk.26.attn_k.weight
+create_tensor: loading tensor blk.26.attn_v.weight
+create_tensor: loading tensor blk.26.attn_output.weight
+create_tensor: loading tensor blk.26.attn_k_norm.weight
+create_tensor: loading tensor blk.26.attn_q_norm.weight
+create_tensor: loading tensor blk.26.ffn_norm.weight
+create_tensor: loading tensor blk.26.ffn_gate.weight
+create_tensor: loading tensor blk.26.ffn_down.weight
+create_tensor: loading tensor blk.26.ffn_up.weight
+create_tensor: loading tensor blk.27.attn_norm.weight
+create_tensor: loading tensor blk.27.attn_q.weight
+create_tensor: loading tensor blk.27.attn_k.weight
+create_tensor: loading tensor blk.27.attn_v.weight
+create_tensor: loading tensor blk.27.attn_output.weight
+create_tensor: loading tensor blk.27.attn_k_norm.weight
+create_tensor: loading tensor blk.27.attn_q_norm.weight
+create_tensor: loading tensor blk.27.ffn_norm.weight
+create_tensor: loading tensor blk.27.ffn_gate.weight
+create_tensor: loading tensor blk.27.ffn_down.weight
+create_tensor: loading tensor blk.27.ffn_up.weight
+create_tensor: loading tensor blk.28.attn_norm.weight
+create_tensor: loading tensor blk.28.attn_q.weight
+create_tensor: loading tensor blk.28.attn_k.weight
+create_tensor: loading tensor blk.28.attn_v.weight
+create_tensor: loading tensor blk.28.attn_output.weight
+create_tensor: loading tensor blk.28.attn_k_norm.weight
+create_tensor: loading tensor blk.28.attn_q_norm.weight
+create_tensor: loading tensor blk.28.ffn_norm.weight
+create_tensor: loading tensor blk.28.ffn_gate.weight
+create_tensor: loading tensor blk.28.ffn_down.weight
+create_tensor: loading tensor blk.28.ffn_up.weight
+create_tensor: loading tensor blk.29.attn_norm.weight
+create_tensor: loading tensor blk.29.attn_q.weight
+create_tensor: loading tensor blk.29.attn_k.weight
+create_tensor: loading tensor blk.29.attn_v.weight
+create_tensor: loading tensor blk.29.attn_output.weight
+create_tensor: loading tensor blk.29.attn_k_norm.weight
+create_tensor: loading tensor blk.29.attn_q_norm.weight
+create_tensor: loading tensor blk.29.ffn_norm.weight
+create_tensor: loading tensor blk.29.ffn_gate.weight
+create_tensor: loading tensor blk.29.ffn_down.weight
+create_tensor: loading tensor blk.29.ffn_up.weight
+create_tensor: loading tensor blk.30.attn_norm.weight
+create_tensor: loading tensor blk.30.attn_q.weight
+create_tensor: loading tensor blk.30.attn_k.weight
+create_tensor: loading tensor blk.30.attn_v.weight
+create_tensor: loading tensor blk.30.attn_output.weight
+create_tensor: loading tensor blk.30.attn_k_norm.weight
+create_tensor: loading tensor blk.30.attn_q_norm.weight
+create_tensor: loading tensor blk.30.ffn_norm.weight
+create_tensor: loading tensor blk.30.ffn_gate.weight
+create_tensor: loading tensor blk.30.ffn_down.weight
+create_tensor: loading tensor blk.30.ffn_up.weight
+create_tensor: loading tensor blk.31.attn_norm.weight
+create_tensor: loading tensor blk.31.attn_q.weight
+create_tensor: loading tensor blk.31.attn_k.weight
+create_tensor: loading tensor blk.31.attn_v.weight
+create_tensor: loading tensor blk.31.attn_output.weight
+create_tensor: loading tensor blk.31.attn_k_norm.weight
+create_tensor: loading tensor blk.31.attn_q_norm.weight
+create_tensor: loading tensor blk.31.ffn_norm.weight
+create_tensor: loading tensor blk.31.ffn_gate.weight
+create_tensor: loading tensor blk.31.ffn_down.weight
+create_tensor: loading tensor blk.31.ffn_up.weight
+create_tensor: loading tensor blk.32.attn_norm.weight
+create_tensor: loading tensor blk.32.attn_q.weight
+create_tensor: loading tensor blk.32.attn_k.weight
+create_tensor: loading tensor blk.32.attn_v.weight
+create_tensor: loading tensor blk.32.attn_output.weight
+create_tensor: loading tensor blk.32.attn_k_norm.weight
+create_tensor: loading tensor blk.32.attn_q_norm.weight
+create_tensor: loading tensor blk.32.ffn_norm.weight
+create_tensor: loading tensor blk.32.ffn_gate.weight
+create_tensor: loading tensor blk.32.ffn_down.weight
+create_tensor: loading tensor blk.32.ffn_up.weight
+create_tensor: loading tensor blk.33.attn_norm.weight
+create_tensor: loading tensor blk.33.attn_q.weight
+create_tensor: loading tensor blk.33.attn_k.weight
+create_tensor: loading tensor blk.33.attn_v.weight
+create_tensor: loading tensor blk.33.attn_output.weight
+create_tensor: loading tensor blk.33.attn_k_norm.weight
+create_tensor: loading tensor blk.33.attn_q_norm.weight
+create_tensor: loading tensor blk.33.ffn_norm.weight
+create_tensor: loading tensor blk.33.ffn_gate.weight
+create_tensor: loading tensor blk.33.ffn_down.weight
+create_tensor: loading tensor blk.33.ffn_up.weight
+create_tensor: loading tensor blk.34.attn_norm.weight
+create_tensor: loading tensor blk.34.attn_q.weight
+create_tensor: loading tensor blk.34.attn_k.weight
+create_tensor: loading tensor blk.34.attn_v.weight
+create_tensor: loading tensor blk.34.attn_output.weight
+create_tensor: loading tensor blk.34.attn_k_norm.weight
+create_tensor: loading tensor blk.34.attn_q_norm.weight
+create_tensor: loading tensor blk.34.ffn_norm.weight
+create_tensor: loading tensor blk.34.ffn_gate.weight
+create_tensor: loading tensor blk.34.ffn_down.weight
+create_tensor: loading tensor blk.34.ffn_up.weight
+create_tensor: loading tensor blk.35.attn_norm.weight
+create_tensor: loading tensor blk.35.attn_q.weight
+create_tensor: loading tensor blk.35.attn_k.weight
+create_tensor: loading tensor blk.35.attn_v.weight
+create_tensor: loading tensor blk.35.attn_output.weight
+create_tensor: loading tensor blk.35.attn_k_norm.weight
+create_tensor: loading tensor blk.35.attn_q_norm.weight
+create_tensor: loading tensor blk.35.ffn_norm.weight
+create_tensor: loading tensor blk.35.ffn_gate.weight
+create_tensor: loading tensor blk.35.ffn_down.weight
+create_tensor: loading tensor blk.35.ffn_up.weight
+create_tensor: loading tensor blk.36.attn_norm.weight
+create_tensor: loading tensor blk.36.attn_q.weight
+create_tensor: loading tensor blk.36.attn_k.weight
+create_tensor: loading tensor blk.36.attn_v.weight
+create_tensor: loading tensor blk.36.attn_output.weight
+create_tensor: loading tensor blk.36.attn_k_norm.weight
+create_tensor: loading tensor blk.36.attn_q_norm.weight
+create_tensor: loading tensor blk.36.ffn_norm.weight
+create_tensor: loading tensor blk.36.ffn_gate.weight
+create_tensor: loading tensor blk.36.ffn_down.weight
+create_tensor: loading tensor blk.36.ffn_up.weight
+create_tensor: loading tensor blk.37.attn_norm.weight
+create_tensor: loading tensor blk.37.attn_q.weight
+create_tensor: loading tensor blk.37.attn_k.weight
+create_tensor: loading tensor blk.37.attn_v.weight
+create_tensor: loading tensor blk.37.attn_output.weight
+create_tensor: loading tensor blk.37.attn_k_norm.weight
+create_tensor: loading tensor blk.37.attn_q_norm.weight
+create_tensor: loading tensor blk.37.ffn_norm.weight
+create_tensor: loading tensor blk.37.ffn_gate.weight
+create_tensor: loading tensor blk.37.ffn_down.weight
+create_tensor: loading tensor blk.37.ffn_up.weight
+create_tensor: loading tensor blk.38.attn_norm.weight
+create_tensor: loading tensor blk.38.attn_q.weight
+create_tensor: loading tensor blk.38.attn_k.weight
+create_tensor: loading tensor blk.38.attn_v.weight
+create_tensor: loading tensor blk.38.attn_output.weight
+create_tensor: loading tensor blk.38.attn_k_norm.weight
+create_tensor: loading tensor blk.38.attn_q_norm.weight
+create_tensor: loading tensor blk.38.ffn_norm.weight
+create_tensor: loading tensor blk.38.ffn_gate.weight
+create_tensor: loading tensor blk.38.ffn_down.weight
+create_tensor: loading tensor blk.38.ffn_up.weight
+create_tensor: loading tensor blk.39.attn_norm.weight
+create_tensor: loading tensor blk.39.attn_q.weight
+create_tensor: loading tensor blk.39.attn_k.weight
+create_tensor: loading tensor blk.39.attn_v.weight
+create_tensor: loading tensor blk.39.attn_output.weight
+create_tensor: loading tensor blk.39.attn_k_norm.weight
+create_tensor: loading tensor blk.39.attn_q_norm.weight
+create_tensor: loading tensor blk.39.ffn_norm.weight
+create_tensor: loading tensor blk.39.ffn_gate.weight
+create_tensor: loading tensor blk.39.ffn_down.weight
+create_tensor: loading tensor blk.39.ffn_up.weight
+create_tensor: loading tensor blk.40.attn_norm.weight
+create_tensor: loading tensor blk.40.attn_q.weight
+create_tensor: loading tensor blk.40.attn_k.weight
+create_tensor: loading tensor blk.40.attn_v.weight
+create_tensor: loading tensor blk.40.attn_output.weight
+create_tensor: loading tensor blk.40.attn_k_norm.weight
+create_tensor: loading tensor blk.40.attn_q_norm.weight
+create_tensor: loading tensor blk.40.ffn_norm.weight
+create_tensor: loading tensor blk.40.ffn_gate.weight
+create_tensor: loading tensor blk.40.ffn_down.weight
+create_tensor: loading tensor blk.40.ffn_up.weight
+create_tensor: loading tensor blk.41.attn_norm.weight
+create_tensor: loading tensor blk.41.attn_q.weight
+create_tensor: loading tensor blk.41.attn_k.weight
+create_tensor: loading tensor blk.41.attn_v.weight
+create_tensor: loading tensor blk.41.attn_output.weight
+create_tensor: loading tensor blk.41.attn_k_norm.weight
+create_tensor: loading tensor blk.41.attn_q_norm.weight
+create_tensor: loading tensor blk.41.ffn_norm.weight
+create_tensor: loading tensor blk.41.ffn_gate.weight
+create_tensor: loading tensor blk.41.ffn_down.weight
+create_tensor: loading tensor blk.41.ffn_up.weight
+create_tensor: loading tensor blk.42.attn_norm.weight
+create_tensor: loading tensor blk.42.attn_q.weight
+create_tensor: loading tensor blk.42.attn_k.weight
+create_tensor: loading tensor blk.42.attn_v.weight
+create_tensor: loading tensor blk.42.attn_output.weight
+create_tensor: loading tensor blk.42.attn_k_norm.weight
+create_tensor: loading tensor blk.42.attn_q_norm.weight
+create_tensor: loading tensor blk.42.ffn_norm.weight
+create_tensor: loading tensor blk.42.ffn_gate.weight
+create_tensor: loading tensor blk.42.ffn_down.weight
+create_tensor: loading tensor blk.42.ffn_up.weight
+create_tensor: loading tensor blk.43.attn_norm.weight
+create_tensor: loading tensor blk.43.attn_q.weight
+create_tensor: loading tensor blk.43.attn_k.weight
+create_tensor: loading tensor blk.43.attn_v.weight
+create_tensor: loading tensor blk.43.attn_output.weight
+create_tensor: loading tensor blk.43.attn_k_norm.weight
+create_tensor: loading tensor blk.43.attn_q_norm.weight
+create_tensor: loading tensor blk.43.ffn_norm.weight
+create_tensor: loading tensor blk.43.ffn_gate.weight
+create_tensor: loading tensor blk.43.ffn_down.weight
+create_tensor: loading tensor blk.43.ffn_up.weight
+create_tensor: loading tensor blk.44.attn_norm.weight
+create_tensor: loading tensor blk.44.attn_q.weight
+create_tensor: loading tensor blk.44.attn_k.weight
+create_tensor: loading tensor blk.44.attn_v.weight
+create_tensor: loading tensor blk.44.attn_output.weight
+create_tensor: loading tensor blk.44.attn_k_norm.weight
+create_tensor: loading tensor blk.44.attn_q_norm.weight
+create_tensor: loading tensor blk.44.ffn_norm.weight
+create_tensor: loading tensor blk.44.ffn_gate.weight
+create_tensor: loading tensor blk.44.ffn_down.weight
+create_tensor: loading tensor blk.44.ffn_up.weight
+create_tensor: loading tensor blk.45.attn_norm.weight
+create_tensor: loading tensor blk.45.attn_q.weight
+create_tensor: loading tensor blk.45.attn_k.weight
+create_tensor: loading tensor blk.45.attn_v.weight
+create_tensor: loading tensor blk.45.attn_output.weight
+create_tensor: loading tensor blk.45.attn_k_norm.weight
+create_tensor: loading tensor blk.45.attn_q_norm.weight
+create_tensor: loading tensor blk.45.ffn_norm.weight
+create_tensor: loading tensor blk.45.ffn_gate.weight
+create_tensor: loading tensor blk.45.ffn_down.weight
+create_tensor: loading tensor blk.45.ffn_up.weight
+create_tensor: loading tensor blk.46.attn_norm.weight
+create_tensor: loading tensor blk.46.attn_q.weight
+create_tensor: loading tensor blk.46.attn_k.weight
+create_tensor: loading tensor blk.46.attn_v.weight
+create_tensor: loading tensor blk.46.attn_output.weight
+create_tensor: loading tensor blk.46.attn_k_norm.weight
+create_tensor: loading tensor blk.46.attn_q_norm.weight
+create_tensor: loading tensor blk.46.ffn_norm.weight
+create_tensor: loading tensor blk.46.ffn_gate.weight
+create_tensor: loading tensor blk.46.ffn_down.weight
+create_tensor: loading tensor blk.46.ffn_up.weight
+create_tensor: loading tensor blk.47.attn_norm.weight
+create_tensor: loading tensor blk.47.attn_q.weight
+create_tensor: loading tensor blk.47.attn_k.weight
+create_tensor: loading tensor blk.47.attn_v.weight
+create_tensor: loading tensor blk.47.attn_output.weight
+create_tensor: loading tensor blk.47.attn_k_norm.weight
+create_tensor: loading tensor blk.47.attn_q_norm.weight
+create_tensor: loading tensor blk.47.ffn_norm.weight
+create_tensor: loading tensor blk.47.ffn_gate.weight
+create_tensor: loading tensor blk.47.ffn_down.weight
+create_tensor: loading tensor blk.47.ffn_up.weight
+create_tensor: loading tensor blk.48.attn_norm.weight
+create_tensor: loading tensor blk.48.attn_q.weight
+create_tensor: loading tensor blk.48.attn_k.weight
+create_tensor: loading tensor blk.48.attn_v.weight
+create_tensor: loading tensor blk.48.attn_output.weight
+create_tensor: loading tensor blk.48.attn_k_norm.weight
+create_tensor: loading tensor blk.48.attn_q_norm.weight
+create_tensor: loading tensor blk.48.ffn_norm.weight
+create_tensor: loading tensor blk.48.ffn_gate.weight
+create_tensor: loading tensor blk.48.ffn_down.weight
+create_tensor: loading tensor blk.48.ffn_up.weight
+create_tensor: loading tensor blk.49.attn_norm.weight
+create_tensor: loading tensor blk.49.attn_q.weight
+create_tensor: loading tensor blk.49.attn_k.weight
+create_tensor: loading tensor blk.49.attn_v.weight
+create_tensor: loading tensor blk.49.attn_output.weight
+create_tensor: loading tensor blk.49.attn_k_norm.weight
+create_tensor: loading tensor blk.49.attn_q_norm.weight
+create_tensor: loading tensor blk.49.ffn_norm.weight
+create_tensor: loading tensor blk.49.ffn_gate.weight
+create_tensor: loading tensor blk.49.ffn_down.weight
+create_tensor: loading tensor blk.49.ffn_up.weight
+create_tensor: loading tensor blk.50.attn_norm.weight
+create_tensor: loading tensor blk.50.attn_q.weight
+create_tensor: loading tensor blk.50.attn_k.weight
+create_tensor: loading tensor blk.50.attn_v.weight
+create_tensor: loading tensor blk.50.attn_output.weight
+create_tensor: loading tensor blk.50.attn_k_norm.weight
+create_tensor: loading tensor blk.50.attn_q_norm.weight
+create_tensor: loading tensor blk.50.ffn_norm.weight
+create_tensor: loading tensor blk.50.ffn_gate.weight
+create_tensor: loading tensor blk.50.ffn_down.weight
+create_tensor: loading tensor blk.50.ffn_up.weight
+create_tensor: loading tensor blk.51.attn_norm.weight
+create_tensor: loading tensor blk.51.attn_q.weight
+create_tensor: loading tensor blk.51.attn_k.weight
+create_tensor: loading tensor blk.51.attn_v.weight
+create_tensor: loading tensor blk.51.attn_output.weight
+create_tensor: loading tensor blk.51.attn_k_norm.weight
+create_tensor: loading tensor blk.51.attn_q_norm.weight
+create_tensor: loading tensor blk.51.ffn_norm.weight
+create_tensor: loading tensor blk.51.ffn_gate.weight
+create_tensor: loading tensor blk.51.ffn_down.weight
+create_tensor: loading tensor blk.51.ffn_up.weight
+create_tensor: loading tensor blk.52.attn_norm.weight
+create_tensor: loading tensor blk.52.attn_q.weight
+create_tensor: loading tensor blk.52.attn_k.weight
+create_tensor: loading tensor blk.52.attn_v.weight
+create_tensor: loading tensor blk.52.attn_output.weight
+create_tensor: loading tensor blk.52.attn_k_norm.weight
+create_tensor: loading tensor blk.52.attn_q_norm.weight
+create_tensor: loading tensor blk.52.ffn_norm.weight
+create_tensor: loading tensor blk.52.ffn_gate.weight
+create_tensor: loading tensor blk.52.ffn_down.weight
+create_tensor: loading tensor blk.52.ffn_up.weight
+create_tensor: loading tensor blk.53.attn_norm.weight
+create_tensor: loading tensor blk.53.attn_q.weight
+create_tensor: loading tensor blk.53.attn_k.weight
+create_tensor: loading tensor blk.53.attn_v.weight
+create_tensor: loading tensor blk.53.attn_output.weight
+create_tensor: loading tensor blk.53.attn_k_norm.weight
+create_tensor: loading tensor blk.53.attn_q_norm.weight
+create_tensor: loading tensor blk.53.ffn_norm.weight
+create_tensor: loading tensor blk.53.ffn_gate.weight
+create_tensor: loading tensor blk.53.ffn_down.weight
+create_tensor: loading tensor blk.53.ffn_up.weight
+create_tensor: loading tensor blk.54.attn_norm.weight
+create_tensor: loading tensor blk.54.attn_q.weight
+create_tensor: loading tensor blk.54.attn_k.weight
+create_tensor: loading tensor blk.54.attn_v.weight
+create_tensor: loading tensor blk.54.attn_output.weight
+create_tensor: loading tensor blk.54.attn_k_norm.weight
+create_tensor: loading tensor blk.54.attn_q_norm.weight
+create_tensor: loading tensor blk.54.ffn_norm.weight
+create_tensor: loading tensor blk.54.ffn_gate.weight
+create_tensor: loading tensor blk.54.ffn_down.weight
+create_tensor: loading tensor blk.54.ffn_up.weight
+create_tensor: loading tensor blk.55.attn_norm.weight
+create_tensor: loading tensor blk.55.attn_q.weight
+create_tensor: loading tensor blk.55.attn_k.weight
+create_tensor: loading tensor blk.55.attn_v.weight
+create_tensor: loading tensor blk.55.attn_output.weight
+create_tensor: loading tensor blk.55.attn_k_norm.weight
+create_tensor: loading tensor blk.55.attn_q_norm.weight
+create_tensor: loading tensor blk.55.ffn_norm.weight
+create_tensor: loading tensor blk.55.ffn_gate.weight
+create_tensor: loading tensor blk.55.ffn_down.weight
+create_tensor: loading tensor blk.55.ffn_up.weight
+create_tensor: loading tensor blk.56.attn_norm.weight
+create_tensor: loading tensor blk.56.attn_q.weight
+create_tensor: loading tensor blk.56.attn_k.weight
+create_tensor: loading tensor blk.56.attn_v.weight
+create_tensor: loading tensor blk.56.attn_output.weight
+create_tensor: loading tensor blk.56.attn_k_norm.weight
+create_tensor: loading tensor blk.56.attn_q_norm.weight
+create_tensor: loading tensor blk.56.ffn_norm.weight
+create_tensor: loading tensor blk.56.ffn_gate.weight
+create_tensor: loading tensor blk.56.ffn_down.weight
+create_tensor: loading tensor blk.56.ffn_up.weight
+create_tensor: loading tensor blk.57.attn_norm.weight
+create_tensor: loading tensor blk.57.attn_q.weight
+create_tensor: loading tensor blk.57.attn_k.weight
+create_tensor: loading tensor blk.57.attn_v.weight
+create_tensor: loading tensor blk.57.attn_output.weight
+create_tensor: loading tensor blk.57.attn_k_norm.weight
+create_tensor: loading tensor blk.57.attn_q_norm.weight
+create_tensor: loading tensor blk.57.ffn_norm.weight
+create_tensor: loading tensor blk.57.ffn_gate.weight
+create_tensor: loading tensor blk.57.ffn_down.weight
+create_tensor: loading tensor blk.57.ffn_up.weight
+create_tensor: loading tensor blk.58.attn_norm.weight
+create_tensor: loading tensor blk.58.attn_q.weight
+create_tensor: loading tensor blk.58.attn_k.weight
+create_tensor: loading tensor blk.58.attn_v.weight
+create_tensor: loading tensor blk.58.attn_output.weight
+create_tensor: loading tensor blk.58.attn_k_norm.weight
+create_tensor: loading tensor blk.58.attn_q_norm.weight
+create_tensor: loading tensor blk.58.ffn_norm.weight
+create_tensor: loading tensor blk.58.ffn_gate.weight
+create_tensor: loading tensor blk.58.ffn_down.weight
+create_tensor: loading tensor blk.58.ffn_up.weight
+create_tensor: loading tensor blk.59.attn_norm.weight
+create_tensor: loading tensor blk.59.attn_q.weight
+create_tensor: loading tensor blk.59.attn_k.weight
+create_tensor: loading tensor blk.59.attn_v.weight
+create_tensor: loading tensor blk.59.attn_output.weight
+create_tensor: loading tensor blk.59.attn_k_norm.weight
+create_tensor: loading tensor blk.59.attn_q_norm.weight
+create_tensor: loading tensor blk.59.ffn_norm.weight
+create_tensor: loading tensor blk.59.ffn_gate.weight
+create_tensor: loading tensor blk.59.ffn_down.weight
+create_tensor: loading tensor blk.59.ffn_up.weight
+create_tensor: loading tensor blk.60.attn_norm.weight
+create_tensor: loading tensor blk.60.attn_q.weight
+create_tensor: loading tensor blk.60.attn_k.weight
+create_tensor: loading tensor blk.60.attn_v.weight
+create_tensor: loading tensor blk.60.attn_output.weight
+create_tensor: loading tensor blk.60.attn_k_norm.weight
+create_tensor: loading tensor blk.60.attn_q_norm.weight
+create_tensor: loading tensor blk.60.ffn_norm.weight
+create_tensor: loading tensor blk.60.ffn_gate.weight
+create_tensor: loading tensor blk.60.ffn_down.weight
+create_tensor: loading tensor blk.60.ffn_up.weight
+create_tensor: loading tensor blk.61.attn_norm.weight
+create_tensor: loading tensor blk.61.attn_q.weight
+create_tensor: loading tensor blk.61.attn_k.weight
+create_tensor: loading tensor blk.61.attn_v.weight
+create_tensor: loading tensor blk.61.attn_output.weight
+create_tensor: loading tensor blk.61.attn_k_norm.weight
+create_tensor: loading tensor blk.61.attn_q_norm.weight
+create_tensor: loading tensor blk.61.ffn_norm.weight
+create_tensor: loading tensor blk.61.ffn_gate.weight
+create_tensor: loading tensor blk.61.ffn_down.weight
+create_tensor: loading tensor blk.61.ffn_up.weight
+create_tensor: loading tensor blk.62.attn_norm.weight
+create_tensor: loading tensor blk.62.attn_q.weight
+create_tensor: loading tensor blk.62.attn_k.weight
+create_tensor: loading tensor blk.62.attn_v.weight
+create_tensor: loading tensor blk.62.attn_output.weight
+create_tensor: loading tensor blk.62.attn_k_norm.weight
+create_tensor: loading tensor blk.62.attn_q_norm.weight
+create_tensor: loading tensor blk.62.ffn_norm.weight
+create_tensor: loading tensor blk.62.ffn_gate.weight
+create_tensor: loading tensor blk.62.ffn_down.weight
+create_tensor: loading tensor blk.62.ffn_up.weight
+create_tensor: loading tensor blk.63.attn_norm.weight
+create_tensor: loading tensor blk.63.attn_q.weight
+create_tensor: loading tensor blk.63.attn_k.weight
+create_tensor: loading tensor blk.63.attn_v.weight
+create_tensor: loading tensor blk.63.attn_output.weight
+create_tensor: loading tensor blk.63.attn_k_norm.weight
+create_tensor: loading tensor blk.63.attn_q_norm.weight
+create_tensor: loading tensor blk.63.ffn_norm.weight
+create_tensor: loading tensor blk.63.ffn_gate.weight
+create_tensor: loading tensor blk.63.ffn_down.weight
+create_tensor: loading tensor blk.63.ffn_up.weight
+done_getting_tensors: tensor 'token_embd.weight' (q4_K) (and 0 others) cannot be used with preferred buffer type CUDA_Host, using CPU instead
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 63 repeating layers to GPU
+load_tensors: offloaded 65/65 layers to GPU
+load_tensors:   CPU_Mapped model buffer size =   417.30 MiB
+load_tensors:        CUDA0 model buffer size = 18423.65 MiB
+.................................................................................................
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 8192
+llama_context: n_ctx_seq     = 8192
+llama_context: n_batch       = 256
+llama_context: n_ubatch      = 256
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = enabled
+llama_context: kv_unified    = false
+llama_context: freq_base     = 1000000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (8192) < n_ctx_train (40960) -- the full capacity of the model will not be utilized
+set_abort_callback: call
+llama_context:  CUDA_Host  output buffer size =     0.58 MiB
+llama_kv_cache: layer   0: dev = CUDA0
+llama_kv_cache: layer   1: dev = CUDA0
+llama_kv_cache: layer   2: dev = CUDA0
+llama_kv_cache: layer   3: dev = CUDA0
+llama_kv_cache: layer   4: dev = CUDA0
+llama_kv_cache: layer   5: dev = CUDA0
+llama_kv_cache: layer   6: dev = CUDA0
+llama_kv_cache: layer   7: dev = CUDA0
+llama_kv_cache: layer   8: dev = CUDA0
+llama_kv_cache: layer   9: dev = CUDA0
+llama_kv_cache: layer  10: dev = CUDA0
+llama_kv_cache: layer  11: dev = CUDA0
+llama_kv_cache: layer  12: dev = CUDA0
+llama_kv_cache: layer  13: dev = CUDA0
+llama_kv_cache: layer  14: dev = CUDA0
+llama_kv_cache: layer  15: dev = CUDA0
+llama_kv_cache: layer  16: dev = CUDA0
+llama_kv_cache: layer  17: dev = CUDA0
+llama_kv_cache: layer  18: dev = CUDA0
+llama_kv_cache: layer  19: dev = CUDA0
+llama_kv_cache: layer  20: dev = CUDA0
+llama_kv_cache: layer  21: dev = CUDA0
+llama_kv_cache: layer  22: dev = CUDA0
+llama_kv_cache: layer  23: dev = CUDA0
+llama_kv_cache: layer  24: dev = CUDA0
+llama_kv_cache: layer  25: dev = CUDA0
+llama_kv_cache: layer  26: dev = CUDA0
+llama_kv_cache: layer  27: dev = CUDA0
+llama_kv_cache: layer  28: dev = CUDA0
+llama_kv_cache: layer  29: dev = CUDA0
+llama_kv_cache: layer  30: dev = CUDA0
+llama_kv_cache: layer  31: dev = CUDA0
+llama_kv_cache: layer  32: dev = CUDA0
+llama_kv_cache: layer  33: dev = CUDA0
+llama_kv_cache: layer  34: dev = CUDA0
+llama_kv_cache: layer  35: dev = CUDA0
+llama_kv_cache: layer  36: dev = CUDA0
+llama_kv_cache: layer  37: dev = CUDA0
+llama_kv_cache: layer  38: dev = CUDA0
+llama_kv_cache: layer  39: dev = CUDA0
+llama_kv_cache: layer  40: dev = CUDA0
+llama_kv_cache: layer  41: dev = CUDA0
+llama_kv_cache: layer  42: dev = CUDA0
+llama_kv_cache: layer  43: dev = CUDA0
+llama_kv_cache: layer  44: dev = CUDA0
+llama_kv_cache: layer  45: dev = CUDA0
+llama_kv_cache: layer  46: dev = CUDA0
+llama_kv_cache: layer  47: dev = CUDA0
+llama_kv_cache: layer  48: dev = CUDA0
+llama_kv_cache: layer  49: dev = CUDA0
+llama_kv_cache: layer  50: dev = CUDA0
+llama_kv_cache: layer  51: dev = CUDA0
+llama_kv_cache: layer  52: dev = CUDA0
+llama_kv_cache: layer  53: dev = CUDA0
+llama_kv_cache: layer  54: dev = CUDA0
+llama_kv_cache: layer  55: dev = CUDA0
+llama_kv_cache: layer  56: dev = CUDA0
+llama_kv_cache: layer  57: dev = CUDA0
+llama_kv_cache: layer  58: dev = CUDA0
+llama_kv_cache: layer  59: dev = CUDA0
+llama_kv_cache: layer  60: dev = CUDA0
+llama_kv_cache: layer  61: dev = CUDA0
+llama_kv_cache: layer  62: dev = CUDA0
+llama_kv_cache: layer  63: dev = CUDA0
+llama_kv_cache:      CUDA0 KV buffer size =  2048.00 MiB
+llama_kv_cache: size = 2048.00 MiB (  8192 cells,  64 layers,  1/1 seqs), K (f16): 1024.00 MiB, V (f16): 1024.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+sched_reserve: reserving ...
+sched_reserve: max_nodes = 5656
+sched_reserve: reserving full memory module
+sched_reserve: worst-case: n_tokens = 256, n_seqs = 1, n_outputs = 1
+sched_reserve: resolving fused Gated Delta Net support:
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+sched_reserve: fused Gated Delta Net (autoregressive) enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =   16, n_seqs =  1, n_outputs =   16
+sched_reserve: fused Gated Delta Net (chunked) enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  256, n_seqs =  1, n_outputs =  256
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  256, n_seqs =  1, n_outputs =  256
+sched_reserve:      CUDA0 compute buffer size =   153.38 MiB
+sched_reserve:  CUDA_Host compute buffer size =    18.01 MiB
+sched_reserve: graph nodes  = 2247
+sched_reserve: graph splits = 2
+sched_reserve: reserve took 16.98 ms, sched copies = 1
+CUDA : ARCHS = 700,750,800,860,890,900 | FORCE_MMQ = 1 | USE_GRAPHS = 1 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+Model metadata: {'general.file_type': '15', 'tokenizer.ggml.add_bos_token': 'false', 'tokenizer.ggml.bos_token_id': '151643', 'tokenizer.ggml.eos_token_id': '151645', 'qwen3.attention.value_length': '128', 'qwen3.attention.key_length': '128', 'general.architecture': 'qwen3', 'tokenizer.ggml.padding_token_id': '151643', 'general.basename': 'Qwen3', 'tokenizer.chat_template': '{%- if tools %}\n    {{- \'<|im_start|>system\\n\' }}\n    {%- if messages[0].role == \'system\' %}\n        {{- messages[0].content + \'\\n\\n\' }}\n    {%- endif %}\n    {{- "# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>" }}\n    {%- for tool in tools %}\n        {{- "\\n" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- "\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{\\"name\\": <function-name>, \\"arguments\\": <args-json-object>}\\n</tool_call><|im_end|>\\n" }}\n{%- else %}\n    {%- if messages[0].role == \'system\' %}\n        {{- \'<|im_start|>system\\n\' + messages[0].content + \'<|im_end|>\\n\' }}\n    {%- endif %}\n{%- endif %}\n{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}\n{%- for index in range(ns.last_query_index, -1, -1) %}\n    {%- set message = messages[index] %}\n    {%- if ns.multi_step_tool and message.role == "user" and not(\'<tool_response>\' in message.content and \'</tool_response>\' in message.content) %}\n        {%- set ns.multi_step_tool = false %}\n        {%- set ns.last_query_index = index %}\n    {%- endif %}\n{%- endfor %}\n{%- for message in messages %}\n    {%- if (message.role == "user") or (message.role == "system" and not loop.first) %}\n        {{- \'<|im_start|>\' + message.role + \'\\n\' + message.content + \'<|im_end|>\' + \'\\n\' }}\n    {%- elif message.role == "assistant" %}\n        {%- set content = message.content %}\n        {%- set reasoning_content = \'\' %}\n        {%- if message.reasoning_content is defined and message.reasoning_content is not none %}\n            {%- set reasoning_content = message.reasoning_content %}\n        {%- else %}\n            {%- if \'</think>\' in message.content %}\n                {%- set content = message.content.split(\'</think>\')[-1].lstrip(\'\\n\') %}\n                {%- set reasoning_content = message.content.split(\'</think>\')[0].rstrip(\'\\n\').split(\'<think>\')[-1].lstrip(\'\\n\') %}\n            {%- endif %}\n        {%- endif %}\n        {%- if loop.index0 > ns.last_query_index %}\n            {%- if loop.last or (not loop.last and reasoning_content) %}\n                {{- \'<|im_start|>\' + message.role + \'\\n<think>\\n\' + reasoning_content.strip(\'\\n\') + \'\\n</think>\\n\\n\' + content.lstrip(\'\\n\') }}\n            {%- else %}\n                {{- \'<|im_start|>\' + message.role + \'\\n\' + content }}\n            {%- endif %}\n        {%- else %}\n            {{- \'<|im_start|>\' + message.role + \'\\n\' + content }}\n        {%- endif %}\n        {%- if message.tool_calls %}\n            {%- for tool_call in message.tool_calls %}\n                {%- if (loop.first and content) or (not loop.first) %}\n                    {{- \'\\n\' }}\n                {%- endif %}\n                {%- if tool_call.function %}\n                    {%- set tool_call = tool_call.function %}\n                {%- endif %}\n                {{- \'<tool_call>\\n{"name": "\' }}\n                {{- tool_call.name }}\n                {{- \'", "arguments": \' }}\n                {%- if tool_call.arguments is string %}\n                    {{- tool_call.arguments }}\n                {%- else %}\n                    {{- tool_call.arguments | tojson }}\n                {%- endif %}\n                {{- \'}\\n</tool_call>\' }}\n            {%- endfor %}\n        {%- endif %}\n        {{- \'<|im_end|>\\n\' }}\n    {%- elif message.role == "tool" %}\n        {%- if loop.first or (messages[loop.index0 - 1].role != "tool") %}\n            {{- \'<|im_start|>user\' }}\n        {%- endif %}\n        {{- \'\\n<tool_response>\\n\' }}\n        {{- message.content }}\n        {{- \'\\n</tool_response>\' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != "tool") %}\n            {{- \'<|im_end|>\\n\' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- \'<|im_start|>assistant\\n\' }}\n    {%- if enable_thinking is defined and enable_thinking is false %}\n        {{- \'<think>\\n\\n</think>\\n\\n\' }}\n    {%- endif %}\n{%- endif %}', 'qwen3.context_length': '40960', 'tokenizer.ggml.pre': 'qwen2', 'general.name': 'Qwen3 32B Awq Compatible Instruct', 'qwen3.attention.layer_norm_rms_epsilon': '0.000001', 'general.type': 'model', 'general.size_label': '32B', 'qwen3.block_count': '64', 'qwen3.embedding_length': '5120', 'general.quantization_version': '2', 'tokenizer.ggml.model': 'gpt2', 'qwen3.attention.head_count': '64', 'general.finetune': 'awq-compatible-Instruct', 'qwen3.feed_forward_length': '25600', 'qwen3.rope.freq_base': '1000000.000000', 'qwen3.attention.head_count_kv': '8'}
+Available chat formats from metadata: chat_template.default
+Using gguf chat template: {%- if tools %}
+    {{- '<|im_start|>system\n' }}
+    {%- if messages[0].role == 'system' %}
+        {{- messages[0].content + '\n\n' }}
+    {%- endif %}
+    {{- "# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>" }}
+    {%- for tool in tools %}
+        {{- "\n" }}
+        {{- tool | tojson }}
+    {%- endfor %}
+    {{- "\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call><|im_end|>\n" }}
+{%- else %}
+    {%- if messages[0].role == 'system' %}
+        {{- '<|im_start|>system\n' + messages[0].content + '<|im_end|>\n' }}
+    {%- endif %}
+{%- endif %}
+{%- set ns = namespace(multi_step_tool=true, last_query_index=messages|length - 1) %}
+{%- for index in range(ns.last_query_index, -1, -1) %}
+    {%- set message = messages[index] %}
+    {%- if ns.multi_step_tool and message.role == "user" and not('<tool_response>' in message.content and '</tool_response>' in message.content) %}
+        {%- set ns.multi_step_tool = false %}
+        {%- set ns.last_query_index = index %}
+    {%- endif %}
+{%- endfor %}
+{%- for message in messages %}
+    {%- if (message.role == "user") or (message.role == "system" and not loop.first) %}
+        {{- '<|im_start|>' + message.role + '\n' + message.content + '<|im_end|>' + '\n' }}
+    {%- elif message.role == "assistant" %}
+        {%- set content = message.content %}
+        {%- set reasoning_content = '' %}
+        {%- if message.reasoning_content is defined and message.reasoning_content is not none %}
+            {%- set reasoning_content = message.reasoning_content %}
+        {%- else %}
+            {%- if '</think>' in message.content %}
+                {%- set content = message.content.split('</think>')[-1].lstrip('\n') %}
+                {%- set reasoning_content = message.content.split('</think>')[0].rstrip('\n').split('<think>')[-1].lstrip('\n') %}
+            {%- endif %}
+        {%- endif %}
+        {%- if loop.index0 > ns.last_query_index %}
+            {%- if loop.last or (not loop.last and reasoning_content) %}
+                {{- '<|im_start|>' + message.role + '\n<think>\n' + reasoning_content.strip('\n') + '\n</think>\n\n' + content.lstrip('\n') }}
+            {%- else %}
+                {{- '<|im_start|>' + message.role + '\n' + content }}
+            {%- endif %}
+        {%- else %}
+            {{- '<|im_start|>' + message.role + '\n' + content }}
+        {%- endif %}
+        {%- if message.tool_calls %}
+            {%- for tool_call in message.tool_calls %}
+                {%- if (loop.first and content) or (not loop.first) %}
+                    {{- '\n' }}
+                {%- endif %}
+                {%- if tool_call.function %}
+                    {%- set tool_call = tool_call.function %}
+                {%- endif %}
+                {{- '<tool_call>\n{"name": "' }}
+                {{- tool_call.name }}
+                {{- '", "arguments": ' }}
+                {%- if tool_call.arguments is string %}
+                    {{- tool_call.arguments }}
+                {%- else %}
+                    {{- tool_call.arguments | tojson }}
+                {%- endif %}
+                {{- '}\n</tool_call>' }}
+            {%- endfor %}
+        {%- endif %}
+        {{- '<|im_end|>\n' }}
+    {%- elif message.role == "tool" %}
+        {%- if loop.first or (messages[loop.index0 - 1].role != "tool") %}
+            {{- '<|im_start|>user' }}
+        {%- endif %}
+        {{- '\n<tool_response>\n' }}
+        {{- message.content }}
+        {{- '\n</tool_response>' }}
+        {%- if loop.last or (messages[loop.index0 + 1].role != "tool") %}
+            {{- '<|im_end|>\n' }}
+        {%- endif %}
+    {%- endif %}
+{%- endfor %}
+{%- if add_generation_prompt %}
+    {{- '<|im_start|>assistant\n' }}
+    {%- if enable_thinking is defined and enable_thinking is false %}
+        {{- '<think>\n\n</think>\n\n' }}
+    {%- endif %}
+{%- endif %}
+Using chat eos_token: <|im_end|>
+Using chat bos_token: <|endoftext|>
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =      87.46 ms /    17 tokens (    5.14 ms per token,   194.38 tokens per second)
+llama_perf_context_print:        eval time =     209.99 ms /     8 runs   (   26.25 ms per token,    38.10 tokens per second)
+llama_perf_context_print:       total time =     302.82 ms /    25 tokens
+llama_perf_context_print:    graphs reused =          7
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =      56.63 ms /    17 tokens (    3.33 ms per token,   300.22 tokens per second)
+llama_perf_context_print:        eval time =     202.96 ms /     8 runs   (   25.37 ms per token,    39.42 tokens per second)
+llama_perf_context_print:       total time =     266.31 ms /    25 tokens
+llama_perf_context_print:    graphs reused =          7
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     358.20 ms /   362 tokens (    0.99 ms per token,  1010.59 tokens per second)
+llama_perf_context_print:        eval time =    1595.11 ms /    67 runs   (   23.81 ms per token,    42.00 tokens per second)
+llama_perf_context_print:       total time =    3971.48 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     669.28 ms /   712 tokens (    0.94 ms per token,  1063.83 tokens per second)
+llama_perf_context_print:        eval time =     661.49 ms /    26 runs   (   25.44 ms per token,    39.31 tokens per second)
+llama_perf_context_print:       total time =    1353.09 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     397.07 ms /   409 tokens (    0.97 ms per token,  1030.05 tokens per second)
+llama_perf_context_print:        eval time =     505.90 ms /    21 runs   (   24.09 ms per token,    41.51 tokens per second)
+llama_perf_context_print:       total time =    1371.22 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     700.68 ms /   750 tokens (    0.93 ms per token,  1070.39 tokens per second)
+llama_perf_context_print:        eval time =     717.66 ms /    28 runs   (   25.63 ms per token,    39.02 tokens per second)
+llama_perf_context_print:       total time =    1436.49 ms /   778 tokens
+llama_perf_context_print:    graphs reused =         26
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     438.04 ms /   464 tokens (    0.94 ms per token,  1059.27 tokens per second)
+llama_perf_context_print:        eval time =    1326.60 ms /    55 runs   (   24.12 ms per token,    41.46 tokens per second)
+llama_perf_context_print:       total time =    3116.99 ms /   519 tokens
+llama_perf_context_print:    graphs reused =         53
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     761.28 ms /   794 tokens (    0.96 ms per token,  1042.98 tokens per second)
+llama_perf_context_print:        eval time =     153.99 ms /     6 runs   (   25.66 ms per token,    38.96 tokens per second)
+llama_perf_context_print:       total time =     919.77 ms /   800 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     437.98 ms /   464 tokens (    0.94 ms per token,  1059.42 tokens per second)
+llama_perf_context_print:        eval time =    1318.17 ms /    55 runs   (   23.97 ms per token,    41.72 tokens per second)
+llama_perf_context_print:       total time =    3068.86 ms /   519 tokens
+llama_perf_context_print:    graphs reused =         53
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     762.27 ms /   794 tokens (    0.96 ms per token,  1041.62 tokens per second)
+llama_perf_context_print:        eval time =     154.22 ms /     6 runs   (   25.70 ms per token,    38.90 tokens per second)
+llama_perf_context_print:       total time =     921.24 ms /   800 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     354.11 ms /   362 tokens (    0.98 ms per token,  1022.30 tokens per second)
+llama_perf_context_print:        eval time =    1589.03 ms /    67 runs   (   23.72 ms per token,    42.16 tokens per second)
+llama_perf_context_print:       total time =    3723.46 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     673.94 ms /   712 tokens (    0.95 ms per token,  1056.48 tokens per second)
+llama_perf_context_print:        eval time =     657.28 ms /    26 runs   (   25.28 ms per token,    39.56 tokens per second)
+llama_perf_context_print:       total time =    1348.49 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.31 ms /   408 tokens (    0.98 ms per token,  1019.21 tokens per second)
+llama_perf_context_print:        eval time =     504.82 ms /    21 runs   (   24.04 ms per token,    41.60 tokens per second)
+llama_perf_context_print:       total time =    1309.06 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     701.50 ms /   738 tokens (    0.95 ms per token,  1052.03 tokens per second)
+llama_perf_context_print:        eval time =    1114.43 ms /    44 runs   (   25.33 ms per token,    39.48 tokens per second)
+llama_perf_context_print:       total time =    1843.07 ms /   782 tokens
+llama_perf_context_print:    graphs reused =         42
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     444.59 ms /   479 tokens (    0.93 ms per token,  1077.39 tokens per second)
+llama_perf_context_print:        eval time =     503.45 ms /    21 runs   (   23.97 ms per token,    41.71 tokens per second)
+llama_perf_context_print:       total time =    1352.30 ms /   500 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     774.65 ms /   809 tokens (    0.96 ms per token,  1044.34 tokens per second)
+llama_perf_context_print:        eval time =     156.39 ms /     6 runs   (   26.07 ms per token,    38.36 tokens per second)
+llama_perf_context_print:       total time =     935.92 ms /   815 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     446.45 ms /   479 tokens (    0.93 ms per token,  1072.90 tokens per second)
+llama_perf_context_print:        eval time =     506.19 ms /    21 runs   (   24.10 ms per token,    41.49 tokens per second)
+llama_perf_context_print:       total time =    1351.63 ms /   500 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     774.65 ms /   809 tokens (    0.96 ms per token,  1044.34 tokens per second)
+llama_perf_context_print:        eval time =     154.54 ms /     6 runs   (   25.76 ms per token,    38.82 tokens per second)
+llama_perf_context_print:       total time =     934.36 ms /   815 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     351.28 ms /   362 tokens (    0.97 ms per token,  1030.52 tokens per second)
+llama_perf_context_print:        eval time =    1593.71 ms /    67 runs   (   23.79 ms per token,    42.04 tokens per second)
+llama_perf_context_print:       total time =    3749.05 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     676.20 ms /   712 tokens (    0.95 ms per token,  1052.94 tokens per second)
+llama_perf_context_print:        eval time =     659.89 ms /    26 runs   (   25.38 ms per token,    39.40 tokens per second)
+llama_perf_context_print:       total time =    1352.87 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.14 ms /   409 tokens (    0.98 ms per token,  1019.58 tokens per second)
+llama_perf_context_print:        eval time =     510.59 ms /    21 runs   (   24.31 ms per token,    41.13 tokens per second)
+llama_perf_context_print:       total time =    1407.93 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     703.69 ms /   750 tokens (    0.94 ms per token,  1065.81 tokens per second)
+llama_perf_context_print:        eval time =     796.85 ms /    31 runs   (   25.70 ms per token,    38.90 tokens per second)
+llama_perf_context_print:       total time =    1522.84 ms /   781 tokens
+llama_perf_context_print:    graphs reused =         29
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     441.32 ms /   467 tokens (    0.95 ms per token,  1058.18 tokens per second)
+llama_perf_context_print:        eval time =    1604.08 ms /    67 runs   (   23.94 ms per token,    41.77 tokens per second)
+llama_perf_context_print:       total time =    3825.34 ms /   534 tokens
+llama_perf_context_print:    graphs reused =         65
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     762.56 ms /   797 tokens (    0.96 ms per token,  1045.16 tokens per second)
+llama_perf_context_print:        eval time =     156.71 ms /     6 runs   (   26.12 ms per token,    38.29 tokens per second)
+llama_perf_context_print:       total time =     923.90 ms /   803 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     441.46 ms /   467 tokens (    0.95 ms per token,  1057.86 tokens per second)
+llama_perf_context_print:        eval time =    1604.93 ms /    67 runs   (   23.95 ms per token,    41.75 tokens per second)
+llama_perf_context_print:       total time =    3823.57 ms /   534 tokens
+llama_perf_context_print:    graphs reused =         65
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     764.82 ms /   797 tokens (    0.96 ms per token,  1042.08 tokens per second)
+llama_perf_context_print:        eval time =     155.57 ms /     6 runs   (   25.93 ms per token,    38.57 tokens per second)
+llama_perf_context_print:       total time =     925.41 ms /   803 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     354.86 ms /   362 tokens (    0.98 ms per token,  1020.12 tokens per second)
+llama_perf_context_print:        eval time =    1593.44 ms /    67 runs   (   23.78 ms per token,    42.05 tokens per second)
+llama_perf_context_print:       total time =    3796.35 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.13 ms /   712 tokens (    0.95 ms per token,  1054.62 tokens per second)
+llama_perf_context_print:        eval time =     660.28 ms /    26 runs   (   25.40 ms per token,    39.38 tokens per second)
+llama_perf_context_print:       total time =    1351.92 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.94 ms /   415 tokens (    0.97 ms per token,  1035.07 tokens per second)
+llama_perf_context_print:        eval time =     504.76 ms /    21 runs   (   24.04 ms per token,    41.60 tokens per second)
+llama_perf_context_print:       total time =    1316.98 ms /   436 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     703.55 ms /   756 tokens (    0.93 ms per token,  1074.55 tokens per second)
+llama_perf_context_print:        eval time =     820.35 ms /    32 runs   (   25.64 ms per token,    39.01 tokens per second)
+llama_perf_context_print:       total time =    1542.72 ms /   788 tokens
+llama_perf_context_print:    graphs reused =         30
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     447.69 ms /   474 tokens (    0.94 ms per token,  1058.78 tokens per second)
+llama_perf_context_print:        eval time =    1508.60 ms /    63 runs   (   23.95 ms per token,    41.76 tokens per second)
+llama_perf_context_print:       total time =    3599.21 ms /   537 tokens
+llama_perf_context_print:    graphs reused =         61
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     769.47 ms /   801 tokens (    0.96 ms per token,  1040.97 tokens per second)
+llama_perf_context_print:        eval time =     157.88 ms /     6 runs   (   26.31 ms per token,    38.00 tokens per second)
+llama_perf_context_print:       total time =     931.83 ms /   807 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     450.53 ms /   474 tokens (    0.95 ms per token,  1052.10 tokens per second)
+llama_perf_context_print:        eval time =    1514.78 ms /    63 runs   (   24.04 ms per token,    41.59 tokens per second)
+llama_perf_context_print:       total time =    3587.04 ms /   537 tokens
+llama_perf_context_print:    graphs reused =         61
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     768.60 ms /   801 tokens (    0.96 ms per token,  1042.15 tokens per second)
+llama_perf_context_print:        eval time =     156.99 ms /     6 runs   (   26.17 ms per token,    38.22 tokens per second)
+llama_perf_context_print:       total time =     930.30 ms /   807 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     455.99 ms /   362 tokens (    1.26 ms per token,   793.87 tokens per second)
+llama_perf_context_print:        eval time =    1592.21 ms /    67 runs   (   23.76 ms per token,    42.08 tokens per second)
+llama_perf_context_print:       total time =    3822.60 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.42 ms /   712 tokens (    0.95 ms per token,  1054.15 tokens per second)
+llama_perf_context_print:        eval time =     661.87 ms /    26 runs   (   25.46 ms per token,    39.28 tokens per second)
+llama_perf_context_print:       total time =    1353.74 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.75 ms /   409 tokens (    0.98 ms per token,  1018.05 tokens per second)
+llama_perf_context_print:        eval time =     506.51 ms /    21 runs   (   24.12 ms per token,    41.46 tokens per second)
+llama_perf_context_print:       total time =    1312.37 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     703.46 ms /   750 tokens (    0.94 ms per token,  1066.16 tokens per second)
+llama_perf_context_print:        eval time =     745.76 ms /    29 runs   (   25.72 ms per token,    38.89 tokens per second)
+llama_perf_context_print:       total time =    1467.32 ms /   779 tokens
+llama_perf_context_print:    graphs reused =         27
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     439.96 ms /   465 tokens (    0.95 ms per token,  1056.92 tokens per second)
+llama_perf_context_print:        eval time =    1607.73 ms /    67 runs   (   24.00 ms per token,    41.67 tokens per second)
+llama_perf_context_print:       total time =    3836.92 ms /   532 tokens
+llama_perf_context_print:    graphs reused =         65
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     765.44 ms /   795 tokens (    0.96 ms per token,  1038.61 tokens per second)
+llama_perf_context_print:        eval time =     156.54 ms /     6 runs   (   26.09 ms per token,    38.33 tokens per second)
+llama_perf_context_print:       total time =     926.79 ms /   801 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     757.16 ms /   792 tokens (    0.96 ms per token,  1046.01 tokens per second)
+llama_perf_context_print:        eval time =     154.94 ms /     6 runs   (   25.82 ms per token,    38.73 tokens per second)
+llama_perf_context_print:       total time =     916.65 ms /   798 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     355.04 ms /   362 tokens (    0.98 ms per token,  1019.60 tokens per second)
+llama_perf_context_print:        eval time =    1590.90 ms /    67 runs   (   23.74 ms per token,    42.11 tokens per second)
+llama_perf_context_print:       total time =    3704.31 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.63 ms /   712 tokens (    0.95 ms per token,  1053.83 tokens per second)
+llama_perf_context_print:        eval time =     663.85 ms /    26 runs   (   25.53 ms per token,    39.17 tokens per second)
+llama_perf_context_print:       total time =    1356.84 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.32 ms /   406 tokens (    0.99 ms per token,  1011.66 tokens per second)
+llama_perf_context_print:        eval time =     506.44 ms /    21 runs   (   24.12 ms per token,    41.47 tokens per second)
+llama_perf_context_print:       total time =    1311.57 ms /   427 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     703.67 ms /   747 tokens (    0.94 ms per token,  1061.58 tokens per second)
+llama_perf_context_print:        eval time =     718.50 ms /    28 runs   (   25.66 ms per token,    38.97 tokens per second)
+llama_perf_context_print:       total time =    1440.06 ms /   775 tokens
+llama_perf_context_print:    graphs reused =         26
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     841.84 ms /   788 tokens (    1.07 ms per token,   936.04 tokens per second)
+llama_perf_context_print:        eval time =     154.31 ms /     6 runs   (   25.72 ms per token,    38.88 tokens per second)
+llama_perf_context_print:       total time =    1001.08 ms /   794 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     454.72 ms /   461 tokens (    0.99 ms per token,  1013.81 tokens per second)
+llama_perf_context_print:        eval time =     505.72 ms /    21 runs   (   24.08 ms per token,    41.53 tokens per second)
+llama_perf_context_print:       total time =    1370.18 ms /   482 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     756.62 ms /   791 tokens (    0.96 ms per token,  1045.43 tokens per second)
+llama_perf_context_print:        eval time =     156.41 ms /     6 runs   (   26.07 ms per token,    38.36 tokens per second)
+llama_perf_context_print:       total time =     917.55 ms /   797 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     418.29 ms /   362 tokens (    1.16 ms per token,   865.44 tokens per second)
+llama_perf_context_print:        eval time =    1596.05 ms /    67 runs   (   23.82 ms per token,    41.98 tokens per second)
+llama_perf_context_print:       total time =    3778.07 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     674.77 ms /   712 tokens (    0.95 ms per token,  1055.17 tokens per second)
+llama_perf_context_print:        eval time =     667.46 ms /    26 runs   (   25.67 ms per token,    38.95 tokens per second)
+llama_perf_context_print:       total time =    1366.19 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.44 ms /   408 tokens (    0.98 ms per token,  1018.87 tokens per second)
+llama_perf_context_print:        eval time =     505.95 ms /    21 runs   (   24.09 ms per token,    41.51 tokens per second)
+llama_perf_context_print:       total time =    1315.95 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     704.68 ms /   749 tokens (    0.94 ms per token,  1062.89 tokens per second)
+llama_perf_context_print:        eval time =     793.73 ms /    31 runs   (   25.60 ms per token,    39.06 tokens per second)
+llama_perf_context_print:       total time =    1517.18 ms /   780 tokens
+llama_perf_context_print:    graphs reused =         29
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     548.78 ms /   466 tokens (    1.18 ms per token,   849.15 tokens per second)
+llama_perf_context_print:        eval time =    1439.67 ms /    60 runs   (   23.99 ms per token,    41.68 tokens per second)
+llama_perf_context_print:       total time =    3502.06 ms /   526 tokens
+llama_perf_context_print:    graphs reused =         58
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     761.99 ms /   796 tokens (    0.96 ms per token,  1044.63 tokens per second)
+llama_perf_context_print:        eval time =     158.95 ms /     6 runs   (   26.49 ms per token,    37.75 tokens per second)
+llama_perf_context_print:       total time =     928.30 ms /   802 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     504.89 ms /   466 tokens (    1.08 ms per token,   922.98 tokens per second)
+llama_perf_context_print:        eval time =    1460.90 ms /    60 runs   (   24.35 ms per token,    41.07 tokens per second)
+llama_perf_context_print:       total time =    3685.88 ms /   526 tokens
+llama_perf_context_print:    graphs reused =         58
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     764.03 ms /   796 tokens (    0.96 ms per token,  1041.85 tokens per second)
+llama_perf_context_print:        eval time =     158.69 ms /     6 runs   (   26.45 ms per token,    37.81 tokens per second)
+llama_perf_context_print:       total time =     928.57 ms /   802 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     445.47 ms /   362 tokens (    1.23 ms per token,   812.63 tokens per second)
+llama_perf_context_print:        eval time =    1606.03 ms /    67 runs   (   23.97 ms per token,    41.72 tokens per second)
+llama_perf_context_print:       total time =    3911.65 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.41 ms /   712 tokens (    0.95 ms per token,  1054.18 tokens per second)
+llama_perf_context_print:        eval time =     665.12 ms /    26 runs   (   25.58 ms per token,    39.09 tokens per second)
+llama_perf_context_print:       total time =    1359.46 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.54 ms /   404 tokens (    0.99 ms per token,  1008.64 tokens per second)
+llama_perf_context_print:        eval time =     506.96 ms /    21 runs   (   24.14 ms per token,    41.42 tokens per second)
+llama_perf_context_print:       total time =    1312.59 ms /   425 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     683.58 ms /   734 tokens (    0.93 ms per token,  1073.76 tokens per second)
+llama_perf_context_print:        eval time =     585.69 ms /    23 runs   (   25.46 ms per token,    39.27 tokens per second)
+llama_perf_context_print:       total time =    1283.82 ms /   757 tokens
+llama_perf_context_print:    graphs reused =         22
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     521.69 ms /   454 tokens (    1.15 ms per token,   870.24 tokens per second)
+llama_perf_context_print:        eval time =     506.27 ms /    21 runs   (   24.11 ms per token,    41.48 tokens per second)
+llama_perf_context_print:       total time =    1435.71 ms /   475 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     753.01 ms /   784 tokens (    0.96 ms per token,  1041.15 tokens per second)
+llama_perf_context_print:        eval time =     156.16 ms /     6 runs   (   26.03 ms per token,    38.42 tokens per second)
+llama_perf_context_print:       total time =     913.94 ms /   790 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     516.90 ms /   454 tokens (    1.14 ms per token,   878.31 tokens per second)
+llama_perf_context_print:        eval time =     507.61 ms /    21 runs   (   24.17 ms per token,    41.37 tokens per second)
+llama_perf_context_print:       total time =    1485.62 ms /   475 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     752.42 ms /   784 tokens (    0.96 ms per token,  1041.97 tokens per second)
+llama_perf_context_print:        eval time =     158.16 ms /     6 runs   (   26.36 ms per token,    37.94 tokens per second)
+llama_perf_context_print:       total time =     916.40 ms /   790 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     456.84 ms /   362 tokens (    1.26 ms per token,   792.40 tokens per second)
+llama_perf_context_print:        eval time =    1601.68 ms /    67 runs   (   23.91 ms per token,    41.83 tokens per second)
+llama_perf_context_print:       total time =    4029.99 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     676.03 ms /   712 tokens (    0.95 ms per token,  1053.20 tokens per second)
+llama_perf_context_print:        eval time =     670.09 ms /    26 runs   (   25.77 ms per token,    38.80 tokens per second)
+llama_perf_context_print:       total time =    1372.18 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     403.33 ms /   412 tokens (    0.98 ms per token,  1021.50 tokens per second)
+llama_perf_context_print:        eval time =     511.01 ms /    21 runs   (   24.33 ms per token,    41.10 tokens per second)
+llama_perf_context_print:       total time =    1367.76 ms /   433 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     706.94 ms /   753 tokens (    0.94 ms per token,  1065.16 tokens per second)
+llama_perf_context_print:        eval time =     847.43 ms /    33 runs   (   25.68 ms per token,    38.94 tokens per second)
+llama_perf_context_print:       total time =    1580.84 ms /   786 tokens
+llama_perf_context_print:    graphs reused =         31
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     558.95 ms /   472 tokens (    1.18 ms per token,   844.45 tokens per second)
+llama_perf_context_print:        eval time =    1369.22 ms /    57 runs   (   24.02 ms per token,    41.63 tokens per second)
+llama_perf_context_print:       total time =    3439.68 ms /   529 tokens
+llama_perf_context_print:    graphs reused =         55
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     772.63 ms /   802 tokens (    0.96 ms per token,  1038.01 tokens per second)
+llama_perf_context_print:        eval time =     156.34 ms /     6 runs   (   26.06 ms per token,    38.38 tokens per second)
+llama_perf_context_print:       total time =     934.78 ms /   808 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     558.27 ms /   472 tokens (    1.18 ms per token,   845.47 tokens per second)
+llama_perf_context_print:        eval time =    1372.25 ms /    57 runs   (   24.07 ms per token,    41.54 tokens per second)
+llama_perf_context_print:       total time =    3515.50 ms /   529 tokens
+llama_perf_context_print:    graphs reused =         55
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     770.92 ms /   802 tokens (    0.96 ms per token,  1040.32 tokens per second)
+llama_perf_context_print:        eval time =     157.83 ms /     6 runs   (   26.30 ms per token,    38.02 tokens per second)
+llama_perf_context_print:       total time =     934.62 ms /   808 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     472.05 ms /   362 tokens (    1.30 ms per token,   766.87 tokens per second)
+llama_perf_context_print:        eval time =    1602.88 ms /    67 runs   (   23.92 ms per token,    41.80 tokens per second)
+llama_perf_context_print:       total time =    4169.36 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     677.24 ms /   712 tokens (    0.95 ms per token,  1051.33 tokens per second)
+llama_perf_context_print:        eval time =     663.90 ms /    26 runs   (   25.53 ms per token,    39.16 tokens per second)
+llama_perf_context_print:       total time =    1364.47 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.16 ms /   409 tokens (    0.98 ms per token,  1019.56 tokens per second)
+llama_perf_context_print:        eval time =     512.38 ms /    21 runs   (   24.40 ms per token,    40.98 tokens per second)
+llama_perf_context_print:       total time =    1328.87 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     706.17 ms /   750 tokens (    0.94 ms per token,  1062.07 tokens per second)
+llama_perf_context_print:        eval time =     976.15 ms /    38 runs   (   25.69 ms per token,    38.93 tokens per second)
+llama_perf_context_print:       total time =    1708.05 ms /   788 tokens
+llama_perf_context_print:    graphs reused =         36
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     540.91 ms /   474 tokens (    1.14 ms per token,   876.30 tokens per second)
+llama_perf_context_print:        eval time =    1636.13 ms /    68 runs   (   24.06 ms per token,    41.56 tokens per second)
+llama_perf_context_print:       total time =    4028.82 ms /   542 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     771.81 ms /   801 tokens (    0.96 ms per token,  1037.82 tokens per second)
+llama_perf_context_print:        eval time =     157.15 ms /     6 runs   (   26.19 ms per token,    38.18 tokens per second)
+llama_perf_context_print:       total time =     934.53 ms /   807 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     527.72 ms /   474 tokens (    1.11 ms per token,   898.21 tokens per second)
+llama_perf_context_print:        eval time =    1630.25 ms /    68 runs   (   23.97 ms per token,    41.71 tokens per second)
+llama_perf_context_print:       total time =    4007.49 ms /   542 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     772.21 ms /   801 tokens (    0.96 ms per token,  1037.28 tokens per second)
+llama_perf_context_print:        eval time =     155.50 ms /     6 runs   (   25.92 ms per token,    38.59 tokens per second)
+llama_perf_context_print:       total time =     933.18 ms /   807 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     463.88 ms /   362 tokens (    1.28 ms per token,   780.38 tokens per second)
+llama_perf_context_print:        eval time =    1594.92 ms /    67 runs   (   23.80 ms per token,    42.01 tokens per second)
+llama_perf_context_print:       total time =    3862.82 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     676.96 ms /   712 tokens (    0.95 ms per token,  1051.77 tokens per second)
+llama_perf_context_print:        eval time =     660.70 ms /    26 runs   (   25.41 ms per token,    39.35 tokens per second)
+llama_perf_context_print:       total time =    1350.58 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     402.39 ms /   409 tokens (    0.98 ms per token,  1016.43 tokens per second)
+llama_perf_context_print:        eval time =     503.65 ms /    21 runs   (   23.98 ms per token,    41.70 tokens per second)
+llama_perf_context_print:       total time =    1298.39 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     705.99 ms /   737 tokens (    0.96 ms per token,  1043.93 tokens per second)
+llama_perf_context_print:        eval time =     584.33 ms /    23 runs   (   25.41 ms per token,    39.36 tokens per second)
+llama_perf_context_print:       total time =    1301.68 ms /   760 tokens
+llama_perf_context_print:    graphs reused =         22
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     519.07 ms /   459 tokens (    1.13 ms per token,   884.27 tokens per second)
+llama_perf_context_print:        eval time =     505.33 ms /    21 runs   (   24.06 ms per token,    41.56 tokens per second)
+llama_perf_context_print:       total time =    1439.61 ms /   480 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     759.73 ms /   786 tokens (    0.97 ms per token,  1034.58 tokens per second)
+llama_perf_context_print:        eval time =     156.17 ms /     6 runs   (   26.03 ms per token,    38.42 tokens per second)
+llama_perf_context_print:       total time =     921.41 ms /   792 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     547.68 ms /   459 tokens (    1.19 ms per token,   838.08 tokens per second)
+llama_perf_context_print:        eval time =     507.18 ms /    21 runs   (   24.15 ms per token,    41.41 tokens per second)
+llama_perf_context_print:       total time =    1484.66 ms /   480 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     760.51 ms /   786 tokens (    0.97 ms per token,  1033.52 tokens per second)
+llama_perf_context_print:        eval time =     155.49 ms /     6 runs   (   25.91 ms per token,    38.59 tokens per second)
+llama_perf_context_print:       total time =     921.75 ms /   792 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     428.80 ms /   362 tokens (    1.18 ms per token,   844.22 tokens per second)
+llama_perf_context_print:        eval time =    1592.10 ms /    67 runs   (   23.76 ms per token,    42.08 tokens per second)
+llama_perf_context_print:       total time =    3804.80 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     678.02 ms /   712 tokens (    0.95 ms per token,  1050.12 tokens per second)
+llama_perf_context_print:        eval time =     662.78 ms /    26 runs   (   25.49 ms per token,    39.23 tokens per second)
+llama_perf_context_print:       total time =    1358.05 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.58 ms /   410 tokens (    0.98 ms per token,  1020.96 tokens per second)
+llama_perf_context_print:        eval time =     506.23 ms /    21 runs   (   24.11 ms per token,    41.48 tokens per second)
+llama_perf_context_print:       total time =    1318.23 ms /   431 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     706.41 ms /   751 tokens (    0.94 ms per token,  1063.12 tokens per second)
+llama_perf_context_print:        eval time =     822.66 ms /    32 runs   (   25.71 ms per token,    38.90 tokens per second)
+llama_perf_context_print:       total time =    1553.72 ms /   783 tokens
+llama_perf_context_print:    graphs reused =         30
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     545.67 ms /   469 tokens (    1.16 ms per token,   859.50 tokens per second)
+llama_perf_context_print:        eval time =     507.13 ms /    21 runs   (   24.15 ms per token,    41.41 tokens per second)
+llama_perf_context_print:       total time =    1480.14 ms /   490 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     764.91 ms /   799 tokens (    0.96 ms per token,  1044.57 tokens per second)
+llama_perf_context_print:        eval time =     157.14 ms /     6 runs   (   26.19 ms per token,    38.18 tokens per second)
+llama_perf_context_print:       total time =     927.45 ms /   805 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     548.34 ms /   469 tokens (    1.17 ms per token,   855.31 tokens per second)
+llama_perf_context_print:        eval time =     505.35 ms /    21 runs   (   24.06 ms per token,    41.56 tokens per second)
+llama_perf_context_print:       total time =    1477.96 ms /   490 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     764.04 ms /   799 tokens (    0.96 ms per token,  1045.76 tokens per second)
+llama_perf_context_print:        eval time =     155.93 ms /     6 runs   (   25.99 ms per token,    38.48 tokens per second)
+llama_perf_context_print:       total time =     925.57 ms /   805 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     451.57 ms /   362 tokens (    1.25 ms per token,   801.65 tokens per second)
+llama_perf_context_print:        eval time =    1593.16 ms /    67 runs   (   23.78 ms per token,    42.05 tokens per second)
+llama_perf_context_print:       total time =    3889.57 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     678.32 ms /   712 tokens (    0.95 ms per token,  1049.65 tokens per second)
+llama_perf_context_print:        eval time =     662.38 ms /    26 runs   (   25.48 ms per token,    39.25 tokens per second)
+llama_perf_context_print:       total time =    1362.19 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.74 ms /   409 tokens (    0.98 ms per token,  1020.61 tokens per second)
+llama_perf_context_print:        eval time =    1593.15 ms /    67 runs   (   23.78 ms per token,    42.06 tokens per second)
+llama_perf_context_print:       total time =    3781.80 ms /   476 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     705.89 ms /   759 tokens (    0.93 ms per token,  1075.24 tokens per second)
+llama_perf_context_print:        eval time =     543.88 ms /    21 runs   (   25.90 ms per token,    38.61 tokens per second)
+llama_perf_context_print:       total time =    1264.65 ms /   780 tokens
+llama_perf_context_print:    graphs reused =         19
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     525.76 ms /   457 tokens (    1.15 ms per token,   869.21 tokens per second)
+llama_perf_context_print:        eval time =    1605.10 ms /    67 runs   (   23.96 ms per token,    41.74 tokens per second)
+llama_perf_context_print:       total time =    3925.28 ms /   524 tokens
+llama_perf_context_print:    graphs reused =         65
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     752.16 ms /   784 tokens (    0.96 ms per token,  1042.32 tokens per second)
+llama_perf_context_print:        eval time =     157.09 ms /     6 runs   (   26.18 ms per token,    38.20 tokens per second)
+llama_perf_context_print:       total time =     914.86 ms /   790 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     849.69 ms /   784 tokens (    1.08 ms per token,   922.69 tokens per second)
+llama_perf_context_print:        eval time =     154.25 ms /     6 runs   (   25.71 ms per token,    38.90 tokens per second)
+llama_perf_context_print:       total time =    1009.43 ms /   790 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     463.13 ms /   362 tokens (    1.28 ms per token,   781.64 tokens per second)
+llama_perf_context_print:        eval time =    1594.84 ms /    67 runs   (   23.80 ms per token,    42.01 tokens per second)
+llama_perf_context_print:       total time =    3896.89 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     676.03 ms /   712 tokens (    0.95 ms per token,  1053.21 tokens per second)
+llama_perf_context_print:        eval time =     662.42 ms /    26 runs   (   25.48 ms per token,    39.25 tokens per second)
+llama_perf_context_print:       total time =    1358.18 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.43 ms /   411 tokens (    0.97 ms per token,  1026.39 tokens per second)
+llama_perf_context_print:        eval time =     503.25 ms /    21 runs   (   23.96 ms per token,    41.73 tokens per second)
+llama_perf_context_print:       total time =    1300.95 ms /   432 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     705.80 ms /   761 tokens (    0.93 ms per token,  1078.20 tokens per second)
+llama_perf_context_print:        eval time =     869.69 ms /    34 runs   (   25.58 ms per token,    39.09 tokens per second)
+llama_perf_context_print:       total time =    1591.97 ms /   795 tokens
+llama_perf_context_print:    graphs reused =         32
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     829.54 ms /   799 tokens (    1.04 ms per token,   963.19 tokens per second)
+llama_perf_context_print:        eval time =     154.80 ms /     6 runs   (   25.80 ms per token,    38.76 tokens per second)
+llama_perf_context_print:       total time =     988.81 ms /   805 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     539.18 ms /   472 tokens (    1.14 ms per token,   875.41 tokens per second)
+llama_perf_context_print:        eval time =     507.97 ms /    21 runs   (   24.19 ms per token,    41.34 tokens per second)
+llama_perf_context_print:       total time =    1488.97 ms /   493 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     764.23 ms /   799 tokens (    0.96 ms per token,  1045.50 tokens per second)
+llama_perf_context_print:        eval time =     156.63 ms /     6 runs   (   26.11 ms per token,    38.31 tokens per second)
+llama_perf_context_print:       total time =     926.46 ms /   805 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     453.46 ms /   362 tokens (    1.25 ms per token,   798.30 tokens per second)
+llama_perf_context_print:        eval time =    1592.94 ms /    67 runs   (   23.78 ms per token,    42.06 tokens per second)
+llama_perf_context_print:       total time =    3823.22 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.15 ms /   712 tokens (    0.95 ms per token,  1054.58 tokens per second)
+llama_perf_context_print:        eval time =     665.70 ms /    26 runs   (   25.60 ms per token,    39.06 tokens per second)
+llama_perf_context_print:       total time =    1358.63 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.28 ms /   413 tokens (    0.97 ms per token,  1031.78 tokens per second)
+llama_perf_context_print:        eval time =     507.44 ms /    21 runs   (   24.16 ms per token,    41.38 tokens per second)
+llama_perf_context_print:       total time =    1327.62 ms /   434 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     705.60 ms /   763 tokens (    0.92 ms per token,  1081.35 tokens per second)
+llama_perf_context_print:        eval time =     619.83 ms /    24 runs   (   25.83 ms per token,    38.72 tokens per second)
+llama_perf_context_print:       total time =    1341.68 ms /   787 tokens
+llama_perf_context_print:    graphs reused =         22
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     540.93 ms /   464 tokens (    1.17 ms per token,   857.78 tokens per second)
+llama_perf_context_print:        eval time =    1535.81 ms /    64 runs   (   24.00 ms per token,    41.67 tokens per second)
+llama_perf_context_print:       total time =    3783.67 ms /   528 tokens
+llama_perf_context_print:    graphs reused =         62
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     759.34 ms /   791 tokens (    0.96 ms per token,  1041.69 tokens per second)
+llama_perf_context_print:        eval time =     156.72 ms /     6 runs   (   26.12 ms per token,    38.29 tokens per second)
+llama_perf_context_print:       total time =     921.59 ms /   797 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     872.00 ms /   791 tokens (    1.10 ms per token,   907.11 tokens per second)
+llama_perf_context_print:        eval time =     154.80 ms /     6 runs   (   25.80 ms per token,    38.76 tokens per second)
+llama_perf_context_print:       total time =    1032.51 ms /   797 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     430.66 ms /   362 tokens (    1.19 ms per token,   840.57 tokens per second)
+llama_perf_context_print:        eval time =    1592.38 ms /    67 runs   (   23.77 ms per token,    42.08 tokens per second)
+llama_perf_context_print:       total time =    3896.10 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.45 ms /   712 tokens (    0.95 ms per token,  1054.12 tokens per second)
+llama_perf_context_print:        eval time =     664.42 ms /    26 runs   (   25.55 ms per token,    39.13 tokens per second)
+llama_perf_context_print:       total time =    1361.05 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     400.87 ms /   408 tokens (    0.98 ms per token,  1017.79 tokens per second)
+llama_perf_context_print:        eval time =    1549.56 ms /    65 runs   (   23.84 ms per token,    41.95 tokens per second)
+llama_perf_context_print:       total time =    3682.75 ms /   473 tokens
+llama_perf_context_print:    graphs reused =         64
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     706.04 ms /   758 tokens (    0.93 ms per token,  1073.60 tokens per second)
+llama_perf_context_print:        eval time =     596.49 ms /    23 runs   (   25.93 ms per token,    38.56 tokens per second)
+llama_perf_context_print:       total time =    1318.13 ms /   781 tokens
+llama_perf_context_print:    graphs reused =         21
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     843.44 ms /   785 tokens (    1.07 ms per token,   930.72 tokens per second)
+llama_perf_context_print:        eval time =     155.14 ms /     6 runs   (   25.86 ms per token,    38.68 tokens per second)
+llama_perf_context_print:       total time =    1004.08 ms /   791 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     526.43 ms /   458 tokens (    1.15 ms per token,   870.01 tokens per second)
+llama_perf_context_print:        eval time =    1536.85 ms /    64 runs   (   24.01 ms per token,    41.64 tokens per second)
+llama_perf_context_print:       total time =    3765.92 ms /   522 tokens
+llama_perf_context_print:    graphs reused =         62
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     757.73 ms /   785 tokens (    0.97 ms per token,  1035.99 tokens per second)
+llama_perf_context_print:        eval time =     155.20 ms /     6 runs   (   25.87 ms per token,    38.66 tokens per second)
+llama_perf_context_print:       total time =     918.54 ms /   791 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     466.60 ms /   362 tokens (    1.29 ms per token,   775.83 tokens per second)
+llama_perf_context_print:        eval time =    1595.88 ms /    67 runs   (   23.82 ms per token,    41.98 tokens per second)
+llama_perf_context_print:       total time =    3867.54 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     676.84 ms /   712 tokens (    0.95 ms per token,  1051.94 tokens per second)
+llama_perf_context_print:        eval time =     661.29 ms /    26 runs   (   25.43 ms per token,    39.32 tokens per second)
+llama_perf_context_print:       total time =    1355.53 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     402.01 ms /   409 tokens (    0.98 ms per token,  1017.39 tokens per second)
+llama_perf_context_print:        eval time =     500.26 ms /    21 runs   (   23.82 ms per token,    41.98 tokens per second)
+llama_perf_context_print:       total time =    1286.06 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     705.23 ms /   750 tokens (    0.94 ms per token,  1063.48 tokens per second)
+llama_perf_context_print:        eval time =     717.20 ms /    28 runs   (   25.61 ms per token,    39.04 tokens per second)
+llama_perf_context_print:       total time =    1436.05 ms /   778 tokens
+llama_perf_context_print:    graphs reused =         26
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     537.07 ms /   464 tokens (    1.16 ms per token,   863.94 tokens per second)
+llama_perf_context_print:        eval time =    1320.94 ms /    55 runs   (   24.02 ms per token,    41.64 tokens per second)
+llama_perf_context_print:       total time =    3154.47 ms /   519 tokens
+llama_perf_context_print:    graphs reused =         53
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     763.42 ms /   794 tokens (    0.96 ms per token,  1040.06 tokens per second)
+llama_perf_context_print:        eval time =     155.72 ms /     6 runs   (   25.95 ms per token,    38.53 tokens per second)
+llama_perf_context_print:       total time =     924.96 ms /   800 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     512.86 ms /   464 tokens (    1.11 ms per token,   904.73 tokens per second)
+llama_perf_context_print:        eval time =    1324.51 ms /    55 runs   (   24.08 ms per token,    41.52 tokens per second)
+llama_perf_context_print:       total time =    3131.62 ms /   519 tokens
+llama_perf_context_print:    graphs reused =         53
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     763.72 ms /   794 tokens (    0.96 ms per token,  1039.65 tokens per second)
+llama_perf_context_print:        eval time =     155.10 ms /     6 runs   (   25.85 ms per token,    38.68 tokens per second)
+llama_perf_context_print:       total time =     924.01 ms /   800 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     443.59 ms /   362 tokens (    1.23 ms per token,   816.06 tokens per second)
+llama_perf_context_print:        eval time =    1596.27 ms /    67 runs   (   23.82 ms per token,    41.97 tokens per second)
+llama_perf_context_print:       total time =    3828.97 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     675.10 ms /   712 tokens (    0.95 ms per token,  1054.66 tokens per second)
+llama_perf_context_print:        eval time =     663.90 ms /    26 runs   (   25.53 ms per token,    39.16 tokens per second)
+llama_perf_context_print:       total time =    1359.68 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.52 ms /   408 tokens (    0.98 ms per token,  1016.13 tokens per second)
+llama_perf_context_print:        eval time =     504.02 ms /    21 runs   (   24.00 ms per token,    41.66 tokens per second)
+llama_perf_context_print:       total time =    1325.82 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     703.85 ms /   738 tokens (    0.95 ms per token,  1048.52 tokens per second)
+llama_perf_context_print:        eval time =    1123.74 ms /    44 runs   (   25.54 ms per token,    39.15 tokens per second)
+llama_perf_context_print:       total time =    1861.00 ms /   782 tokens
+llama_perf_context_print:    graphs reused =         42
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     548.48 ms /   479 tokens (    1.15 ms per token,   873.33 tokens per second)
+llama_perf_context_print:        eval time =     507.16 ms /    21 runs   (   24.15 ms per token,    41.41 tokens per second)
+llama_perf_context_print:       total time =    1478.72 ms /   500 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     775.23 ms /   809 tokens (    0.96 ms per token,  1043.56 tokens per second)
+llama_perf_context_print:        eval time =     157.75 ms /     6 runs   (   26.29 ms per token,    38.03 tokens per second)
+llama_perf_context_print:       total time =     938.83 ms /   815 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     540.64 ms /   479 tokens (    1.13 ms per token,   885.99 tokens per second)
+llama_perf_context_print:        eval time =     506.43 ms /    21 runs   (   24.12 ms per token,    41.47 tokens per second)
+llama_perf_context_print:       total time =    1475.48 ms /   500 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     775.49 ms /   809 tokens (    0.96 ms per token,  1043.22 tokens per second)
+llama_perf_context_print:        eval time =     156.84 ms /     6 runs   (   26.14 ms per token,    38.25 tokens per second)
+llama_perf_context_print:       total time =     938.06 ms /   815 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     437.45 ms /   362 tokens (    1.21 ms per token,   827.52 tokens per second)
+llama_perf_context_print:        eval time =    1599.30 ms /    67 runs   (   23.87 ms per token,    41.89 tokens per second)
+llama_perf_context_print:       total time =    3810.74 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     677.07 ms /   712 tokens (    0.95 ms per token,  1051.59 tokens per second)
+llama_perf_context_print:        eval time =     661.88 ms /    26 runs   (   25.46 ms per token,    39.28 tokens per second)
+llama_perf_context_print:       total time =    1356.62 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     402.47 ms /   409 tokens (    0.98 ms per token,  1016.22 tokens per second)
+llama_perf_context_print:        eval time =     507.41 ms /    21 runs   (   24.16 ms per token,    41.39 tokens per second)
+llama_perf_context_print:       total time =    1320.76 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     704.90 ms /   750 tokens (    0.94 ms per token,  1063.98 tokens per second)
+llama_perf_context_print:        eval time =     798.64 ms /    31 runs   (   25.76 ms per token,    38.82 tokens per second)
+llama_perf_context_print:       total time =    1527.63 ms /   781 tokens
+llama_perf_context_print:    graphs reused =         29
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     547.36 ms /   467 tokens (    1.17 ms per token,   853.18 tokens per second)
+llama_perf_context_print:        eval time =    1607.12 ms /    67 runs   (   23.99 ms per token,    41.69 tokens per second)
+llama_perf_context_print:       total time =    3981.34 ms /   534 tokens
+llama_perf_context_print:    graphs reused =         65
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     764.08 ms /   797 tokens (    0.96 ms per token,  1043.09 tokens per second)
+llama_perf_context_print:        eval time =     157.36 ms /     6 runs   (   26.23 ms per token,    38.13 tokens per second)
+llama_perf_context_print:       total time =     927.03 ms /   803 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     523.53 ms /   467 tokens (    1.12 ms per token,   892.01 tokens per second)
+llama_perf_context_print:        eval time =    1603.81 ms /    67 runs   (   23.94 ms per token,    41.78 tokens per second)
+llama_perf_context_print:       total time =    3872.87 ms /   534 tokens
+llama_perf_context_print:    graphs reused =         65
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     763.63 ms /   797 tokens (    0.96 ms per token,  1043.70 tokens per second)
+llama_perf_context_print:        eval time =     156.30 ms /     6 runs   (   26.05 ms per token,    38.39 tokens per second)
+llama_perf_context_print:       total time =     923.94 ms /   803 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     473.10 ms /   362 tokens (    1.31 ms per token,   765.16 tokens per second)
+llama_perf_context_print:        eval time =    1596.60 ms /    67 runs   (   23.83 ms per token,    41.96 tokens per second)
+llama_perf_context_print:       total time =    3870.57 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     676.77 ms /   712 tokens (    0.95 ms per token,  1052.06 tokens per second)
+llama_perf_context_print:        eval time =     663.07 ms /    26 runs   (   25.50 ms per token,    39.21 tokens per second)
+llama_perf_context_print:       total time =    1361.19 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.39 ms /   415 tokens (    0.97 ms per token,  1033.90 tokens per second)
+llama_perf_context_print:        eval time =     506.32 ms /    21 runs   (   24.11 ms per token,    41.48 tokens per second)
+llama_perf_context_print:       total time =    1341.11 ms /   436 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     708.27 ms /   756 tokens (    0.94 ms per token,  1067.39 tokens per second)
+llama_perf_context_print:        eval time =     821.16 ms /    32 runs   (   25.66 ms per token,    38.97 tokens per second)
+llama_perf_context_print:       total time =    1550.63 ms /   788 tokens
+llama_perf_context_print:    graphs reused =         30
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     515.08 ms /   474 tokens (    1.09 ms per token,   920.24 tokens per second)
+llama_perf_context_print:        eval time =    1514.67 ms /    63 runs   (   24.04 ms per token,    41.59 tokens per second)
+llama_perf_context_print:       total time =    3678.62 ms /   537 tokens
+llama_perf_context_print:    graphs reused =         61
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     770.52 ms /   801 tokens (    0.96 ms per token,  1039.56 tokens per second)
+llama_perf_context_print:        eval time =     157.41 ms /     6 runs   (   26.23 ms per token,    38.12 tokens per second)
+llama_perf_context_print:       total time =     933.60 ms /   807 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     530.53 ms /   474 tokens (    1.12 ms per token,   893.44 tokens per second)
+llama_perf_context_print:        eval time =    1514.32 ms /    63 runs   (   24.04 ms per token,    41.60 tokens per second)
+llama_perf_context_print:       total time =    3729.23 ms /   537 tokens
+llama_perf_context_print:    graphs reused =         61
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     770.40 ms /   801 tokens (    0.96 ms per token,  1039.71 tokens per second)
+llama_perf_context_print:        eval time =     157.03 ms /     6 runs   (   26.17 ms per token,    38.21 tokens per second)
+llama_perf_context_print:       total time =     933.15 ms /   807 tokens
+llama_perf_context_print:    graphs reused =          5
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     421.61 ms /   362 tokens (    1.16 ms per token,   858.61 tokens per second)
+llama_perf_context_print:        eval time =    1594.84 ms /    67 runs   (   23.80 ms per token,    42.01 tokens per second)
+llama_perf_context_print:       total time =    3872.76 ms /   429 tokens
+llama_perf_context_print:    graphs reused =         66
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     677.15 ms /   712 tokens (    0.95 ms per token,  1051.47 tokens per second)
+llama_perf_context_print:        eval time =     662.80 ms /    26 runs   (   25.49 ms per token,    39.23 tokens per second)
+llama_perf_context_print:       total time =    1361.86 ms /   738 tokens
+llama_perf_context_print:    graphs reused =         25
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     401.91 ms /   409 tokens (    0.98 ms per token,  1017.64 tokens per second)
+llama_perf_context_print:        eval time =     506.12 ms /    21 runs   (   24.10 ms per token,    41.49 tokens per second)
+llama_perf_context_print:       total time =    1340.47 ms /   430 tokens
+llama_perf_context_print:    graphs reused =         20
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+ggml_backend_cuda_graph_compute: CUDA graph warmup reset
+ggml_backend_cuda_graph_compute: CUDA graph warmup complete
+llama_perf_context_print:        load time =      87.73 ms
+llama_perf_context_print: prompt eval time =     704.43 ms /   750 tokens (    0.94 ms per token,  1064.69 tokens per second)
+llama_perf_context_print:        eval time =     744.81 ms /    29 runs   (   25.68 ms per token,    38.94 tokens per second)
+llama_perf_context_print:       total time =    1468.20 ms /   779 tokens
+llama_perf_context_print:    graphs reused =         27
