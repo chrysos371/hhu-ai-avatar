@@ -1,0 +1,25 @@
+usage: web.py [-h] [--db DB] [--port PORT] [--asr-model ASR_MODEL]
+              [--asr-backend {funasr,faster-whisper}]
+              [--asr-device {cpu,cuda}] [--profile-grounding]
+              [--identity-grounding] [--task-delivery-check]
+              [--literal-composition] [--no-context-recovery]
+
+Avatar 单用户本机管理页面
+
+options:
+  -h, --help            show this help message and exit
+  --db DB
+  --port PORT
+  --asr-model ASR_MODEL
+                        已安装的本机 FunASR 模型目录；默认不启用识别
+  --asr-backend {funasr,faster-whisper}
+  --asr-device {cpu,cuda}
+                        CUDA 设备可见性由 CUDA_VISIBLE_DEVICES 显式控制
+  --profile-grounding   实验性已确认资料查询与偏好归属纠正；启用后模型文本整段检查再发送，默认关闭
+  --identity-grounding  启用已验证画像的身份约束提示；需先在目标模型完成评测
+  --task-delivery-check
+                        实验性写作原文约束与一次交付修正，默认关闭；从当前短期窗口恢复任务
+  --literal-composition
+                        实验性固定原文槽位修正，需同时开启--task-delivery-check及模型JSON schema支持
+  --no-context-recovery
+                        不从持久历史续接模型上下文；本进程仍保留临时对话窗口

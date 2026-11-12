@@ -540,7 +540,7 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         avatar.speaker_context_store = SpeakerContextStore(memory)
         if server.context_revision != memory.context_revision:
             server.short_term = []
-        if server.recover_context and not any((server.identity_grounding,
+        if getattr(server, 'recover_context', False) and not any((server.identity_grounding,
                 server.profile_grounding, server.task_delivery_check, server.literal_composition)):
             from .brain.conversation_context import ConversationContextStore
             avatar.conversation_context_store = ConversationContextStore(memory)
@@ -558,7 +558,7 @@ def run_chat(server, user_text, use_web=False, *, job=None):
         if job:
             from .web_api import enrich_chat_result
             result = enrich_chat_result(server, memory, result)
-        else:
+        elif result.get('conversation'):
             # Sync callers also need a completed source pair before a subsequent
             # request. Public enrichment may replace this row with its full trace.
             from .brain.conversations import ConversationStore
@@ -695,6 +695,8 @@ def main():
                         help='实验性写作原文约束与一次交付修正，默认关闭；从当前短期窗口恢复任务')
     parser.add_argument('--literal-composition', action='store_true',
                         help='实验性固定原文槽位修正，需同时开启--task-delivery-check及模型JSON schema支持')
+    parser.add_argument('--no-context-recovery', action='store_true',
+                        help='不从持久历史续接模型上下文；本进程仍保留临时对话窗口')
     args = parser.parse_args()
     if args.literal_composition and not args.task_delivery_check:
         parser.error('--literal-composition 需要 --task-delivery-check')
@@ -726,7 +728,8 @@ def main():
                                identity_grounding=args.identity_grounding,
                                profile_grounding=args.profile_grounding,
                                task_delivery_check=args.task_delivery_check,
-                               literal_composition=args.literal_composition)
+                               literal_composition=args.literal_composition,
+                               recover_context=not args.no_context_recovery)
     except OSError as exc:
         parser.exit(2, f"无法监听 127.0.0.1:{args.port}（{exc.strerror}）；请用 --port 指定空闲端口。\n")
     print(
