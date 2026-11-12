@@ -3,13 +3,14 @@ import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
-from state_common import ROOT,BASE,PROTOCOL,FIXTURES,RUNTIME,digest,verify_freeze,verify_historical_binding,validate_fixture_provenance
+from state_common import ROOT,BASE,PROTOCOL,FIXTURES,RUNTIME,REGISTRY,digest,verify_freeze,verify_historical_binding,validate_fixture_provenance
 
 
 def verify(path):
     report=json.loads(path.read_text());model=report['model_id'];work=BASE/'审计/工作目录/001-原生状态隔离'
     frozen=verify_freeze(work/'执行冻结.json',report['freeze_sha256'],model);verify_historical_binding(frozen)
     protocol=json.loads((ROOT/PROTOCOL).read_text());fixture=validate_fixture_provenance(model);backend=json.loads((ROOT/RUNTIME).read_text())
+    registry=json.loads((ROOT/REGISTRY).read_text());spec=next(m for m in registry['models'] if m['model_id']==model)
     assert report['completed'] and report['engineering_passed'] and report['cleanup_passed'] and not report['failure'] and not report['cleanup_errors']
     assert report['actual_native_cuda'] and report['avatar_or_sql_run'] is False and report['semantic_approval'] is False
     assert [p['state_policy'] for p in report['policies']]==protocol['policy_orders'][model]
@@ -19,6 +20,10 @@ def verify(path):
         assert ready==policy['provider_ready'] and close==policy['provider_closeout']
         assert policy['completed'] and policy['cleanup_passed'] and policy['provider_exit']==0 and not policy.get('forced_cleanup')
         assert ready['pid']==close['pid']==policy['provider_pid'] and ready['state_policy']==close['state_policy']==name
+        assert ready['model_id']==model and ready['model_sha256']==spec['sha256'] and ready['model_revision']==spec['revision']
+        assert ready['registry_path']==REGISTRY and ready['registry_sha256']==frozen['sha256'][REGISTRY]
+        assert Path(ready['metadata_path']).resolve()==(ROOT/spec['metadata']).resolve() and ready['metadata_sha256']==frozen['sha256'][spec['metadata']]
+        assert ready['backend']=='cuda' and ready['llama_cpp_python']=='0.3.19' and max(ready['process_gpu_mib_after_load'])>=1024
         assert ready['backend_runtime_identity_sha256']==close['backend_runtime_identity_sha256']==frozen['sha256'][RUNTIME]
         assert ready['backend_runtime_files_verified']==close['runtime_files_verified_after']==len(backend['files_sha256'])==54
         assert close['model_closed'] and close['server_closed'] and ready['model_context_memory_present']
@@ -27,7 +32,9 @@ def verify(path):
         assert len(ready['state_method_sources'])==2
         for method in ready['state_method_sources'].values():assert backend['files_sha256'][method['path']]==method['file_sha256']
         for key,value in {'n_gpu_layers':-1,'n_ctx':8192,'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'concurrent_sequences':1,'repeat_penalty':1.0,'top_p':1.0,'top_k':0,'state_policy':name}.items():assert ready['configuration'][key]==value
-        gpu=ready['chosen_gpu'];devices.add(gpu['uuid']);assert gpu['free_mib']>= (16384 if '4b-' in model else 32768) and gpu['utilization_percent']<=20
+        gpu=ready['chosen_gpu'];devices.add(gpu['uuid']);assert gpu['free_mib']>=spec['required_free_mib'] and gpu['utilization_percent']<=20
+        assert ready['requested_visible_devices']==ready['effective_visible_devices']==gpu['uuid']
+        assert not any(line.split(',')[0].strip()==str(ready['pid']) for line in policy['gpu_processes_after'].splitlines())
         assert policy['controller_choice']['uuid']==gpu['uuid'] and policy['historical_gpu_uuid_equal']==(gpu['uuid']==fixture['source_gpu']['uuid'])
         trace=folder/'provider-trace.jsonl';assert Path(policy['trace_path']).resolve()==trace.resolve() and digest(trace)==policy['native_trace_sha256']
         native=[json.loads(line) for line in trace.read_text().splitlines()];rows=policy['requests'];assert len(native)==len(rows)==35
