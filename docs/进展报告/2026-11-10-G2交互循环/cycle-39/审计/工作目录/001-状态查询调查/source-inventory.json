@@ -1,0 +1,37 @@
+{
+  "scope": "C39 read-only reminder domain investigation before any implementation",
+  "source_ref": "9d69f2b7a033af0a4a9770694da4d0e007a3a003",
+  "sha256": {
+    "src/avatar/main.py": "b00f6f2ee0203b43a2c7987622dc2e109de8aff75b20c9528e10b9b4d8a815cf",
+    "src/avatar/brain/reminders.py": "bd2ec65bef2b37b5e7dbbb930320d256b023a112887b10c6e7652049be95a3e5",
+    "src/avatar/brain/action_receipts.py": "c216af5f1be6a84083a98134177c27ebb53136213bc43e8be10d029c0c17fcc3",
+    "src/avatar/brain/speaker_scope.py": "76c6162c2203329757d0971314e7d7b8a0e419e10436e2700aa75c622e04b856",
+    "src/avatar/brain/speaker_control.py": "50766c56c25141d3511fd51c5ebde01dd8ec34b7eca64211c5f31e84baa1ae6a",
+    "src/avatar/web_api.py": "af858ed4045f614d5f91d70c591c8b7e2a16f7e629d8fca52578b01bb306c84a",
+    "src/avatar/brain/memory_operations.py": "3532aa1e02bf17710e115b55a3508c3bf9cb9579f752919022a463ee081e05fa",
+    "src/avatar/tools/assistant_server.py": "898ce86a10b68a28f456570ff9dcb2c3b90ef8cdcdbf54bc331e2927176ba40b",
+    "tests/test_reminder_deliveries.py": "29de61ace22b7b118213e3fd345511c4fdfa419613aa19262df896aecbb1b1dd",
+    "tests/test_reminder_writing_scope.py": "0e3ca6c88f7a5751f3ec55969f622a7345974c3af78f61e64ec4af89e073f9a8",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/系统审计与推进报告.md": "50b28fb66da7aa0c7f210d05390ae98b1e2fcc4c25f71ddc673a7acd6812b585"
+  },
+  "observations": [
+    {
+      "source": "src/avatar/main.py",
+      "fact": "explicit create/cancel and canonical speaker controls have rule replies; ordinary real-user turns claim_due before generation, so a final reviewer alone cannot provide a no-claim reminder-query contract"
+    },
+    {
+      "source": "src/avatar/brain/reminders.py",
+      "fact": "current row status, service claim, durable client delivery and client ACK are distinct; list/list_with_delivery read; claim_due/pending_deliveries can mutate"
+    },
+    {
+      "source": "src/avatar/web_api.py",
+      "fact": "authenticated management GET reminders reads current records; pending delivery and ACK are separate POST endpoints"
+    },
+    {
+      "source": "src/avatar/brain/action_receipts.py",
+      "fact": "visible receipts are revision-scoped; absence of current receipt is not proof that no durable reminder row exists"
+    }
+  ],
+  "new_model_calls": 0,
+  "production_changes": false
+}
