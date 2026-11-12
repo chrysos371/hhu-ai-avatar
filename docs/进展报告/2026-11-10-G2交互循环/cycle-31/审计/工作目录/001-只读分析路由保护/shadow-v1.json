@@ -1,0 +1,490 @@
+{
+  "actual_llm_or_gpu": false,
+  "protocol_sha256": "7c482545e972cf86b890d271165420948fcc06accdd2c6b87f806f2f78096c92",
+  "candidate_sha256": "b55d132a6f249b5fe91a17b09ff20d21c43e3655126d5ba18fa17b2aa980c816",
+  "rows": [
+    {
+      "id": "eligible-01",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-02",
+      "text": "根据资料，绿票由谁保管？只回答姓名。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-03",
+      "text": "按照记录，调整后的终点是哪一站？只回答站名。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-04",
+      "text": "根据清单，更新后两种材料的数量合计是多少？只回答数字。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-05",
+      "text": "根据表格，哪一个箱子的容量更大？只回答箱子代号。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-06",
+      "text": "根据资料，这份说明的页码是多少？只回答数字，资料未给出则回答无法确认。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-07",
+      "text": "请根据文本，封面的颜色是什么？只回答颜色。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-08",
+      "text": "按照前文，第一项记录的代号是什么？仅回答代号。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-09",
+      "text": "根据记录，甲组的数量是多少？只输出数字。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-10",
+      "text": "根据预算，两项费用的合计是多少？只回答数字。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-11",
+      "text": "按照表格，最小的数值是哪一个？仅输出数字。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "eligible-12",
+      "text": "根据资料，样品的编号是什么？只回答编号。",
+      "expected": true,
+      "decision": {
+        "eligible": true,
+        "reason": "explicit_neutral_source_question_no_current_rule_facts"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-01",
+      "text": "我叫许澄。根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "outside_explicit_single_source_question"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-02",
+      "text": "我喜欢清单里的绿色。根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "outside_explicit_single_source_question"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-03",
+      "text": "根据资料，今年21岁的人是谁？只回答姓名。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-04",
+      "text": "根据上文，喜欢咖啡的是谁？只回答姓名。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-05",
+      "text": "根据资料，我的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-06",
+      "text": "根据资料，I am nervous，这是什么代号？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-07",
+      "text": "根据资料，这件事让我很焦虑，代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-08",
+      "text": "根据资料，心情难过时该看哪项？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "current_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-09",
+      "text": "根据资料，这个情绪是什么意思？只回答词语。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "current_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-10",
+      "text": "根据资料，很担心结果时该选哪项？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "current_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-11",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-12",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-13",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-14",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-15",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-16",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-17",
+      "text": "根据资料，提醒我什么时候出发？只回答时间。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-18",
+      "text": "根据资料，发送给谁？只回答姓名。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-19",
+      "text": "根据记录，删除哪一个？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-20",
+      "text": "根据资料，保存哪一段？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-21",
+      "text": "根据资料，扮演谁？只回答姓名。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-22",
+      "text": "根据资料，预约哪一项？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-23",
+      "text": "根据资料，“提醒我”指什么？只回答词语。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-24",
+      "text": "根据资料，\"我叫谁\"里的名字是什么？只回答姓名。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-25",
+      "text": "根据资料，假如换个角色是谁？只回答姓名。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-26",
+      "text": "根据资料，引用哪句话？只回答原文。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-27",
+      "text": "先记住这条。根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "outside_explicit_single_source_question"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-28",
+      "text": "根据上文，代号是什么？\n只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "outside_explicit_single_source_question"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-29",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "scope_or_ongoing_boundary"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-30",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "scope_or_ongoing_boundary"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-31",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "scope_or_ongoing_boundary"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-32",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "current_rule_fact"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-33",
+      "text": "根据资料，代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "text_type_or_bound"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-34",
+      "text": "根据上文，柜门标签的代号是什么？只回答代号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "recent_affect"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-35",
+      "text": "根据资料，今天刚搬到新家，编号是什么？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    },
+    {
+      "id": "protected-36",
+      "text": "根据资料，记住哪一条规则？只回答编号。",
+      "expected": false,
+      "decision": {
+        "eligible": false,
+        "reason": "personal_action_quote_or_control"
+      },
+      "passed": true
+    }
+  ],
+  "eligible": 12,
+  "passed": 48,
+  "total": 48
+}
