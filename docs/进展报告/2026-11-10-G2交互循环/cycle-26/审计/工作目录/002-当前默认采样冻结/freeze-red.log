@@ -1,0 +1,369 @@
+FFFFFFFFFFFFFFFF                                                         [100%]
+=================================== FAILURES ===================================
+____________ test_valid_current_defaults_freeze_binds_real_sources _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_valid_current_defaults_fr0')
+
+    def test_valid_current_defaults_freeze_binds_real_sources(tmp_path):
+        path=tmp_path/'freeze.json';data,expected=frozen(path)
+>       assert audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')==data
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:31: AttributeError
+________________ test_descriptor_identity_precedes_json_parsing ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_descriptor_identity_prece0')
+
+    def test_descriptor_identity_precedes_json_parsing(tmp_path):
+        path=tmp_path/'freeze.json';_,expected=frozen(path);path.write_text('{malformed')
+        with pytest.raises(ValueError,match='Execution freeze descriptor identity changed'):
+>           audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-4b-q4_k_m')
+E           AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:37: AttributeError
+_____ test_incomplete_or_wrong_execution_contract_is_rejected[input_hash] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu0')
+change = 'input_hash'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+____ test_incomplete_or_wrong_execution_contract_is_rejected[missing_input] ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu1')
+change = 'missing_input'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+________ test_incomplete_or_wrong_execution_contract_is_rejected[scope] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu2')
+change = 'scope'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+_______ test_incomplete_or_wrong_execution_contract_is_rejected[backend] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu3')
+change = 'backend'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+______ test_incomplete_or_wrong_execution_contract_is_rejected[partition] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu4')
+change = 'partition'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+______ test_incomplete_or_wrong_execution_contract_is_rejected[candidate] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu5')
+change = 'candidate'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+________ test_incomplete_or_wrong_execution_contract_is_rejected[model] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu6')
+change = 'model'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+_____ test_incomplete_or_wrong_execution_contract_is_rejected[case_order] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu7')
+change = 'case_order'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+_____ test_incomplete_or_wrong_execution_contract_is_rejected[turn_count] ______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu8')
+change = 'turn_count'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+______ test_incomplete_or_wrong_execution_contract_is_rejected[registry] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_incomplete_or_wrong_execu9')
+change = 'registry'
+
+    @pytest.mark.parametrize('change',['input_hash','missing_input','scope','backend','partition','candidate','model','case_order','turn_count','registry'])
+    def test_incomplete_or_wrong_execution_contract_is_rejected(tmp_path,change):
+        path=tmp_path/'freeze.json';data,_=frozen(path)
+        if change=='input_hash':data['sha256']['src/avatar/main.py']='0'*64
+        elif change=='missing_input':data['sha256'].pop('src/avatar/main.py')
+        elif change=='scope':data['scope']='some_other_job'
+        elif change=='backend':data['provider_backend']='cpu_explicit'
+        elif change=='partition':data['allowed_partition']='prospective'
+        elif change=='candidate':data['candidate']='lab-v4'
+        elif change=='model':data['models']=['qwen3-4b-q4_k_m']
+        elif change=='case_order':data['case_ids']=list(reversed(data['case_ids']))
+        elif change=='turn_count':data['turn_count']+=1
+        else:data['registry_sha256']='changed'
+        path.write_text(json.dumps(data));expected=sha256(path.read_bytes()).hexdigest()
+>       with pytest.raises(ValueError):audit.verify_execution_freeze(path,expected,PROTOCOL,model_id='qwen3-32b-q4_k_m')
+E       AttributeError: module 'evaluate_native_output_audit' has no attribute 'verify_execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:54: AttributeError
+_ test_real_os_entry_wrong_descriptor_sha_rejects_before_output_or_model[runner] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_real_os_entry_wrong_descr0')
+entry = 'runner'
+
+    @pytest.mark.parametrize('entry',['runner','sampler'])
+    def test_real_os_entry_wrong_descriptor_sha_rejects_before_output_or_model(tmp_path,entry):
+        freeze=tmp_path/'freeze.json';_,expected=frozen(freeze);freeze.write_text(freeze.read_text()+'\n')
+        output=tmp_path/'must-not-exist'
+        command=[sys.executable,str(ROOT/'scripts'/('run_native_output_models.py' if entry=='runner' else 'evaluate_native_output_audit.py')),
+            '--protocol',str(PROTOCOL),'--output',str(output),'--execution-freeze',str(freeze),'--expected-execution-freeze-sha256',expected]
+        if entry=='runner':command+=['--stage','development','--provider-python',sys.executable,'--model-key','qwen3-32b-q4_k_m',
+            '--registry',str(REGISTRY),'--expected-registry-sha256',sha256(REGISTRY.read_bytes()).hexdigest()]
+        else:
+            provider,_=ready();path=tmp_path/'provider.json';path.write_text(json.dumps(provider));command+=['--provider',str(path)]
+        result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True)
+>       assert result.returncode!=0 and 'Execution freeze descriptor identity changed' in result.stderr
+E       AssertionError: assert (2 != 0 and 'Execution freeze descriptor identity changed' in 'usage: run_native_output_models.py [-h] --output OUTPUT --provider-python\n                                   PROVIDE...scr0/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n')
+E        +  where 2 = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip...cr0/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n').returncode
+E        +  and   'usage: run_native_output_models.py [-h] --output OUTPUT --provider-python\n                                   PROVIDE...scr0/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n' = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip...cr0/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n').stderr
+
+tests/test_model_scale_execution_freeze.py:68: AssertionError
+_ test_real_os_entry_wrong_descriptor_sha_rejects_before_output_or_model[sampler] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_real_os_entry_wrong_descr1')
+entry = 'sampler'
+
+    @pytest.mark.parametrize('entry',['runner','sampler'])
+    def test_real_os_entry_wrong_descriptor_sha_rejects_before_output_or_model(tmp_path,entry):
+        freeze=tmp_path/'freeze.json';_,expected=frozen(freeze);freeze.write_text(freeze.read_text()+'\n')
+        output=tmp_path/'must-not-exist'
+        command=[sys.executable,str(ROOT/'scripts'/('run_native_output_models.py' if entry=='runner' else 'evaluate_native_output_audit.py')),
+            '--protocol',str(PROTOCOL),'--output',str(output),'--execution-freeze',str(freeze),'--expected-execution-freeze-sha256',expected]
+        if entry=='runner':command+=['--stage','development','--provider-python',sys.executable,'--model-key','qwen3-32b-q4_k_m',
+            '--registry',str(REGISTRY),'--expected-registry-sha256',sha256(REGISTRY.read_bytes()).hexdigest()]
+        else:
+            provider,_=ready();path=tmp_path/'provider.json';path.write_text(json.dumps(provider));command+=['--provider',str(path)]
+        result=subprocess.run(command,cwd=ROOT,capture_output=True,text=True)
+>       assert result.returncode!=0 and 'Execution freeze descriptor identity changed' in result.stderr
+E       AssertionError: assert (2 != 0 and 'Execution freeze descriptor identity changed' in 'usage: evaluate_native_output_audit.py [-h] --provider PROVIDER\n                                       [--protocol P...scr1/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n')
+E        +  where 2 = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip...cr1/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n').returncode
+E        +  and   'usage: evaluate_native_output_audit.py [-h] --provider PROVIDER\n                                       [--protocol P...scr1/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n' = CompletedProcess(args=['/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python', '/data/Users/zrh/repo/hhu-ai-avatar/scrip...cr1/freeze.json --expected-execution-freeze-sha256 09168f7ba009a5fb9c400858aa1650de7895d68343a4f8c4cfd709ee96ef7167\n').stderr
+
+tests/test_model_scale_execution_freeze.py:68: AssertionError
+_ test_freeze_checked_between_controlled_warmups_before_application_server[False] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_freeze_checked_between_co0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdb3e442350>
+mutate = False
+
+    @pytest.mark.parametrize('mutate',[False,True])
+    def test_freeze_checked_between_controlled_warmups_before_application_server(tmp_path,monkeypatch,mutate):
+        freeze=tmp_path/'freeze.json';data,expected=frozen(freeze);provider,_=ready();path=tmp_path/'provider.json';path.write_text(json.dumps(provider))
+        warm=[];servers=[]
+        class Boundary(RuntimeError):pass
+        class Engine:
+            def __init__(self,*args,**kwargs):pass
+            def chat(self,*args,**kwargs):
+                warm.append('sync')
+                if mutate:data['scope']='changed_after_first_warmup';freeze.write_text(json.dumps(data))
+                return 'controlled warmup'
+            def stream_chat(self,*args,**kwargs):warm.append('stream');return 'controlled warmup'
+            def close(self):pass
+        def server(*args,**kwargs):servers.append(True);raise Boundary('controlled application server boundary')
+        monkeypatch.setattr(audit,'LLMEngine',Engine);monkeypatch.setattr(audit,'create_server',server)
+        for obj,field in ((audit.config.llm,'base_url'),(audit.config.llm,'api_key'),(audit.config.llm,'model'),(audit.config.embedding,'model')):
+            monkeypatch.setattr(obj,field,getattr(obj,field))
+>       report=audit.evaluate(path,tmp_path/'owned-output',PROTOCOL,execution_freeze=freeze,expected_execution_freeze_sha256=expected)
+E       TypeError: evaluate() got an unexpected keyword argument 'execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:89: TypeError
+_ test_freeze_checked_between_controlled_warmups_before_application_server[True] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-298/test_freeze_checked_between_co1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fdb3e4b2320>
+mutate = True
+
+    @pytest.mark.parametrize('mutate',[False,True])
+    def test_freeze_checked_between_controlled_warmups_before_application_server(tmp_path,monkeypatch,mutate):
+        freeze=tmp_path/'freeze.json';data,expected=frozen(freeze);provider,_=ready();path=tmp_path/'provider.json';path.write_text(json.dumps(provider))
+        warm=[];servers=[]
+        class Boundary(RuntimeError):pass
+        class Engine:
+            def __init__(self,*args,**kwargs):pass
+            def chat(self,*args,**kwargs):
+                warm.append('sync')
+                if mutate:data['scope']='changed_after_first_warmup';freeze.write_text(json.dumps(data))
+                return 'controlled warmup'
+            def stream_chat(self,*args,**kwargs):warm.append('stream');return 'controlled warmup'
+            def close(self):pass
+        def server(*args,**kwargs):servers.append(True);raise Boundary('controlled application server boundary')
+        monkeypatch.setattr(audit,'LLMEngine',Engine);monkeypatch.setattr(audit,'create_server',server)
+        for obj,field in ((audit.config.llm,'base_url'),(audit.config.llm,'api_key'),(audit.config.llm,'model'),(audit.config.embedding,'model')):
+            monkeypatch.setattr(obj,field,getattr(obj,field))
+>       report=audit.evaluate(path,tmp_path/'owned-output',PROTOCOL,execution_freeze=freeze,expected_execution_freeze_sha256=expected)
+E       TypeError: evaluate() got an unexpected keyword argument 'execution_freeze'
+
+tests/test_model_scale_execution_freeze.py:89: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_model_scale_execution_freeze.py::test_valid_current_defaults_freeze_binds_real_sources
+FAILED tests/test_model_scale_execution_freeze.py::test_descriptor_identity_precedes_json_parsing
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[input_hash]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[missing_input]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[scope]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[backend]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[partition]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[candidate]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[model]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[case_order]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[turn_count]
+FAILED tests/test_model_scale_execution_freeze.py::test_incomplete_or_wrong_execution_contract_is_rejected[registry]
+FAILED tests/test_model_scale_execution_freeze.py::test_real_os_entry_wrong_descriptor_sha_rejects_before_output_or_model[runner]
+FAILED tests/test_model_scale_execution_freeze.py::test_real_os_entry_wrong_descriptor_sha_rejects_before_output_or_model[sampler]
+FAILED tests/test_model_scale_execution_freeze.py::test_freeze_checked_between_controlled_warmups_before_application_server[False]
+FAILED tests/test_model_scale_execution_freeze.py::test_freeze_checked_between_controlled_warmups_before_application_server[True]
+16 failed in 1.82s
