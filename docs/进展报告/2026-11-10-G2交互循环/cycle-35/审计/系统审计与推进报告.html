@@ -1,0 +1,82 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C35 页面状态隐私屏障：修复、对照与系统审计</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C35 页面状态隐私屏障：修复、对照与系统审计</h1><p class="meta">2026-11-12｜恢复后持续推进｜固定离线HTTP/Chromium工程验证｜spinner-bot</p><p class="verdict">两页各3/3→0/3旧缓存；8补充修后通过，2工具失败保留；23离线回合、0native/GPU；远期目标继续。</p>
+<section><h2>结论与固定前后对照</h2>
+<p>迁移完成后已按用户指令恢复远期Goal active。继承C34-004/P2在本轮限定工程范围关闭：真实情绪/概览页各3重复，独立HTTP遗忘、SQL来源红删/revision1、新API0后，固定约1秒旧DOM由两页各3/3降至各0/3。没有刷新或导航旧页来取得修后结果。</p>
+<p>服务端context绑定同一次快照；前端先核实例/隐私版本、后取派生状态。收到高版本、实例变化或版本不可用时先隐藏并取消/移除两类缓存，epoch拒迟到旧响应。自动预填按epoch失效，真正手动编辑逐字段保留，明确手动0也保留；独立override持续有效。普通消息游标不触发遗忘。</p>
+<p>before412输入保留历史身份；primary-after433输入已退役但Git字节完整。跨窗口诊断与修正分别新冻结433，产品/5构建文件均未变；最新fixed433当前及历史身份完整。before与after辅助采证器有版本差异及迁移路径变更，不声称所有工具字节完全相同；原始路径保留历史，当前启动统一集中数据根。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>页面 / 每阶段n=3</th><th>修前1秒旧DOM</th><th>修后1秒旧DOM</th><th>采样/边界</th></tr></thead><tbody>
+<tr><td>情绪页</td><td>3/3；轮询约9.85秒清除</td><td>0/3；三展示及自动预填0</td><td>after实际1058.82 /1071.60 /1062.46ms</td></tr>
+<tr><td>概览页</td><td>3/3；轮询约14.90秒清除</td><td>0/3；旧PAD/事件消失</td><td>after实际1055.88 /1056.18 /1055.40ms</td></tr>
+<tr><td>共同限定</td><td>全为离线规则与合成准备句</td><td>SQL红删/版本1/新API0/自有服务均关闭</td><td>三组同时采证有HTTP/DOM开销；不是传播延迟分位数或纯推理速度</td></tr>
+</tbody></table></div>
+<p><a href="../../../../../evals/interaction/cycle-35/browser-state-privacy-protocol.json">固定主协议</a></p>
+<p><a href="收尾核验/browser-independent-proof.json">独立原始证据复算</a></p>
+<p><a href="../实验/before-emotion/evaluation.json">修前情绪组</a></p>
+<p><a href="../实验/before-dashboard/evaluation.json">修前概览组</a></p>
+<p><a href="../实验/after-emotion/evaluation.json">修后情绪组</a></p>
+<p><a href="../实验/after-dashboard/evaluation.json">修后概览组</a></p>
+</section>
+<section><h2>真实浏览器故障与正控，失败完整入账</h2>
+<p>预登记8类场景，最终各1个修后通过；实际执行10次，包含跨窗口首跑与诊断两次失败，未删除、覆盖或重复抽样挑有利结果。跨窗口诊断已实际拿到context1/全0，随后工具误abort新版本健康等待导致页面正确隐藏；仅缩窄注入为原revision0后通过，产品与5秒断言均未改。</p>
+<p>迟到route fulfill成功不等于旧体已送达JavaScript；真正忽略AbortSignal的Promise另由单元控制。跨窗口是实际同源两页原生BroadcastChannel受控通知，未冒称完整管理员UI广播全流程。实例测试实际关闭并重建HTTP服务，同端口/DB刻意沿用合成测试token以隔离实例命名空间；没有应用OS重启或生产token轮换验收主张。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>固定补充场景</th><th>实际控制</th><th>结果 / 限制</th></tr></thead><tbody>
+<tr><td>emotion迟到旧响应</td><td>持有实际旧body；新版本0后尝试释放</td><td>通过；1秒后不回填</td></tr>
+<tr><td>dashboard迟到旧响应</td><td>相同边界另一页面</td><td>通过；不宣称JS收到旧体</td></tr>
+<tr><td>emotion元数据503</td><td>持有watch→遗忘→注入503</td><td>旧值先隐藏、实际自动恢复0</td></tr>
+<tr><td>dashboard元数据403</td><td>持有watch→遗忘→注入403</td><td>旧值先隐藏、手动重新读取恢复0</td></tr>
+<tr><td>emotion人工字段/override</td><td>独立.6/-.1覆盖；键盘手工P0、900秒/原因</td><td>自动及用户0；手工字段保持、未编辑A为-.1</td></tr>
+<tr><td>dashboard普通消息</td><td>额外中性输入，privacy revision不变</td><td>合法角色PAD连续性保持</td></tr>
+<tr><td>emotion原生跨窗口</td><td>只阻塞旧watch，第二页原生广播</td><td>修后通过；原2次工具失败保留</td></tr>
+<tr><td>dashboard实际实例重建</td><td>相同DB/端口/fixture token，new instance_id</td><td>revision0但新实例；冷自动状态0</td></tr>
+</tbody></table></div>
+<p><a href="../../../../../evals/interaction/cycle-35/browser-privacy-supplement-protocol.json">补充预登记协议</a></p>
+<p><a href="../实验/supplement-emotion_native_cross_window_broadcast/evaluation.json">跨窗口首失败</a></p>
+<p><a href="../实验/supplement-emotion_native_cross_window_broadcast-diagnostic/evaluation.json">未改产品诊断失败</a></p>
+<p><a href="../实验/supplement-emotion_native_cross_window_broadcast-fixed/evaluation.json">缩窄注入修后通过</a></p>
+</section>
+<section><h2>回归、来源与执行账</h2>
+<p>本轮实验23实际离线应用结果＝before6＋after6＋补充10准备（含2失败）＋同版本正控1。0native/GPU；单元、完整套件内fixture调用不混入此固定实验账。本轮未重复加载4B/32B，C34实模38次仍为历史证据。</p>
+<p>424项已提交src/scripts/tests/frontend输入在各完整回归前后稳定，实际Python模块与5个dist文件另绑定。独立程序重建原DOM/API/SQL与冻结Git字节，不是独立人评；32旧cycle封5736项及迁移封88项共33清单5824项逐项SHA一致。配套数据始终集中/data/Users/zrh/data/hhu-ai-avatar，9入口空闲复核有效，旧7工作树保持迁移结论。</p>
+<p>版本比较仅检测隐私revision，普通用户游标保持合法情绪；网络不可用、拒权和过期元数据遵循隐藏/重核。bootstrap15秒为新增单请求工程边界，以fake timer控制验证，不冒充真实网络15秒采样。最多4个持有元数据等待仍是现有单用户资源限制，多窗口扩展未获新容量批准。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>检查</th><th>新执行结果</th><th>证据与边界</th></tr></thead><tbody>
+<tr><td>Python完整</td><td>1835 passed /1 skipped；122.37s</td><td>424源稳定；全部现有后端/事务/监督器等回归</td></tr>
+<tr><td>前端完整</td><td>192 passed；37文件</td><td>424源稳定；含metadata15/hook17/dashboard4/emotion6共42定向</td></tr>
+<tr><td>类型 /lint /构建</td><td>通过；5个实际构建文件归档</td><td>lint原log；tsc --noEmit＋Vite完整执行</td></tr>
+<tr><td>默认Chromium套件</td><td>15 passed /16 optional skipped；36.9s</td><td>实际模块/构建匹配；可选实模/物理设备未执行</td></tr>
+<tr><td>主对照及补充</td><td>12主准备＋10补充准备＋1普通正控＝23</td><td>真实HTTP/Chromium，0模型/GPU；2工具失败计入</td></tr>
+<tr><td>旧封存与当前身份</td><td>33旧seal/5824项不变</td><td>before412历史/primary-after433历史/fixed433当前及历史</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/002-系统回归/integrated-python-final-binding.json">Python全量绑定</a></p>
+<p><a href="工作目录/002-系统回归/integrated-frontend-final-binding.json">前端全量绑定</a></p>
+<p><a href="工作目录/002-系统回归/integrated-browser-final-runtime.json">浏览器运行身份</a></p>
+<p><a href="工作目录/002-系统回归/integrated-build-final-binding.json">构建绑定</a></p>
+<p><a href="工作目录/002-系统回归/frontend-lint.log">lint原log</a></p>
+<p><a href="verify_browser_evidence.py">独立核验程序</a></p>
+</section>
+<section><h2>系统审计问题与修复状态</h2>
+<p>本轮继承1项P2（C34-004）并新增5项：P2两项（初始读取无界、当前文档状态过时），P3三项（注入范围、通过数误记、历史身份校验误用current）。每项独立文档；功能/工具均完成修正复测，文档已同步并经MD链接核验，HTML显示与最终封存另留收尾凭证。</p>
+<p>错误的32 passed进展已在原历史后追加纠正；实际首次31过1失败、诊断补丁和修后32过全部保留。另有*.test.ts未被Vitest收集、旧测试夹具缺session_id、情绪零值选择器双命中等开发失败，进展及原log保留，未把空收集/失败当作通过。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>问题</th><th>优先级</th><th>修正 / 审计结论</th></tr></thead><tbody>
+<tr><td>C35-000 /继承C34-004</td><td>P2</td><td>版本屏障＋自动预填；两页各3/3→0/3，限定工程范围关闭</td></tr>
+<tr><td>C35-001 跨窗口注入范围</td><td>P3</td><td>原2失败保留，诊断后仅阻塞旧watch；修后通过关闭</td></tr>
+<tr><td>C35-002 通过数误记</td><td>P3</td><td>追加更正、不改历史；真实32与后续192通过关闭</td></tr>
+<tr><td>C35-003 历史current误用</td><td>P3</td><td>旧源严格Git，归档当前SHA；独立复算通过关闭</td></tr>
+<tr><td>C35-004 文档仍写暂停/旧开放</td><td>P2文档</td><td>README/backend/AGENTS/路线同步，外置README去陈旧状态指针</td></tr>
+<tr><td>C35-005 初始metadata无上界</td><td>P2</td><td>独立15秒owner/ticket计时器、重试/卸载/迟到控制通过关闭</td></tr>
+</tbody></table></div>
+<p><a href="问题单/C35-000-C34-004页面旧缓存修复.md">C35-000-C34-004页面旧缓存修复</a></p>
+<p><a href="问题单/C35-001-跨窗口补充场景失败.md">C35-001-跨窗口补充场景失败</a></p>
+<p><a href="问题单/C35-002-测试通过数误记.md">C35-002-测试通过数误记</a></p>
+<p><a href="问题单/C35-003-历史绑定误用当前辅助代码.md">C35-003-历史绑定误用当前辅助代码</a></p>
+<p><a href="问题单/C35-004-恢复后的入口文档状态过时.md">C35-004-恢复后的入口文档状态过时</a></p>
+<p><a href="问题单/C35-005-初始版本读取缺少就绪上界.md">C35-005-初始版本读取缺少就绪上界</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+<p><a href="工作目录/002-系统回归/asset-readme-status-update.json">外置README变更留痕</a></p>
+</section>
+<section><h2>未批准范围与下一循环</h2>
+<p>数据库写入时刻无法瞬时同步到所有离线屏幕，已测的是收到新版本/实例或获知不可用后的隐藏/恢复；未宣称RAM物理清零。自动情绪仍为进程态，文本恢复与跨OS PAD数值连续性分离。规则/模型数值不是人类情绪真值。</p>
+<p>下一循环先将这次实际隐私边界收敛到可维护日常浏览器回归入口，避免只留专项审计驱动；随后推进C19-001/P1通用任务交付与事实归属的新固定材料研究，开发与保护评测分离，实模先基线后候选。C31分析跳过候选保持隔离，已有开发算式/代号题不充当一般能力验收。</p>
+<p>真人中文口型、物理麦克风/设备、正式渲染、自由对话与多日运行仍开放，本轮不批准整体代际跃迁。GPU仅在后续实模研究需要时按实际空闲与UUID选择，同组最多4张；不固定6–7，不停止他人进程。持续Goal active，阶段封存后继续下一循环，小步及时提交与串行推送。</p>
+<p><a href="../../远期目标与验收路线.md">远期目标与验收路线</a></p>
+<p><a href="../../../2026-11-12-项目数据集中迁移/迁移报告.md">迁移封存报告</a></p>
+</section>
+</main></body></html>
