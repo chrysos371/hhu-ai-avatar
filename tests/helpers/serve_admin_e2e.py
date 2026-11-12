@@ -78,7 +78,13 @@ else:
     if os.getenv('AVATAR_E2E_PLAYBACK_AUDIT') == '1':
         playback_overrides = {'fixture-playback-audit':
             (Path(__file__).resolve().parents[2] / 'evals/interaction/cycle-08/final-three-segments.txt').read_text().strip()}
-    _, provider_url = provider_context.enter_context(controlled_provider(delay=0.02, reply_overrides=playback_overrides))
+    # Exact C36 protocol inputs alone get a known cognitive delta. Generation
+    # transport and all other cognitive inputs retain the original fixture.
+    state_protocol = json.loads((project_root / 'evals/interaction/cycle-36/maintained-state-privacy-protocol.json').read_text())
+    analysis_overrides = {text: json.dumps(state_protocol['controlled_cognitive_response'])
+                          for text in state_protocol['preparation'].values()}
+    _, provider_url = provider_context.enter_context(controlled_provider(
+        delay=0.02, reply_overrides=playback_overrides, analysis_overrides=analysis_overrides))
     config.llm.api_key = 'local-browser-fixture'
     config.llm.model = 'fixture'
 config.llm.base_url = provider_url

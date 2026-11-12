@@ -12,7 +12,8 @@ from pathlib import Path
 
 
 @contextmanager
-def controlled_provider(delay=0.04, reply_overrides=None):
+def controlled_provider(delay=0.04, reply_overrides=None, *, analysis_overrides=None):
+    """Optional exact-user-input cognitive bodies are controlled test data only."""
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
             pass
@@ -27,6 +28,8 @@ def controlled_provider(delay=0.04, reply_overrides=None):
                 return
             text = ('{"emotion":{"valence":0,"arousal":0},"facts":[]}'
                     if data.get('response_format') else '第一句已经生成。第二句继续说明。第三句完成交付。')
+            if data.get('response_format') and analysis_overrides:
+                text = analysis_overrides.get(data['messages'][-1]['content'], text)
             if not data.get('response_format') and 'fixture-long' in data['messages'][-1]['content']:
                 text = (Path(__file__).resolve().parents[3] / 'evals/interaction/long-reply-v1.txt').read_text()
             if not data.get('response_format'):

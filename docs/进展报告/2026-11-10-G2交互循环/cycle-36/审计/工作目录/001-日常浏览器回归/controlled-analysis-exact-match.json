@@ -1,0 +1,84 @@
+{
+  "verified": true,
+  "scope": "three_controlled_provider_http_requests_only_no_Avatar_or_native_calls",
+  "protocol_sha256": "1f1d256765d51958ea982cce3d80731d9d7cef5ed01dc11f38052833cc2ef992",
+  "source_sha256": {
+    "src/avatar/lab/transport_fixture.py": "95d6a8b83c1d5b00a397d4801252c7c24c36ea858e9d84db1ce0d48c6c7aa937",
+    "tests/helpers/serve_admin_e2e.py": "909d295db4d7486c9c21d0f4a3f61df3208849de8d3b1fe187ccb7df2968c4b8"
+  },
+  "cases": [
+    {
+      "case": "exact_analysis",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "我叫缓存小岚，我很难过。"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "fixture",
+        "choices": [
+          {
+            "message": {
+              "role": "assistant",
+              "content": "{\"emotion\": {\"valence\": -0.6, \"arousal\": 0.4}, \"facts\": []}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "case": "other_analysis",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "我叫缓存小岚，我很难过。另一句"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "response": {
+        "id": "fixture",
+        "choices": [
+          {
+            "message": {
+              "role": "assistant",
+              "content": "{\"emotion\":{\"valence\":0,\"arousal\":0},\"facts\":[]}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "case": "same_generation",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "我叫缓存小岚，我很难过。"
+          }
+        ]
+      },
+      "response": {
+        "id": "fixture",
+        "choices": [
+          {
+            "message": {
+              "role": "assistant",
+              "content": "第一句已经生成。第二句继续说明。第三句完成交付。"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "source_precommit": true
+}
