@@ -4,6 +4,7 @@ from contextlib import closing
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import subprocess
@@ -27,12 +28,14 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--case', required=True)
 parser.add_argument('--freeze', type=Path, required=True)
 parser.add_argument('--expected-freeze-sha256', required=True)
+parser.add_argument('--run-tag', default='')
 args = parser.parse_args()
+assert not args.run_tag or re.fullmatch(r'[a-z0-9_-]+', args.run_tag)
 protocol_path = ROOT / 'evals/interaction/cycle-35/browser-privacy-supplement-protocol.json'
 protocol = json.loads(protocol_path.read_text())
 case = next(c for c in protocol['cases'] if c['id'] == args.case)
 frozen = verify(args.freeze, args.expected_freeze_sha256, 'after')
-output = BASE / '实验' / ('supplement-' + args.case)
+output = BASE / '实验' / ('supplement-' + args.case + ('-' + args.run_tag if args.run_tag else ''))
 output.mkdir(parents=True, exist_ok=False)
 owned = Path(tempfile.mkdtemp(prefix='c35-control-', dir=project_data_root() / 'tmp'))
 report = {'scope': protocol['scope'], 'case': case, 'source_ref': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),

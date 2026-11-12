@@ -1,6 +1,7 @@
 """Archive a bundle first; freeze only after every phase input is committed."""
 import argparse
 import json
+import re
 import shutil
 import subprocess
 from browser_common import ROOT, BASE, PROTOCOL, source_names, digest, verify
@@ -8,8 +9,10 @@ from browser_common import ROOT, BASE, PROTOCOL, source_names, digest, verify
 parser = argparse.ArgumentParser()
 parser.add_argument('action', choices=('archive', 'freeze'))
 parser.add_argument('--phase', required=True, choices=('before', 'after'))
+parser.add_argument('--tag', default='')
 args = parser.parse_args()
-work = BASE / '审计/工作目录/001-页面版本屏障' / (args.phase + '-inputs')
+assert not args.tag or re.fullmatch(r'[a-z0-9_-]+', args.tag)
+work = BASE / '审计/工作目录/001-页面版本屏障' / (args.phase + ('-' + args.tag if args.tag else '') + '-inputs')
 mapping = work / 'browser-bundle.json'
 if args.action == 'archive':
     assert not mapping.exists()

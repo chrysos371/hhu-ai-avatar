@@ -9,8 +9,19 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
   const report = {id: input.id, page: input.page, completed: false, browser_version: browser.version(),
-    node_version: process.version, errors: [], calls: [], version_requests: [], observations: {}, failure: null};
+    node_version: process.version, errors: [], calls: [], version_requests: [], observations: {}, network: [], failure: null};
   page.on('pageerror', e => report.errors.push(e.message));
+  page.on('response', async response => {
+    const url = new URL(response.url());
+    if (url.pathname !== '/api/v1/emotion' && url.pathname !== '/api/v1/dashboard' && url.pathname !== '/api/v1/conversation/changes') return;
+    const row = {kind: 'response', at: performance.now(), route: url.pathname + url.search, status: response.status()};
+    report.network.push(row);
+    try { row.body = await response.json(); } catch (error) { row.body_error = String(error); }
+  });
+  page.on('requestfailed', request => {
+    const url = new URL(request.url());
+    if(url.pathname.startsWith('/api/v1/')) report.network.push({kind: 'failed', at: performance.now(), route: url.pathname + url.search, error: request.failure()});
+  });
   page.on('request', r => { if(r.url().includes('/conversation/changes?')) report.version_requests.push(new URL(r.url()).search); });
   const query = async (route, data) => {
     const response = await page.request.fetch(input.base_url + route, {method: data === undefined ? 'GET' : 'POST', data,
@@ -145,7 +156,13 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
     await page.screenshot({path: input.screenshot});
     if (report.errors.length) throw Error(JSON.stringify(report.errors));
     report.completed = true;
-  } catch (error) { report.failure = String(error); process.exitCode = 1; }
+  } catch (error) {
+    report.failure = String(error); process.exitCode = 1;
+    report.failure_dom = await dom().catch(e => ({error: String(e)}));
+    report.failure_page = await page.locator('main').innerText().catch(() => 'unavailable');
+    report.failure_visibility = await page.evaluate(() => ({visibility: document.visibilityState, focus: document.hasFocus()})).catch(() => null);
+    await page.screenshot({path: input.screenshot}).catch(() => {});
+  }
   finally {
     releaseOld?.(); releaseMetadata?.();
     await browser.close();
