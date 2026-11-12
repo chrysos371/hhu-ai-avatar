@@ -1,0 +1,29 @@
+{
+  "scope": "C38 selected fixed 4B development candidate evaluation only; no promotion",
+  "models": [
+    {
+      "repo_id": "Qwen/Qwen3-4B-GGUF",
+      "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+      "file": "Qwen3-4B-Q4_K_M.gguf",
+      "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+      "model_id": "qwen3-4b-q4_k_m",
+      "required_free_mib": 16384,
+      "metadata": "evals/interaction/cycle-26/model-metadata-4b.json"
+    }
+  ],
+  "fixed_generation": {
+    "temperature": 0,
+    "seed": 42,
+    "context": 8192,
+    "max_tokens_cap": 512,
+    "thinking": false,
+    "concurrent_sequences": 1
+  },
+  "suites": [
+    "evals/interaction/cycle-02/real-model-cases.json",
+    "evals/interaction/cycle-02/subject-ownership-dev16.json"
+  ],
+  "analysis": "Same family and Q4_K_M configuration, different parameter counts and quantized artifacts; report latency, memory, infrastructure fallbacks, profile/lexical checks, all raw replies. Not a pure one-variable hardware comparison.",
+  "selection_gate": "Do not select configuration unless all frozen objective checks and profile checks pass with zero service fallbacks and no regression. Independent semantic/physical/multi-day acceptance remains separate.",
+  "warmup": "Two short calls, sync then stream, before recording scenario timings; earlier 4B ablation already used a warmed provider. Preserve this difference in reporting."
+}
