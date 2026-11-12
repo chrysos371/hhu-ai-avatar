@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/run_shared_affect.py", line 239, in <module>
+    SharedAffect(args).run()
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/run_shared_affect.py", line 61, in __init__
+    self.args=args;self.frozen=verify_freeze(args.freeze,args.expected_freeze_sha256,args.model);verify_historical_binding(self.frozen);prior_gate(args)
+  File "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/run_shared_affect.py", line 51, in prior_gate
+    if args.prior_4b is None or not args.prior_4b_sha256 or digest(args.prior_4b)!=args.prior_4b_sha256:raise ValueError('32B requires pinned completed same-freeze shared4B engineering evidence')
+ValueError: 32B requires pinned completed same-freeze shared4B engineering evidence

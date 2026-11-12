@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "actual_subprocesses": true,
+  "actual_llm_or_gpu": false,
+  "freeze_sha256": "8037d5abea7e9f5cfaa2b4ad11bc9d2521b2edc807b3af20d51eec39f11f9930",
+  "controls": [
+    {
+      "name": "wrong_freeze",
+      "command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/run_shared_affect.py",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/前置负控/wrong_freeze-forbidden-output",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/执行冻结.json",
+        "--expected-freeze-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+      ],
+      "returncode": 1,
+      "expected": "Shared affect freeze identity changed",
+      "no_output_created": true,
+      "passed": true
+    },
+    {
+      "name": "32b_without_4b",
+      "command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/run_shared_affect.py",
+        "--model",
+        "qwen3-32b-q4_k_m",
+        "--output",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/前置负控/32b_without_4b-forbidden-output",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/执行冻结.json",
+        "--expected-freeze-sha256",
+        "8037d5abea7e9f5cfaa2b4ad11bc9d2521b2edc807b3af20d51eec39f11f9930",
+        "--provider-python",
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python"
+      ],
+      "returncode": 1,
+      "expected": "32B requires pinned completed",
+      "no_output_created": true,
+      "passed": true
+    },
+    {
+      "name": "worker_wrong_freeze",
+      "command": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/shared_affect_worker.py",
+        "--model",
+        "qwen3-4b-q4_k_m",
+        "--db",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/前置负控/must-not-create.db",
+        "--ready",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/前置负控/worker-forbidden-ready.json",
+        "--runtime-out",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/前置负控/worker-forbidden-runtime.json",
+        "--provider-url",
+        "http://127.0.0.1:1/v1",
+        "--freeze",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/执行冻结.json",
+        "--expected-freeze-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "--analysis-arm",
+        "lab_readonly_candidate"
+      ],
+      "returncode": 1,
+      "no_db_ready_runtime_created": true,
+      "passed": true
+    }
+  ]
+}
