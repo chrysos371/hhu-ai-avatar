@@ -2,6 +2,7 @@
 from hashlib import sha256
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 import json
+from pathlib import Path
 import threading
 from urllib.error import HTTPError
 from urllib.request import Request,build_opener,ProxyHandler
@@ -54,7 +55,7 @@ def main():
     finally:
         relay.shutdown();threads[1].join(5);relay.server_close();upstream.shutdown();threads[0].join(5);upstream.server_close()
     out=BASE/'审计/工作目录/001-真实模型重启历史利用/relay-cpu-controls.json';assert not out.exists()
-    out.write_text(json.dumps({'passed':True,'actual_llm_or_gpu':False,'fake_upstream_only':True,'helper_sha256':digest(__file__ if hasattr(__file__,'read_bytes') else __import__('pathlib').Path(__file__)),
+    out.write_text(json.dumps({'passed':True,'actual_llm_or_gpu':False,'fake_upstream_only':True,'helper_sha256':digest(Path(__file__)),
         'wire_checks':checks,'wrong_credential_rejected_before_upstream':True,'grade_controls':grades,'threads_closed':all(not t.is_alive() for t in threads)},ensure_ascii=False,indent=2)+'\n')
     print('CPU fake-upstream control:4 byte-exact sync/stream cognition/generation paths,wrong credential blocked,6 score positive/negative pairs; no real model or GPU.')
 

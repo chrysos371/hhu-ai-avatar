@@ -19,7 +19,8 @@ def source_paths():
     paths.update(str(p.relative_to(ROOT)) for g in ('src','tests','scripts') for p in (ROOT/g).rglob('*.py'))
     paths.update('evals/interaction/cycle-26/model-metadata-'+label+'.json' for label in ('4b','14b','32b'))
     paths.update(str((OLD/n).relative_to(ROOT)) for n in ('context_baseline_common.py','context_fault_common.py','run_context_baseline.py','run_context_fault_controls.py'))
-    paths.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('context_native_common.py','context_native_worker.py','context_native_relay.py','run_native_context_use.py'))
+    paths.update(str((BASE/'审计'/n).relative_to(ROOT)) for n in ('context_native_common.py','context_native_worker.py','context_native_relay.py','run_native_context_use.py','probe_relay_controls.py'))
+    paths.update(str((BASE/'审计/工作目录/001-真实模型重启历史利用'/n).relative_to(ROOT)) for n in ('relay-cpu-controls.json','relay-cpu-controls.log'))
     return paths
 
 
