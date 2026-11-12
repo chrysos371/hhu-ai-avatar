@@ -1,0 +1,25 @@
+{
+  "scope": "Compile GBNF only; no model load/inference and no semantic result.",
+  "runs": [
+    {
+      "label": "default-library-path",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "-c",
+        "import json,hashlib\nfrom pathlib import Path\nfrom importlib.metadata import version\nfrom llama_cpp import LlamaGrammar,llama_supports_gpu_offload\nprotocol=json.loads(Path(\"evals/interaction/cycle-25/structured-provider-protocol.json\").read_text())\nrows=[]\nfor case in protocol[\"cases\"]:\n grammar=LlamaGrammar.from_json_schema(json.dumps(case[\"schema\"]),verbose=False)\n rows.append({\"id\":case[\"id\"],\"grammar_nonempty\":bool(grammar._grammar),\"grammar_sha256\":hashlib.sha256(grammar._grammar.encode()).hexdigest(),\"gbnf\":grammar._grammar})\nprint(json.dumps({\"llama_cpp_python\":version(\"llama-cpp-python\"),\"cuda_offload_supported\":llama_supports_gpu_offload(),\"models_loaded\":False,\"schemas\":rows},ensure_ascii=False,indent=2))\n"
+      ],
+      "exit_code": 1,
+      "LD_LIBRARY_PATH": null
+    },
+    {
+      "label": "explicit-runner-library-path",
+      "argv": [
+        "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/bin/python",
+        "-c",
+        "import json,hashlib\nfrom pathlib import Path\nfrom importlib.metadata import version\nfrom llama_cpp import LlamaGrammar,llama_supports_gpu_offload\nprotocol=json.loads(Path(\"evals/interaction/cycle-25/structured-provider-protocol.json\").read_text())\nrows=[]\nfor case in protocol[\"cases\"]:\n grammar=LlamaGrammar.from_json_schema(json.dumps(case[\"schema\"]),verbose=False)\n rows.append({\"id\":case[\"id\"],\"grammar_nonempty\":bool(grammar._grammar),\"grammar_sha256\":hashlib.sha256(grammar._grammar.encode()).hexdigest(),\"gbnf\":grammar._grammar})\nprint(json.dumps({\"llama_cpp_python\":version(\"llama-cpp-python\"),\"cuda_offload_supported\":llama_supports_gpu_offload(),\"models_loaded\":False,\"schemas\":rows},ensure_ascii=False,indent=2))\n"
+      ],
+      "exit_code": 0,
+      "LD_LIBRARY_PATH": "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/nvidia/cuda_runtime/lib:/data/Users/zrh/repo/runtime/gpu-libs/nvidia/cublas/lib:/data/Users/zrh/repo/runtime/gpu-libs/nvidia/cudnn/lib"
+    }
+  ]
+}

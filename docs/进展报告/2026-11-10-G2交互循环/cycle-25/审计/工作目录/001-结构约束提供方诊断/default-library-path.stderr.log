@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/llama_cpp/_ctypes_extensions.py", line 67, in load_shared_library
+    return ctypes.CDLL(str(lib_path), **cdll_args)  # type: ignore
+  File "/usr/lib/python3.10/ctypes/__init__.py", line 374, in __init__
+    self._handle = _dlopen(self._name, mode)
+OSError: libcudart.so.12: cannot open shared object file: No such file or directory
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+  File "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/llama_cpp/__init__.py", line 1, in <module>
+    from .llama_cpp import *
+  File "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/llama_cpp/llama_cpp.py", line 43, in <module>
+    _lib = load_shared_library(_lib_base_name, _base_path)
+  File "/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/llama_cpp/_ctypes_extensions.py", line 69, in load_shared_library
+    raise RuntimeError(f"Failed to load shared library '{lib_path}': {e}")
+RuntimeError: Failed to load shared library '/data/Users/zrh/repo/envs/hhu-ai-avatar-llm/lib/python3.10/site-packages/llama_cpp/lib/libllama.so': libcudart.so.12: cannot open shared object file: No such file or directory

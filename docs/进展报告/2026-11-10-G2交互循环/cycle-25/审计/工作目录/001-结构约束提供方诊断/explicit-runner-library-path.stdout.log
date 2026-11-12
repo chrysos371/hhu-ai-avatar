@@ -1,0 +1,31 @@
+{
+  "llama_cpp_python": "0.3.19",
+  "cuda_offload_supported": true,
+  "models_loaded": false,
+  "schemas": [
+    {
+      "id": "const_sentinel",
+      "grammar_nonempty": true,
+      "grammar_sha256": "41ab2007e5823c13eb5324c2a2ebf0df8438ac6890702145175edf1a12e6b785",
+      "gbnf": "probe-tag ::= \"\\\"c25_schema_only_7a69\\\"\"\nprobe-tag-kv ::= \"\\\"probe_tag\\\"\" space \":\" space probe-tag\nroot ::= \"{\" space probe-tag-kv \"}\" space\nspace ::= \" \"?"
+    },
+    {
+      "id": "status_enum_adversarial",
+      "grammar_nonempty": true,
+      "grammar_sha256": "72d458b4402766cae28b1e9c856152a8e9fb9f86b1ee11d539444f5be6109f49",
+      "gbnf": "delivery-status ::= \"\\\"not_executed\\\"\"\ndelivery-status-kv ::= \"\\\"delivery_status\\\"\" space \":\" space delivery-status\nroot ::= \"{\" space delivery-status-kv \"}\" space\nspace ::= \" \"?"
+    },
+    {
+      "id": "teacher_draft",
+      "grammar_nonempty": true,
+      "grammar_sha256": "699d722c932894e6ebbf14cf84e5fe41e5bb8f82127d1c8056459b2b8950c7af",
+      "gbnf": "char ::= [^\"\\\\] | \"\\\\\" ([\"\\\\/bfnrt] | \"u\" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])\ndelivery-status ::= \"\\\"not_executed\\\"\"\ndelivery-status-kv ::= \"\\\"delivery_status\\\"\" space \":\" space delivery-status\ndraft-kv ::= \"\\\"draft\\\"\" space \":\" space string\nroot ::= \"{\" space delivery-status-kv \",\" space draft-kv \"}\" space\nspace ::= \" \"?\nstring ::= \"\\\"\" char* \"\\\"\" space"
+    },
+    {
+      "id": "literal_preservation",
+      "grammar_nonempty": true,
+      "grammar_sha256": "699d722c932894e6ebbf14cf84e5fe41e5bb8f82127d1c8056459b2b8950c7af",
+      "gbnf": "char ::= [^\"\\\\] | \"\\\\\" ([\"\\\\/bfnrt] | \"u\" [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F])\ndelivery-status ::= \"\\\"not_executed\\\"\"\ndelivery-status-kv ::= \"\\\"delivery_status\\\"\" space \":\" space delivery-status\ndraft-kv ::= \"\\\"draft\\\"\" space \":\" space string\nroot ::= \"{\" space delivery-status-kv \",\" space draft-kv \"}\" space\nspace ::= \" \"?\nstring ::= \"\\\"\" char* \"\\\"\" space"
+    }
+  ]
+}
