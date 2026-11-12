@@ -171,3 +171,31 @@ def test_actual_http_sse_query_result_and_SQL_remain_readonly(api_v1,monkeypatch
         row=memory._conn.execute('SELECT content FROM memory_messages WHERE id=?',
                                 (result['conversation']['assistant_message_id'],)).fetchone()
         assert row[0]==result['reply']
+
+
+@pytest.mark.parametrize('interrupt',['cancel','forget'])
+def test_read_checkpoint_keeps_emotion_epoch_current_without_erasing_valid_same_epoch_observation(tmp_path,monkeypatch,interrupt):
+    from avatar.brain import reminder_queries
+    path=str(tmp_path/'query-emotion-epoch.db')
+    with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
+        seed(memory)
+        root=memory.add_message('user','受控旧情感来源。','old')
+        fact=memory.remember('受控旧情感来源',source_message_id=root)
+        bot=Avatar(memory=memory,llm=Recorder('must not run'))
+        bot.emotion.bind_context_revision(memory.context_revision)
+        bot.emotion.observe(-.5,.6,text='受控旧情感来源。')
+        assert bot.emotion.state.valence != 0
+        token=CancellationToken(); original=reminder_queries.resolve_query
+        def changed(*args,**kwargs):
+            result=original(*args,**kwargs)
+            if interrupt=='forget':writer.forget(fact)
+            else:token.cancel()
+            return result
+        monkeypatch.setattr(reminder_queries,'resolve_query',changed)
+        with pytest.raises(Cancelled):bot.respond('查询提醒编号1',cancel=token)
+        assert bot.emotion.context_revision==memory.context_revision
+        if interrupt=='forget':
+            assert bot.emotion.state.valence==bot.emotion.state.arousal==0
+            assert bot.emotion.user_state.valence==bot.emotion.user_state.arousal==0
+        else:
+            assert bot.emotion.state.valence!=0  # mere cancellation keeps valid completed observations

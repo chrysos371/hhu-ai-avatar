@@ -1,0 +1,38 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_read_checkpoint_keeps_emotion_epoch_current_without_erasing_valid_same_epoch_observation[forget] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-20/test_read_checkpoint_keeps_emo1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3e547769b0>
+interrupt = 'forget'
+
+    @pytest.mark.parametrize('interrupt',['cancel','forget'])
+    def test_read_checkpoint_keeps_emotion_epoch_current_without_erasing_valid_same_epoch_observation(tmp_path,monkeypatch,interrupt):
+        from avatar.brain import reminder_queries
+        path=str(tmp_path/'query-emotion-epoch.db')
+        with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
+            seed(memory)
+            root=memory.add_message('user','受控旧情感来源。','old')
+            fact=memory.remember('受控旧情感来源',source_message_id=root)
+            bot=Avatar(memory=memory,llm=Recorder('must not run'))
+            bot.emotion.bind_context_revision(memory.context_revision)
+            bot.emotion.observe(-.5,.6,text='受控旧情感来源。')
+            assert bot.emotion.state.valence != 0
+            token=CancellationToken(); original=reminder_queries.resolve_query
+            def changed(*args,**kwargs):
+                result=original(*args,**kwargs)
+                if interrupt=='forget':writer.forget(fact)
+                else:token.cancel()
+                return result
+            monkeypatch.setattr(reminder_queries,'resolve_query',changed)
+            with pytest.raises(Cancelled):bot.respond('查询提醒编号1',cancel=token)
+>           assert bot.emotion.context_revision==memory.context_revision
+E           assert 0 == 1
+E            +  where 0 = <avatar.brain.emotion.EmotionEngine object at 0x7f3e54777280>.context_revision
+E            +    where <avatar.brain.emotion.EmotionEngine object at 0x7f3e54777280> = <avatar.main.Avatar object at 0x7f3e54777460>.emotion
+E            +  and   1 = <avatar.brain.memory.MemoryStore object at 0x7f3e54777cd0>.context_revision
+
+tests/test_reminder_query_flow.py:196: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_query_flow.py::test_read_checkpoint_keeps_emotion_epoch_current_without_erasing_valid_same_epoch_observation[forget]
+1 failed, 1 passed, 19 deselected in 0.88s
