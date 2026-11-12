@@ -1,0 +1,23 @@
+.................................................................F.      [100%]
+=================================== FAILURES ===================================
+_ test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot[True] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-30/test_cross_connection_forget_a1')
+caller_snapshot = True
+
+    @pytest.mark.parametrize('caller_snapshot',[False,True])
+    def test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot(tmp_path, caller_snapshot):
+        path=tmp_path/'source.sqlite'
+        with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
+            if caller_snapshot:
+                assert memory._conn.execute('PRAGMA journal_mode=WAL').fetchone()[0]=='wal'
+>               assert writer._conn.execute('PRAGMA journal_mode').fetchone()[0]=='wal'
+E               AssertionError: assert 'delete' == 'wal'
+E                 
+E                 - wal
+E                 + delete
+
+tests/test_trusted_local_read.py:258: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_trusted_local_read.py::test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot[True]
+1 failed, 66 passed in 1.05s

@@ -2,6 +2,7 @@
 from contextlib import closing
 from dataclasses import replace
 import json
+import sqlite3
 import time
 
 import pytest
@@ -119,7 +120,7 @@ def test_missing_record_and_corrupt_existing_record_are_distinct(lab):
 def test_actual_client_ack_is_not_human_reading(lab):
     memory, session = lab
     now = time.time()
-    memory._conn.execute('INSERT INTO memory_reminder_deliveries(reminder_id,queued_at,acknowledged_at) VALUES (?,?,?)', (1,now,now));memory._conn.commit()
+    memory._conn.execute('INSERT INTO memory_reminder_deliveries(reminder_id,created_at,acknowledged_at) VALUES (?,?,?)', (1,now,now));memory._conn.commit()
     session.begin_turn('提醒编号1是什么状态？')
     result = session.execute('read_reminder_state', {'reminder_id':1})
     assert result.data['state']['client_ack_recorded'] and not result.data['human_reading_verified']
@@ -252,6 +253,11 @@ def test_cancellation_never_publishes_stale_read(lab, phase):
 def test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot(tmp_path, caller_snapshot):
     path=tmp_path/'source.sqlite'
     with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
+        if caller_snapshot:
+            assert memory._conn.execute('PRAGMA journal_mode=WAL').fetchone()[0]=='wal'
+            assert writer._conn.execute('PRAGMA journal_mode').fetchone()[0]=='wal'
+        else:
+            assert memory._conn.execute('PRAGMA journal_mode').fetchone()[0]=='delete'
         calls=[0];armed=[False]
         fact=writer.remember('本次隐私版本控制事实')
         def checkpoint():
@@ -272,3 +278,24 @@ def test_cross_connection_forget_after_read_cannot_hide_behind_old_sql_snapshot(
         else:
             with pytest.raises(Cancelled):session.execute('read_reminder_state',{'reminder_id':1})
         assert projection(memory)==before
+
+
+def test_default_rollback_journal_blocks_writer_until_reader_releases(tmp_path):
+    path=tmp_path/'rollback.sqlite'
+    with closing(MemoryStore(path)) as memory,closing(MemoryStore(path)) as writer:
+        assert memory._conn.execute('PRAGMA journal_mode').fetchone()[0]=='delete'
+        session=LabReadSession(memory,'c41-rollback')
+        seed(memory)
+        fact=writer.remember('隐私版本控制')
+        session.begin_turn('提醒编号1是什么状态？')
+        memory._conn.execute('BEGIN')
+        result=session.execute('read_reminder_state',{'reminder_id':1})
+        revision=writer.context_revision
+        writer._conn.execute('PRAGMA busy_timeout=0')
+        with pytest.raises(sqlite3.OperationalError,match='locked'):writer.forget(fact)
+        assert not writer._conn.in_transaction and writer.context_revision==revision
+        with pytest.raises(Cancelled,match='released'):session.publish(result)
+        memory._conn.rollback()
+        writer.forget(fact)
+        assert writer.context_revision==revision+1
+        with pytest.raises(Cancelled):session.publish(result)
