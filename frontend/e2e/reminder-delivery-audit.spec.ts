@@ -75,7 +75,7 @@ test('reminder claim response and actual page presentation baseline', async ({ p
     expect(claimed[0].notified_at).not.toBeNull();
     if (scenario === 'navigation_before_response') {
       await page.getByRole('link', { name: '总览', exact: true }).click();
-      await expect(page.getByRole('heading', { name: '总览', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: '数字人大脑总览', exact: true })).toBeVisible();
       report.navigatedBeforeResponseRelease = true;
       release();
       await expect.poll(() => fulfilled, { timeout: 15000 }).toBe(1);
