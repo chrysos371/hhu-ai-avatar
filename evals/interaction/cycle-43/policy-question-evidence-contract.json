@@ -1,0 +1,36 @@
+{
+  "scope": "isolated finite policy-question source evidence; not general semantic intent proof/default integration",
+  "baseline": "C42 CatalogueReadSession eligible_complete unchanged",
+  "candidate": "new PolicyQuestionReadSession: only policy availability+execution tightened; state binding and reference clarification inherited unchanged",
+  "patterns": {
+    "runtime_cue": "程序|服务|系统|后台|进程|网页|浏览器|短信|邮件|电话|轮询|运行条件|送达条件|通知渠道|电脑|关机|休眠|断网|下线",
+    "record_reference": "这条|那条|某条|之前设的|以前设的|编号[ \\t]*[0-9]+|提醒(?:的编号|编号|#)?[ \\t]*[0-9]+",
+    "record_state": "状态|有效|取消|完成|存在|已经送达|已送达|送到没有|送达了吗"
+  },
+  "decision_order": [
+    "actual source authority before planning/execute",
+    "existing parameter_basis(text,args,POLICY) failure first",
+    "visible_source masks quoted/code spans without changing offsets",
+    "record reference AND record state => record_state_not_policy, even if runtime cue",
+    "no runtime cue => runtime_policy_basis_missing",
+    "else policy evidence allowed"
+  ],
+  "evidence": {
+    "immutable": "error plus runtime matches/indexes and record-reference/state flags; bound to actual live source via issued catalogue",
+    "model_visibility": "source original messages+eligible declared schemas only; no labels, evidence fields, SQL data, titles or permissions",
+    "semantic_intent_verified": false
+  },
+  "catalogue": "base eligible_complete; remove POLICY when actual finite evidence disallows; issue new live source-bound immutable catalogue with evidence and rehashed metadata; no business SELECT",
+  "execution": "candidate independently recomputes actual-source policy evidence inside authorized SQLite snapshot; direct POLICY submission cannot bypass unavailable catalogue; no model-supplied authority or metadata",
+  "unchanged_safety": [
+    "caller startup transaction rejection",
+    "source role/text/latest/session/revision/persisted scope",
+    "own snapshot/release before model waits",
+    "publish current source and latest-issued identity",
+    "no claim/ACK/create/cancel/external send",
+    "no verified read => fixed no-read; model draft retained not published"
+  ],
+  "clarification": "existing no-unique-ID ReferenceClarification distinct from business read and validation error; extra policy evidence does not itself authorize reference clarification",
+  "execution_authority": "CPU/current-software/runtime identity then separate exact frozen descriptor; protected separate after primary development pass",
+  "default_enabled": false
+}
