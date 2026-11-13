@@ -249,3 +249,16 @@ def test_cancellation_after_catalogue_never_permits_model_use_or_clarification(l
     cat=session.catalogue(TOOLS,'eligible_complete');token.cancel()
     with pytest.raises(Cancelled):cat.require_current(session)
     with pytest.raises(Cancelled):session.execute(CLARIFY,{})
+
+
+def test_schema_hint_does_not_replace_execution_source_validation(lab):
+    memory,session=lab;session.begin_turn('提醒编号1现在是什么状态？')
+    cat=session.catalogue(TOOLS,'eligible_complete')
+    assert cat.tools[0]['function']['parameters']['properties']['reminder_id']['const']==1
+    before,changes=projection(memory),memory._conn.total_changes
+    trace=[];memory._conn.set_trace_callback(trace.append)
+    result=session.execute(STATE,{'reminder_id':12345})
+    assert not result.ok and result.error['code']=='unbound_reminder_id' and result.data is None
+    assert not any('FROM memory_reminders r' in sql for sql in trace)
+    assert SECRET not in session.publish(result)
+    assert projection(memory)==before and memory._conn.total_changes==changes
