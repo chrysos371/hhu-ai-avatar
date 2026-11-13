@@ -176,7 +176,7 @@ def test_model_arguments_cannot_override_policy_authority(lab,arguments,code):
 def test_caller_transaction_is_not_committed_by_planning_execution_or_publication(lab):
     memory,session=lab;session.begin_turn('程序退出后，本机提醒还能通知吗？')
     memory._conn.execute('BEGIN')
-    memory._conn.execute("INSERT INTO memory_messages(role,content,session_id) VALUES('assistant','pending','x')")
+    memory._conn.execute("INSERT INTO memory_messages(role,content,session_id,created_at) VALUES('assistant','pending','x',?)",(time.time(),))
     with pytest.raises(Cancelled):session.catalogue(TOOLS)
     assert memory._conn.in_transaction
     read=session.execute(POLICY,{})
@@ -189,7 +189,7 @@ def test_caller_transaction_is_not_committed_by_planning_execution_or_publicatio
 def test_startup_rejects_active_caller_transaction_before_schema_commit():
     with closing(MemoryStore(':memory:')) as memory:
         memory._conn.execute('BEGIN')
-        memory._conn.execute("INSERT INTO memory_messages(role,content,session_id) VALUES('assistant','pending','x')")
+        memory._conn.execute("INSERT INTO memory_messages(role,content,session_id,created_at) VALUES('assistant','pending','x',?)",(time.time(),))
         with pytest.raises(Cancelled):PolicyQuestionReadSession(memory,'pending')
         assert memory._conn.in_transaction
         memory._conn.rollback()
