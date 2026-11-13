@@ -1,0 +1,618 @@
+{
+  "scope": "posthoc descriptive accounting only; no native/selection/rerouting/protected execution",
+  "native_calls": 0,
+  "verification_sha256": "dcd8cfa0bcd3e66be5f7e7d808ed20193107b920dcd93fe86a931d0d46c79671",
+  "arm_accounting": {
+    "full": {
+      "task_score": 27,
+      "native_calls": 30,
+      "framework_skips": 0,
+      "origins": {
+        "guarded_failure": 6,
+        "trusted_read_fixed": 9,
+        "model_no_tool_fixed": 15
+      },
+      "by_category": {
+        "read": {
+          "total": 12,
+          "task_correct": 9,
+          "native_used": 12,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 3
+        },
+        "avoid": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 12,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0
+        },
+        "clarify": {
+          "total": 6,
+          "task_correct": 6,
+          "native_used": 6,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0
+        }
+      }
+    },
+    "eligible_bound": {
+      "task_score": 24,
+      "native_calls": 18,
+      "framework_skips": 12,
+      "origins": {
+        "trusted_read_fixed": 18,
+        "framework_no_eligible": 12
+      },
+      "by_category": {
+        "read": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 12,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 6
+        },
+        "avoid": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 0,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0
+        },
+        "clarify": {
+          "total": 6,
+          "task_correct": 0,
+          "native_used": 6,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 6
+        }
+      }
+    },
+    "eligible_complete": {
+      "task_score": 27,
+      "native_calls": 18,
+      "framework_skips": 12,
+      "origins": {
+        "trusted_read_fixed": 15,
+        "framework_no_eligible": 12,
+        "verified_clarification": 3
+      },
+      "by_category": {
+        "read": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 12,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 6
+        },
+        "avoid": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 0,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0
+        },
+        "clarify": {
+          "total": 6,
+          "task_correct": 3,
+          "native_used": 6,
+          "explicit_verified_clarification": 3,
+          "wrong_policy_reads": 3
+        }
+      }
+    }
+  },
+  "deterministic_repeat_groups": [
+    {
+      "case": "policy-exit",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "policy-exit",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "policy-exit",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "policy-web",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "policy-web",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "policy-web",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "state-1",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "state-1",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "state-1",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-999",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-999",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-999",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "quoted-draft",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "quoted-draft",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "quoted-draft",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "negated-read",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "negated-read",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "negated-read",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "external-mail",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "external-mail",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "external-mail",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "ordinary",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "ordinary",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "ordinary",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "missing-reference-status",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-reference-status",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-reference-status",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-reference-number",
+      "arm": "full",
+      "three_repeated_proposal_and_reply_identical": true
+    },
+    {
+      "case": "missing-reference-number",
+      "arm": "eligible_bound",
+      "three_repeated_proposal_and_reply_identical": false
+    },
+    {
+      "case": "missing-reference-number",
+      "arm": "eligible_complete",
+      "three_repeated_proposal_and_reply_identical": false
+    }
+  ],
+  "historical_lineage": [
+    {
+      "prior": "C40",
+      "paired_reused_cases": 24,
+      "comparisons": [
+        {
+          "repetition": 1,
+          "case": "policy-exit",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "policy-web",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "state-1",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "missing-999",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "quoted-draft",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "negated-read",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "external-mail",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": false
+        },
+        {
+          "repetition": 1,
+          "case": "ordinary",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "policy-exit",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "policy-web",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "state-1",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "missing-999",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "quoted-draft",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "negated-read",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "external-mail",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": false
+        },
+        {
+          "repetition": 2,
+          "case": "ordinary",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "policy-exit",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "policy-web",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "state-1",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "missing-999",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "quoted-draft",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "negated-read",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "external-mail",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": false
+        },
+        {
+          "repetition": 3,
+          "case": "ordinary",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        }
+      ],
+      "request_hash_equal_count": 0,
+      "prompt_hash_equal_count": 24,
+      "raw_equal_count": 21
+    },
+    {
+      "prior": "C41",
+      "paired_reused_cases": 24,
+      "comparisons": [
+        {
+          "repetition": 1,
+          "case": "policy-exit",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "policy-web",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "state-1",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "missing-999",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "quoted-draft",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "negated-read",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 1,
+          "case": "external-mail",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": false
+        },
+        {
+          "repetition": 1,
+          "case": "ordinary",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "policy-exit",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "policy-web",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "state-1",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "missing-999",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "quoted-draft",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "negated-read",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 2,
+          "case": "external-mail",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": false
+        },
+        {
+          "repetition": 2,
+          "case": "ordinary",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "policy-exit",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "policy-web",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "state-1",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "missing-999",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "quoted-draft",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "negated-read",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        },
+        {
+          "repetition": 3,
+          "case": "external-mail",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": false
+        },
+        {
+          "repetition": 3,
+          "case": "ordinary",
+          "same_request_body_bytes": false,
+          "same_rendered_native_prompt": true,
+          "same_native_raw": true
+        }
+      ],
+      "request_hash_equal_count": 0,
+      "prompt_hash_equal_count": 24,
+      "raw_equal_count": 21
+    }
+  ],
+  "new_unseen_native_development_cases": 2,
+  "reused_native_development_cases": 8,
+  "rules_are_not_model_decisions": true,
+  "score_does_not_certify_general_chat_quality": true,
+  "analyzer_sha256": "b792cd280cdec1f4e00b52b73c2ca90c16522ed6a433a4d603645440a6b16783"
+}
