@@ -1,0 +1,489 @@
+{
+  "scope": "posthoc measured accounting; not model execution or causal explanation of output variation",
+  "native_calls": 0,
+  "verification_sha256": "9ae7c93897d6ff8f80d5d7c8f4d80c1afdc4036accfdb7e973e7b766296b9e4c",
+  "arm_accounting": {
+    "baseline_complete": {
+      "task_score": 41,
+      "native_calls": 36,
+      "framework_skips": 12,
+      "origins": {
+        "trusted_read_fixed": 30,
+        "framework_no_eligible": 12,
+        "verified_clarification": 6
+      },
+      "by_category": {
+        "read": {
+          "total": 24,
+          "task_correct": 23,
+          "native_used": 24,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0,
+          "wrong_state_reads": 1
+        },
+        "avoid": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 0,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0,
+          "wrong_state_reads": 0
+        },
+        "clarify": {
+          "total": 12,
+          "task_correct": 6,
+          "native_used": 12,
+          "explicit_verified_clarification": 6,
+          "wrong_policy_reads": 6,
+          "wrong_state_reads": 0
+        }
+      }
+    },
+    "policy_grounded": {
+      "task_score": 47,
+      "native_calls": 36,
+      "framework_skips": 12,
+      "origins": {
+        "trusted_read_fixed": 24,
+        "framework_no_eligible": 12,
+        "verified_clarification": 12
+      },
+      "by_category": {
+        "read": {
+          "total": 24,
+          "task_correct": 23,
+          "native_used": 24,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0,
+          "wrong_state_reads": 1
+        },
+        "avoid": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 0,
+          "explicit_verified_clarification": 0,
+          "wrong_policy_reads": 0,
+          "wrong_state_reads": 0
+        },
+        "clarify": {
+          "total": 12,
+          "task_correct": 12,
+          "native_used": 12,
+          "explicit_verified_clarification": 12,
+          "wrong_policy_reads": 0,
+          "wrong_state_reads": 0
+        }
+      }
+    }
+  },
+  "repeat_groups": [
+    {
+      "case": "policy-exit",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "policy-exit",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "policy-web",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "policy-web",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "state-1",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "state-1",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "missing-999",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "missing-999",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "quoted-draft",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "quoted-draft",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "negated-read",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "negated-read",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "external-mail",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "external-mail",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "ordinary",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "ordinary",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "missing-reference-status",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "missing-reference-status",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "missing-reference-number",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "missing-reference-number",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "runtime-stopped-service",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "runtime-stopped-service",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "runtime-no-open-page",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "runtime-no-open-page",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "reference-cancelled-without-selection",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "reference-cancelled-without-selection",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "reference-delivered-state",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "reference-delivered-state",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "numbered-reference-channel",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": false
+    },
+    {
+      "case": "numbered-reference-channel",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": false
+    },
+    {
+      "case": "runtime-computer-sleep",
+      "arm": "baseline_complete",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    },
+    {
+      "case": "runtime-computer-sleep",
+      "arm": "policy_grounded",
+      "only_opaque_call_ids_normalized": true,
+      "three_repetitions_identical": true
+    }
+  ],
+  "C42_reused_native_pairs": [
+    {
+      "repetition": 1,
+      "case": "policy-exit",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 1,
+      "case": "policy-web",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 1,
+      "case": "state-1",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 1,
+      "case": "missing-999",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 1,
+      "case": "missing-reference-status",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 1,
+      "case": "missing-reference-number",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 2,
+      "case": "policy-exit",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 2,
+      "case": "policy-web",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 2,
+      "case": "state-1",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 2,
+      "case": "missing-999",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 2,
+      "case": "missing-reference-status",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 2,
+      "case": "missing-reference-number",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 3,
+      "case": "policy-exit",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 3,
+      "case": "policy-web",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 3,
+      "case": "state-1",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 3,
+      "case": "missing-999",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 3,
+      "case": "missing-reference-status",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    },
+    {
+      "repetition": 3,
+      "case": "missing-reference-number",
+      "same_request_body_bytes": true,
+      "same_rendered_native_prompt": true,
+      "same_native_raw": true
+    }
+  ],
+  "C42_request_SHA_equal": 18,
+  "C42_prompt_SHA_equal": 18,
+  "C42_native_raw_equal": 18,
+  "same_input_route_flip": [
+    {
+      "repetition": 1,
+      "arm": "baseline_complete",
+      "request_ordinal": 23,
+      "request_body_sha256": "96be99a0c421d9422826c18c56769675573c0a847dba868d6856400ad6282511",
+      "prompt_sha256": "3646acba29600258ac833636517b933463179f0ec939d939a98522302cdc5bfd",
+      "native_raw": "<tool_call>\n{\"name\": \"read_reminder_delivery_policy\", \"arguments\": {}}\n</tool_call>",
+      "function": "read_reminder_delivery_policy",
+      "arguments": {},
+      "native_finish_reason": "stop",
+      "temperature": 0
+    },
+    {
+      "repetition": 1,
+      "arm": "policy_grounded",
+      "request_ordinal": 24,
+      "request_body_sha256": "96be99a0c421d9422826c18c56769675573c0a847dba868d6856400ad6282511",
+      "prompt_sha256": "3646acba29600258ac833636517b933463179f0ec939d939a98522302cdc5bfd",
+      "native_raw": "<tool_call>\n{\"name\": \"read_reminder_delivery_policy\", \"arguments\": {}}\n</tool_call>",
+      "function": "read_reminder_delivery_policy",
+      "arguments": {},
+      "native_finish_reason": "stop",
+      "temperature": 0
+    },
+    {
+      "repetition": 2,
+      "arm": "baseline_complete",
+      "request_ordinal": 48,
+      "request_body_sha256": "96be99a0c421d9422826c18c56769675573c0a847dba868d6856400ad6282511",
+      "prompt_sha256": "3646acba29600258ac833636517b933463179f0ec939d939a98522302cdc5bfd",
+      "native_raw": "<tool_call>\n{\"name\": \"read_reminder_state\", \"arguments\": {\"reminder_id\": 1}}\n</tool_call>",
+      "function": "read_reminder_state",
+      "arguments": {
+        "reminder_id": 1
+      },
+      "native_finish_reason": "stop",
+      "temperature": 0
+    },
+    {
+      "repetition": 2,
+      "arm": "policy_grounded",
+      "request_ordinal": 47,
+      "request_body_sha256": "96be99a0c421d9422826c18c56769675573c0a847dba868d6856400ad6282511",
+      "prompt_sha256": "3646acba29600258ac833636517b933463179f0ec939d939a98522302cdc5bfd",
+      "native_raw": "<tool_call>\n{\"name\": \"read_reminder_state\", \"arguments\": {\"reminder_id\": 1}}\n</tool_call>",
+      "function": "read_reminder_state",
+      "arguments": {
+        "reminder_id": 1
+      },
+      "native_finish_reason": "stop",
+      "temperature": 0
+    },
+    {
+      "repetition": 3,
+      "arm": "baseline_complete",
+      "request_ordinal": 71,
+      "request_body_sha256": "96be99a0c421d9422826c18c56769675573c0a847dba868d6856400ad6282511",
+      "prompt_sha256": "3646acba29600258ac833636517b933463179f0ec939d939a98522302cdc5bfd",
+      "native_raw": "<tool_call>\n{\"name\": \"read_reminder_delivery_policy\", \"arguments\": {}}\n</tool_call>",
+      "function": "read_reminder_delivery_policy",
+      "arguments": {},
+      "native_finish_reason": "stop",
+      "temperature": 0
+    },
+    {
+      "repetition": 3,
+      "arm": "policy_grounded",
+      "request_ordinal": 72,
+      "request_body_sha256": "96be99a0c421d9422826c18c56769675573c0a847dba868d6856400ad6282511",
+      "prompt_sha256": "3646acba29600258ac833636517b933463179f0ec939d939a98522302cdc5bfd",
+      "native_raw": "<tool_call>\n{\"name\": \"read_reminder_delivery_policy\", \"arguments\": {}}\n</tool_call>",
+      "function": "read_reminder_delivery_policy",
+      "arguments": {},
+      "native_finish_reason": "stop",
+      "temperature": 0
+    }
+  ],
+  "route_flip_cause_established": false,
+  "runtime_seed": 42,
+  "reused_development_cases": 10,
+  "new_preregistered_development_cases": 6,
+  "protected_executed": false,
+  "rules_are_not_model_decisions": true,
+  "analyzer_sha256": "1e2409f9291dfca0136378ac7c0b100d84d85522bc48ea2a326b90e40dd87bf0"
+}
