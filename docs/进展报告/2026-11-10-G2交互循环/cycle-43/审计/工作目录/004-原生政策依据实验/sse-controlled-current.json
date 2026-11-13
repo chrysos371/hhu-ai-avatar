@@ -1,0 +1,117 @@
+{
+  "verified": true,
+  "scope": "actual SDK same-client SSE hook positive control with scripted loopback HTTP, no model/GPU",
+  "native_or_GPU_calls": 0,
+  "scripted_HTTP_streams": 1,
+  "requests": [
+    {
+      "body": {
+        "model": "scripted",
+        "stream": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "预热"
+          }
+        ],
+        "max_tokens": 32,
+        "temperature": 0
+      },
+      "sha256": "4ef1b2333e9f6e805a8d538c407f9eec4d446b1e926373b2fb071cb7a85a26a3"
+    }
+  ],
+  "hook_SHA256": [
+    "4ef1b2333e9f6e805a8d538c407f9eec4d446b1e926373b2fb071cb7a85a26a3"
+  ],
+  "response_statuses": [
+    200
+  ],
+  "raw_SSE": "data: {\"id\": \"scripted-sse-1\", \"object\": \"chat.completion.chunk\", \"model\": \"scripted\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"预热\"}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"scripted-sse-1\", \"object\": \"chat.completion.chunk\", \"model\": \"scripted\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"完成。\"}, \"finish_reason\": null}]}\n\ndata: {\"id\": \"scripted-sse-1\", \"object\": \"chat.completion.chunk\", \"model\": \"scripted\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"\"}, \"finish_reason\": \"stop\"}]}\n\ndata: [DONE]\n\n",
+  "SDK_events": [
+    {
+      "id": "scripted-sse-1",
+      "choices": [
+        {
+          "delta": {
+            "audio": null,
+            "content": "预热",
+            "function_call": null,
+            "refusal": null,
+            "role": null,
+            "tool_calls": null
+          },
+          "index": 0,
+          "finish_reason": null,
+          "logprobs": null
+        }
+      ],
+      "created": null,
+      "model": "scripted",
+      "object": "chat.completion.chunk",
+      "moderation": null,
+      "obfuscation": null,
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": null
+    },
+    {
+      "id": "scripted-sse-1",
+      "choices": [
+        {
+          "delta": {
+            "audio": null,
+            "content": "完成。",
+            "function_call": null,
+            "refusal": null,
+            "role": null,
+            "tool_calls": null
+          },
+          "index": 0,
+          "finish_reason": null,
+          "logprobs": null
+        }
+      ],
+      "created": null,
+      "model": "scripted",
+      "object": "chat.completion.chunk",
+      "moderation": null,
+      "obfuscation": null,
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": null
+    },
+    {
+      "id": "scripted-sse-1",
+      "choices": [
+        {
+          "delta": {
+            "audio": null,
+            "content": "",
+            "function_call": null,
+            "refusal": null,
+            "role": null,
+            "tool_calls": null
+          },
+          "index": 0,
+          "finish_reason": "stop",
+          "logprobs": null
+        }
+      ],
+      "created": null,
+      "model": "scripted",
+      "object": "chat.completion.chunk",
+      "moderation": null,
+      "obfuscation": null,
+      "service_tier": null,
+      "system_fingerprint": null,
+      "usage": null
+    }
+  ],
+  "result": {
+    "role": "assistant",
+    "content": "预热完成。"
+  },
+  "server_closed": true,
+  "probe_sha256": "1b5d7c4ecc6dec8b1ed85fcc32162ad34aeb4c9c9a5a4fe77e205284ba9552b7",
+  "sampler_sha256": "572874434b452a0839b7b9c41572ecb86814d49783a1202e66dc13295b26839b"
+}
