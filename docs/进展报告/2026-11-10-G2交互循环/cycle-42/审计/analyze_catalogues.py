@@ -1,5 +1,6 @@
 """Post-experiment accounting and historical prompt lineage, no model execution."""
 from collections import Counter
+import copy
 import json
 from pathlib import Path
 from native_common import ROOT,BASE,WORK,PROTOCOL,read,digest
@@ -27,13 +28,21 @@ def main():
                 'task_correct':sum(c['expected_outcome']==category and b['final_expected_task_outcome'] for c,b in rows),
                 'native_used':sum(c['expected_outcome']==category and b['model_used'] for c,b in rows),
                 'explicit_verified_clarification':sum(c['expected_outcome']==category and b['reply_origin']=='verified_clarification' for c,b in rows),
-                'wrong_policy_reads':sum(c['expected_outcome']==category and b['reply_origin']=='trusted_read_fixed' and b['final_tool']=='read_reminder_delivery_policy' for c,b in rows)}
+                'wrong_policy_reads':sum(c['expected_outcome']==category and c.get('tool')!='read_reminder_delivery_policy' and b['reply_origin']=='trusted_read_fixed' and b['final_tool']=='read_reminder_delivery_policy' for c,b in rows)}
                 for category in ('read','avoid','clarify')}}
+        assert arms[arm]['by_category']['read']['wrong_policy_reads']==0
     for case in cases:
         for arm in p['arms']:
             responses=[next(c['arms'][arm] for c in g['cases'] if c['case']==case) for g in report['groups']]
             signatures=[json.dumps({k:b[k] for k in ('proposal','reply','reply_origin','final_expected_task_outcome')},ensure_ascii=False,sort_keys=True) for b in responses]
-            repeats.append({'case':case,'arm':arm,'three_repeated_proposal_and_reply_identical':len(set(signatures))==1})
+            normalized=[]
+            for b in responses:
+                value=copy.deepcopy({k:b[k] for k in ('proposal','reply','reply_origin','final_expected_task_outcome')})
+                for call in (value['proposal'] or {}).get('tool_calls',[]):call['id']='<opaque-call-id>'
+                normalized.append(json.dumps(value,ensure_ascii=False,sort_keys=True))
+            repeats.append({'case':case,'arm':arm,'three_repeated_proposal_and_reply_identical':len(set(signatures))==1,
+                'raw_signature_includes_opaque_call_id':True,'only_call_id_normalized_signature_identical':len(set(normalized))==1})
+    assert [arms[a]['by_category']['clarify']['wrong_policy_reads'] for a in p['arms']]==[0,6,3]
     current=indexed(run,'selection','full')
     old40=ROOT/'docs/进展报告/2026-11-10-G2交互循环/cycle-40/实验/native-wire-4b-sse-fixed'
     old41=ROOT/'docs/进展报告/2026-11-10-G2交互循环/cycle-41/实验/development-v1'
