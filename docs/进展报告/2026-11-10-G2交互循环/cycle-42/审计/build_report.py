@@ -1,0 +1,61 @@
+"""Render C42 measured conclusions after whole-cycle reconciliation."""
+import json
+from pathlib import Path
+from native_common import BASE,WORK,read,digest
+from render_report import render
+
+out=BASE/'审计'
+assert not (out/'系统审计与推进报告.html').exists()
+system=read(out/'收尾核验/system-evidence.json');assert system['verified']
+sections=[
+{'title':'结论：可执行目录解决部分选择错误，仍未通过语义门槛','paragraphs':[
+'C42在C41有源只读服务上新增来源绑定的工具目录与无业务读取的显式澄清类型；保留原执行门槛，默认Avatar/Web工厂不接入。先登记10开发题（8重用＋2缺编号诊断）、三分支及固定第三主候选，再实现61控制、完整当前软件与真实4B实验。主候选开发27/30未达到全部正确门槛，8新保护题未运行，不宣称本轮整体代际跃迁。',
+'full提供原2工具；eligible_bound按来源可执行条件过滤并给唯一编号加schema const；eligible_complete再提供clarify_reminder_reference。三臂各30实际来源/SQLite分支，总90分支；68 native＝2预热＋30＋18＋18。两个候选各12回合由规则跳过模型，不能算模型正确决策。目录没有预读提醒内容、不能由模型提交权限；schema提示不替代执行端校验。',
+'真正需要读取的12回合，主候选12/12，full9/12；但缺编号诊断主候选仅3/6，eligible_bound0/6。对于“我之前设的那条提醒现在是什么状态？”，两候选三次都错误读取政策。显式澄清只修正另一句明确说没有具体编号的问法。程序读到了真实资料，仍然答非所问，参数可执行性不能证明语义相关性。',
+'full最终任务27/30包含3次缺编号错误调用被拒后的固定无读结果，按预登记宽口径符合澄清/无读任务，但不是正确模型工具决策。其6次无源12345尝试全部被拦，0幽灵编号SQL；主候选0无效参数尝试仍有3个语义错读。因此总分相同不代表错误结构相同，安全阻断、明确澄清与成功资料读取分别报告。'],
+'table':(['分支','最终任务','native /规则跳过','需读题','缺参澄清题','非法参数尝试'],[
+['full原2工具','27/30','30 / 0','9/12','6/6安全无读；显式澄清0','6；均被拒'],
+['eligible_bound','24/30','18 / 12','12/12','0/6；错误政策6','0'],
+['eligible_complete（事先固定主候选）','27/30','18 / 12','12/12','3/6；错误政策3','0；主门槛仍失败']]),
+'links':[('先登记目录契约','../../../../../evals/interaction/cycle-42/source-tool-catalogue-contract.json'),('三分支开发与保护协议','../../../../../evals/interaction/cycle-42/source-catalogue-trial-protocol.json'),('目录/澄清实现','../../../../../src/avatar/lab/source_tool_catalogue.py'),('61个新增控制','../../../../../tests/test_source_tool_catalogue.py'),('原生总结果','../实验/development-v1/evaluation.json'),('关键错误完整分支','../实验/development-v1/repetition-1/missing-reference-status/eligible_complete/evaluation.json')]},
+{'title':'真实原生、来源、SQL与历史材料交叉核验','paragraphs':[
+'固定同一Qwen3-4B-Q4_K_M、temperature0/seed42/8192上下文、256 token上限，三重复分支次序轮换，无追加重试。冻结569输入对应Git 0d406e28，描述符SHA143b5ba2…先提交。启动按实际余量选GPU2/UUID GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e，40441MiB空闲/0%利用率，实际进程4096MiB。PID153316退出0、进程和GPU分配均无残留；未停止其他进程、未静默CPU替代。',
+'预写独立核验首次通过68请求/SDK/raw与68实际嵌入模板重渲染、90 SQLdump重建、来源/语境/版本/参数/固定答复核平。19实际项目模块、8映射冻结库、54安装库核实。90结果＝42可信数据答复＋3明确澄清＋24规则无读＋15模型无工具后的固定无读＋6参数拒绝。18次状态SELECT，24次固定政策结果，其中9次虽资料真实却与缺参状态问题错域。业务表与来源提交后写计数均不变；未claim、ACK、创建或外发。',
+'新脚本接口控制为12组、32次尝试、41实际SQLite分支/41重建、7状态SELECT，无HTTP/SDK模型生成；另1次实际SDK回环HTTP SSE（3事件/stop）检验同客户端收集，0模型。与原生68调用、默认浏览器回合均独立计数。',
+'full重用原8题的24个实际提示词SHA与C40/C41完全相同，HTTP请求体字节0/24相同（schema对象序列化次序变化），native原稿21/24相同；差异位于邮件普通回复。去除不透明call id后30个题×分支组中29组三重复相同，邮件普通文字仍不同；不能把同文重复当独立样本或声称温度0必然逐字确定。两新增开发诊断也不是独立保护题。',
+'主候选门槛失败后，实际controller CLI用故意构造的未批准保护描述符在主门槛处拒绝；未创建输出/provider。开发描述符随后退役并实际验证重启拒绝。没有调优本批再重跑，没有事后改选消融或开启默认功能。'],
+'table':(['证据层','实测数量','边界'],[
+['真实生成与lab分支','68 native /90 SQL分支','2预热；无额外修复；合成行/真实内存SQLite'],
+['实际数据读取与澄清','18状态SELECT /24政策 /3明确澄清','9政策结果语义错域；无个人数据/磁盘耐久验收'],
+['独立原生核验','68模板 /90 dump /19模块 /8映射库 /54库','自动核验不等于独立真人盲评'],
+['受控接口与真实SDK','32脚本尝试 /41 SQL；另1 HTTP SSE','0native，不替代模型效果'],
+['保护与默认产品','8题未跑 /默认不开启','实际CLI拒绝、provider清理、描述符退役']]),
+'links':[('冻结描述符','工作目录/004-原生目录实验/development-freeze.json'),('独立核验','工作目录/004-原生目录实验/development-verification.json'),('进程/GPU/映射库证据','../实验/development-v1/provider-kernel-proof.json'),('原生原稿与适配trace','../实验/development-v1/provider-trace.jsonl'),('分项与历史提示词统计','工作目录/005-系统复核/catalogue-accounting.json'),('实际保护/退役拒绝','工作目录/004-原生目录实验/protected-and-retirement-verification.json')]},
+{'title':'系统回归、问题单与迁移后持续留痕','paragraphs':[
+'61个新增控制与已有门槛共262相关控制通过；完整当前Python2199 passed/1 skipped，前端37文件/192通过，构建含TypeScript检查通过，默认Chromium18通过/16可选跳过。各450输入均与启动Git及结束字节一致，浏览器实际9模块/C36隐私与C39查询两协议/5bundle核平；维护范围5应用结果的原件另存，不当全suite总调用数。',
+'目录副本/元数据不可改内部schema，跨实例/旧目录/伪造对象拒绝，独立执行仍拦错误ID/附加权限字段；缺编号澄清不查业务，不伪装成ReadResult.ok或参数错误。来源/角色/混合退出/取消/遗忘、调用方事务与发布前快照检查沿用真实来源机制。脚本额外证明原稿虚假保证不发布、gold污染不改执行、生成前后公共forget均取消旧源。',
+'新增2项单独问题：001/P2语义错域开放；002/P3事后统计器把正确政策答复也计为wrong_policy_reads，发现后先保留首版/精确Git源，再追加预期动作条件重算修正。独立主评分与原生数据从未改变；首版及修后统计均入报告。没有把工程统计修正说成模型语义修复。',
+'40旧seal（39周期＋迁移）共6924项逐字节核对，9集中数据入口有效，未回写旧封存目录。环境/模型/缓存/临时数据仍统一/data/Users/zrh/data/hhu-ai-avatar，代码在/data/Users/zrh/repo/hhu-ai-avatar；本轮实验输出是版本化证据文本，实际SQLite与缓存未散落repo父目录。spinner-bot小步提交、串行推送；每个受控组和结束的原生重复均单独归档。'],
+'table':(['项目/问题','结果','证据限制'],[
+['完整软件','2199/1 Python；192前端；18/16浏览器','450稳定输入；type/build通过；可选场景未跑'],
+['C42-001 /P2','开放','3次主候选语义错读；保护未获准入'],
+['C42-002 /P3','统计器限定关闭','read类别错政策3/6/6→0/0/0；clarify仍0/6/3'],
+['迁移与历史材料','40旧seal/6924项；9入口通过','只读核对；不重跑旧写入器']]),
+'links':[('完整Python绑定','工作目录/002-当前软件与浏览器/catalogue-python-final-binding.json'),('完整前端绑定','工作目录/002-当前软件与浏览器/catalogue-frontend-final-binding.json'),('完整浏览器绑定','工作目录/002-当前软件与浏览器/catalogue-browser-final-binding.json'),('受控12组汇总','工作目录/003-受控目录配对/controlled-summary.json'),('001语义错域','问题单/001-缺少编号的状态问题仍被错误路由到政策.md'),('002统计器修复','问题单/002-补充统计错误政策指标遗漏预期类别.md'),('首版统计原件','工作目录/005-系统复核/catalogue-accounting-first.json'),('系统交叉核验','收尾核验/system-evidence.json')]},
+{'title':'下一循环：约束查询结果类型，保留独立语义验收','paragraphs':[
+'下一轮优先研究来源绑定的结果类型：用户询问单条记录状态但无唯一依据时应返回不确定/澄清，运行条件只能回答相应运行问题。必须先登记自然变体与否定、写作、引用、混合语境反例，分清规则贡献与模型选择，不能在本轮已见10题上继续调提示后宣称独立提升。',
+'在开发与新保护全部门槛通过前，候选继续隔离。实际应用集成还要验证自动claim_due之前的分支顺序、用户来源不双写、Web/SDK流式与取消、遗忘/并发版本及网页可见结果，不能仅凭lab成功接入默认。C39显式查询是当前默认已有能力。',
+'远期Goal active，继续测试、优化、迭代与系统审计。一般动作/外发语义C19-P1、真人/物理麦克风ASR、中文口型/ü/声调、跨OS PAD及多日稳定仍开放，各自要实际数据验收；本轮无相应实验，不声明这些部分已经解决。'],
+'table':(['优先级','推进事项','进入下一层的条件'],[
+['P1当前','结果类型与缺参语义判别','先登记有限规则/模型贡献、新诊断与保护，实际源/SQL/原生验证'],
+['P1随后','来源与语义共同门槛','任务正确、无未绑定尝试、保护独立通过，不事后挑分支'],
+['P2集成','默认应用完整读模式','过门槛后再核实际Web/SDK/并发/隐私/取消/DOM'],
+['持续远期','听—思—演—记与设备/多日','分层实测，不以局部通过替代整体代际提升']]),
+'links':[('远期目标与验收路线','../../远期目标与验收路线.md'),('本轮预登记计划','../计划.md'),('全过程进展','../进展.md')]}
+]
+meta=render(out,'C42 来源可执行工具目录、澄清与系统审计','2026-11-14｜持续Goal active｜spinner-bot',
+    '68 native/90 SQL分支；三臂27/24/27，主候选门槛失败、保护未跑、默认未接入。2199/1、192、18/16通过；1语义开放/1统计器限定关闭。',
+    sections,BASE.parent/'cycle-41/审计/系统审计与推进报告.html')
+meta.update(system_sha256=digest(out/'收尾核验/system-evidence.json'),builder_sha256=digest(__file__),renderer_sha256=digest(out/'render_report.py'))
+(out/'report-render-metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
+print('C42 rendered',meta['tables'],'tables',meta['links'],'links')
