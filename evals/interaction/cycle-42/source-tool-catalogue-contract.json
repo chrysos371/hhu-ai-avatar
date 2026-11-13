@@ -1,0 +1,93 @@
+{
+  "scope": "isolated dedicated reminder read mode; no default Avatar integration or ordinary chat equivalence",
+  "base_reader": "avatar.lab.trusted_local_read.LabReadSession; preserve C41 source/execute/publish and startup transaction guards",
+  "declared_tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "read_reminder_state",
+        "description": "只读查询一个本机提醒编号的当前记录；不创建、认领、ACK或保证真人阅读。",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "reminder_id": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            }
+          },
+          "required": [
+            "reminder_id"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "read_reminder_delivery_policy",
+        "description": "读取当前本机提醒运行与送达条件；可核验服务退出、网页在线轮询及外部通道的限制。",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "clarify_reminder_reference",
+        "description": "当前用户询问某条提醒的状态，但没有唯一有效编号或可信已选对象时，请求补充编号；不读取记录或运行条件，不执行业务动作。运行和送达条件问题本身无需提醒编号。",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "variants": {
+    "full": "advertise original2 state/policy tools, no source availability filtering/const; executor source guard still applies",
+    "eligible_bound": "filter by actual source parameter preconditions, add state reminder_id const when unique eligible ID; no clarification function",
+    "eligible_complete": "same eligible_bound plus clarification function when reminder domain allowed and no unique eligible ID; fixed main candidate"
+  },
+  "source_catalogue": {
+    "entry": "session.ensure_current and actual private current-turn token; refuse active caller transaction before planning/model waits",
+    "identity": "live session/turn object plus message_id/session/revision/source text SHA; metadata never acts as a serialized authorization token",
+    "policy_eligibility": "C41 parameter_basis(text,{},read_reminder_delivery_policy) passes",
+    "state_eligibility": "visible unquoted/non-code finite ID candidate + C41 parameter_basis(text,{reminder_id:n},read_reminder_state) passes; no business row is read to decide existence",
+    "state_binding": "eligible variants retain declared integer/min/max/required/additionalProperties schema and add const=n; actual execution independently rejects bool/float/string/wrong ID/extra fields",
+    "clarification_eligibility": "policy source/domain/exclusion gate passes and no unique source-eligible ID; not a claim semantic intent is known",
+    "catalogue_mutability": "immutable serialized schemas; tools accessor returns a copy; bind/freshness checked before and after model inference; no held read transaction",
+    "registry_validation": "exact3 known function names, no duplicate names, expected parameter shapes; baseline selects only legacy2; no write tool or model-provided registry accepted",
+    "semantic_intent_verified": false
+  },
+  "clarification_action": {
+    "arguments": "empty JSON object only",
+    "result_kind": "reference_clarification, distinct from successful data read or validation failure",
+    "reply": "请明确要查询的提醒编号；当前没有唯一编号，这次未读取提醒记录。",
+    "business_reads_or_writes": 0,
+    "guards": "actual current source/role/independent permission, domain/exclusion/missing ID; current valid ID makes missing-reference clarification ineligible; source/epoch changes cancel",
+    "publication": "same service-issued latest result identity and fresh-source/released-transaction boundary as base reader"
+  },
+  "no_eligible_tools": "eligible variants publish fixed no-read clarification under source authority, skip model; count framework rule cases separately, never model successes",
+  "model_no_tool_or_invalid": "preserve raw text/proposal/error in evidence, publish fixed no-read response; no unverified model text presented as data; malformed/unavailable output separately counted and never business-dispatched",
+  "task_scope": "dedicated read-mode only; does not preserve ordinary creative-writing/greeting behavior; default normal chat is unchanged",
+  "CPU_controls_required": [
+    "policy/no-ID source offers policy only vs policy+clarifier; no forced policy execution",
+    "bound ID state/policy const, no-existence-probe on missing row ID",
+    "quoted/code/negated/writing/multiple-ID/invalid-ID finite source filters, clarify only eligible",
+    "clone schemas cannot mutate catalogue; bad registry/type/name/extra parameters rejected",
+    "cross-session/same-text replay/new-turn/epoch/deletion/role/cancel catalogue stale checks",
+    "catalogue cannot hold caller transaction across inference",
+    "clarification has no business SQL/write/ACK/receipt and remains distinct from read success",
+    "clarification false for explicit ID, invalid params rejected; stale publication and old result identity rejected",
+    "gold poisoning changes only scores, never catalogue/execution",
+    "raw unsupported function/XML and no-tool false assurance withheld with honest no-read result"
+  ],
+  "default_enabled": false,
+  "execution_authority": "separate immutable descriptor only after CPU/current software/runtime admission; this registration is not an execution token"
+}
