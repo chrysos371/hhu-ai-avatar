@@ -136,6 +136,39 @@ def test_exception_nested_cross_experiment_and_foreign_override_fail_closed(monk
     assert query_history.query_history_content is foreign
 
 
+@pytest.mark.parametrize('arm',['verified_snapshot_history','typed_observation_history'])
+def test_real_role_source_cannot_gain_query_observation(arm):
+    with closing(MemoryStore(':memory:')) as memory:
+        model = Recorder('must not run'); bot = Avatar(memory=memory,llm=model)
+        bot.reminders.create('提醒我2099年1月1日上午十点，C48角色不可读。')
+        with typed_history_representation(arm):
+            bot.respond('我来扮演一个虚构角色。',mode='reminder_query')
+            blocked = bot.respond('提醒编号1现在是什么状态？',mode='reminder_query')
+            assert blocked['generation_mode'] == 'rules_speaker_scope'
+            assert 'reminder_query' not in blocked and 'C48角色不可读' not in blocked['reply']
+            assert not model.native and not model.analysis
+
+
+def test_forgetting_query_source_removes_typed_history_from_actual_model_input():
+    with closing(MemoryStore(':memory:')) as memory:
+        model = Recorder('这是普通答复。'); bot = Avatar(memory=memory,llm=model)
+        bot.reminders.create('提醒我2099年1月1日上午十点，C48待删查询标题。')
+        with typed_history_representation('typed_observation_history'):
+            query = bot.respond('提醒编号1现在是什么状态？',mode='reminder_query')
+            bot.respond('接着聊聊。')
+            assert 'typed_historical_evidence' in str(model.native[-1])
+            assert 'C48待删查询标题' in str(model.native[-1])
+            fragment = memory.remember('来源删除控制',source_message_id=query['conversation']['user_message_id'])
+            memory.forget(fragment)
+            bot.respond('回到现实。')
+            bot.respond('重新开始聊聊。')
+            assert len(model.native) == len(model.analysis) == 2
+            for messages in (model.native[-1],model.analysis[-1]):
+                assert 'typed_historical_evidence' not in str(messages)
+                assert 'C48待删查询标题' not in str(messages)
+            assert bot.reminders.list()[0]['status'] == 'active'
+
+
 @pytest.mark.parametrize('reply',[
     'prefix '+json.dumps(EXPECTED),'```json\n'+json.dumps(EXPECTED)+'\n```',
     '{"client_ack_in_observation":false,'+json.dumps(EXPECTED)[1:],
