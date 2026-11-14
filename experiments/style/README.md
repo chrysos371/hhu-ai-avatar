@@ -1,6 +1,6 @@
 # 无需人工参与的数据与模型实验准备
 
-本目录是实验配置；实现入口为 `python -m avatar.lab`，可通过仓库根目录的 `./scripts/companion_lab.sh` 调用。脚本使用工作区已有训练环境，不修改生产后台、不读取生产记忆数据库、不调用云端，也不自动安装软件或下载模型。
+本目录是实验配置；实现入口为 `python -m avatar.lab`，可通过仓库根目录的 `./scripts/companion_lab.sh` 调用。脚本优先使用本项目专用训练环境，缺失时回退普通环境，只能执行其依赖已安装的子命令；不读取生产记忆数据库，不自动安装软件或下载模型。C51实际核查：当前无专用训练环境，现有环境缺Torch/Transformers/PEFT，模型根及本项目HF缓存未见Qwen可训练基础权重；不能把历史训练记录当当前就绪。见[C51进展](../../docs/进展报告/2026-11-10-G2交互循环/cycle-51/进展.md)。
 
 ## 当前已做
 
@@ -16,7 +16,7 @@
 
 本机当前环境、模型和缓存统一在 `/data/Users/zrh/data/hhu-ai-avatar/`，运行产物使用其artifacts/style-lab（仓库data/style-lab只是兼容入口），详见[数据布局](../../docs/本机数据布局.md)。下表是早期产物路径记录，是否存在需逐项核验；不借用其他用户目录，也不将迁移当新训练/下载。原始公开数据不提交仓库。
 
-## 本轮有效产物
+## 历史准备产物（非当前本机可用性保证）
 
 | 内容 | 路径 |
 |---|---|
@@ -42,6 +42,8 @@
 CUDA_VISIBLE_DEVICES='' ./scripts/companion_lab.sh preflight --data data/style-lab/pilot-NEW/sft.jsonl --output data/style-lab/preflight-NEW
 ./scripts/companion_lab.sh lock-models --output data/style-lab/models-NEW
 ```
+
+C51已补充`cases.query_text`与`cases.followup_text`的文本及材料文件hash保护，C47—50的100个字段出现次真实候选筛选全部拒绝，旧fixture与无关短信创作对照保持。该修复只覆盖已登记字段，不证明所有schema或语义家族隔离；旧独立smoke流程不借此自动获得批准。
 
 筛选规则或受保护评测文件改变时，必须重新筛选和导出。导出 manifest 含数据、开发 split、规则实现和受保护评测哈希。读取训练数据会复核哈希、数量、训练/开发 ID 与内容交集。近似检测是词面启发式，不能排除所有语义重合；筛选也不能保证隐私、身份和内容错误完全消失。
 
