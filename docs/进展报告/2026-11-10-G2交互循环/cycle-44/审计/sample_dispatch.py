@@ -73,7 +73,9 @@ def run_branch(model,protocol,case,repetition,variant,output,*,on_context=None,b
             planning=session.catalogue(protocol['tools'],'policy_grounded') if variant=='model_policy_grounded' else session.plan()
             result['catalogue' if variant=='model_policy_grounded' else 'plan']=planning.metadata
             if variant=='model_policy_grounded':result['advertised_tools']=planning.tools
-            if before_execution:before_execution(session,planning,variant)
+            if before_execution:
+                phase[0]='control-before-execution';before_execution(session,planning,variant)
+                phase[0]='planning'
             planning.require_current(session)
             if variant=='source_dispatch':
                 if on_context:on_context({'phase':'dispatch','repetition':repetition,'case':case['id'],'arm':variant})
@@ -115,10 +117,12 @@ def run_branch(model,protocol,case,repetition,variant,output,*,on_context=None,b
                 elif read.ok:kind,origin='trusted_data_read','trusted_read_fixed'
                 else:kind,origin='validation_failure','guarded_failure'
                 result['result_kind']=kind
-                if before_publication:before_publication(session,read,variant)
+                if before_publication:
+                    phase[0]='control-before-publication';before_publication(session,read,variant)
                 phase[0]='publication';result['reply']=session.publish(read);result['reply_origin']=origin
             else:
-                if before_publication:before_publication(session,None,variant)
+                if before_publication:
+                    phase[0]='control-before-publication';before_publication(session,None,variant)
             planning.require_current(session)
         except Cancelled as error:
             result.update(source_cancelled=True,reply=None,reply_origin='source_cancelled',failure=type(error).__name__+': '+str(error))
