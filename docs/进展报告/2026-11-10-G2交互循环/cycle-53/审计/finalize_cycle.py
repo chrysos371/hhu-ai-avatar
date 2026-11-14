@@ -46,6 +46,9 @@ def main(seal):
     assert meta["HTML_sha256"]==sha(report) and meta["MD_sha256"]==sha(report.with_suffix(".md"))
     assert browser["completed"] and not browser["errors"] and browser["reportSha256"]==sha(report)
     assert browser["scriptSha256"]==sha(AUDIT/"preview_report_v2.mjs")
+    fix=read(AUDIT/"工作目录/006-报告显示修复/report-fix-protocol-v2.json")
+    assert meta["style_sha256"]==fix["style_sha256"]==sha(AUDIT/"工作目录/006-报告显示修复/report-style-v2.html.txt")
+    assert all(sha(Path(item["preserved"]))==item["sha256"] for item in fix["preserved"])
     assert meta["tables"]==2 and meta["links"]==14
     assert [v["viewport"]["width"] for v in browser["views"]]==[1440,390]
     assert all(not v["overflow"] and v["tableCount"]==2 and len(v["links"])==14
