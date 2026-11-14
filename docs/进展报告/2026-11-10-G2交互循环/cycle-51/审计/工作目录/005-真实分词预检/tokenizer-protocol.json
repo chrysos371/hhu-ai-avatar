@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "scope": "CPU AutoTokenizer and existing training encoder/preflight only, zero LLM construction/CUDA/training",
+  "environment": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51",
+  "packages": {
+    "pip": "25.3",
+    "transformers": "4.57.6",
+    "tokenizers": "0.22.2",
+    "huggingface_hub": "0.36.2",
+    "safetensors": "0.7.0",
+    "numpy": "2.2.6",
+    "Jinja2": "3.1.6"
+  },
+  "package_index": "https://pypi.org/simple",
+  "bootstrap": "cached verified pip25.3 wheel from environment-v3",
+  "model_assets": "/data/Users/zrh/data/hhu-ai-avatar/models/Qwen3-4B",
+  "data": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c51/correction-data-v1/sft.jsonl",
+  "training_source": "src/avatar/lab/training.py",
+  "max_length": 2048,
+  "expected_train": 176,
+  "expected_dev": 44,
+  "checks": [
+    "same pinned tokenizer asset identities",
+    "existing encode_record actual token IDs, all history/prompt labels -100, nonempty final-answer supervision plus EOS",
+    "no truncation or silent overlength rejection",
+    "actual final-assistant-only prefix/answer reconstruction and mismatch faults",
+    "record tokenizer/Transformers versions and later cross-check against complete CUDA training environment"
+  ],
+  "no_training_readiness_claim": true,
+  "existing_download_processes_continue": true,
+  "whole_experiment_wallclock_cutoff": null
+}
