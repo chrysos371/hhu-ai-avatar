@@ -50,6 +50,38 @@ def encode_record(tokenizer, row, max_length):
     }
 
 
+def _actual_dialogue_hash(row):
+    if (
+        not isinstance(row, dict)
+        or not isinstance(row.get("id"), str)
+        or not row["id"].strip()
+        or not isinstance(row.get("messages"), list)
+        or len(row["messages"]) < 3
+        or len(row["messages"]) % 2 != 1
+    ):
+        raise ValueError("Invalid training conversation")
+    messages = row["messages"]
+    for index, message in enumerate(messages):
+        role = "system" if index == 0 else ("user" if index % 2 else "assistant")
+        if (
+            not isinstance(message, dict)
+            or message.get("role") != role
+            or not isinstance(message.get("content"), str)
+            or not message["content"].strip()
+        ):
+            raise ValueError("Invalid training conversation")
+    provenance = row.get("provenance")
+    declared = provenance.get("content_sha256") if isinstance(provenance, dict) else None
+    dialogue_hash = hashlib.sha256(canonical(messages[1:]).encode()).hexdigest()
+    full_hash = hashlib.sha256(canonical(messages).encode()).hexdigest()
+    # Original exports hash the dialogue; synthetic SDK exports hash the full prompt.
+    if not isinstance(declared, str) or declared not in (dialogue_hash, full_hash):
+        raise ValueError("Invalid training content provenance")
+    if not isinstance(provenance.get("source"), str) or not provenance["source"].strip():
+        raise ValueError("Invalid training content provenance")
+    return dialogue_hash
+
+
 def load_data(data):
     data = Path(data)
     manifest = json.loads(data.with_name("manifest.json").read_text())
@@ -68,7 +100,7 @@ def load_data(data):
 
     if manifest.get("screening_code_sha256") != sha(Path(data_module.__file__)):
         raise ValueError("Screening implementation changed; rebuild pilot export")
-    _, protected = evaluation_texts()
+    protected_texts, protected = evaluation_texts()
     if protected != manifest["protected_eval_hashes"]:
         raise ValueError("Evaluation corpus changed; rescreen data")
     train = [json.loads(x) for x in data.read_text().splitlines() if x.strip()]
@@ -79,6 +111,10 @@ def load_data(data):
     ]
     if len(train) != manifest["samples"] or not train or len(train) > 200:
         raise ValueError("Pilot training sample count must be 1..200")
+    if len(dev) != manifest.get("dev_samples"):
+        raise ValueError("Development sample count differs from manifest")
+    actual_train = {_actual_dialogue_hash(row) for row in train}
+    actual_dev = {_actual_dialogue_hash(row) for row in dev}
     train_ids = {r["id"] for r in train}
     dev_ids = {r["id"] for r in dev}
     if len(train_ids) != len(train) or len(dev_ids) != len(dev) or train_ids & dev_ids:
@@ -87,6 +123,23 @@ def load_data(data):
     b = {r["provenance"]["content_sha256"] for r in dev}
     if a & b:
         raise ValueError("Duplicate content across splits")
+    if actual_train & actual_dev:
+        raise ValueError("Duplicate actual dialogue across splits")
+    candidates = []
+    policy = {}
+    for row in train + dev:
+        source = row["provenance"]["source"]
+        policy[source] = {"use": "experimental-sft"}
+        candidates.append(data_module.normalize_dialogue(
+            source, "train", row["id"], [m["content"] for m in row["messages"][1:]]
+        ))
+    _, rejected = data_module.screen_candidates(candidates, protected_texts, source_policy=policy)
+    # Exported pilots may intentionally repeat templates. Actual cross-split
+    # duplicates are checked above; these export selection rules are separate.
+    for row in rejected:
+        reasons = set(row["reasons"]) - {"duplicate", "near_duplicate"}
+        if reasons:
+            raise ValueError("Training data screening rejected: " + ", ".join(sorted(reasons)))
     return train, dev, manifest
 
 
