@@ -1,0 +1,98 @@
+{
+  "status": "complete",
+  "environment": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51",
+  "scope": "CPU AutoTokenizer and existing training encoder/preflight only, zero LLM construction/CUDA/training",
+  "steps": [
+    {
+      "name": "tokenizer-venv-create",
+      "argv": [
+        "/usr/bin/python3.10",
+        "-m",
+        "venv",
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "tokenizer-pip-bootstrap",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--no-deps",
+        "--no-index",
+        "/data/Users/zrh/data/hhu-ai-avatar/cache/pip-bootstrap/pip-25.3-py3-none-any.whl"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "tokenizer-package-install",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51/bin/python",
+        "-m",
+        "pip",
+        "--isolated",
+        "install",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--cache-dir",
+        "/data/Users/zrh/data/hhu-ai-avatar/cache/pip",
+        "--timeout",
+        "60",
+        "--retries",
+        "3",
+        "--progress-bar",
+        "off",
+        "--report",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/005-真实分词预检/package-report.json",
+        "transformers==4.57.6",
+        "tokenizers==0.22.2",
+        "huggingface_hub==0.36.2",
+        "safetensors==0.7.0",
+        "numpy==2.2.6",
+        "Jinja2==3.1.6"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "tokenizer-pip-check",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "tokenizer-freeze",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51/bin/python",
+        "-m",
+        "pip",
+        "freeze",
+        "--all"
+      ],
+      "returncode": 0
+    }
+  ],
+  "CPU_import_probe": {
+    "prefix": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-tokenizer-c51",
+    "versions": {
+      "pip": "25.3",
+      "transformers": "4.57.6",
+      "tokenizers": "0.22.2",
+      "huggingface_hub": "0.36.2",
+      "safetensors": "0.7.0",
+      "numpy": "2.2.6",
+      "Jinja2": "3.1.6"
+    },
+    "torch_available": false,
+    "AutoTokenizer_imported": true
+  },
+  "LLM_model_constructions": 0,
+  "CUDA_allocation": false,
+  "training_steps": 0
+}
