@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "scope": "CPU fabricated observations passed to actual validator; not real model hook execution",
+  "valid_fixture_roles": 4,
+  "faults_rejected": [
+    {
+      "fault": "different_actual_tokens",
+      "rejection": "actual/template token mismatch"
+    },
+    {
+      "fault": "boolean_token_ID",
+      "rejection": "invalid token IDs"
+    },
+    {
+      "fault": "different_attention_mask",
+      "rejection": "actual attention mask mismatch"
+    },
+    {
+      "fault": "boolean_attention_mask",
+      "rejection": "mask values must be integers"
+    },
+    {
+      "fault": "two_sequences",
+      "rejection": "one nonempty sequence required"
+    },
+    {
+      "fault": "analysis_adapter",
+      "rejection": "analysis adapter forbidden"
+    },
+    {
+      "fault": "unexpected_LoRA_layers",
+      "rejection": "actual LoRA layer presence mismatch"
+    },
+    {
+      "fault": "model_training",
+      "rejection": "model remains in training mode"
+    },
+    {
+      "fault": "wrong_dtype",
+      "rejection": "BF16 base required"
+    },
+    {
+      "fault": "CPU_offload",
+      "rejection": "CUDA model required"
+    },
+    {
+      "fault": "sampled_decode",
+      "rejection": "greedy generation required"
+    },
+    {
+      "fault": "changed_budget",
+      "rejection": "generation limit mismatch"
+    },
+    {
+      "fault": "boolean_budget",
+      "rejection": "generation limit mismatch"
+    },
+    {
+      "fault": "context_overflow",
+      "rejection": "context budget exceeded"
+    },
+    {
+      "fault": "reply_grammar",
+      "rejection": "grammar role mismatch"
+    },
+    {
+      "fault": "missing_adapter",
+      "rejection": "missing adapter"
+    },
+    {
+      "fault": "false_numeric_adapter_flag",
+      "rejection": "adapter flags must be booleans"
+    },
+    {
+      "fault": "analysis_layer_still_enabled",
+      "rejection": "actual LoRA disable state mismatch"
+    },
+    {
+      "fault": "analysis_layer_training",
+      "rejection": "LoRA layer remains in training mode"
+    }
+  ],
+  "source_sha256": {
+    "probe_capture_validation.py": "bcffa6c55df8aa6192ba19c1954dfc199b22e8ca4438714b31a86e03598f2483",
+    "capture_transformers.py": "b1acc23969f6be2352b5bfb964584ca879c267f71d2980281f93327ef5c97b69"
+  },
+  "head": "c39a682d2ce5d9972cf05d551e2ac37961681b10",
+  "actual_model_hook_verified": false,
+  "model_constructions": 0,
+  "training_steps": 0,
+  "GPU_allocations": 0,
+  "semantic_quality_approved": false
+}
