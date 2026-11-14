@@ -5,7 +5,7 @@
   "patterns": {
     "query_request": "[?？]|吗|么|是否|能否|能不能|可不可以|会不会|是不是|查询|查看|核对|查一下|看一下|看看|查查|想查|想看|想知道|读一下|什么状态|还在不在|有没有",
     "writing_request": "写(?:一段|段|一个|个|一篇|篇|一句|句|封|一封|代码|文案|示例)|(?:生成|输出)[^\\n。；]{0,6}(?:代码|台词|文案|句子|示例|故事)",
-    "mutation_request": "(?:请(?:帮我|替我|给我)?|帮我|替我|给我|我要|我想|现在|马上|立即|能不能(?:帮我|替我|给我)?|能否(?:帮我|替我|给我)?|可以(?:帮我|替我|给我)?)(?:把[^。；！？\\n]{0,16})?(?:创建|新增|设置|添加|删除|取消|完成|修改|更改|更新|推迟|提前|重设)|^\\s*(?:创建|新增|设置|添加|删除|取消|完成|修改|更改|更新|推迟|提前|重设)(?!的)[^。；！？\\n]{0,8}提醒",
+    "mutation_request": "(?:请(?:帮我|替我|给我)?|帮我|替我|给我|我要|我想|能不能(?:帮我|替我|给我)?|能否(?:帮我|替我|给我)?|可以(?:帮我|替我|给我)?)(?:现在|马上|立即)?(?:把[^。；！？\\n]{0,16})?(?:创建|新增|设置|添加|删除|取消|完成|修改|更改|更新|推迟|提前|重设)|^\\s*(?:现在|马上|立即)(?:把[^。；！？\\n]{0,16})?(?:创建|新增|设置|添加|删除|取消|完成|修改|更改|更新|推迟|提前|重设)(?!的)|^\\s*(?:创建|新增|设置|添加|删除|取消|完成|修改|更改|更新|推迟|提前|重设)(?!的)[^。；！？\\n]{0,8}提醒",
     "external_action_request": "(?:请(?:帮我|替我|给我)?|帮我|替我|给我)(?:给[^。；！？\\n]{0,12})?(?:发送|代发|发)[^。；！？\\n]{0,8}(?:邮件|短信|电话)|(?:请帮我|帮我|替我)(?:通过|用)(?:短信|邮件|电话)[^。；！？\\n]{0,12}(?:提醒|通知)"
   },
   "policy_question_patterns_inherited": {
@@ -54,5 +54,14 @@
   ],
   "execution_authority": "CPU/current-software/runtime/controller gates then separate exact development descriptor; protected separate after candidate all66 and all gates",
   "descriptor_consistency": "execution_authorized exact true; allowed partition must match; protected_execution_authorized exact false for development and exact true for protected",
-  "default_enabled": false
+  "default_enabled": false,
+  "version": 2,
+  "supersedes_CPU_only_v1": {
+    "reason": "registered v1 unanchored temporal prefix matched 现在取消 inside an actual status question; restrict temporal prefixes to clear request or sentence start before any native experiment",
+    "retirement_record": "docs/进展报告/2026-11-10-G2交互循环/cycle-44/审计/工作目录/001-双向目标与直接路由调查/v1-registration-retirement.json",
+    "retirement_sha256": "26a4e3e4ab54b2a3e66969c1b2209c900b474614db9b05db9775f14c4ac1693a",
+    "first_exact_source_history_anchor": "f85cab1a",
+    "native_calls_at_revision": 0,
+    "new_primary_development_outcomes": 72
+  }
 }
