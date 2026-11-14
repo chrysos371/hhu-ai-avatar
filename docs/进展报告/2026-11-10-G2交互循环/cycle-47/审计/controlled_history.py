@@ -6,10 +6,11 @@ import sqlite3
 import subprocess
 
 from sample_history import sample_trial, projection
+from avatar.brain.reminder_queries import parse_query
 
 ROOT = Path(__file__).resolve().parents[5]
 BASE = Path(__file__).resolve().parents[1]
-WORK = BASE/'审计/工作目录/003-受控实模管线'
+WORK = BASE/'审计/工作目录/003-受控实模管线/v2'
 
 
 class ScriptedEngine:
@@ -27,8 +28,9 @@ class ScriptedEngine:
 
 
 def main():
-    assert not WORK.exists(); WORK.mkdir()
+    assert not WORK.exists(); WORK.mkdir(parents=True)
     cases = json.loads((ROOT/'evals/interaction/cycle-47/native-history-cases.json').read_text())['cases']
+    assert all(parse_query(case['followup_text']) is None for case in cases)
     rows = []; contexts = []
     for case in cases:
         for arm in ('authorized_raw_history','verified_snapshot_history'):
