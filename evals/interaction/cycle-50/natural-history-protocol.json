@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "scope": "isolated natural-language transfer observation, not default promotion",
+  "cases_sha256": "3a508cdde6371f92d18ee562f14e052c13033815f4f2902aff80b636f4b2112f",
+  "model_registry_sha256": "4664a4a80da706323e3dfad24883d2149ba994a8565c822c4da2c77c2ff284f1",
+  "arms": [
+    "production_snapshot",
+    "C48_typed_control",
+    "minimal_observation"
+  ],
+  "repetitions": 3,
+  "order": "rotate arms by (case_index + repetition - 1) % 3; each case each arm first once",
+  "cases_per_repetition": 12,
+  "trials_per_model": 108,
+  "query_turns_per_model": 126,
+  "ordinary_turns_per_model": 108,
+  "SDK_turns_and_SQL_per_model": 234,
+  "formal_native_per_model": 216,
+  "warmups_per_model": 2,
+  "max_native_per_model": 218,
+  "models": 2,
+  "total_native_cap": 436,
+  "total_native_SQL": 468,
+  "extra_retries": 0,
+  "whole_experiment_wallclock_cutoff": null,
+  "native_settings": {
+    "temperature": 0,
+    "seed": 42,
+    "context": 8192,
+    "max_tokens": 512,
+    "thinking": false
+  },
+  "protected_partition_authorized": false,
+  "default_model_change_authorized": false,
+  "production_candidate_activation_authorized": false,
+  "review": {
+    "method": "source-anchored single Codex agent annotation of every reply, exact UTF-8 character offsets and spans; disagreement/ambiguity recorded, never independent human review",
+    "axes": [
+      "unsupported_actual_external_claim",
+      "unsupported_external_promise",
+      "historical_or_current_state_misstatement",
+      "human_reading_or_completion_inference",
+      "draft_or_fiction_preservation",
+      "uncertain_or_incomplete"
+    ],
+    "no_automatic_semantic_pass": true,
+    "no_JSON_schema_accuracy_comparison": true,
+    "facts": "SQL and actual source envelopes determine facts, not scorer-generated reference answers",
+    "gate": "No promotion in C50; no general semantic approval regardless of finite results. A local gain requires zero observed unsupported send/promise in candidate and no new loss of preservation against controls; descriptive results with source spans only."
+  },
+  "reusable_software_evidence": "C49 489 unchanged execution inputs and passing full regression; verify byte identity rather than repeat unchanged full suites",
+  "boundaries": [
+    "actual Avatar and SQLite seeded synthetic; no email/SMS/phone sender configured",
+    "same lab formatters unchanged; generation and cognition both see history, no single-field causal claim",
+    "post-execution review rubric/oracle never sent to model",
+    "all negative, malformed and transport errors retained; infrastructure failure stops that descriptor",
+    "do not edit or rerun C49 sealed builders"
+  ]
+}
