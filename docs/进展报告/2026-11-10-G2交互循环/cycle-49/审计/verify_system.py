@@ -133,8 +133,10 @@ def main():
         models.append({'model':short,'verification_sha256':digest(proof_path),'source_ref':frozen['source_ref'],
             'inputs':len(frozen['sha256']),'freeze_sha256':digest(frozen_path),'arms':arms,
             'paired_field_regressions':regressions,'paired_field_improvements':improvements,
-            'native_calls':146,'SQL_dumps':dumps,'GPU':proof['actual_chosen_GPU'],'primary_gate_passed':False})
+            'native_calls':proof['native_calls'],'SQL_dumps':dumps,'GPU':proof['actual_chosen_GPU'],'primary_gate_passed':False})
     assert native_SQL == 756
+    assert sum(m['native_calls'] for m in models) == 652
+    assert all(type(m['native_calls']) is int and m['native_calls'] == 326 for m in models)
     control = read(CONTROLS/'v1/controlled-summary.json'); CPU_SQL = 0
     assert control['actual_SDK_trials'] == 59 and control['native_calls'] == 0
     for row in control['groups']:
@@ -180,7 +182,7 @@ def main():
         'CPU_SDK_turns':136,'CPU_scripted_attempts':116,'source_contract_sha256':digest(contract_path),
         'metadata_probe_new_SQL_dumps':0,'metadata_probe_reconstructed_existing_SQL':1,
         'new_native_calls_during_system_audit':0,'old_seals_including_migration':47,'old_items':9740,
-        'old_seals':seals,'asset_aliases':aliases,'undefined_globals':names,'issues_limited_closed':1,'issues_open':3,
+        'old_seals':seals,'asset_aliases':aliases,'undefined_globals':names,'issues_limited_closed':2,'issues_open':3,
         'candidate_rejected_for_default_activation':True,'general_semantic_or_default_model_approval':False}
     output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     print('C49 system:652 native;756 native +136 CPU SQL;489 source;47old/9740;format vs actual JSON claims separated;candidate rejected')
