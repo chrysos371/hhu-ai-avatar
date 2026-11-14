@@ -510,8 +510,23 @@ class Avatar:
         cancel: Optional[CancellationToken] = None,
         on_delta=None,
         source_precondition=None,
+        mode: str = 'chat',
     ) -> dict:
         """处理文本输入，返回回复、情绪、决策以及可选的音频与口型帧。"""
+        if type(mode) is not str or mode not in ('chat', 'reminder_query'):
+            raise ValueError('unknown conversation mode')
+        if mode == 'reminder_query':
+            if (use_web is not False or not isinstance(user_text, str)
+                    or not user_text.strip() or len(user_text) > 2000):
+                raise ValueError('reminder query mode requires 1..2000 characters and no web tools')
+            if self.memory._conn.in_transaction:
+                raise Cancelled('query mode requires a released caller transaction')
+            # Web already installs this store. SDK queries must also persist
+            # the speaker basis with the SINGLE user row below. Earlier
+            # untracked SDK history remains unverified until a separate exit.
+            if self.speaker_context_store is None:
+                from .brain.speaker_context import SpeakerContextStore
+                self.speaker_context_store = SpeakerContextStore(self.memory)
         self._cancel_token = cancel
         self._response_review = None
         self.analysis_mode = 'boundary_or_tool_rules'
@@ -572,20 +587,27 @@ class Avatar:
                 (self._current_message_id,)).fetchone()
             if not source or source['role'] != 'user' or source['content'] != user_text:
                 raise Cancelled('canonical control source changed')
-        from .brain.reminder_queries import parse_query, resolve_query, QuerySource
-        reminder_query = (parse_query(user_text)
+        from .brain.reminder_queries import ReminderQuery, parse_query, resolve_query, QuerySource
+        reminder_query = ((ReminderQuery('dedicated') if mode == 'reminder_query' else parse_query(user_text))
                           if boundary.reply is None and control is None else None)
         query_reply = None
+        query_reader = None
         if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
         try:
             if (reminder_query is not None and self.speaker_scope.scope == 'current_user'
                     and self.speaker_scope.allows_actions):
-                query_reply = resolve_query(self.reminders, reminder_query, user_text,
-                    QuerySource(self._current_message_id, self.session_id, turn_context_revision,
-                                self.speaker_scope.scope, self.speaker_scope.allows_actions),
-                    checkpoint=checkpoint_context)
+                query_source = QuerySource(self._current_message_id, self.session_id, turn_context_revision,
+                                          self.speaker_scope.scope, self.speaker_scope.allows_actions)
+                if mode == 'reminder_query':
+                    from .brain.reminder_query_mode import ReminderQueryReader
+                    query_reader = ReminderQueryReader(self.reminders, user_text, query_source,
+                                                       checkpoint=checkpoint_context)
+                    query_reply = query_reader.resolve()
+                else:
+                    query_reply = resolve_query(self.reminders, reminder_query, user_text,
+                        query_source, checkpoint=checkpoint_context)
                 # The read snapshot has released. An external privacy writer may
                 # now be visible; never publish a result from the old source epoch.
                 checkpoint_context()
@@ -626,13 +648,13 @@ class Avatar:
             user_text)
         speaker_tool_blocked = bool(not self.speaker_scope.allows_actions
                                     and (use_web or reminder_request or cancel_match or reminder_query is not None))
-        if boundary.reply is None and reminder_request and not speaker_tool_blocked:
+        if boundary.reply is None and reminder_query is None and reminder_request and not speaker_tool_blocked:
             try:
                 reminder = self.reminders.create(user_text, checkpoint=checkpoint_context, receipt_context=receipt_context)
             except ValueError as exc:
                 reminder_error = str(exc)
         cancelled_reminder_id = None
-        if boundary.reply is None and cancel_match and not speaker_tool_blocked:
+        if boundary.reply is None and reminder_query is None and cancel_match and not speaker_tool_blocked:
             cancelled_reminder_id = int(cancel_match[1])
             try:
                 self.reminders.set_status(cancelled_reminder_id, 'cancelled', checkpoint=checkpoint_context,
@@ -866,6 +888,8 @@ class Avatar:
             if self.memory.context_revision != turn_context_revision:
                 raise Cancelled('context changed before reply commit')
             self._checkpoint()
+            if query_reader is not None:
+                query_reader.ensure_current()
             self.memory.add_short_term("assistant", reply)
             assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)
@@ -956,6 +980,8 @@ class Avatar:
             result['response_review'] = self._response_review
         if query_reply is not None:
             result['reminder_query'] = query_reply.metadata
+        if query_reader is not None:
+            query_reader.ensure_current()
         if control is not None:
             result['speaker_control'] = control.data()
         from .brain.action_receipts import ActionReceiptStore
