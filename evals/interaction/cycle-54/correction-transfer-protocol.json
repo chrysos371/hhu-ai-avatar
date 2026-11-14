@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "scope": "prospective C54 fixed-prompt target-expression package study; no default promotion",
+  "cases_sha256": "4e4af6e09fc97d8425cb8356366b472463e12da62466ba7ef1b620a326e188b4",
+  "model": {
+    "model_id": "Qwen/Qwen3-4B",
+    "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "license": "Apache-2.0",
+    "source": "https://huggingface.co/api/models/Qwen/Qwen3-4B/tree/1cfa9a7208912126459214e8b04321603b3df60c?recursive=true",
+    "sha256": {
+      "model-00001-of-00003.safetensors": "328a91d3122359d5547f9d79521205bc0a46e1f79a792dfe650e99fc2d651223",
+      "model-00002-of-00003.safetensors": "6cd087b316306a68c562436b5492edbcf6e16c6dba3a1308279caa5a58e21ca5",
+      "model-00003-of-00003.safetensors": "e4bf436957184f4eeb86a80e9db394503f1f56446b2e6b7edeac5b81470f4ca1"
+    }
+  },
+  "training": {
+    "seed": 42,
+    "max_length": 2048,
+    "max_steps": 44,
+    "epochs_cap": 1,
+    "gradient_accumulation_steps": 4,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "learning_rate": 2e-05,
+    "supervision": "final assistant only; history and user tokens masked",
+    "analysis_adapter_enabled": false,
+    "dtype": "bfloat16",
+    "attention": "sdpa"
+  },
+  "data": {
+    "train_samples": 176,
+    "dev_samples": 44,
+    "manifest_sha256": "efa2ac6c0123fbe64a3c268a39b6058efdbea403118ede86e27f626207708947",
+    "target_variants_sha256": "a6bea1c36037e514676db65ed14016e571cfcd07b66e94e4c683ef5405b0308d",
+    "data_preparation_protocol_sha256": "47eb589a6fa718874bab0972d79ac350165794c16d91e6c757741cac3a2a81a7",
+    "actual_prompt_pairs_unchanged": 220,
+    "literal_target_types_train": 81,
+    "literal_target_types_dev": 41,
+    "supervised_train_tokens": 3856,
+    "supervised_dev_tokens": 1012,
+    "human_reviewed": false
+  },
+  "execution": {
+    "stages": [
+      "base",
+      "old_adapter",
+      "train",
+      "reload",
+      "new_adapter"
+    ],
+    "fresh_process_each_stage": true,
+    "no_retries": true,
+    "previous_proof_must_be_committed": true,
+    "actual_LLM_constructions_cap": 5
+  },
+  "evaluation": {
+    "phases": [
+      "base",
+      "old_adapter",
+      "new_adapter"
+    ],
+    "cases": 22,
+    "repetitions": 3,
+    "trials_per_phase": 66,
+    "queries_per_phase": 66,
+    "ordinary_turns_per_phase": 66,
+    "SDK_turns_SQL_per_phase": 132,
+    "formal_generation_calls_per_phase": 132,
+    "warmup_calls_per_phase": 2,
+    "generation_cap_per_phase": 134,
+    "no_extra_retries": true,
+    "context_tokens": 8192,
+    "reply_tokens": 512,
+    "analysis_tokens": 512,
+    "do_sample": false,
+    "enable_thinking": false,
+    "same_base_weights_and_tokenizer": true,
+    "common_STYLE_HINT_in_both_reply_arms": true,
+    "controlled_query_clock_epoch": 1794650400.0,
+    "actual_runtime_clock_recorded_separately": true,
+    "model_input_bytes_before_after_checked": true,
+    "phase_generation_cap": 134,
+    "three_phase_generation_cap": 402,
+    "save_reload_probe_generation_cap": 2,
+    "total_generation_cap": 404,
+    "query_clock_epoch": 1794650400.0,
+    "all_cases_same_across_arms": true,
+    "old_adapter_and_new_adapter_each_paired_to_base": 66,
+    "pairs_total": 132
+  },
+  "old_adapter": {
+    "root": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c52/real-transfer-v1/adapter",
+    "adapter_weights_sha256": "e39adcff0b0a038b070718fc8c41648cfce46ea641f29e07b2c8b23055c6da86",
+    "manifest_sha256": "5d64816629ad9d0649a260827fca696d97a27b352a2437f95ca0d96ed2c79bb1",
+    "adapter_config_sha256": "bdc327c9c02c10b4962ead645ccfe510ce8d4ccf96e5e1d869d797252ea22e5d",
+    "historical_train_step_order_unobserved": true
+  },
+  "actual_new_training_evidence": {
+    "labeled_train_forwards": 176,
+    "labeled_dev_forwards": 44,
+    "labeled_tensor_ids_and_labels_captured": true,
+    "step_ids_must_equal_actual_forward_identity_order": true,
+    "sample_coverage_once_per_train_dev": true,
+    "step_supervised_token_sums_must_equal3856": true,
+    "probe_generations": 2,
+    "probe_direct_forwards": 2,
+    "do_not_claim_all_autoregressive_internal_forwards_counted": true
+  },
+  "GPU": {
+    "choose_current_idle_by_index_and_UUID": true,
+    "min_free_MiB": 36000,
+    "max_used_MiB": 1024,
+    "max_utilization_percent": 10,
+    "single_card_each_stage": true,
+    "no_CPU_or_disk_offload": true,
+    "wait_actual_process_exit_and_GPU_retirement_before_next": true
+  },
+  "interpretation": {
+    "intervention_is_target_replacement_package_not_scalar_diversity": true,
+    "supervision_changes3936_to3856": true,
+    "old_optimizer_order_cannot_be_independently_matched": true,
+    "only_controlled_new_eval_input_matching_can_support_local_adapter_comparison": true,
+    "new_cases_known11families_not_independent_human_or_OOD_holdout": true,
+    "same_agent_target_author_and_reviewer_not_independent": true,
+    "capture_CPU_copies_IO_in_timing_not_pure_training_throughput": true
+  },
+  "review": {
+    "method": "single-agent full-source exact-span review all198ordinary replies; not independent human",
+    "local_gain_requires": "no unsupported actual external completion/in-progress/promise after new adapter; draft/fiction preserved6/6 each; no regression in human/state/time failure counts; improvement only if base observed errors;actual paired inputs match",
+    "all_failures_retained": true,
+    "no_general_quality_or_generative_leap_approval": true
+  },
+  "default_activation_authorized": false,
+  "whole_experiment_wallclock_cutoff": null
+}
