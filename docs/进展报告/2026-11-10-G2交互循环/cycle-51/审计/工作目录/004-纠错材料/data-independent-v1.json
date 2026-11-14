@@ -1,0 +1,101 @@
+{
+  "verified": true,
+  "head": "8df31dc44ab3065c5baa990ba9e24d7ff53ee973",
+  "verifier_sha256": "35e38d72901c3fab3de348a84fe962694954952bde654a3e2b4e6c91b3239d73",
+  "summary_sha256": "eb75976e45ae4ca85792908afa34f97290589646b45ad53d4288da22f012b71d",
+  "train_samples": 176,
+  "dev_samples": 44,
+  "families": {
+    "external_email": {
+      "train": 16,
+      "dev": 4
+    },
+    "external_SMS": {
+      "train": 16,
+      "dev": 4
+    },
+    "external_phone": {
+      "train": 16,
+      "dev": 4
+    },
+    "draft_quote": {
+      "train": 16,
+      "dev": 4
+    },
+    "fiction_phone": {
+      "train": 16,
+      "dev": 4
+    },
+    "historical_active": {
+      "train": 16,
+      "dev": 4
+    },
+    "historical_cancelled": {
+      "train": 16,
+      "dev": 4
+    },
+    "record_completion": {
+      "train": 16,
+      "dev": 4
+    },
+    "client_ACK": {
+      "train": 16,
+      "dev": 4
+    },
+    "due_not_observation": {
+      "train": 16,
+      "dev": 4
+    },
+    "historical_missing": {
+      "train": 16,
+      "dev": 4
+    }
+  },
+  "actual_CPU_examples": 220,
+  "SQL_dumps_reconstructed": 440,
+  "raw_source_and_model_messages_matched": true,
+  "actual_loader_faults_rejected": [
+    {
+      "kind": "sft_bytes",
+      "error": "Dataset manifest hash mismatch",
+      "input": "/data/Users/zrh/data/hhu-ai-avatar/tmp/c51-data-faults-v1/sft_bytes"
+    },
+    {
+      "kind": "protected_hash",
+      "error": "Evaluation corpus changed; rescreen data",
+      "input": "/data/Users/zrh/data/hhu-ai-avatar/tmp/c51-data-faults-v1/protected_hash"
+    },
+    {
+      "kind": "screen_code",
+      "error": "Screening implementation changed; rebuild pilot export",
+      "input": "/data/Users/zrh/data/hhu-ai-avatar/tmp/c51-data-faults-v1/screen_code"
+    },
+    {
+      "kind": "split_id",
+      "error": "Split identity leakage",
+      "input": "/data/Users/zrh/data/hhu-ai-avatar/tmp/c51-data-faults-v1/split_id"
+    },
+    {
+      "kind": "split_content",
+      "error": "Duplicate content across splits",
+      "input": "/data/Users/zrh/data/hhu-ai-avatar/tmp/c51-data-faults-v1/split_content"
+    },
+    {
+      "kind": "human_flag",
+      "error": "Expected explicit automatic-only pilot provenance",
+      "input": "/data/Users/zrh/data/hhu-ai-avatar/tmp/c51-data-faults-v1/human_flag"
+    }
+  ],
+  "actual_source_faults_rejected": [
+    "source_id",
+    "state",
+    "history_context"
+  ],
+  "native_calls": 0,
+  "training_steps": 0,
+  "semantic_quality_approved": false,
+  "human_reviewed": false,
+  "scope": "mechanical/source/SQL/export verification of scripted-target synthetic corpus, not naturalness or general semantic approval",
+  "tokenizer_preflight_pending": true,
+  "real_training_admission_pending": true
+}
