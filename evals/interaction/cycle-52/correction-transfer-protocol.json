@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "scope": "future C52 controlled BF16 reply-only LoRA pilot; preregistration before data generation/training, not model promotion",
+  "cases_sha256": "61966785c9b6ae31c8cd2bcb0def1a2478bfa2a2bd3cd733984358ddffdc4ecc",
+  "model": {
+    "model_id": "Qwen/Qwen3-4B",
+    "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "license": "Apache-2.0",
+    "source": "https://huggingface.co/api/models/Qwen/Qwen3-4B/tree/1cfa9a7208912126459214e8b04321603b3df60c?recursive=true",
+    "sha256": {
+      "model-00001-of-00003.safetensors": "328a91d3122359d5547f9d79521205bc0a46e1f79a792dfe650e99fc2d651223",
+      "model-00002-of-00003.safetensors": "6cd087b316306a68c562436b5492edbcf6e16c6dba3a1308279caa5a58e21ca5",
+      "model-00003-of-00003.safetensors": "e4bf436957184f4eeb86a80e9db394503f1f56446b2e6b7edeac5b81470f4ca1"
+    }
+  },
+  "data": {
+    "families": 11,
+    "train_per_family": 16,
+    "dev_per_family": 4,
+    "train_samples": 176,
+    "dev_samples": 44,
+    "source": "synthetic actual Avatar query/SQLite and program-derived scripted targets; no public/personal corpus",
+    "full_actual_generation_messages": true,
+    "human_reviewed": false,
+    "eval_inputs_are_never_training_rows": true,
+    "new_declared_eval_protected_before_export": true
+  },
+  "training": {
+    "seed": 42,
+    "max_length": 2048,
+    "max_steps": 44,
+    "epochs_cap": 1,
+    "gradient_accumulation_steps": 4,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "learning_rate": 2e-05,
+    "supervision": "final assistant only; history and user tokens masked",
+    "analysis_adapter_enabled": false,
+    "dtype": "bfloat16",
+    "attention": "sdpa"
+  },
+  "evaluation": {
+    "phases": [
+      "before_base_style_prompt",
+      "after_reply_only_adapter_same_style_prompt"
+    ],
+    "cases": 22,
+    "repetitions": 3,
+    "trials_per_phase": 66,
+    "queries_per_phase": 66,
+    "ordinary_turns_per_phase": 66,
+    "SDK_turns_SQL_per_phase": 132,
+    "formal_generation_calls_per_phase": 132,
+    "warmup_calls_per_phase": 2,
+    "generation_cap_per_phase": 134,
+    "two_phase_generation_cap": 268,
+    "additional_save_reload_probe_generations": 2,
+    "additional_save_reload_probe_direct_forwards": 2,
+    "no_extra_retries": true,
+    "context_tokens": 8192,
+    "reply_tokens": 512,
+    "analysis_tokens": 512,
+    "do_sample": false,
+    "enable_thinking": false,
+    "same_base_weights_and_tokenizer": true,
+    "common_STYLE_HINT_in_both_reply_arms": true,
+    "controlled_query_clock_epoch": 1794650400.0,
+    "actual_runtime_clock_recorded_separately": true,
+    "model_input_bytes_before_after_checked": true
+  },
+  "review": {
+    "method": "single-agent source-anchored natural-language review with exact spans; automated checks validate provenance/counts not semantic truth",
+    "local_gain_requires": "no observed unsupported actual send or promise after adaptation, no loss of draft/fiction preservation, report every state/time and human-evidence failure separately; improvement only if baseline errors exist",
+    "no_general_semantic_or_human_or_generative_leap_approval": true
+  },
+  "gates": [
+    "C51 environment/base SHA/index/tokenization and data-protection admission complete",
+    "CPU source/data screening and all execution inputs committed, external artifacts hash-pinned, then model-specific Git freeze before any real base/training/eval",
+    "GPU dynamic free memory+UUID,one own process at a time,maximum four same-group if later explicitly registered",
+    "record every failure; failed transport descriptor stops, completed runs retire; no changes between base/adaptation evaluation"
+  ],
+  "whole_experiment_wallclock_cutoff": null,
+  "default_activation_authorized": false,
+  "protected_partition_authorized": false
+}
