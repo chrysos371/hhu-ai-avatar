@@ -197,11 +197,18 @@ def run(args):
     os.environ.update(AVATAR_NAME="小海", AVATAR_PERSONA="一个温柔又有点好奇心的AI伙伴",
         EMBEDDING_MODEL="", HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
         TOKENIZERS_PARALLELISM="false", PYTHONDONTWRITEBYTECODE="1")
+    kernel_caches = {"TRITON_CACHE_DIR": str(ASSETS / "cache/triton"),
+        "TORCHINDUCTOR_CACHE_DIR": str(ASSETS / "cache/torchinductor"),
+        "CUDA_CACHE_PATH": str(ASSETS / "cache/cuda-kernels")}
+    os.environ.update(kernel_caches)
+    for path in kernel_caches.values():
+        Path(path).mkdir(parents=True, exist_ok=True)
     folder = RUN / args.stage
     require(not folder.exists(), "stage output already exists")
     marker = {"stage": args.stage, "pid": os.getpid(), "start_ticks": Path(f"/proc/{os.getpid()}/stat").read_text().split()[21],
         "freeze_sha256": args.expected_freeze_sha256, "started_UTC": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "selected_gpu": selected, "inventory_at_start": cards, "package_versions": versions,
+        "kernel_cache_paths": kernel_caches,
         "completed": False, "process_retirement_pending": True, "quality_approved": False}
     write_new(RUN / "ledger" / (args.stage + "-start.json"), marker)
     folder.mkdir(parents=True, exist_ok=False)

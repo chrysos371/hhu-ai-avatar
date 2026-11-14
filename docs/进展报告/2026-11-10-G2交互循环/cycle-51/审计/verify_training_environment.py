@@ -24,7 +24,10 @@ def main(name):
             and "pip" in command and "install" in command), "target pip install is still running")
     assets = TARGET.parents[1]
     env = dict(os.environ, CUDA_VISIBLE_DEVICES="", PYTHONDONTWRITEBYTECODE="1",
-        PYTHONPATH=str(ROOT / "src"), TMPDIR=str(assets / "tmp"))
+        PYTHONPATH=str(ROOT / "src"), TMPDIR=str(assets / "tmp"),
+        TRITON_CACHE_DIR=str(assets / "cache/triton"),
+        TORCHINDUCTOR_CACHE_DIR=str(assets / "cache/torchinductor"),
+        CUDA_CACHE_PATH=str(assets / "cache/cuda-kernels"))
     installed = inventory(TARGET / "bin/python", env)
     require(installed == source["installed"], "current installed environment differs from completed preparation")
     originals = {name: inventory(assets / "envs" / name / "bin/python", env)
