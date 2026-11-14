@@ -1,0 +1,46 @@
+{
+  "scope": "actual Avatar.respond unconfigured SDK only; not all configured/default Web behavior or model quality",
+  "head": "fea1e955f5a65e717328ca925151627463f6f74c",
+  "source_sha256": {
+    "src/avatar/main.py": "6c07179cefc047d5b797372006bd729f2e1a749083743e35a3b927910af39dc1",
+    "src/avatar/brain/reminder_queries.py": "93e76059458e84e2b0b1af8ae8f701be9c893c3fc41fbf926bf23da1c4e0ac53",
+    "docs/进展报告/2026-11-10-G2交互循环/cycle-44/审计/probe_default_gap.py": "59c473bf826d12a8070e72bf3239a8c8d34c59439f5dd7e399bece3cbb914673"
+  },
+  "respond_signature": "(self, user_text: 'str', use_tts: 'bool' = False, tts_path: 'str' = './data/reply.mp3', use_web: 'bool' = False, cancel: 'Optional[CancellationToken]' = None, on_delta=None, source_precondition=None) -> 'dict'",
+  "default_read_mode_parameter_present": false,
+  "cases": [
+    {
+      "text": "提醒编号1能通过短信送给我吗？",
+      "explicit_parser_matched": false,
+      "generation_mode": "rules_unconfigured",
+      "analysis_mode": "rules_fallback",
+      "reply": "我会尽力帮你，请告诉我具体希望怎么做。",
+      "has_verified_query_metadata": false,
+      "business_unchanged": true,
+      "conversation": {
+        "session_id": "c44-default-gap",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      }
+    },
+    {
+      "text": "提醒编号1现在是什么状态？",
+      "explicit_parser_matched": false,
+      "generation_mode": "rules_unconfigured",
+      "analysis_mode": "rules_fallback",
+      "reply": "这是个好问题～（当前未接入大模型，请在 .env 配置 LLM_API_KEY）",
+      "has_verified_query_metadata": false,
+      "business_unchanged": true,
+      "conversation": {
+        "session_id": "c44-default-gap",
+        "revision": 0,
+        "user_message_id": 1,
+        "assistant_message_id": 2
+      }
+    }
+  ],
+  "native_calls": 0,
+  "actual_SDK_turns": 2,
+  "default_feature_delivery_proven": false
+}

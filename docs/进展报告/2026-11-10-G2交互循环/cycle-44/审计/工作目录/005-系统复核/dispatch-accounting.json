@@ -1,0 +1,477 @@
+{
+  "scope": "descriptive staged finite-pipeline comparison, no pure model/single-factor/human-helpfulness claim",
+  "new_native_calls": 0,
+  "native_total": 79,
+  "SQL_dump_total": 180,
+  "status_SELECTs_total": 42,
+  "candidate_model_calls_total": 0,
+  "candidate_strict_correct_total": 90,
+  "candidate_cases_total": 90,
+  "candidate_direct_no_model_total": 63,
+  "candidate_no_read_total": 26,
+  "candidate_source_denials": 1,
+  "stages": {
+    "development": {
+      "native_calls": 62,
+      "SQL_dumps": 144,
+      "status_SELECTs": 30,
+      "arms": {
+        "model_policy_grounded": {
+          "task_correct": 54,
+          "total": 72,
+          "model_used": 60,
+          "rule_no_model": 12,
+          "direct_no_model": 0,
+          "source_denied": 0,
+          "origins": {
+            "trusted_read_fixed": 42,
+            "framework_no_eligible": 12,
+            "verified_clarification": 18
+          },
+          "by_category": {
+            "read": {
+              "total": 30,
+              "correct": 27
+            },
+            "clarify_reference": {
+              "total": 15,
+              "correct": 15
+            },
+            "clarify_intent": {
+              "total": 6,
+              "correct": 0
+            },
+            "avoid": {
+              "total": 21,
+              "correct": 12
+            },
+            "blocked": {
+              "total": 0,
+              "correct": 0
+            }
+          }
+        },
+        "source_dispatch": {
+          "task_correct": 72,
+          "total": 72,
+          "model_used": 0,
+          "rule_no_model": 21,
+          "direct_no_model": 51,
+          "source_denied": 0,
+          "origins": {
+            "trusted_read_fixed": 30,
+            "framework_no_read": 21,
+            "verified_clarification": 15,
+            "verified_intent_clarification": 6
+          },
+          "by_category": {
+            "read": {
+              "total": 30,
+              "correct": 30
+            },
+            "clarify_reference": {
+              "total": 15,
+              "correct": 15
+            },
+            "clarify_intent": {
+              "total": 6,
+              "correct": 6
+            },
+            "avoid": {
+              "total": 21,
+              "correct": 21
+            },
+            "blocked": {
+              "total": 0,
+              "correct": 0
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "arm": "model_policy_grounded",
+          "case": "numbered-reference-channel",
+          "repetition": 1,
+          "expected": "read",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "nonquery-runtime-note",
+          "repetition": 1,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_delivery_policy",
+          "arguments": {},
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "explicit-write-cancel",
+          "repetition": 1,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "mixed-numbered-targets",
+          "repetition": 1,
+          "expected": "clarify_intent",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "unspecified-reminder-question",
+          "repetition": 1,
+          "expected": "clarify_intent",
+          "actual_kind": "reference_clarification",
+          "final_tool": "clarify_reminder_reference",
+          "arguments": {},
+          "reply_origin": "verified_clarification",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "immediate-write-cancel",
+          "repetition": 1,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "numbered-reference-channel",
+          "repetition": 2,
+          "expected": "read",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "nonquery-runtime-note",
+          "repetition": 2,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_delivery_policy",
+          "arguments": {},
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "explicit-write-cancel",
+          "repetition": 2,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "mixed-numbered-targets",
+          "repetition": 2,
+          "expected": "clarify_intent",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "unspecified-reminder-question",
+          "repetition": 2,
+          "expected": "clarify_intent",
+          "actual_kind": "reference_clarification",
+          "final_tool": "clarify_reminder_reference",
+          "arguments": {},
+          "reply_origin": "verified_clarification",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "immediate-write-cancel",
+          "repetition": 2,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "numbered-reference-channel",
+          "repetition": 3,
+          "expected": "read",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "nonquery-runtime-note",
+          "repetition": 3,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_delivery_policy",
+          "arguments": {},
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "explicit-write-cancel",
+          "repetition": 3,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "mixed-numbered-targets",
+          "repetition": 3,
+          "expected": "clarify_intent",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "unspecified-reminder-question",
+          "repetition": 3,
+          "expected": "clarify_intent",
+          "actual_kind": "reference_clarification",
+          "final_tool": "clarify_reminder_reference",
+          "arguments": {},
+          "reply_origin": "verified_clarification",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "immediate-write-cancel",
+          "repetition": 3,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        }
+      ],
+      "proof_sha256": "29b02dd16b49e3388dace0efa44b2f501928d3c8a8b8387b9312bc5a5b36770e"
+    },
+    "protected": {
+      "native_calls": 17,
+      "SQL_dumps": 36,
+      "status_SELECTs": 12,
+      "arms": {
+        "model_policy_grounded": {
+          "task_correct": 12,
+          "total": 18,
+          "model_used": 15,
+          "rule_no_model": 2,
+          "direct_no_model": 0,
+          "source_denied": 1,
+          "origins": {
+            "trusted_read_fixed": 11,
+            "verified_clarification": 3,
+            "framework_no_eligible": 2,
+            "source_cancelled": 1,
+            "model_no_tool_fixed": 1
+          },
+          "by_category": {
+            "read": {
+              "total": 9,
+              "correct": 7
+            },
+            "clarify_reference": {
+              "total": 2,
+              "correct": 2
+            },
+            "clarify_intent": {
+              "total": 1,
+              "correct": 0
+            },
+            "avoid": {
+              "total": 5,
+              "correct": 2
+            },
+            "blocked": {
+              "total": 1,
+              "correct": 1
+            }
+          }
+        },
+        "source_dispatch": {
+          "task_correct": 18,
+          "total": 18,
+          "model_used": 0,
+          "rule_no_model": 5,
+          "direct_no_model": 12,
+          "source_denied": 1,
+          "origins": {
+            "trusted_read_fixed": 9,
+            "verified_clarification": 2,
+            "framework_no_read": 5,
+            "source_cancelled": 1,
+            "verified_intent_clarification": 1
+          },
+          "by_category": {
+            "read": {
+              "total": 9,
+              "correct": 9
+            },
+            "clarify_reference": {
+              "total": 2,
+              "correct": 2
+            },
+            "clarify_intent": {
+              "total": 1,
+              "correct": 1
+            },
+            "avoid": {
+              "total": 5,
+              "correct": 5
+            },
+            "blocked": {
+              "total": 1,
+              "correct": 1
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "arm": "model_policy_grounded",
+          "case": "heldout-persisted-vs-running",
+          "repetition": 1,
+          "expected": "read",
+          "actual_kind": null,
+          "final_tool": null,
+          "arguments": null,
+          "reply_origin": "model_no_tool_fixed",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "heldout-cancel-request",
+          "repetition": 1,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "heldout-statement-id",
+          "repetition": 1,
+          "expected": "avoid",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 1
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "heldout-two-questions",
+          "repetition": 1,
+          "expected": "clarify_intent",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "heldout-no-explicit-question",
+          "repetition": 1,
+          "expected": "avoid",
+          "actual_kind": "reference_clarification",
+          "final_tool": "clarify_reminder_reference",
+          "arguments": {},
+          "reply_origin": "verified_clarification",
+          "status_SELECTs": 0
+        },
+        {
+          "arm": "model_policy_grounded",
+          "case": "heldout-id-channel",
+          "repetition": 1,
+          "expected": "read",
+          "actual_kind": "trusted_data_read",
+          "final_tool": "read_reminder_state",
+          "arguments": {
+            "reminder_id": 2
+          },
+          "reply_origin": "trusted_read_fixed",
+          "status_SELECTs": 1
+        }
+      ],
+      "proof_sha256": "5292a3597c30e2c68f5bfe2a43786e500bb418640fde5b409d2c54f9a903b199"
+    }
+  },
+  "analyzer_sha256": "bdc716fa2e32cd17604ccbdbe4b9e655d5afb9f6afd0c663b53bd9c22c433ba9"
+}
