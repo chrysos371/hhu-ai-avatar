@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "scope": "three normal CLI calls reject actual unfinished preparation/cache for precise reasons; no positive environment admission",
+  "actual_CLI_controls": [
+    {
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "-B",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/verify_cuda_wheel_cache.py"
+      ],
+      "returncode": 1,
+      "expected_reason": "complete fifteen-wheel cache required before independent admission",
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/verify_cuda_wheel_cache.py\", line 65, in <module>\n    main()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/verify_cuda_wheel_cache.py\", line 25, in main\n    raise ValueError(\"complete fifteen-wheel cache required before independent admission\")\nValueError: complete fifteen-wheel cache required before independent admission\n",
+      "script_sha256": "943de9ffd907cebb915bf67323744f41fcc778e9733272501c392f0a9460987d"
+    },
+    {
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "-B",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/prepare_environment_from_wheels.py"
+      ],
+      "returncode": 1,
+      "expected_reason": "C51 complete verified wheel cache required for local recovery",
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/prepare_environment_from_wheels.py\", line 128, in <module>\n    main()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/prepare_environment_from_wheels.py\", line 29, in main\n    raise ValueError(\"C51 complete verified wheel cache required for local recovery\")\nValueError: C51 complete verified wheel cache required for local recovery\n",
+      "script_sha256": "e95d75677b783e0d8efcae559e6fcc1059fe1e8e438636a85eb983417e6519df"
+    },
+    {
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "-B",
+        "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/verify_training_environment.py",
+        "--preparation-source",
+        "environment-v3/environment-v3.json"
+      ],
+      "returncode": 1,
+      "expected_reason": "environment preparation is not complete",
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/verify_training_environment.py\", line 71, in <module>\n    main(parser.parse_args().preparation_source)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/verify_training_environment.py\", line 16, in main\n    path, source = successful_source(name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/environment_receipt.py\", line 28, in successful_source\n    require(source[\"status\"] == \"complete\", \"environment preparation is not complete\")\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/environment_receipt.py\", line 15, in require\n    raise ValueError(message)\nValueError: environment preparation is not complete\n",
+      "script_sha256": "47872ecb4336e6e016d4ee3991bb702505b7fca795396b10ac46a7fa406e3cb6"
+    }
+  ],
+  "setup_process_at_observation_only": {
+    "pid": 407654,
+    "start_ticks": "59364802",
+    "command": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "-B",
+      "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/prepare_training_environment.py"
+    ]
+  },
+  "reader_sha256": "454d04955919f0a5387af529700b51f766097ea437214b9a23f01011db621e84",
+  "verifier_sha256": "2c7fad0e88416e02c6d1a9d4799aa7bf03e18d27321e4e5f8ff64a8dbde97e23",
+  "admission_created": false,
+  "replacement_install_created": false,
+  "model_constructions": 0,
+  "GPU_allocations": 0,
+  "training_steps": 0,
+  "head": "3ff6d1363cb7a3ef1058dc49dbd3c4157ac6ab6a"
+}
