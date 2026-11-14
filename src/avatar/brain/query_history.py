@@ -34,7 +34,7 @@ def query_history_content(reply, metadata, *, text, source_message_id, session_i
             or metadata.get('semantic_intent_verified') is not False):
         return None
     observed = metadata.get('observed_at')
-    if type(observed) not in (int, float) or not math.isfinite(observed) or not 0 < observed <= 253402300799:
+    if type(observed) not in (int, float) or not 0 < observed <= 253402300799 or not math.isfinite(observed):
         return None
     try:
         target = derive_read_target(text)
