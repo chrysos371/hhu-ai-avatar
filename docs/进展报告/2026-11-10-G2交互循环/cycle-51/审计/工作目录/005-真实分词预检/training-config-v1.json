@@ -1,0 +1,19 @@
+{
+  "seed": 42,
+  "max_length": 2048,
+  "max_steps": 44,
+  "epochs_cap": 1,
+  "gradient_accumulation_steps": 4,
+  "lora_r": 8,
+  "lora_alpha": 16,
+  "lora_dropout": 0.05,
+  "target_modules": [
+    "q_proj",
+    "v_proj"
+  ],
+  "learning_rate": 2e-05,
+  "supervision": "final assistant only; history and user tokens masked",
+  "analysis_adapter_enabled": false,
+  "dtype": "bfloat16",
+  "attention": "sdpa"
+}
