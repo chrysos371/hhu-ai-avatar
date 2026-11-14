@@ -1,5 +1,7 @@
 """Install an isolated project training environment; never construct a model."""
 import importlib.metadata
+import hashlib
+import urllib.request
 import json
 import os
 from pathlib import Path
@@ -9,7 +11,8 @@ import time
 
 ROOT=Path(__file__).resolve().parents[5]
 BASE=Path(__file__).resolve().parents[1]
-WORK=BASE/'审计/工作目录/003-环境与基础权重'
+PREPARATION=BASE/'审计/工作目录/003-环境与基础权重'
+WORK=PREPARATION/'environment-v2'
 ASSETS=Path('/data/Users/zrh/data/hhu-ai-avatar')
 
 
@@ -24,9 +27,11 @@ def inventory(python,env):
 
 def main():
     assert subprocess.run(['mountpoint','-q','/data']).returncode==0
-    output=WORK/'environment-v1.json';assert not output.exists()
-    target=ASSETS/'envs/hhu-ai-avatar-train';assert not target.exists()
-    protocol=json.loads((WORK/'preparation-protocol.json').read_text())
+    WORK.mkdir(exist_ok=False)
+    output=WORK/'environment-v2.json';assert not output.exists()
+    target=ASSETS/'envs/hhu-ai-avatar-train';assert target.is_dir()
+    prior=json.loads((PREPARATION/'environment-v1.json').read_text());assert prior['status']=='failed' and prior['target']==str(target)
+    protocol=json.loads((PREPARATION/'preparation-protocol.json').read_text())
     assert str(ASSETS)==protocol['data_root'] and protocol['model_constructions']==0
     env=dict(os.environ,CUDA_VISIBLE_DEVICES='',PYTHONDONTWRITEBYTECODE='1',
         TMPDIR=str(ASSETS/'tmp'),PIP_CACHE_DIR=str(ASSETS/'cache/pip'),
@@ -46,8 +51,20 @@ def main():
         if command.returncode:raise RuntimeError(name+' failed; preserve its log before retry')
         print(name,'completed',flush=True)
     try:
-        run('environment-create',['/usr/bin/python3.10','-m','venv',str(target)])
         python=str(target/'bin/python')
+        seed=inventory(python,env);assert set(seed['versions'])=={'pip','setuptools'} and seed['versions']['pip']=='22.0.2'
+        result['resumed_seed_only_environment']=seed
+        url='https://pypi.org/pypi/pip/25.3/json'
+        with urllib.request.urlopen(url,timeout=60) as stream:metadata=json.load(stream)
+        artifact=next(f for f in metadata['urls'] if f['filename']=='pip-25.3-py3-none-any.whl')
+        write(WORK/'pip-bootstrap-metadata.json',metadata)
+        wheel=ASSETS/'cache/pip-bootstrap'/artifact['filename'];wheel.parent.mkdir(parents=True,exist_ok=True)
+        if not wheel.exists():
+            with urllib.request.urlopen(artifact['url'],timeout=60) as stream:wheel.write_bytes(stream.read())
+        assert hashlib.sha256(wheel.read_bytes()).hexdigest()==artifact['digests']['sha256']
+        result['pip_bootstrap']={'source':url,'wheel':str(wheel),'sha256':artifact['digests']['sha256']}
+        run('environment-pip-bootstrap',[python,'-m','pip','--isolated','install','--no-deps','--no-index',str(wheel)])
+        assert inventory(python,env)['versions']['pip']=='25.3'
         common=[python,'-m','pip','--isolated','install','--cache-dir',str(ASSETS/'cache/pip'),
             '--timeout','60','--retries','3','--progress-bar','off']
         run('environment-torch-install',common+['--index-url',protocol['torch']['index'],
