@@ -71,7 +71,7 @@ def main(mode):
             assert primary_passes(True,stops,True,True,True,scores|{protocol['primary_candidate']:score},protocol) is False
             rejected.append({'stops':stops,'candidate_score':score})
         result.update(verified=True,runner_sha256=digest(runner_path),
-            'current_verifier_sha256':digest(BASE/'审计/verify_native.py'),
+            current_verifier_sha256=digest(BASE/'审计/verify_native.py'),
             current_first_positions=positions,each_case_each_arm_first_once=True,
             perfect_registered_result_passes=True,invalid_count_gates_rejected=rejected)
     else: result.update(expected_red_reproduced=True,count_as_admission=False)
