@@ -72,6 +72,22 @@ def protocol_check():
         require(type(p["evaluation"].get(key)) is type(value) and p["evaluation"][key] == value,
             "C52 sampling contract changed: " + key)
     require(len(read(CASES)["cases"]) == 22, "C52 case count differs")
+    spec = read(PREPARATION / "preparation-protocol.json")["model"]
+    require(p["model"]["model_id"] == spec["repo"] and p["model"]["revision"] == spec["revision"]
+        and p["model"]["sha256"] == spec["sha256"], "C52 model differs from prepared C51 identity")
+    manifest = read(DATA.with_name("manifest.json"))
+    mask = read(TOKENIZATION / "mask-preflight-v1.json")
+    require(manifest["protocol_sha256"] == sha(PROTOCOL), "C52 data was exported under a different protocol")
+    require(mask["data_manifest_sha256"] == sha(DATA.with_name("manifest.json"))
+        and mask["config_sha256"] == sha(TOKENIZATION / "training-config-v1.json"),
+        "C52 actual tokenization input binding changed")
+    require(manifest["sft_sha256"] == sha(DATA) and manifest["dev_sha256"] == sha(DATA.with_name("dev.jsonl")),
+        "C52 dataset byte identity changed")
+    require(manifest["samples"] == 176 and manifest["dev_samples"] == 44
+        and manifest["human_reviewed"] is False and manifest["adapter_scope"] == "reply-only",
+        "C52 dataset scope differs")
+    from avatar.lab.training import load_data
+    load_data(DATA)  # Existing actual protection/schema gate, still before any Torch/GPU import.
     return p
 
 
