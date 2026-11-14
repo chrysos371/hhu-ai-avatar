@@ -8,6 +8,8 @@ import sys
 AUDIT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(AUDIT))
 from execution_common import ROOT, RUN, read, sha, require, write_new
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "006-调用结束态核验"))
+from trace_transition import validate_transition
 from capture_transformers import validate_call
 from replay_common import CASES, case_for_replay, inspect_observations
 
@@ -35,7 +37,7 @@ def main(stage, repetition):
             result = phase / f"actual-generate/{ordinal:04}-result.json"
             start = read(entry); row = read(result)
             require(row["completed"] is True and row["fixture"] is False, "actual generation incomplete")
-            require(all(row[k] == v for k, v in start.items()), "trace entry changed")
+            validate_transition(start, row)
             validate_call(row)
             for p in [entry, result]:
                 files[str(p.relative_to(phase))] = sha(p)
