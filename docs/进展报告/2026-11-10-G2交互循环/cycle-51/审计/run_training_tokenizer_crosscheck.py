@@ -8,6 +8,7 @@ import sys
 
 from avatar.lab.common import sha
 from avatar.lab.training import preflight
+from environment_receipt import admitted_environment, ADMISSION
 
 ROOT = Path(__file__).resolve().parents[5]
 BASE = Path(__file__).resolve().parents[1]
@@ -18,7 +19,7 @@ WORK = BASE / "审计/工作目录/005-真实分词预检"
 def main():
     assert os.environ.get("CUDA_VISIBLE_DEVICES") == ""
     assert sys.prefix == str(ASSETS / "envs/hhu-ai-avatar-train")
-    environment = json.loads((BASE / "审计/工作目录/003-环境与基础权重/environment-v3/environment-v3.json").read_text())
+    environment = admitted_environment()
     assert environment["status"] == "complete" and environment["existing_environments_unchanged"]
     proof_path = WORK / "training-tokenizer-crosscheck-v1.json"
     assert not proof_path.exists()
@@ -45,7 +46,7 @@ def main():
     assert not torch.cuda.is_initialized()
     proof = {"verified": True, "scope": "training-env CPU tokenization equals independently verified tokenizer-only output; not CUDA/model training",
         "tokenizer_preflight_proof_sha256": sha(WORK / "mask-preflight-v1.json"),
-        "training_environment_proof_sha256": sha(BASE / "审计/工作目录/003-环境与基础权重/environment-v3/environment-v3.json"),
+        "training_environment_proof_sha256": sha(ADMISSION),
         "verifier_sha256": sha(Path(__file__)), "config_sha256": sha(config),
         "environment": sys.prefix, "versions": versions, "torch": torch.__version__,
         "tokens_sha256": sha(output / "tokens.json"), "identical_to_tokenizer_only_environment": True,

@@ -22,7 +22,8 @@ def sha(path):
 def successful_source(name):
     require(name in SOURCES, "unregistered environment preparation source")
     path = PREPARATION / name
-    require(path.is_file(), "environment preparation source missing")
+    require(path.is_file() and path.resolve().is_relative_to(PREPARATION.resolve()),
+        "environment preparation source missing or outside registered directory")
     source = json.loads(path.read_text())
     require(source["status"] == "complete", "environment preparation is not complete")
     require(source["target"] == str(TARGET), "environment preparation target differs")
@@ -39,6 +40,9 @@ def admitted_environment():
     admission = json.loads(ADMISSION.read_text())
     require(admission["verified"] is True and admission["target"] == str(TARGET),
         "C51 environment admission is not verified")
+    require(admission["reader_sha256"] == sha(Path(__file__))
+        and admission["verifier_sha256"] == sha(Path(__file__).with_name("verify_training_environment.py")),
+        "environment admission verification source changed")
     path, source = successful_source(admission["preparation_source"])
     require(sha(path) == admission["preparation_source_sha256"], "successful environment source changed")
     require(source["installed"] == admission["installed"], "admitted package inventory differs")

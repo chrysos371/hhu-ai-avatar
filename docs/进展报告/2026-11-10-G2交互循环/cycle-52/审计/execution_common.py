@@ -1,6 +1,7 @@
 """C52 committed-source and preparation gates, without importing Torch."""
 import hashlib
 import io
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -91,8 +92,17 @@ def protocol_check():
     return p
 
 
+def environment_reader():
+    path = C51 / "审计/environment_receipt.py"
+    spec = importlib.util.spec_from_file_location("c51_environment_receipt", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def preparation_check(expected_seal):
-    environment = read(PREPARATION / "environment-v3/environment-v3.json")
+    reader = environment_reader()
+    environment = reader.admitted_environment()
     require(environment["status"] == "complete", "C51 training environment is not complete")
     require(environment["existing_environments_unchanged"] is True, "original environments changed")
     base = read(PREPARATION / "model-v1/model-preparation.json")
@@ -103,6 +113,8 @@ def preparation_check(expected_seal):
     require(mask["verified"] is True and cross["verified"] is True
         and cross["identical_to_tokenizer_only_environment"] is True, "C51 tokenizer crosscheck missing")
     require(mask["tokens_sha256"] == cross["tokens_sha256"], "C51 cross-environment tokens differ")
+    require(cross["training_environment_proof_sha256"] == sha(reader.ADMISSION),
+        "C51 tokenization was checked against a different environment admission")
     seal_path = C51 / "审计/证据清单.json"
     require(type(expected_seal) is str and re.fullmatch("[0-9a-f]{64}", expected_seal) is not None,
         "C51 explicit seal SHA required")
@@ -123,7 +135,11 @@ def required_inputs():
     names.update(str((BASE.parent / "cycle-50/审计" / name).relative_to(ROOT))
         for name in ("sample_history.py", "verify_observations.py", "text_shape.py"))
     names.add(str((C51 / "审计/证据清单.json").relative_to(ROOT)))
-    for p in (PREPARATION / "environment-v3/environment-v3.json",
+    reader = environment_reader()
+    admitted = read(reader.ADMISSION)
+    source, _ = reader.successful_source(admitted["preparation_source"])
+    for p in (reader.ADMISSION, source, C51 / "审计/environment_receipt.py",
+        C51 / "审计/verify_training_environment.py",
         PREPARATION / "model-v1/model-preparation.json", LOCK,
         TOKENIZATION / "mask-preflight-v1.json", TOKENIZATION / "training-tokenizer-crosscheck-v1.json",
         TOKENIZATION / "training-config-v1.json"):
