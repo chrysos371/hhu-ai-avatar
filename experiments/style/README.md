@@ -98,3 +98,7 @@ CUDA_VISIBLE_DEVICES='' /data/Users/zyyh/envs/hhu-ai-avatar-train/bin/python -m 
 可选 torch 测试用极小随机 Qwen3 在 CPU 更新 LoRA、保存重载，并验证 disable_adapter 异常恢复；它不加载 4B、不占用 GPU、不评价模型能力。核心环境没有 torch 时该项会跳过。
 
 2026-11-10 G2 第二轮：训练保护现在递归发现 `evals/` 下声明式 `cases/turns` 套件，新增交互评测已纳入。旧自动筛选池的保护哈希已过时，后续导出/训练前须重新筛选；不得直接修改 manifest 绕过门禁。过去的 200/50 导出保留为历史实验材料，不宣称通过新保护集合。见 `docs/进展报告/2026-11-10-G2交互循环/cycle-02/审计/issues/G2C2-008.md`。
+
+## C53加载准入与训练日志补充
+
+主lab加载器现在复核实际对话结构及行来源hash（兼容原不含system/C51全messages两种历史范围），按真实非system对话防跨split重复，并重新筛当前受保护评测文本；开发计数也与manifest核对。更新整文件manifest不能绕过行来源；重算行hash也不能放入已保护评测输入。原176/44与220实际分词保持，新完整回归2548/1；这不是语义收益批准。未来成功microbatch的ID/监督token在优化步成功后落盘，实际新日志仍待后续登记训练验证，旧日志不回填。见[C53-003](../../docs/进展报告/2026-11-10-G2交互循环/cycle-53/审计/问题单/003-加载器信任未复核的逐行来源哈希.md)。
