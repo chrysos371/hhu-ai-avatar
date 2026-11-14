@@ -1,0 +1,744 @@
+{
+  "case": "runtime-stopped-service",
+  "repetition": 1,
+  "variant": "source_dispatch",
+  "catalogue": null,
+  "plan": {
+    "version": 1,
+    "route": "read_policy",
+    "reason": "runtime_or_channel_query",
+    "arguments": {},
+    "evidence": {
+      "bound_reminder_id": null,
+      "domain_or_exclusion_error": null,
+      "external_action_request": false,
+      "mutation_request": false,
+      "policy_question_evidence": {
+        "error": null,
+        "record_reference": false,
+        "record_state": false,
+        "runtime_spans": [
+          [
+            2,
+            4,
+            "服务"
+          ]
+        ]
+      },
+      "query_request": true,
+      "writing_request": false
+    },
+    "source_message_id": 1,
+    "session_id": "c44-runtime-stopped-service-1-source_dispatch",
+    "revision": 0,
+    "source_text_sha256": "a84263d6886643b245a7c890acbcd09085929abfbc1c0075acfcbaaf5b1150dd",
+    "model_required": false,
+    "business_data_read": false,
+    "semantic_intent_verified": false,
+    "plan_sha256": "d50f67ec8799dddcac7b66ae1dc1e99f639f231d0f75f36b4772403007e4bd71"
+  },
+  "advertised_tools": null,
+  "model_used": false,
+  "framework_skipped_model": false,
+  "direct_dispatch_without_model": true,
+  "proposal": null,
+  "model_error": null,
+  "model_contract_error": null,
+  "read_or_control_result": {
+    "ok": true,
+    "data": {
+      "requires_running_server": true,
+      "web_requires_active_client_polling": true,
+      "external_delivery_channels": [],
+      "human_reading_verified": false
+    },
+    "error": null,
+    "reply": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+    "source_message_id": 1,
+    "revision": 0,
+    "observed_at": 1794618475.3238087
+  },
+  "result_kind": "trusted_data_read",
+  "reply": "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。",
+  "reply_origin": "trusted_read_fixed",
+  "final_tool": "read_reminder_delivery_policy",
+  "final_arguments": {},
+  "attempted_function": null,
+  "attempted_arguments": null,
+  "source_cancelled": false,
+  "failure": null,
+  "Avatar_application_turns": 0,
+  "service_implementation": "avatar.lab.source_read_dispatch.SourceReadDispatchSession",
+  "source_message_id": 1,
+  "source_revision": 0,
+  "source_scope": "current_user",
+  "independent_turn_allowed": true,
+  "session_id": "c44-runtime-stopped-service-1-source_dispatch",
+  "business_before": {
+    "memory_reminders": [
+      {
+        "id": 1,
+        "title": "C41受控提醒一",
+        "due_at": 1700000000.0,
+        "created_at": 1699996400.0,
+        "status": "cancelled",
+        "notified_at": null
+      },
+      {
+        "id": 2,
+        "title": "C41到期正控：禁止自动认领",
+        "due_at": 1700000060.0,
+        "created_at": 1699996400.0,
+        "status": "active",
+        "notified_at": null
+      }
+    ],
+    "memory_reminder_deliveries": [],
+    "memory_action_receipts": []
+  },
+  "business_after": {
+    "memory_reminders": [
+      {
+        "id": 1,
+        "title": "C41受控提醒一",
+        "due_at": 1700000000.0,
+        "created_at": 1699996400.0,
+        "status": "cancelled",
+        "notified_at": null
+      },
+      {
+        "id": 2,
+        "title": "C41到期正控：禁止自动认领",
+        "due_at": 1700000060.0,
+        "created_at": 1699996400.0,
+        "status": "active",
+        "notified_at": null
+      }
+    ],
+    "memory_reminder_deliveries": [],
+    "memory_action_receipts": []
+  },
+  "business_unchanged": true,
+  "total_changes_before": 5,
+  "total_changes_after": 5,
+  "no_post_source_writes": true,
+  "sqlite_backend": "actual sqlite3 :memory: with synthetic rows; no personal/disk durability approval",
+  "SQL_dump_sha256": "0b67573fdf1b833d3e1d53fce3878956a8cab3dc5e4191bbaa0c35191c83266d",
+  "SQL_trace": [
+    {
+      "phase": "startup",
+      "sql": "CREATE TABLE IF NOT EXISTS memory_reminders (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            title TEXT NOT NULL, due_at REAL NOT NULL, created_at REAL NOT NULL,\n            status TEXT NOT NULL DEFAULT 'active', notified_at REAL\n        )"
+    },
+    {
+      "phase": "startup",
+      "sql": "CREATE TABLE IF NOT EXISTS memory_reminder_deliveries (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            reminder_id INTEGER NOT NULL UNIQUE,\n            created_at REAL NOT NULL, acknowledged_at REAL\n        )"
+    },
+    {
+      "phase": "seed",
+      "sql": "BEGIN "
+    },
+    {
+      "phase": "seed",
+      "sql": "INSERT INTO memory_reminders(id,title,status,due_at,created_at,notified_at) VALUES (1,'C41受控提醒一','cancelled',1700000000.0,1699996400.0,NULL)"
+    },
+    {
+      "phase": "seed",
+      "sql": "INSERT INTO memory_reminders(id,title,status,due_at,created_at,notified_at) VALUES (2,'C41到期正控：禁止自动认领','active',1700000060.0,1699996400.0,NULL)"
+    },
+    {
+      "phase": "seed",
+      "sql": "COMMIT"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "BEGIN IMMEDIATE"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SAVEPOINT memory_batch_0"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SAVEPOINT memory_batch_1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "INSERT INTO memory_messages (role, content, session_id, created_at,context_tracked) VALUES ('user', '提醒服务停止运行时，还能发送通知吗？', 'c44-runtime-stopped-service-1-source_dispatch', 1794618475.32194,0)"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "RELEASE SAVEPOINT memory_batch_1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id<1 LIMIT 1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "INSERT OR REPLACE INTO memory_web_speaker_state (id,format_version,context_revision,cursor,scope,source_ids_json) VALUES (1,1,0,1,'current_user','[1]')"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "RELEASE SAVEPOINT memory_batch_0"
+    },
+    {
+      "phase": "source-entry",
+      "sql": "COMMIT"
+    },
+    {
+      "phase": "before-projection",
+      "sql": "SELECT * FROM memory_reminders ORDER BY id"
+    },
+    {
+      "phase": "before-projection",
+      "sql": "SELECT * FROM memory_reminder_deliveries ORDER BY id"
+    },
+    {
+      "phase": "before-projection",
+      "sql": "SELECT * FROM memory_action_receipts ORDER BY id"
+    },
+    {
+      "phase": "planning",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "planning",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "planning",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "planning",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "planning",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "execute",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "execute",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "execute",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "execute",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "execute",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "execute",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "execute",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "publication",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "publication",
+      "sql": "BEGIN"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT role,content,session_id FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT COALESCE(MAX(id),0) FROM memory_messages WHERE role='user'"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT revision FROM memory_context_revision WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT * FROM memory_web_speaker_state WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT 1 FROM memory_messages WHERE role='user' AND id>1 AND id<2 LIMIT 1"
+    },
+    {
+      "phase": "publication",
+      "sql": "SELECT role,content FROM memory_messages WHERE id=1"
+    },
+    {
+      "phase": "publication",
+      "sql": "ROLLBACK"
+    },
+    {
+      "phase": "after-projection",
+      "sql": "SELECT * FROM memory_reminders ORDER BY id"
+    },
+    {
+      "phase": "after-projection",
+      "sql": "SELECT * FROM memory_reminder_deliveries ORDER BY id"
+    },
+    {
+      "phase": "after-projection",
+      "sql": "SELECT * FROM memory_action_receipts ORDER BY id"
+    },
+    {
+      "phase": "archive",
+      "sql": "\n        SELECT \"name\", \"type\", \"sql\"\n        FROM \"sqlite_master\"\n            WHERE \"sql\" NOT NULL AND\n            \"type\" == 'table'\n            ORDER BY \"name\"\n        "
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_action_receipts\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_action_receipts\" VALUES('||quote(\"id\")||','||quote(\"source_message_id\")||','||quote(\"session_id\")||','||quote(\"context_revision\")||','||quote(\"action\")||','||quote(\"reminder_id\")||','||quote(\"recorded_at\")||')' FROM \"memory_action_receipts\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_chat_results\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_chat_results\" VALUES('||quote(\"message_id\")||','||quote(\"context_revision\")||','||quote(\"result_json\")||')' FROM \"memory_chat_results\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_context_revision\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_context_revision\" VALUES('||quote(\"id\")||','||quote(\"revision\")||')' FROM \"memory_context_revision\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_episodic\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_episodic\" VALUES('||quote(\"id\")||','||quote(\"event_type\")||','||quote(\"content\")||','||quote(\"participants\")||','||quote(\"created_at\")||')' FROM \"memory_episodic\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_fragments\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_fragments\" VALUES('||quote(\"id\")||','||quote(\"content\")||','||quote(\"memory_type\")||','||quote(\"category\")||','||quote(\"importance\")||','||quote(\"last_accessed\")||','||quote(\"created_at\")||','||quote(\"content_vector\")||','||quote(\"status\")||','||quote(\"valid_from\")||','||quote(\"valid_to\")||','||quote(\"predecessor_id\")||','||quote(\"profile_key\")||','||quote(\"preference_object\")||','||quote(\"preference_polarity\")||','||quote(\"embedding_model\")||','||quote(\"embedding_dim\")||','||quote(\"bad_hits\")||')' FROM \"memory_fragments\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_long_term_goals\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_long_term_goals\" VALUES('||quote(\"id\")||','||quote(\"title\")||','||quote(\"description\")||','||quote(\"priority\")||','||quote(\"progress\")||','||quote(\"deadline\")||','||quote(\"status\")||')' FROM \"memory_long_term_goals\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_messages\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_messages\" VALUES('||quote(\"id\")||','||quote(\"role\")||','||quote(\"content\")||','||quote(\"session_id\")||','||quote(\"created_at\")||','||quote(\"context_tracked\")||')' FROM \"memory_messages\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_reminder_deliveries\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_reminder_deliveries\" VALUES('||quote(\"id\")||','||quote(\"reminder_id\")||','||quote(\"created_at\")||','||quote(\"acknowledged_at\")||')' FROM \"memory_reminder_deliveries\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_reminders\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_reminders\" VALUES('||quote(\"id\")||','||quote(\"title\")||','||quote(\"due_at\")||','||quote(\"created_at\")||','||quote(\"status\")||','||quote(\"notified_at\")||')' FROM \"memory_reminders\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_response_context\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_response_context\" VALUES('||quote(\"message_id\")||','||quote(\"source_type\")||','||quote(\"source_id\")||')' FROM \"memory_response_context\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_short_term_ideas\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_short_term_ideas\" VALUES('||quote(\"id\")||','||quote(\"content\")||','||quote(\"source_type\")||','||quote(\"status\")||','||quote(\"excitement\")||','||quote(\"created_at\")||')' FROM \"memory_short_term_ideas\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_sources\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_sources\" VALUES('||quote(\"id\")||','||quote(\"fragment_id\")||','||quote(\"source_message_id\")||','||quote(\"evidence\")||','||quote(\"created_at\")||')' FROM \"memory_sources\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_summary_items\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_summary_items\" VALUES('||quote(\"session_id\")||','||quote(\"source_message_id\")||')' FROM \"memory_summary_items\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_tags\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_tags\" VALUES('||quote(\"id\")||','||quote(\"fragment_id\")||','||quote(\"tag\")||')' FROM \"memory_tags\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_version_links\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_version_links\" VALUES('||quote(\"fragment_id\")||','||quote(\"related_fragment_id\")||')' FROM \"memory_version_links\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "PRAGMA table_info(\"memory_web_speaker_state\")"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT 'INSERT INTO \"memory_web_speaker_state\" VALUES('||quote(\"id\")||','||quote(\"format_version\")||','||quote(\"context_revision\")||','||quote(\"cursor\")||','||quote(\"scope\")||','||quote(\"source_ids_json\")||')' FROM \"memory_web_speaker_state\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "SELECT * FROM \"sqlite_sequence\";"
+    },
+    {
+      "phase": "archive",
+      "sql": "\n        SELECT \"name\", \"type\", \"sql\"\n        FROM \"sqlite_master\"\n            WHERE \"sql\" NOT NULL AND\n            \"type\" IN ('index', 'trigger', 'view')\n        "
+    }
+  ],
+  "status_business_SELECTs": 0,
+  "final_expected_task_outcome": true,
+  "scope_matches_expected": true
+}
