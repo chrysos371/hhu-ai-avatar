@@ -24,6 +24,14 @@ def processes():
         '--format=csv,noheader,nounits'],text=True)
 
 
+def require_trial_transport(receipt):
+    """An Avatar rule fallback must not hide a failed experimental transport."""
+    calls = receipt['actual_model_interface_calls']
+    if ([c['role'] for c in calls] != ['cognition','generation']
+            or any(c['error'] is not None for c in calls)):
+        raise RuntimeError('native SDK transport or interface failed; stop registered run')
+
+
 def run(args):
     short = {'qwen3-4b-q4_k_m':'4b','qwen3-14b-q4_k_m':'14b'}[args.model]
     output = args.output.resolve()
@@ -127,6 +135,11 @@ def run(args):
                             'no_new_user_facts':receipt['no_new_user_facts']})
                         report['actual_SDK_trials'] += 1; report['actual_query_turns'] += receipt['actual_query_turns']; report['actual_ordinary_turns'] += 1
                         write(output/'evaluation.json',report)
+                        try:
+                            require_trial_transport(receipt)
+                        except RuntimeError:
+                            write(folder/'group.json',group)  # Preserve the failed partial group.
+                            raise
                 group['completed'] = True
                 write(folder/'group.json',group); report['groups'].append(group)
                 write(output/'evaluation.json',report)
