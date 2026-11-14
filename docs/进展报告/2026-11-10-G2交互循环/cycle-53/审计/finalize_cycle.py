@@ -42,19 +42,19 @@ def main(seal):
     assert system["new_LLM_generations"]==system["new_training_steps"]==system["GPU_allocations"]==0
     meta=read(OUT/"report-render-metadata.json");browser=read(OUT/"report-browser.json")
     report=AUDIT/"系统审计与推进报告.html"
-    assert meta["system_evidence_sha256"]==sha(OUT/"system-evidence.json") and meta["builder_sha256"]==sha(AUDIT/"build_report.py")
+    assert meta["system_evidence_sha256"]==sha(OUT/"system-evidence.json") and meta["builder_sha256"]==sha(AUDIT/"build_report_v2.py")
     assert meta["HTML_sha256"]==sha(report) and meta["MD_sha256"]==sha(report.with_suffix(".md"))
     assert browser["completed"] and not browser["errors"] and browser["reportSha256"]==sha(report)
-    assert browser["scriptSha256"]==sha(AUDIT/"preview_report.mjs")
-    assert meta["tables"]==2 and meta["links"]==13
+    assert browser["scriptSha256"]==sha(AUDIT/"preview_report_v2.mjs")
+    assert meta["tables"]==2 and meta["links"]==14
     assert [v["viewport"]["width"] for v in browser["views"]]==[1440,390]
-    assert all(not v["overflow"] and v["tableCount"]==2 and len(v["links"])==13
+    assert all(not v["overflow"] and v["tableCount"]==2 and len(v["links"])==14
         and all(t["lastCellReadable"] for t in v["horizontalTables"])
         and sha(Path(v["screenshot"]))==v["screenshotSha256"] for v in browser["views"])
-    issues=sorted((AUDIT/"问题单").glob("*.md"));assert len(issues)==3
+    issues=sorted((AUDIT/"问题单").glob("*.md"));assert len(issues)==4
     for p in issues:
         status=next(line for line in p.read_text().splitlines() if line.startswith("状态："))
-        assert ("限定关闭" in status) if p.name.startswith("003") else ("开放" in status)
+        assert ("限定关闭" in status) if p.name[:3] in ("003","004") else ("开放" in status)
     checker=BASE.parent/"cycle-38/审计/check_research_names.py"
     spec=importlib.util.spec_from_file_location("c38_names_c53_final",checker);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     undefined={str(p.relative_to(ROOT)):module.undefined_globals(p.read_text(),str(p)) for p in AUDIT.glob("*.py")}
@@ -76,10 +76,10 @@ def main(seal):
     write_json(OUT/"closeout.json",{"verified":True,"scope":"final current loader repair/CPU/report verification;no causal or model-quality approval",
         "head":head,"verifier_sha256":sha(Path(__file__)),"system_sha256":sha(OUT/"system-evidence.json"),
         "MD_sha256":sha(report.with_suffix(".md")),"HTML_sha256":sha(report),"browser_sha256":sha(OUT/"report-browser.json"),
-        "MD_links_checked":len(links),"links":links,"tables":2,"HTML_links":13,"viewports":[1440,390],"undefined_globals":undefined,
-        "authors_checked":len(authors),"issues_limited_closed":1,"issues_open":2,"new_LLM_generations":0,"new_training_steps":0,
+        "MD_links_checked":len(links),"links":links,"tables":2,"HTML_links":14,"viewports":[1440,390],"undefined_globals":undefined,
+        "authors_checked":len(authors),"issues_limited_closed":2,"issues_open":2,"new_LLM_generations":0,"new_training_steps":0,
         "GPU_allocations":0,"step_logging_actual_GPU_unverified":True,"default_model_changed":False,"goal_active":True})
-    print("C53 closeout:",len(links),"MD links;2tables/13HTMLlinks/1440+390;1limited closed/2open;0newLLM/GPU")
+    print("C53 closeout:",len(links),"MD links;2tables/14HTMLlinks/1440+390;2limited closed/2open;0newLLM/GPU")
 
 
 if __name__=="__main__":
