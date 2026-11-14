@@ -104,6 +104,7 @@ class CapturedBackend:
             "messages": json.loads(json.dumps(messages, ensure_ascii=False)),
             "context": dict(self.context), "actual_generate_entries": 0,
             "actual_wallclock_epoch": actual_wallclock(), "fixture": False,
+            "backend_seconds_scope": "backend timer includes capture CPU copies and trace I/O",
             "registered_limit": settings["analysis_tokens" if kind == "analysis" else "reply_tokens"],
             "context_tokens": settings["context_tokens"], "completed": False}
         row["messages_sha256"] = digest(row["messages"])
