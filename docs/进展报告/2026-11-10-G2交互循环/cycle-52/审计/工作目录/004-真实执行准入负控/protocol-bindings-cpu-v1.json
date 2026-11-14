@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "scope": "actual current dataset passes existing load_data plus C52 bindings; six patched observation faults rejected",
+  "current_train_samples": 176,
+  "current_dev_samples": 44,
+  "faults_rejected": [
+    {
+      "fault": "model_revision",
+      "rejected": true,
+      "reason": "C52 model differs from prepared C51 identity"
+    },
+    {
+      "fault": "model_shard_SHA",
+      "rejected": true,
+      "reason": "C52 model differs from prepared C51 identity"
+    },
+    {
+      "fault": "export_protocol_SHA",
+      "rejected": true,
+      "reason": "C52 data was exported under a different protocol"
+    },
+    {
+      "fault": "tokenized_manifest_SHA",
+      "rejected": true,
+      "reason": "C52 actual tokenization input binding changed"
+    },
+    {
+      "fault": "tokenized_config_SHA",
+      "rejected": true,
+      "reason": "C52 actual tokenization input binding changed"
+    },
+    {
+      "fault": "training_data_SHA",
+      "rejected": true,
+      "reason": "C52 dataset byte identity changed"
+    }
+  ],
+  "source_sha256": {
+    "probe_protocol_bindings.py": "46076175304cd64789e35031c0908b846e69fc067e9732cff2d2400c7a1d1c0c",
+    "execution_common.py": "ab11c37e034ab1b16c4f40468aea9317068bedf3cced0b69322e3c7e4f7911ee"
+  },
+  "protocol_sha256": "bd9d89970fb7ba43f1ccc2466bdd7815464293add3008529725ce4e7d4834e70",
+  "dataset_manifest_sha256": "3a8505cc8659be59d652c2d6a60b3beec4239cb5221b49b0f9e0f2ad6c5545c1",
+  "head": "70afbb8e9141ff672f1d7c11d990dd8460f53c57",
+  "torch_imported": false,
+  "model_constructions": 0,
+  "training_steps": 0,
+  "GPU_allocations": 0,
+  "actual_model_hook_verified": false
+}
