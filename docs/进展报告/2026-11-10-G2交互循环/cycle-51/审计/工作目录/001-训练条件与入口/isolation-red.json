@@ -1,0 +1,53 @@
+{
+  "verified": true,
+  "expected_behavior": "red",
+  "screening_code_sha256": "f9204f957f0027e329c091b8ceb426f6b3e69f316bd5ca0cd752501bbf7022b3",
+  "probe_sha256": "12004f988d1556980d06b36fb4956a15dd882cae66404750c4738660dbdc2e8e",
+  "scope": "actual CPU screen_candidates on synthetic fixture using actual registered input; not evidence of past training contamination",
+  "actual_C50_case": {
+    "input": "刚才那次查询看到了什么？这足够判断它此刻仍然有效吗？",
+    "accepted": true,
+    "reasons": []
+  },
+  "unrelated_preservation": {
+    "input": "帮我写一条短信文案，提醒同伴带上指南针去观察山顶的星座。",
+    "accepted": true,
+    "reasons": []
+  },
+  "legacy_protection": {
+    "input": "我喜欢喝可乐。请帮我写一封信。",
+    "accepted": false,
+    "reasons": [
+      "eval_overlap"
+    ]
+  },
+  "coverage": [
+    {
+      "file": "evals/interaction/cycle-47/native-history-cases.json",
+      "protected_hash": false,
+      "input_occurrences": 16,
+      "included_occurrences": 0
+    },
+    {
+      "file": "evals/interaction/cycle-48/typed-history-cases.json",
+      "protected_hash": false,
+      "input_occurrences": 24,
+      "included_occurrences": 0
+    },
+    {
+      "file": "evals/interaction/cycle-49/minimal-history-cases.json",
+      "protected_hash": false,
+      "input_occurrences": 36,
+      "included_occurrences": 0
+    },
+    {
+      "file": "evals/interaction/cycle-50/natural-history-cases.json",
+      "protected_hash": false,
+      "input_occurrences": 24,
+      "included_occurrences": 0
+    }
+  ],
+  "fixed_all_100_input_occurrence_screening": [],
+  "native_calls": 0,
+  "training_steps": 0
+}
