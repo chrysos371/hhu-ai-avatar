@@ -33,10 +33,25 @@ def main(name):
     result = subprocess.run([str(TARGET / "bin/python"), "-m", "pip", "check"],
         cwd=ROOT, env=env, text=True, capture_output=True)
     require(result.returncode == 0, "current pip check failed: " + result.stdout + result.stderr)
-    code = '''import json,sys,importlib.metadata as m,torch,transformers,peft,accelerate,lmformatenforcer,interegular
+    code = '''import json,sys,hashlib,importlib.metadata as m,torch,transformers,peft,accelerate,lmformatenforcer,interegular
+from pathlib import Path
+import huggingface_hub,safetensors,tokenizers
 from transformers import Qwen3ForCausalLM,AutoTokenizer
 names=['transformers','tokenizers','huggingface_hub','safetensors','peft','accelerate','lm-format-enforcer','interegular','numpy','edge-tts','openai','python-dotenv','Jinja2','pip']
-print(json.dumps({'prefix':sys.prefix,'torch':torch.__version__,'CUDA_build':torch.version.cuda,'CUDA_initialized':torch.cuda.is_initialized(),'torch_cuda_visible_count':torch.cuda.device_count(),'Qwen3_class':Qwen3ForCausalLM.__name__,'versions':{n:m.version(n) for n in names},'CPU_imports_passed':True}))
+files={Path(module.__file__).resolve() for module in (torch,torch._C,transformers,peft,accelerate,lmformatenforcer,interegular,huggingface_hub,safetensors,tokenizers)}
+for line in Path('/proc/self/maps').read_text().splitlines():
+ fields=line.split(maxsplit=5)
+ if len(fields)==6 and fields[5].startswith(sys.prefix+'/') and '.so' in Path(fields[5]).name:
+  assert '(deleted)' not in fields[5]
+  files.add(Path(fields[5]).resolve())
+hashes={}
+for path in sorted(files):
+ assert path.is_relative_to(Path(sys.prefix).resolve()) and path.is_file()
+ digest=hashlib.sha256()
+ with path.open('rb') as stream:
+  for block in iter(lambda:stream.read(8*1024*1024),b''):digest.update(block)
+ hashes[str(path)]=digest.hexdigest()
+print(json.dumps({'prefix':sys.prefix,'torch':torch.__version__,'CUDA_build':torch.version.cuda,'CUDA_initialized':torch.cuda.is_initialized(),'torch_cuda_visible_count':torch.cuda.device_count(),'Qwen3_class':Qwen3ForCausalLM.__name__,'versions':{n:m.version(n) for n in names},'runtime_files_sha256':hashes,'runtime_files_scope':'imported ML entry modules and currently mapped target-prefix shared libraries;not host drivers or future lazy loads','CPU_imports_passed':True}))
 '''
     actual = json.loads(subprocess.check_output([str(TARGET / "bin/python"), "-B", "-c", code], cwd=ROOT, env=env, text=True))
     expected = {"transformers": "4.57.6", "tokenizers": "0.22.2", "huggingface_hub": "0.36.2",
@@ -47,6 +62,7 @@ print(json.dumps({'prefix':sys.prefix,'torch':torch.__version__,'CUDA_build':tor
         and actual["CUDA_build"] == "12.4" and actual["CUDA_initialized"] is False
         and actual["torch_cuda_visible_count"] == 0 and actual["Qwen3_class"] == "Qwen3ForCausalLM",
         "independent CPU runtime identity differs")
+    require(len(actual["runtime_files_sha256"]) >= 10, "installed ML runtime byte identity missing")
     token_protocol = json.loads((PREPARATION.parent / "005-真实分词预检/tokenizer-protocol.json").read_text())
     require(all(actual["versions"][key] == token_protocol["packages"][key]
         for key in ("transformers", "tokenizers", "huggingface_hub", "safetensors", "numpy", "Jinja2")),

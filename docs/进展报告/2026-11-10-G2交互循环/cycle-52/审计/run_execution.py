@@ -10,7 +10,7 @@ import time
 
 from execution_common import (ROOT, BASE, ASSETS, RUN, DATA, LOCK, TOKENIZATION,
     STAGES, WORK, verify_freeze, protocol_check, preparation_check, read, sha, write_new, require,
-    historical, verify_training_binding)
+    historical, verify_training_binding, environment_reader)
 
 
 def gpu_cards():
@@ -44,6 +44,10 @@ def environment_check(frozen):
     actual = {d.metadata["Name"]: d.version for d in importlib.metadata.distributions()
         if Path(d.locate_file("")).resolve().is_relative_to(Path(sys.prefix).resolve())}
     require(actual == proof["installed"]["local_versions"], "installed training packages changed")
+    admission = read(environment_reader().ADMISSION)
+    runtime = admission["actual_CPU_probe"]["runtime_files_sha256"]
+    require(len(runtime) >= 10 and all(Path(path).resolve().is_relative_to(Path(sys.prefix).resolve())
+        and sha(Path(path)) == value for path, value in runtime.items()), "admitted installed ML runtime bytes changed")
     return actual
 
 
