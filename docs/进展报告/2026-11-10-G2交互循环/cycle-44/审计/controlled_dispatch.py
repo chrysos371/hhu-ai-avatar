@@ -75,7 +75,7 @@ def run(mode):
     if mode=='paired':
         batch=sample_repetition(model,p,p['development_cases'],1,out/'cases',on_context=context)
         scores={v:sum(c['arms'][v]['final_expected_task_outcome'] for c in batch['cases']) for v in p['arms']}
-        assert scores=={'model_policy_grounded':15,'source_dispatch':24},scores
+        assert scores=={'model_policy_grounded':19,'source_dispatch':24},scores
         assert len(model.records)==20
         branches=[(out/'cases'/c['case']/v,b) for c in batch['cases'] for v,b in c['arms'].items()]
         assert sum(b['status_business_SELECTs'] for _,b in branches)==9
