@@ -302,8 +302,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         self._request(post=True)
 
-    def _chat(self, user_text, use_web=False):
-        return run_chat(self.server, user_text, use_web)
+    def _chat(self, user_text, use_web=False, *, mode='chat'):
+        return run_chat(self.server, user_text, use_web, **({'mode': mode} if mode != 'chat' else {}))
 
     def _conversation_changes(self, parsed):
         from .conversation_changes import WatchDisconnected
@@ -516,7 +516,7 @@ class Handler(BaseHTTPRequestHandler):
         return self._send(200, content, html=True)
 
 
-def run_chat(server, user_text, use_web=False, *, job=None):
+def run_chat(server, user_text, use_web=False, *, job=None, mode='chat'):
     from .main import Avatar
     token = job.token if job else None
     while not server.state_lock.acquire(timeout=0.05):
@@ -550,7 +550,9 @@ def run_chat(server, user_text, use_web=False, *, job=None):
                 # This is pure parsing: never replay tools, reminders or model calls.
                 if server.task_delivery_check and message['role'] == 'user':
                     avatar.tasks.update(message['content'])
-        result = avatar.respond(user_text, use_web=use_web, **(
+        actual_mode = job.mode if job else mode
+        result = avatar.respond(user_text, use_web=use_web,
+            **({'mode': actual_mode} if actual_mode != 'chat' else {}), **(
             {'cancel': token, 'on_delta': lambda text: job.emit('text', {'text': text}),
              **({'source_precondition': lambda: avatar.speaker_context_store.require_context(
                  job.expected_context, server.session_id)} if job.expected_context is not None else {})} if job else {}))

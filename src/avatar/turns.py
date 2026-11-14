@@ -29,6 +29,7 @@ class Turn:
     subscribers: int = 0
     redacted: bool = False
     expected_context: dict | None = None
+    mode: str = 'chat'
 
     def emit(self, kind, data):
         with self.changed:
@@ -81,12 +82,16 @@ class TurnCoordinator:
 
     @staticmethod
     def validate(data):
-        if (not isinstance(data, dict) or not set(data) <= {'request_id', 'text', 'use_web', 'expected_context'}
+        if (not isinstance(data, dict) or not set(data) <= {'request_id', 'text', 'use_web', 'expected_context', 'mode'}
                 or not isinstance(data.get('request_id'), str)
                 or not re.fullmatch(r'[A-Za-z0-9_-]{20,100}', data['request_id'])
                 or not isinstance(data.get('text'), str) or not 1 <= len(data['text'].strip()) <= 4000
                 or type(data.get('use_web', False)) is not bool):
             raise OperationError(422, 'invalid_turn', '消息或请求编号无效。')
+        mode = data.get('mode', 'chat')
+        if (type(mode) is not str or mode not in ('chat', 'reminder_query')
+                or mode == 'reminder_query' and (data.get('use_web', False) or len(data['text']) > 2000)):
+            raise OperationError(422, 'invalid_turn', '提醒查询限2000字，不能同时开启联网工具。')
         if 'expected_context' in data:
             context = data['expected_context']
             if (not isinstance(context, dict) or set(context) != {'instance_id', 'revision', 'context_cursor'}
@@ -118,9 +123,12 @@ class TurnCoordinator:
     def submit(self, data):
         request_id, text, use_web = self.validate(data)
         expected = dict(data['expected_context']) if 'expected_context' in data else None
+        mode = data.get('mode', 'chat')
         self.refresh_privacy()
         # Keep the existing durable fingerprint byte-for-byte for legacy callers.
         parts = [text, use_web] if expected is None else [text, use_web, expected]
+        if mode != 'chat':
+            parts.append({'mode': mode})
         fingerprint = hashlib.sha256(json.dumps(parts, ensure_ascii=False,
             **({'sort_keys': True} if expected is not None else {})).encode()).hexdigest()
         with self._lock:
@@ -129,7 +137,7 @@ class TurnCoordinator:
             self._prune_locked()
             if request_id in self._jobs:
                 job = self._jobs[request_id]
-                if (job.text, job.use_web, job.expected_context) != (text, use_web, expected):
+                if (job.text, job.use_web, job.expected_context, job.mode) != (text, use_web, expected, mode):
                     raise OperationError(409, 'request_id_conflict', '请求编号已用于另一条消息。')
                 return job
             if self._active is not None:
@@ -138,7 +146,7 @@ class TurnCoordinator:
                 _, old = self._jobs.popitem(last=False)
                 self._redact(old, 'expired')
             self._ledger(request_id, fingerprint)
-            job = Turn(request_id, text, use_web, expected_context=expected)
+            job = Turn(request_id, text, use_web, expected_context=expected, mode=mode)
             job.emit('status', {'status': 'queued'})
             self._jobs[request_id] = job
             self._active = job

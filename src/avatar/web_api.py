@@ -184,13 +184,16 @@ class V1API:
         if post and path == "/chat":
             text = data.get("text")
             use_web = data.get("use_web", False)
+            mode = data.get('mode', 'chat')
             if (
                 not isinstance(text, str)
                 or not 1 <= len(text.strip()) <= 4000
                 or type(use_web) is not bool
+                or type(mode) is not str or mode not in ('chat', 'reminder_query')
+                or mode == 'reminder_query' and (use_web or len(text) > 2000)
             ):
                 raise OperationError(422, "invalid_chat")
-            result = self.chat(text, use_web)
+            result = self.chat(text, use_web, **({'mode': mode} if mode != 'chat' else {}))
             return 200, enrich_chat_result(self.server, self.memory, result)
         if not post and path == "/persona":
             return 200, PersonaService(self.store).current()
