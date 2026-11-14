@@ -28,6 +28,7 @@ import avatar.brain.memory
 import avatar.brain.reminders
 import avatar.brain.reminder_queries
 import avatar.brain.reminder_query_mode
+import avatar.brain.query_history
 import avatar.brain.reminder_query_targets
 import avatar.brain.speaker_context
 import avatar.lab.transport_fixture
@@ -40,7 +41,7 @@ from avatar.lab.transport_fixture import controlled_provider
 
 modules = (avatar.main, avatar.web, avatar.web_api, avatar.web_state,
            avatar.brain.emotion, avatar.brain.memory, avatar.brain.reminders, avatar.brain.reminder_queries,
-           avatar.brain.reminder_query_mode, avatar.brain.reminder_query_targets, avatar.brain.speaker_context,
+           avatar.brain.reminder_query_mode, avatar.brain.reminder_query_targets, avatar.brain.speaker_context, avatar.brain.query_history,
            avatar.lab.transport_fixture)
 module_paths = {module.__name__: Path(module.__file__).resolve() for module in modules}
 if not all(path.is_relative_to(project_root / 'src') for path in module_paths.values()):
@@ -49,6 +50,7 @@ state_protocol_path = project_root / 'evals/interaction/cycle-36/maintained-stat
 state_protocol = json.loads(state_protocol_path.read_text())
 query_protocol_path = project_root / 'evals/interaction/cycle-39/explicit-reminder-query-protocol.json'
 runtime_binding = {'reminder_query_protocol_sha256': sha256(query_protocol_path.read_bytes()).hexdigest(), 'state_privacy_protocol_sha256': sha256(state_protocol_path.read_bytes()).hexdigest(), 'project_root': str(project_root), 'python_prefix': sys.prefix,
+    'query_history_protocol_sha256': sha256((project_root / 'evals/interaction/cycle-46/query-history-protocol.json').read_bytes()).hexdigest(),
     'query_mode_protocol_sha256': sha256((project_root / 'evals/interaction/cycle-45/product-query-protocol.json').read_bytes()).hexdigest(),
     'module_paths': {name: str(path) for name, path in module_paths.items()},
     'module_sha256': {name: sha256(path.read_bytes()).hexdigest() for name, path in module_paths.items()},
