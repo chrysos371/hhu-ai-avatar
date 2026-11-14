@@ -1,0 +1,148 @@
+{
+  "completed": true,
+  "scope": "read-only project-owned metadata, existence and actual CPU help/protection; no model/GPU allocation",
+  "head": "197e141977b1f8781765172f883dce04daec1a93",
+  "collector_sha256": "cae4ddb335d11fcd60c43cc52462cd73f72ccb59141a7cf8f7c3c8a66fa54f16",
+  "source_sha256": {
+    "scripts/companion_lab.sh": "f352368bda59da450e5690f53461e8d78b2b41d598ba3fd05d447dc6d581fc63",
+    "scripts/train_companion_smoke.py": "62e0ceacd9368a8fa175e7f450016dae8a8351d3cc378a7db006391f90b0f1e1",
+    "scripts/prepare_companion_training.py": "b1ca7f1769521bd1682f04388cbd2e90335bb6a273433e02c13f31538de508a2",
+    "src/avatar/lab/__main__.py": "4a1fc8c4917cdf765dcc43bc8a6493fc346af414e31890d5b52c9b35c94929cd",
+    "src/avatar/lab/training.py": "e5f953b9707ca030a1efbc7e818835622dcdba614c5c3173e3f325af5d3fe7f6",
+    "src/avatar/lab/data.py": "f9204f957f0027e329c091b8ceb426f6b3e69f316bd5ca0cd752501bbf7022b3",
+    "experiments/style/README.md": "3e273f92efdf609ee11cd2896e4d9fc02bfd6d1d1f396351adafa13d27e48d2b",
+    "experiments/style/lora-config.json": "ccccf5269c2b76dbf920d7bd204ad9ccea329d553e828615593f560bae22a328",
+    "training/companion/smoke-config.json": "e50bee87db872bd1fde5029c82c0c956a67f3c06b5e36b7402d04a6f79ab9ec3",
+    "training/requirements-smoke.txt": "faca5b4a938c1e8fea2de0f498f403461f394980840b15152a17b4f8f09c34f2",
+    "training/requirements-eval.txt": "e9824e82992450755a78894979af056f68aa41392270f726230212f79296d0c1"
+  },
+  "environments": [
+    {
+      "name": "hhu-ai-avatar",
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "exists": true,
+      "returncode": 0,
+      "stdout": "{\"executable\": \"/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python\", \"prefix\": \"/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar\", \"versions\": {\"torch\": null, \"transformers\": null, \"peft\": null, \"accelerate\": null, \"huggingface_hub\": \"2.4.0\", \"tokenizers\": \"0.23.3\", \"safetensors\": null, \"llama_cpp_python\": null}}\n",
+      "stderr": "",
+      "metadata": {
+        "executable": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "prefix": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar",
+        "versions": {
+          "torch": null,
+          "transformers": null,
+          "peft": null,
+          "accelerate": null,
+          "huggingface_hub": "2.4.0",
+          "tokenizers": "0.23.3",
+          "safetensors": null,
+          "llama_cpp_python": null
+        }
+      }
+    },
+    {
+      "name": "hhu-ai-avatar-llm",
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/bin/python",
+      "exists": true,
+      "returncode": 0,
+      "stdout": "{\"executable\": \"/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/bin/python\", \"prefix\": \"/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm\", \"versions\": {\"torch\": null, \"transformers\": null, \"peft\": null, \"accelerate\": null, \"huggingface_hub\": null, \"tokenizers\": null, \"safetensors\": null, \"llama_cpp_python\": \"0.3.19\"}}\n",
+      "stderr": "",
+      "metadata": {
+        "executable": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm/bin/python",
+        "prefix": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-llm",
+        "versions": {
+          "torch": null,
+          "transformers": null,
+          "peft": null,
+          "accelerate": null,
+          "huggingface_hub": null,
+          "tokenizers": null,
+          "safetensors": null,
+          "llama_cpp_python": "0.3.19"
+        }
+      }
+    },
+    {
+      "name": "hhu-ai-avatar-train",
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar-train/bin/python",
+      "exists": false
+    }
+  ],
+  "training_cli_help": {
+    "returncode": 0,
+    "stdout": "usage: __main__.py [-h]\n                   {capture,rescreen,export,lock-models,download-model,resources,preflight,evaluate,train,verify-reload,judge,compare}\n                   ...\n\nUsage: python -m avatar.lab --help. No GPU or network use unless requested.\n\npositional arguments:\n  {capture,rescreen,export,lock-models,download-model,resources,preflight,evaluate,train,verify-reload,judge,compare}\n\noptions:\n  -h, --help            show this help message and exit\n",
+    "stderr": ""
+  },
+  "local_weights_existence_only": [
+    {
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/models/qwen3-32b-gguf/Qwen3-32B-Q4_K_M.gguf",
+      "bytes": 19762149024,
+      "sha256_verified_in_this_probe": false
+    },
+    {
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/models/qwen3-14b-gguf/Qwen3-14B-Q4_K_M.gguf",
+      "bytes": 9001752960,
+      "sha256_verified_in_this_probe": false
+    },
+    {
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/models/qwen3-4b-gguf/Qwen3-4B-Q4_K_M.gguf",
+      "bytes": 2497280256,
+      "sha256_verified_in_this_probe": false
+    },
+    {
+      "path": "/data/Users/zrh/data/hhu-ai-avatar/models/faster-whisper-small/model.bin",
+      "bytes": 483546902,
+      "sha256_verified_in_this_probe": false
+    }
+  ],
+  "local_models_dirs": [
+    "faster-whisper-small",
+    "qwen3-14b-gguf",
+    "qwen3-32b-gguf",
+    "qwen3-4b-gguf"
+  ],
+  "old_style_lab_artifact_dir_exists": false,
+  "protected_text_count": 1553,
+  "protected_file_count": 47,
+  "actual_history_material_coverage": [
+    {
+      "file": "evals/interaction/cycle-47/native-history-cases.json",
+      "file_sha256": "37cb82f1643eb107ab8606417ac9f8a3989d686c156c2b1b059eb57a47c7e485",
+      "included_in_protected_hashes": false,
+      "cases": 8,
+      "query_inputs_absent_from_text_corpus": 8,
+      "followup_inputs_absent_from_text_corpus": 8
+    },
+    {
+      "file": "evals/interaction/cycle-48/typed-history-cases.json",
+      "file_sha256": "aebbdfcd438431ee8adeabe11d5361794fdddaf6349ccfbfe401309c98bf5429",
+      "included_in_protected_hashes": false,
+      "cases": 12,
+      "query_inputs_absent_from_text_corpus": 12,
+      "followup_inputs_absent_from_text_corpus": 12
+    },
+    {
+      "file": "evals/interaction/cycle-49/minimal-history-cases.json",
+      "file_sha256": "74cad40cec0d7a4b5e98b0cf2492dd1c52b8c3dbc474721756eec36fd5fa59c2",
+      "included_in_protected_hashes": false,
+      "cases": 18,
+      "query_inputs_absent_from_text_corpus": 18,
+      "followup_inputs_absent_from_text_corpus": 18
+    },
+    {
+      "file": "evals/interaction/cycle-50/natural-history-cases.json",
+      "file_sha256": "3a508cdde6371f92d18ee562f14e052c13033815f4f2902aff80b636f4b2112f",
+      "included_in_protected_hashes": false,
+      "cases": 12,
+      "query_inputs_absent_from_text_corpus": 12,
+      "followup_inputs_absent_from_text_corpus": 12
+    }
+  ],
+  "main_trainer_has_gradient_checkpointing_enable": true,
+  "main_trainer_uses_nonreentrant_checkpointing": true,
+  "independent_smoke_config_has_checkpoint_flag": false,
+  "GPU_inventory_without_allocation": "0, GPU-81550800-367d-1855-0f35-c61c274edfdf, 39096, 0\n1, GPU-86a346f2-2b01-66d9-9efa-23eff30f4150, 39096, 41\n2, GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e, 40441, 0\n3, GPU-3a66f673-05de-ba45-3f5c-308b333fea68, 40441, 0\n4, GPU-aa1364f0-1402-b5f0-97fe-6a0bed58ed3e, 40441, 0\n5, GPU-83b3ac27-3e78-fb30-a5f6-d5daf4aac4fb, 40441, 0\n6, GPU-b39d6e79-86fb-92d6-ae69-6e93f55fd249, 40441, 0\n7, GPU-7d263daa-6d13-02a6-b0ea-29c2c09a2c8b, 40441, 0\n",
+  "model_constructions": 0,
+  "training_steps": 0,
+  "native_inference_calls": 0,
+  "limits": "No model SHA verification or CUDA compatibility/training proof; standalone old smoke is distinct from avatar.lab main trainer."
+}
