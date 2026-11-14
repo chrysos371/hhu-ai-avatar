@@ -888,9 +888,17 @@ class Avatar:
             if self.memory.context_revision != turn_context_revision:
                 raise Cancelled('context changed before reply commit')
             self._checkpoint()
+            context_reply = reply
             if query_reader is not None:
                 query_reader.ensure_current()
-            self.memory.add_short_term("assistant", reply)
+                from .brain.query_history import query_history_content
+                context_reply = query_history_content(reply, query_reply.metadata, text=user_text,
+                    source_message_id=self._current_message_id, session_id=self.session_id,
+                    revision=turn_context_revision, scope=self.speaker_scope.scope,
+                    turn_tools_allowed=self.speaker_scope.allows_actions)
+                if context_reply is None:
+                    raise Cancelled('query context does not match the verified source')
+            self.memory.add_short_term("assistant", context_reply)
             assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)
         checkpoint_context()

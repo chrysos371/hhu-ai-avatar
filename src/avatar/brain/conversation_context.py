@@ -100,7 +100,7 @@ class ConversationContextStore:
                 or attribution.get('scope') != scope
                 or result.get('reply') != assistant['content']
                 or result.get('generation_mode') not in {
-                    'llm', 'rules', 'rules_speaker_control', 'rules_speaker_scope'}
+                    'llm', 'rules', 'rules_speaker_control', 'rules_speaker_scope', 'rules_reminder_query'}
                 or type(source.get('revision')) is not int or source['revision'] != revision
                 or type(source.get('user_message_id')) is not int
                 or source['user_message_id'] != user['id']
@@ -110,6 +110,17 @@ class ConversationContextStore:
             return None
         if not self._dependencies_valid(assistant['id'], user['id']):
             return None
+        if result['generation_mode'] == 'rules_reminder_query':
+            from .query_history import query_history_content
+            content = query_history_content(result['reply'], result.get('reminder_query'),
+                text=user['content'], source_message_id=user['id'], session_id=user['session_id'],
+                revision=revision, scope=attribution.get('scope'),
+                turn_tools_allowed=attribution.get('turn_tools_allowed'))
+            if content is None:
+                return None
+            # Private decoded object only: never persist this envelope or trust
+            # a same-named key injected into an ordinary non-query result.
+            result['_query_history_context'] = content
         return result
 
     def read(self, *, current_user_id, scope, expected_revision, limit_messages=18):
@@ -151,6 +162,9 @@ class ConversationContextStore:
             result = self._result(assistant, user, scope, expected_revision)
             if result is None:
                 break
+            if result['generation_mode'] == 'rules_reminder_query':
+                assistant = dict(assistant)
+                assistant['content'] = result['_query_history_context']
             pairs.append((user, assistant))
             if result['generation_mode'] == 'rules_speaker_control':
                 break
