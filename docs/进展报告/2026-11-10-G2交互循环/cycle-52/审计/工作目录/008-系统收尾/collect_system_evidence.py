@@ -86,7 +86,7 @@ def main():
     names = set(frozen["sha256"]) | set(software)
     names.update(str(p.relative_to(ROOT)) for p in (AUDIT / "工作目录").rglob("*")
         if p.is_file() and p.parent != HERE)
-    names.update(str(p.relative_to(ROOT)) for p in HERE.glob("*.py"))
+    names.update(str(p.relative_to(ROOT)) for p in HERE.iterdir() if p.is_file())
     names.update(str(p.relative_to(ROOT)) for p in AUDIT.glob("*.mjs"))
     for p in [ROOT / "AGENTS.md", ROOT / "README.md", ROOT / "experiments/style/README.md",
         BASE / "计划.md", BASE / "真实执行接续.md", *sorted((AUDIT / "问题单").glob("*.md"))]:
