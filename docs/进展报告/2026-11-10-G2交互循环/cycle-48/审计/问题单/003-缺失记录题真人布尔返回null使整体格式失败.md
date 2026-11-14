@@ -7,3 +7,5 @@
 [首基线实际SDK原件](../../实验/4b-development-v1/repetition-1/missing-record-verified_snapshot_history/receipt.json) / [分项计数](../工作目录/004-原生准入/4b-verification.json)。类型化候选同题3/3输出正确布尔且整条通过；候选在全部36条中格式均有效，但总体30/36仍未达门槛，默认未启用，不算默认问题已修。
 
 优化目标：分别报告格式失败和格式有效后的语义不符；保留原文/严格主分，不能自动把null改false后冒模型合格。继续同登记14B以观察尺度，不中途改schema。
+
+- 14B两臂36/36格式有效，未复现4B基线缺失题的两个人类布尔null；14B的ACK字段null在schema中合法，其值是否符合实际观测另列004，不能混成格式失败或真人已读断言。
