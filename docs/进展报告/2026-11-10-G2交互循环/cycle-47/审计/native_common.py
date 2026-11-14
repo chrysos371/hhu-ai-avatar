@@ -74,13 +74,18 @@ def protocol_check():
         raise ValueError('C47 is diagnostic development only')
     if len(cases['cases']) != 8 or len({c['id'] for c in cases['cases']}) != 8:
         raise ValueError('C47 exact eight diagnostic cases required')
+    if (type(cases.get('registration_version')) is not int or cases['registration_version'] != 2
+            or protocol['arms'] != ['authorized_raw_history','verified_snapshot_history']
+            or protocol['primary_candidate'] != 'verified_snapshot_history'):
+        raise ValueError('C47 arm or corrected material version differs')
     from avatar.brain.reminder_queries import parse_query
     if any(parse_query(c['followup_text']) is not None for c in cases['cases']):
         raise ValueError('C47 followup must reach ordinary product path')
     sampling = protocol['sampling']
     for field,value in {'repetitions':3,'cases_per_repetition':8,'arms':2,'native_calls_per_trial':2,
         'trials_per_model':48,'query_turns_per_model':48,'ordinary_turns_per_model':48,
-        'warmups_per_model':2,'max_native_calls_per_model':98,'models':2,'max_total_native_calls':196}.items():
+        'warmups_per_model':2,'max_native_calls_per_model':98,'models':2,'max_total_native_calls':196,
+        'SQL_dumps_per_model':96,'extra_model_retries':0}.items():
         if type(sampling.get(field)) is not int or sampling[field] != value:
             raise ValueError('C47 sampling contract differs')
     if sampling['extra_model_retries'] != 0 or sampling['whole_experiment_wallclock_cutoff'] is not None:
