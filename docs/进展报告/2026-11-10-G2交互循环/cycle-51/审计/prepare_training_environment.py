@@ -12,7 +12,7 @@ import time
 ROOT=Path(__file__).resolve().parents[5]
 BASE=Path(__file__).resolve().parents[1]
 PREPARATION=BASE/'审计/工作目录/003-环境与基础权重'
-WORK=PREPARATION/'environment-v2'
+WORK=PREPARATION/'environment-v3'
 ASSETS=Path('/data/Users/zrh/data/hhu-ai-avatar')
 
 
@@ -21,14 +21,20 @@ def write(path,value):
 
 
 def inventory(python,env):
-    script='import importlib.metadata as m,json,sys;print(json.dumps({"prefix":sys.prefix,"versions":{d.metadata["Name"]:d.version for d in m.distributions()}}))'
+    script='''import importlib.metadata as m,json,sys
+from pathlib import Path
+items=list(m.distributions())
+print(json.dumps({'prefix':sys.prefix,'versions':{d.metadata['Name']:d.version for d in items},
+ 'locations':{d.metadata['Name']:str(d.locate_file('')) for d in items},
+ 'local_versions':{d.metadata['Name']:d.version for d in items if Path(d.locate_file('')).resolve().is_relative_to(Path(sys.prefix).resolve())}}))
+'''
     return json.loads(subprocess.check_output([str(python),'-B','-c',script],cwd=ROOT,env=env,text=True))
 
 
 def main():
     assert subprocess.run(['mountpoint','-q','/data']).returncode==0
     WORK.mkdir(exist_ok=False)
-    output=WORK/'environment-v2.json';assert not output.exists()
+    output=WORK/'environment-v3.json';assert not output.exists()
     target=ASSETS/'envs/hhu-ai-avatar-train';assert target.is_dir()
     prior=json.loads((PREPARATION/'environment-v1.json').read_text());assert prior['status']=='failed' and prior['target']==str(target)
     protocol=json.loads((PREPARATION/'preparation-protocol.json').read_text())
@@ -52,7 +58,10 @@ def main():
         print(name,'completed',flush=True)
     try:
         python=str(target/'bin/python')
-        seed=inventory(python,env);assert set(seed['versions'])=={'pip','setuptools'} and seed['versions']['pip']=='22.0.2'
+        seed=inventory(python,env)
+        assert set(seed['local_versions'])=={'pip','setuptools'} and seed['local_versions']['pip']=='22.0.2'
+        assert set(seed['versions'])-set(seed['local_versions'])=={'hhu-ai-avatar'}
+        assert Path(seed['locations']['hhu-ai-avatar']).resolve()==(ROOT/'src').resolve()
         result['resumed_seed_only_environment']=seed
         url='https://pypi.org/pypi/pip/25.3/json'
         with urllib.request.urlopen(url,timeout=60) as stream:metadata=json.load(stream)
