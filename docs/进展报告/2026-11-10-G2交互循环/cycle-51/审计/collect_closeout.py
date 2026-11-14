@@ -146,6 +146,9 @@ def main():
     names.update(str(p.relative_to(ROOT)) for folder in (WORK, C52 / "审计/工作目录")
         for p in folder.rglob("*") if p.is_file())
     names.update(str(p.relative_to(ROOT)) for p in (BASE / "审计").glob("*.py"))
+    names.update(str(p.relative_to(ROOT)) for p in (BASE / "审计").glob("*.mjs"))
+    names.update(str((BASE.parent / "cycle-50/审计" / name).relative_to(ROOT))
+        for name in ("render_report.py", "系统审计与推进报告.html"))
     names.update(str(p.relative_to(ROOT)) for p in (C52 / "审计").glob("*.py"))
     current = {name: sha(ROOT / name) for name in names}
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
