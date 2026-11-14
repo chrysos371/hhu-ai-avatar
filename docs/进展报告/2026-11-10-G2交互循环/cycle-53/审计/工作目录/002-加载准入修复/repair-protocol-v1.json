@@ -1,0 +1,20 @@
+{
+  "scope": "CPU-only production loader integrity repair; no model/training execution",
+  "problem": "C53-003",
+  "preserve_old_source": true,
+  "compatibility": [
+    "hash over dialogue excluding system",
+    "hash over full messages"
+  ],
+  "checks": [
+    "strict conversation/ID/provenance structure",
+    "actual content digest matches declared hash in one supported legacy scope",
+    "actual non-system dialogue cross-split dedup",
+    "current evaluation overlap rescreen",
+    "actual dev count matches manifest"
+  ],
+  "original_C51_C52_data_never_rewritten": true,
+  "targeted_real_loader_tests": "tests/test_training_data_admission.py",
+  "full_Python_regression_after_source_fix": true,
+  "no_new_GPU_or_model_claim": true
+}
