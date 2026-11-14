@@ -1,0 +1,77 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C50 自然语言历史解释与动作边界审计</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C50 自然语言历史解释与动作边界审计</h1><p class="meta">2026-11-14｜spinner-bot｜持续Goal active</p><p class="verdict">436真实推理/468原生＋88CPU SQL。216条来源锚定单代理审阅：不实发送4B5/3/6、14B0/0/6（各36），创作对照各6/6保留；候选不推广。2流程限定关闭/4开放，不冒独立人评。</p>
+<section><h2>从八字段诊断转向自然追问，固定版本与重复</h2>
+<p>C49已见14B最小观测36/36并未迁移到新开发材料，且4B格式退步。C50改变用户任务，取消八字段JSON契约，使用12条新撰写的自然追问：历史/当前、ACK/真人行为、政策、两次查询、实际邮件/短信/电话请求，以及代拟引用和虚构台词保留。种子类别已见、问句为生成开发材料，不是独立真人盲评；不把新自然回复与C49结构化总分直接比较。</p>
+<p>生产快照、原C48候选、最小观测三版实现固定，不在模型或重复之间调优；每题每臂三次，轮换首位，每轮每臂4个首位、每题跨三轮各臂首位一次。每模型108试验、126只读查询＋108普通追问，218真实推理（216认知/生成＋2同步/SSE预热）。普通追问不进行新状态读取，只有两题在独立actor变更后再次显式查询。</p>
+<p>实际Avatar/MemoryStore/SQLite，种子为合成、本轮无发送器、无Web/工具或真实远程发送；当前业务和事实保持，model_modes均真实LLM。Qwen3-4B/14B Q4_K_M、temperature0/seed42/8192ctx/512上限/thinking=false，记录PAD请求与提供方实际强制参数；历史表示共同影响认知/PAD/生成，不声称单字段因果。无整轮墙钟截止或额外重试。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>执行范围</th><th>数量</th><th>证据边界</th></tr></thead><tbody>
+<tr><td>真实应用</td><td>216试验；252查询＋216普通</td><td>468 SDK回合/468SQL；查询0模型</td></tr>
+<tr><td>真实推理</td><td>432正式＋4预热＝436 native</td><td>两模型各218，全stop；0实际外发</td></tr>
+<tr><td>CPU采集/错误/参考投毒</td><td>41试验；47查询＋41普通</td><td>88SQL/80脚本接口；0native</td></tr>
+<tr><td>来源锚定代理审阅</td><td>216条全覆盖＋5故障负控</td><td>代码只核字节/span/覆盖/count，非独立人评</td></tr>
+</tbody></table></div>
+<p><a href="../计划.md">事前计划</a></p>
+<p><a href="../../../../../evals/interaction/cycle-50/natural-history-cases.json">12题材料</a></p>
+<p><a href="../../../../../evals/interaction/cycle-50/natural-history-protocol.json">固定协议</a></p>
+<p><a href="sample_history.py">实际SDK采样</a></p>
+</section>
+<section><h2>自然文本仍有明确不实发送，保留创作任务另计</h2>
+<p>每模型/臂各36条自然回复，均非空，未输出JSON对象。完整原文由单Codex代理按登记维度逐条审阅，引用实际来源、SQL与精确字符span；这是代理判断，不是独立人评或通用语义判定器。下表计观察到的明确实际发送断言，每条回复最多计一次，邮件/短信/电话分列；三次相关重复不当36个独立问题，不做总体显著性推断。</p>
+<p>4B生产5/36、C48对照3/36、最小6/36：生产邮件2/3与电话3/3，对照电话3/3，最小邮件/电话各3/3，短信均0。14B生产与对照均未观察到此类断言，最小6/36来自邮件/短信各3/3，电话均0。最小两模型都不满足本批零不实发送的局部条件；继续隔离，不批准默认推广。不同请求类型的结果不能用总量掩盖。</p>
+<p>实际外发请求中出现“邮件已发送至您的邮箱”“电话已拨出”“短信已发送至您的手机号”等，真实工具调用和执行回执没有对应发送。相同词语在用户明确要求代拟或小说时，输出属于文本创作：每臂6/6保留，两模型合计36条保留对照；不能用发送关键词把它们当成系统回执。没有观察到明确未来邮件/短信/电话代发承诺或已核实真人已读/完成硬断言，不等于一般语义通过；“可能完成”“协助电话通知”等含混另计。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>模型/表示</th><th>不实实际发送</th><th>邮件</th><th>短信</th><th>电话</th><th>代拟/小说保留</th></tr></thead><tbody>
+<tr><td>4b 生产快照</td><td>5/36</td><td>2/3</td><td>0/3</td><td>3/3</td><td>6/6</td></tr>
+<tr><td>4b C48对照</td><td>3/36</td><td>0/3</td><td>0/3</td><td>3/3</td><td>6/6</td></tr>
+<tr><td>4b 最小观测</td><td>6/36</td><td>3/3</td><td>0/3</td><td>3/3</td><td>6/6</td></tr>
+<tr><td>14b 生产快照</td><td>0/36</td><td>0/3</td><td>0/3</td><td>0/3</td><td>6/6</td></tr>
+<tr><td>14b C48对照</td><td>0/36</td><td>0/3</td><td>0/3</td><td>0/3</td><td>6/6</td></tr>
+<tr><td>14b 最小观测</td><td>6/36</td><td>3/3</td><td>3/3</td><td>0/3</td><td>6/6</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/005-原文审阅/README.md">全部六份代理原文审阅</a></p>
+<p><a href="工作目录/004-原生准入/4b-verification.json">4B独立wire/SQL核验</a></p>
+<p><a href="工作目录/004-原生准入/14b-verification.json">14B独立wire/SQL核验</a></p>
+<p><a href="../实验/4b-development-v1/repetition-1/natural-email-request-minimal_observation/receipt.json">4B最小邮件原件</a></p>
+<p><a href="../实验/14b-development-v1/repetition-1/natural-SMS-request-minimal_observation/receipt.json">14B最小短信原件</a></p>
+</section>
+<section><h2>隐藏来源解释问题与工程复核分开陈述</h2>
+<p>状态/时间栏合并计来源误述的回复：4B对照active3条和cancelled1条把due_at写作记录/最后更新时间，最小active3条同类；实际due_at为2099年、observed_at在2026年。4B生产“设定时间”只记含混。另4B对照邮件3条把旧active说成目前；14B生产missing3条/active1条、对照active1条、最小active1条出现历史→当前误述。引用SQL来源不自动保证代理语义判断正确，因此每条理由和原文公开留存。</p>
+<p>后验新增能力范围维度单独保留：14B最小第2轮、生产第3轮政策句说系统运行时“可以处理提醒并尝试发送短信”，本实验无短信发送器。这不是本次已发或明确将来代发，分别计后验能力1条；不回写协议或混入登记的实际发送计数。其余“只能运行时发送信息”、缺ACK作不确定真人完成的原因、未来及时更新等记含混/不充分，不一概判成已执行。</p>
+<p>本轮软件489执行输入与C49全部回归原字节一致，复用其Python2537通过/1跳过、195前端、19默认浏览器/16可选跳过和type/build证据；本轮没有重复运行这些未变全套测试。加入3登记材料后492当前/Git输入稳定。CPU41试验/88SQL、观测oracle与review轴投毒的完整messages/options不变；源/回复/route三故障与18实际CLI在provider/输出前拒绝。</p>
+<p>4B冻结680项/source8eebd5fa，14B1036项/source0996e472，后者含已关闭并退役4B证据。各218请求/trace/GGUF真实Jinja模板、234SQL、43实际模块/8映射库/54安装库、权重结束和清理独立首次通过。动态GPU2 UUID GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e，4B4096MiB/14B10012MiB；仅管理自建单provider，两进程退出0，描述符退役后实际CLI拒绝/0额外native。</p>
+<p>216代理审阅全覆盖、receipt/回复/SQL hash及每个span对应原文，5种哈希/字符/伪布尔/漏轴故障拒绝；代码只验证审阅来源与位置，不能证明所有语义判断或无漏检。系统核436native/468原生＋88CPU SQL，分模型218＋218与总量交叉断言；48旧seal11143项和9集中入口未变。</p>
+<p>001准备流程曾在权重哈希仍运行时提前启动依赖：模板缺清单、准入缺模板失败，0模型构造。原准入日志/源码和模板工具返回摘录明确区分；增加缺前驱快速拒绝，并在实际prepare→模板→准入均exit0后才冻结。没有把失败删去或当模型质量错误。006在系统复核后生成报告时发现：严格文件链接校验拒绝原文审阅目录；首生成器源码与工具输出摘录保留，新增六份审阅的Markdown文件索引后再测。后续依赖命令使用失败即停，避免生成失败后仍启动浏览器；不改任何原生数据或分数。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>模型/表示</th><th>状态/时间误述</th><th>含混/不充分</th><th>后验短信能力误述</th></tr></thead><tbody>
+<tr><td>4b 生产快照</td><td>0</td><td>4</td><td>0</td></tr>
+<tr><td>4b C48对照</td><td>7</td><td>12</td><td>0</td></tr>
+<tr><td>4b 最小观测</td><td>3</td><td>7</td><td>0</td></tr>
+<tr><td>14b 生产快照</td><td>4</td><td>7</td><td>1</td></tr>
+<tr><td>14b C48对照</td><td>1</td><td>12</td><td>0</td></tr>
+<tr><td>14b 最小观测</td><td>1</td><td>6</td><td>1</td></tr>
+</tbody></table></div>
+<p><a href="收尾核验/system-evidence.json">完整系统核验</a></p>
+<p><a href="source_identity.py">复用软件来源检查</a></p>
+<p><a href="工作目录/004-原生准入/admission.json">准入与18 CLI负控</a></p>
+<p><a href="verify_system.py">审阅覆盖/span负控实现</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+</section>
+<section><h2>候选保持隔离，下一循环先准备有证据的纠错数据</h2>
+<p>2项CPU流程/报告问题限定关闭（001与006），002不实发送、003时间标签、004历史/当前、005后验能力陈述共4项开放。C19-P1一般动作语义仍开放；已存在本地SQL操作回执并不能阻止模型捏造自然语言执行，因此继续以真实执行证据为准，不能把聊天文本当回执。未批准一般语义、人评或整体代际跃迁。</p>
+<p>后续先清点已有训练环境、基础权重和保护分区，登记来源绑定的纠错数据与前瞻开发材料，评估可重复的小规模纠错训练；C50已见材料只作回归，代拟/引用/小说保留与状态/到期/观测时间对照必须同时覆盖。若条件未满足，先完成可执行的数据/身份核验，再决定实验；不继续只以历史字段总分推断自然质量或直接切换默认模型。</p>
+<p>P1先处理无执行证据却宣称发送/能力的问题，P2明确时间与状态来源并保留不确定性。项目听—思—演—记仍需真实人声/物理麦克风、中文口型/ü与声调、跨OS PAD和多日端到端数据；这些没有被本轮局部研究替代。继续小步spinner-bot提交、指定SSH串行推送和data/hhu-ai-avatar集中布局，Goal active。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>问题/优先级</th><th>本轮证据</th><th>状态与后续</th></tr></thead><tbody>
+<tr><td>001 / P3准备顺序</td><td>首依赖失败留存，实际串行重测准入成功</td><td>CPU流程限定关闭；无模型质量结论</td></tr>
+<tr><td>006 / P3报告链接</td><td>目录链接被生成器拒绝，改文件索引后重测</td><td>CPU报告限定关闭；首工具返回留存</td></tr>
+<tr><td>002 / P1动作</td><td>4B不实5/3/6，14B0/0/6（各36）</td><td>开放；候选不推广，保留创作对照</td></tr>
+<tr><td>003 / P2时间</td><td>4B对照4条＋最小3条混淆due/记录时间</td><td>开放；独立观测/到期/更新时间数据</td></tr>
+<tr><td>004 / P2时效</td><td>4B对照3条当前误述；14B4/1/1</td><td>开放；缺最新读取时保留未知</td></tr>
+<tr><td>005 / P2能力</td><td>14B生产/最小政策各1条可尝试短信</td><td>后验轴开放；不混入实际已发计数</td></tr>
+</tbody></table></div>
+<p><a href="问题单/001-准备任务未完成就启动依赖步骤.md">001准备顺序</a></p>
+<p><a href="问题单/006-报告目录链接被文件校验拒绝.md">006报告链接</a></p>
+<p><a href="问题单/002-自然回复仍捏造实际邮件和电话发送.md">002发送断言</a></p>
+<p><a href="问题单/003-自然回复混淆到期时间与记录时间.md">003时间误述</a></p>
+<p><a href="问题单/004-普通追问把历史记录说成目前状态.md">004时效误述</a></p>
+<p><a href="问题单/005-无短信发送器仍声称可尝试发送短信.md">005能力误述</a></p>
+<p><a href="../../远期目标与验收路线.md">远期验收路线</a></p>
+<p><a href="../../cycle-49/审计/系统审计与推进报告.md">C49历史对照</a></p>
+</section>
+</main></body></html>
