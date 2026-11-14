@@ -3,7 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import time
+from time import time as actual_wallclock
 
 
 def digest(value):
@@ -103,7 +103,7 @@ class CapturedBackend:
             "adapter_requested": adapter, "has_adapter": self.backend.has_adapter,
             "messages": json.loads(json.dumps(messages, ensure_ascii=False)),
             "context": dict(self.context), "actual_generate_entries": 0,
-            "actual_wallclock_epoch": time.time(), "fixture": False,
+            "actual_wallclock_epoch": actual_wallclock(), "fixture": False,
             "registered_limit": settings["analysis_tokens" if kind == "analysis" else "reply_tokens"],
             "context_tokens": settings["context_tokens"], "completed": False}
         row["messages_sha256"] = digest(row["messages"])
