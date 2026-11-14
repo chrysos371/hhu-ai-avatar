@@ -1,0 +1,13 @@
+{
+  "scope": "future optimizer-step observability; no change to optimizer/order/loss; no GPU run registered",
+  "problem": "C53-002",
+  "fields": [
+    "sample_ids appended only after that microbatch loss and backward succeed",
+    "supervised_tokens including EOS for the actual completed microbatches"
+  ],
+  "write_time": "only after optimizer.step succeeds",
+  "old_C52_logs_never_backfilled": true,
+  "actual_GPU_observation_still_required": true,
+  "new_tests_not_added_for_low_impact_metadata_only": true,
+  "full_regression_after_both_loader_and_log_source_changes": true
+}
