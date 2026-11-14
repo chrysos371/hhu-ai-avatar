@@ -1,0 +1,95 @@
+{
+  "verified": true,
+  "scope": "post-hoc deliberate pure-helper metadata corruption; no public-route exploit demonstrated",
+  "probe_sha256": "ff141be29101a05bc6d3875ad22651dde0a4e6670188b0c154d27ed564548fde",
+  "candidate_sha256": "f21fdd706833b7dc70748491a70fef91606f75d7fd48e0e936a4fa059e39db5b",
+  "receipt": "docs/进展报告/2026-11-10-G2交互循环/cycle-48/实验/4b-development-v1/repetition-1/active-neutral-typed_observation_history/receipt.json",
+  "receipt_sha256": "2304c755e45e9b8c1b048df0806b609c4ab4b8a30a7bba6635263116a2a09768",
+  "existing_SQL_sha256": "131f33f2d3d9b4361f0d3a503207113b161da985db9a065468141d0e01d5ea2b",
+  "SQL_service_claim_recorded": false,
+  "unmodified_query_metadata": {
+    "version": 2,
+    "kind": "status",
+    "source_message_id": 1,
+    "revision": 0,
+    "observed_at": 1794639296.1108215,
+    "business_mutations": false,
+    "reminder_id": 1,
+    "exists": true,
+    "state": {
+      "id": 1,
+      "title": "普通历史状态控制",
+      "due_at": 4070916000.0,
+      "status": "active",
+      "service_claim_recorded": false,
+      "client_ack_recorded": false
+    },
+    "requires_running_server": true,
+    "web_requires_active_client_polling": true,
+    "external_delivery_channels": [],
+    "human_reading_verified": false,
+    "mode": "reminder_query",
+    "route": "read_state",
+    "reason": "unique_record_query",
+    "arguments": {
+      "reminder_id": 1
+    },
+    "evidence": {
+      "bound_reminder_id": 1,
+      "domain_or_exclusion_error": null,
+      "external_action_request": false,
+      "mutation_request": false,
+      "policy_question_evidence": {
+        "error": "record_state_not_policy",
+        "record_reference": true,
+        "record_state": true,
+        "runtime_spans": []
+      },
+      "query_request": true,
+      "writing_request": false
+    },
+    "session_id": "c48-history-active-neutral",
+    "model_calls": 0,
+    "semantic_intent_verified": false,
+    "business_data_read": true
+  },
+  "public_reply_unchanged": "编号1「普通历史状态控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+  "before_projection": {
+    "client_ack_recorded": false,
+    "observed_at": 1794639296.1108215,
+    "reminder_id": 1,
+    "service_claim_recorded": false,
+    "source_message_id": 1,
+    "status_at_observation": "active"
+  },
+  "after_single_flag_flip_projection": {
+    "client_ack_recorded": false,
+    "observed_at": 1794639296.1108215,
+    "reminder_id": 1,
+    "service_claim_recorded": true,
+    "source_message_id": 1,
+    "status_at_observation": "active"
+  },
+  "production_envelope_unchanged_by_flip": true,
+  "reply_bound_negative_controls": [
+    {
+      "field": "client_ack_recorded",
+      "typed_projection_added": false
+    },
+    {
+      "field": "status",
+      "typed_projection_added": false
+    },
+    {
+      "field": "title",
+      "typed_projection_added": false
+    }
+  ],
+  "source_binding_unchanged": true,
+  "sampling_artifacts_modified": false,
+  "new_SDK_turns": 0,
+  "new_native_calls": 0,
+  "new_SQL_dumps": 0,
+  "existing_SQL_dumps_reconstructed": 1,
+  "interpretation": "service claim is not narrated in the public reply; finite shape and canonical reply do not independently authenticate this metadata field. Actual SDK producer supplied correct metadata in the native runs. Production integration needs an explicit trusted-producer boundary or omission of unneeded unbound fields."
+}
