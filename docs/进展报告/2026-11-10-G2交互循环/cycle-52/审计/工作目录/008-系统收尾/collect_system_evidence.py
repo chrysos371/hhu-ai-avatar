@@ -21,6 +21,7 @@ def pure_module(name, path):
 
 
 def main():
+    require(not (HERE / "system-evidence.json").exists() and not (HERE / "external-adapter-files.json").exists(), "fresh final collection required")
     frozen_path = WORK / "freeze-v1.json"
     frozen = verify_freeze(frozen_path, "589430a5b10f4a52496001cc0f9a2bee43d008b36af3be07b62eb04e90c7eaed")
     comparison_path = AUDIT / "工作目录/007-逐条来源审阅/comparison-v1.json"
@@ -56,7 +57,6 @@ def main():
     require(len(train_probe["generations"]) == len(reload_probe["generations"]) == 1
         and len(train_probe["direct_forwards"]) == len(reload_probe["direct_forwards"]) == 1, "probe counts differ")
     adapter_files = {str(p.relative_to(RUN / "adapter")): sha(p) for p in (RUN / "adapter").rglob("*") if p.is_file()}
-    write_new(HERE / "external-adapter-files.json", adapter_files)
     entry = next(e for e in read(LOCK)["models"] if e["name"] == "4b")
     local_model(entry)
     reader = environment_reader(); admission = read(reader.ADMISSION)
@@ -94,6 +94,7 @@ def main():
     current = {n: sha(ROOT / n) for n in sorted(names)}
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     require(historical(head, current) == current, "commit all final collection inputs first")
+    write_new(HERE / "external-adapter-files.json", adapter_files)
     output = {"verified": True, "scope": "current experiment engineering and single-agent review provenance; not human/general quality approval",
         "head": head, "collector_sha256": sha(Path(__file__)), "source_sha256": current,
         "execution_freeze_sha256": sha(frozen_path), "execution_inputs": len(frozen["sha256"]),
