@@ -25,8 +25,14 @@ def main():
     protocol = json.loads(protocol_path.read_text())
     cache = json.loads((CACHE / "wheel-cache-v1.json").read_text())
     registry = json.loads((CACHE / "wheel-registry-v2.json").read_text())
-    assert cache["status"] == "complete" and len(cache["artifacts"]) == len(registry["artifacts"]) == 15
+    if cache["status"] != "complete" or len(cache["artifacts"]) != 15:
+        raise ValueError("C51 complete verified wheel cache required for local recovery")
+    assert len(registry["artifacts"]) == 15
     assert cache["registry_sha256"] == sha(CACHE / "wheel-registry-v2.json")
+    independent = json.loads((CACHE / "wheel-cache-independent-v1.json").read_text())
+    assert independent["verified"] and independent["wheel_count"] == 15
+    assert independent["cache_run_sha256"] == sha(CACHE / "wheel-cache-v1.json")
+    assert independent["registry_sha256"] == sha(CACHE / "wheel-registry-v2.json")
     previous = json.loads((PREPARATION / "environment-v3/environment-v3.json").read_text())
     assert previous["status"] == "failed" and previous["target"] == str(TARGET)
     retirement_path = PREPARATION / "environment-v3/operator-retirement-v1.json"
