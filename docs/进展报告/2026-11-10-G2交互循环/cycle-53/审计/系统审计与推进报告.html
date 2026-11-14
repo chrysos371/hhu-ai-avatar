@@ -1,0 +1,53 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C53 系统审计与训练准入修复报告</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C53 系统审计与训练准入修复报告</h1><p class="meta">2026-11-14T23:59:55+08:00 · 源 a0c0c3a65ef4</p><p class="verdict">当前加载完整性限定修复；模型质量与退化因果未批准</p>
+<section><h2>结论与范围</h2>
+<p>C53在C52失败adapter继续隔离的条件下，完成CPU训练材料结构审计，并复现/修复主lab加载准入的逐行来源校验缺口。当前源码完整Python2548通过/1跳过，494输入与Git及执行前后字节一致；不是复用旧C51结果。</p>
+<p>3组完整176/44克隆材料均复现旧加载器接受、修后拒绝，原176/44仍接受；修后真实CPU分词220序列与原C51同SHA。本轮0新LLM生成、0训练步、0GPU分配。工程完整性修复不等于模型质量提升，也未确定C52退化原因。</p>
+<p><a href="收尾核验/system-evidence.json">系统独立重核</a></p>
+<p><a href="工作目录/002-加载准入修复/independent-admission-v1.json">完整数据旧新加载对照</a></p>
+<p><a href="../../cycle-52/审计/系统审计与推进报告.md">前轮失败适配报告</a></p>
+</section>
+<section><h2>材料结构实测</h2>
+<p>11类各训练16/开发4，每类只有一个固定脚本目标；全部220材料来自实际Avatar/SQLite流程配合显式脚本teacher，非真实模型或独立人评目标。记录条数不能当作独立措辞数。</p>
+<p>数字归一化只把每段十进制数字替换为&lt;N&gt;，会抹掉数值含义，不能证明语义等价。相同目标跨split出现不自动等于数据污染；这些是结构局限而非退化因果。启动前侦察已知11目标，正式审计没有冒称盲假设。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>指标</th><th>训练</th><th>开发</th></tr></thead><tbody>
+<tr><td>记录数</td><td>176</td><td>44</td></tr>
+<tr><td>最终目标字面种类</td><td>11</td><td>11；与训练共享全部11种</td></tr>
+<tr><td>末轮追问字面种类</td><td>44</td><td>11</td></tr>
+<tr><td>完整对话精确种类</td><td>176</td><td>44；跨split交集0</td></tr>
+<tr><td>数字归一化完整对话种类</td><td>44</td><td>11；跨split交集0</td></tr>
+<tr><td>监督tokens（含EOS）</td><td>3936 / 全序列145692</td><td>984 / 全序列36428</td></tr>
+<tr><td>含历史快照标记</td><td>176/176</td><td>44/44</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/001-训练材料结构/structure-v1.json">原始结构测量与故障观测</a></p>
+<p><a href="工作目录/001-训练材料结构/protocol-v1.json">执行前指标协议</a></p>
+</section>
+<section><h2>加载修复与当前验证</h2>
+<p>现在加载时先核真实行结构与声明内容hash，兼容两种既有范围；按实际非system对话防跨split重复，再对当前评测材料重筛，并核开发计数。更新整文件manifest不能绕过失真的逐行来源；重算行hash也不能塞入已保护评测原文。</p>
+<p>模板重复/近重复属于导出选择规则，已有材料可能有意重复，加载时不以此推翻既有导出；实际跨split重复单独严格拒绝。当前修复只覆盖主lab加载入口，不认证所有训练入口、来源许可或语义家族隔离。</p>
+<p>新训练日志在microbatch loss/反传成功后追加样本ID与监督token，优化器步成功后落盘；不改抽样/loss/优化算法。C52旧日志没有这些字段，不能回填或假称可恢复实际顺序。真实新日志采证仍需后续预登记训练。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>项目</th><th>结果</th><th>边界</th></tr></thead><tbody>
+<tr><td>原加载器回归</td><td>修前6失败/2通过</td><td>实际准入测试，首失败保留</td></tr>
+<tr><td>修后定向</td><td>11通过</td><td>含原训练隔离控制；非新实模收益</td></tr>
+<tr><td>当前完整Python</td><td>2548通过/1跳过；494输入</td><td>pytest181.26s；driver含收集182.172s</td></tr>
+<tr><td>原完整数据</td><td>176/44仍接受</td><td>原文件/manifest与封存没有改写</td></tr>
+<tr><td>完整克隆故障</td><td>3旧接受→3新拒绝</td><td>失真行hash、重算hash的eval原文、换system的跨split重复</td></tr>
+<tr><td>原两种内容hash范围</td><td>均兼容</td><td>普通不含system；C51全messages</td></tr>
+<tr><td>当前真实CPU分词</td><td>220序列与原同SHA</td><td>3936训练监督tokens；CUDA未初始化</td></tr>
+<tr><td>未来步骤日志</td><td>已加sample_ids/监督量</td><td>仅实现，未新跑GPU，不批准实际采证</td></tr>
+<tr><td>旧证据与布局</td><td>51 seal/12418项，9入口不变</td><td>旧seal不认证当前新源码，当前另有完整回归</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/004-当前软件回归/python-first-binding.json">当前完整回归绑定</a></p>
+<p><a href="工作目录/002-加载准入修复/targeted-after-fix-v1.log">修后定向日志</a></p>
+<p><a href="工作目录/005-修后真实分词/current-tokenization-v1.json">当前真实分词证明</a></p>
+</section>
+<section><h2>单项审计与后续优先级</h2>
+<p>001材料目标/上下文覆盖有限：开放，下一步以新资料和反事实对照测量，不猜测因果或盲目增加步数。002日志样本身份：实现已补，真实训练未验，保持开放。003逐行来源信任：当前主lab准入限定关闭；原源、6红2绿、原文件与独立3组完整对照保留。</p>
+<p>P0保持C52失败adapter隔离和默认模型不变，禁止改旧封存/旧金标、重跑旧阶段或挑选有利重复。P1下一轮先登记更丰富且有条件/反事实差异的开发材料及目标审核，CPU来源/隔离/分词通过后再注册GPU训练对照，并验证新样本日志。已看过的C52题永远是开发诊断，不重新叫独立留出。</p>
+<p>P2继续一般动作语义、真实来源/时效、客户端ACK与人类行为区别；独立人评、自由人声/物理麦克风、ü/声调口型、跨OS PAD、多日端到端仍开放。当前没有整体代际跃迁批准，Goal保持active。</p>
+<p><a href="问题单/001-合成目标与上下文覆盖有限.md">问题001</a></p>
+<p><a href="问题单/002-优化日志缺少实际样本身份与监督量.md">问题002</a></p>
+<p><a href="问题单/003-加载器信任未复核的逐行来源哈希.md">问题003</a></p>
+<p><a href="../进展.md">过程进展</a></p>
+<p><a href="../../远期目标与验收路线.md">远期目标</a></p>
+</section>
+</main></body></html>
