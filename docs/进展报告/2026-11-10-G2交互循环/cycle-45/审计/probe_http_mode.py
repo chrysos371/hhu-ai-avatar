@@ -10,6 +10,7 @@ import urllib.request
 
 import avatar.main
 from avatar.brain.memory import MemoryStore
+from avatar.brain.reminders import ReminderStore
 from avatar.config import config
 from avatar.paths import temporary_dir
 from avatar.web import create_server
@@ -17,7 +18,7 @@ from probe_sdk_mode import CaptureModel, digest, projection
 from run_regression import ROOT, snapshot
 
 BASE = Path(__file__).resolve().parents[1]
-WORK = BASE/'审计/工作目录/003-真实HTTP与上下文'
+WORK = BASE/'审计/工作目录/003-真实HTTP与上下文/v2'
 
 
 def main():
@@ -60,6 +61,7 @@ def main():
                 return raw if stream else json.loads(raw)['data']
             try:
                 with closing(MemoryStore(server.db_path)) as memory:
+                    ReminderStore(memory)  # Explicit fixture schema startup before seeding.
                     now = time.time()
                     with memory.transaction():
                         memory._conn.execute('INSERT INTO memory_reminders(title,due_at,created_at) VALUES (?,?,?)',
