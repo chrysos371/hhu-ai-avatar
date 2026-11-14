@@ -1,0 +1,938 @@
+{
+  "version": "1",
+  "pip_version": "25.3",
+  "install": [
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/torch-2.6.0%2Bcu124-cp310-cp310-linux_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=7f2ba7f7c0459320a521696f6b5bccc187f59890b23c9dfb6c49b0b87c6bfc97",
+          "hashes": {
+            "sha256": "7f2ba7f7c0459320a521696f6b5bccc187f59890b23c9dfb6c49b0b87c6bfc97"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "torch",
+        "version": "2.6.0+cu124",
+        "summary": "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
+        "description_content_type": "text/markdown",
+        "keywords": [
+          "pytorch",
+          "machine learning"
+        ],
+        "home_page": "https://pytorch.org/",
+        "download_url": "https://github.com/pytorch/pytorch/tags",
+        "author": "PyTorch Team",
+        "author_email": "packages@pytorch.org",
+        "license": "BSD-3-Clause",
+        "license_file": [
+          "LICENSE",
+          "NOTICE"
+        ],
+        "classifier": [
+          "Development Status :: 5 - Production/Stable",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: OSI Approved :: BSD License",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Topic :: Software Development :: Libraries :: Python Modules",
+          "Programming Language :: C++",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3.12",
+          "Programming Language :: Python :: 3.13"
+        ],
+        "requires_dist": [
+          "filelock",
+          "typing-extensions (>=4.10.0)",
+          "networkx",
+          "jinja2",
+          "fsspec",
+          "nvidia-cuda-nvrtc-cu12 (==12.4.127) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cuda-runtime-cu12 (==12.4.127) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cuda-cupti-cu12 (==12.4.127) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cudnn-cu12 (==9.1.0.70) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cublas-cu12 (==12.4.5.8) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cufft-cu12 (==11.2.1.3) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-curand-cu12 (==10.3.5.147) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cusolver-cu12 (==11.6.1.9) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cusparse-cu12 (==12.3.1.170) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-cusparselt-cu12 (==0.6.2) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-nccl-cu12 (==2.21.5) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-nvtx-cu12 (==12.4.127) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "nvidia-nvjitlink-cu12 (==12.4.127) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "triton (==3.2.0) ; platform_system == \"Linux\" and platform_machine == \"x86_64\"",
+          "setuptools ; python_version >= \"3.12\"",
+          "sympy (==1.13.1) ; python_version >= \"3.9\"",
+          "opt-einsum (>=3.3) ; extra == 'opt-einsum'",
+          "optree (>=0.13.0) ; extra == 'optree'"
+        ],
+        "requires_python": ">=3.9.0",
+        "provides_extra": [
+          "opt-einsum",
+          "optree"
+        ],
+        "description": "![PyTorch Logo](https://github.com/pytorch/pytorch/raw/main/docs/source/_static/img/pytorch-logo-dark.png)\n\n--------------------------------------------------------------------------------\n\nPyTorch is a Python package that provides two high-level features:\n- Tensor computation (like NumPy) with strong GPU acceleration\n- Deep neural networks built on a tape-based autograd system\n\nYou can reuse your favorite Python packages such as NumPy, SciPy, and Cython to extend PyTorch when needed.\n\nOur trunk health (Continuous Integration signals) can be found at [hud.pytorch.org](https://hud.pytorch.org/ci/pytorch/pytorch/main).\n\n<!-- toc -->\n\n- [More About PyTorch](#more-about-pytorch)\n  - [A GPU-Ready Tensor Library](#a-gpu-ready-tensor-library)\n  - [Dynamic Neural Networks: Tape-Based Autograd](#dynamic-neural-networks-tape-based-autograd)\n  - [Python First](#python-first)\n  - [Imperative Experiences](#imperative-experiences)\n  - [Fast and Lean](#fast-and-lean)\n  - [Extensions Without Pain](#extensions-without-pain)\n- [Installation](#installation)\n  - [Binaries](#binaries)\n    - [NVIDIA Jetson Platforms](#nvidia-jetson-platforms)\n  - [From Source](#from-source)\n    - [Prerequisites](#prerequisites)\n      - [NVIDIA CUDA Support](#nvidia-cuda-support)\n      - [AMD ROCm Support](#amd-rocm-support)\n      - [Intel GPU Support](#intel-gpu-support)\n    - [Get the PyTorch Source](#get-the-pytorch-source)\n    - [Install Dependencies](#install-dependencies)\n    - [Install PyTorch](#install-pytorch)\n      - [Adjust Build Options (Optional)](#adjust-build-options-optional)\n  - [Docker Image](#docker-image)\n    - [Using pre-built images](#using-pre-built-images)\n    - [Building the image yourself](#building-the-image-yourself)\n  - [Building the Documentation](#building-the-documentation)\n  - [Previous Versions](#previous-versions)\n- [Getting Started](#getting-started)\n- [Resources](#resources)\n- [Communication](#communication)\n- [Releases and Contributing](#releases-and-contributing)\n- [The Team](#the-team)\n- [License](#license)\n\n<!-- tocstop -->\n\n## More About PyTorch\n\n[Learn the basics of PyTorch](https://pytorch.org/tutorials/beginner/basics/intro.html)\n\nAt a granular level, PyTorch is a library that consists of the following components:\n\n| Component | Description |\n| ---- | --- |\n| [**torch**](https://pytorch.org/docs/stable/torch.html) | A Tensor library like NumPy, with strong GPU support |\n| [**torch.autograd**](https://pytorch.org/docs/stable/autograd.html) | A tape-based automatic differentiation library that supports all differentiable Tensor operations in torch |\n| [**torch.jit**](https://pytorch.org/docs/stable/jit.html) | A compilation stack (TorchScript) to create serializable and optimizable models from PyTorch code  |\n| [**torch.nn**](https://pytorch.org/docs/stable/nn.html) | A neural networks library deeply integrated with autograd designed for maximum flexibility |\n| [**torch.multiprocessing**](https://pytorch.org/docs/stable/multiprocessing.html) | Python multiprocessing, but with magical memory sharing of torch Tensors across processes. Useful for data loading and Hogwild training |\n| [**torch.utils**](https://pytorch.org/docs/stable/data.html) | DataLoader and other utility functions for convenience |\n\nUsually, PyTorch is used either as:\n\n- A replacement for NumPy to use the power of GPUs.\n- A deep learning research platform that provides maximum flexibility and speed.\n\nElaborating Further:\n\n### A GPU-Ready Tensor Library\n\nIf you use NumPy, then you have used Tensors (a.k.a. ndarray).\n\n![Tensor illustration](./docs/source/_static/img/tensor_illustration.png)\n\nPyTorch provides Tensors that can live either on the CPU or the GPU and accelerates the\ncomputation by a huge amount.\n\nWe provide a wide variety of tensor routines to accelerate and fit your scientific computation needs\nsuch as slicing, indexing, mathematical operations, linear algebra, reductions.\nAnd they are fast!\n\n### Dynamic Neural Networks: Tape-Based Autograd\n\nPyTorch has a unique way of building neural networks: using and replaying a tape recorder.\n\nMost frameworks such as TensorFlow, Theano, Caffe, and CNTK have a static view of the world.\nOne has to build a neural network and reuse the same structure again and again.\nChanging the way the network behaves means that one has to start from scratch.\n\nWith PyTorch, we use a technique called reverse-mode auto-differentiation, which allows you to\nchange the way your network behaves arbitrarily with zero lag or overhead. Our inspiration comes\nfrom several research papers on this topic, as well as current and past work such as\n[torch-autograd](https://github.com/twitter/torch-autograd),\n[autograd](https://github.com/HIPS/autograd),\n[Chainer](https://chainer.org), etc.\n\nWhile this technique is not unique to PyTorch, it's one of the fastest implementations of it to date.\nYou get the best of speed and flexibility for your crazy research.\n\n![Dynamic graph](https://github.com/pytorch/pytorch/raw/main/docs/source/_static/img/dynamic_graph.gif)\n\n### Python First\n\nPyTorch is not a Python binding into a monolithic C++ framework.\nIt is built to be deeply integrated into Python.\nYou can use it naturally like you would use [NumPy](https://www.numpy.org/) / [SciPy](https://www.scipy.org/) / [scikit-learn](https://scikit-learn.org) etc.\nYou can write your new neural network layers in Python itself, using your favorite libraries\nand use packages such as [Cython](https://cython.org/) and [Numba](http://numba.pydata.org/).\nOur goal is to not reinvent the wheel where appropriate.\n\n### Imperative Experiences\n\nPyTorch is designed to be intuitive, linear in thought, and easy to use.\nWhen you execute a line of code, it gets executed. There isn't an asynchronous view of the world.\nWhen you drop into a debugger or receive error messages and stack traces, understanding them is straightforward.\nThe stack trace points to exactly where your code was defined.\nWe hope you never spend hours debugging your code because of bad stack traces or asynchronous and opaque execution engines.\n\n### Fast and Lean\n\nPyTorch has minimal framework overhead. We integrate acceleration libraries\nsuch as [Intel MKL](https://software.intel.com/mkl) and NVIDIA ([cuDNN](https://developer.nvidia.com/cudnn), [NCCL](https://developer.nvidia.com/nccl)) to maximize speed.\nAt the core, its CPU and GPU Tensor and neural network backends\nare mature and have been tested for years.\n\nHence, PyTorch is quite fast — whether you run small or large neural networks.\n\nThe memory usage in PyTorch is extremely efficient compared to Torch or some of the alternatives.\nWe've written custom memory allocators for the GPU to make sure that\nyour deep learning models are maximally memory efficient.\nThis enables you to train bigger deep learning models than before.\n\n### Extensions Without Pain\n\nWriting new neural network modules, or interfacing with PyTorch's Tensor API was designed to be straightforward\nand with minimal abstractions.\n\nYou can write new neural network layers in Python using the torch API\n[or your favorite NumPy-based libraries such as SciPy](https://pytorch.org/tutorials/advanced/numpy_extensions_tutorial.html).\n\nIf you want to write your layers in C/C++, we provide a convenient extension API that is efficient and with minimal boilerplate.\nNo wrapper code needs to be written. You can see [a tutorial here](https://pytorch.org/tutorials/advanced/cpp_extension.html) and [an example here](https://github.com/pytorch/extension-cpp).\n\n\n## Installation\n\n### Binaries\nCommands to install binaries via Conda or pip wheels are on our website: [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)\n\n\n#### NVIDIA Jetson Platforms\n\nPython wheels for NVIDIA's Jetson Nano, Jetson TX1/TX2, Jetson Xavier NX/AGX, and Jetson AGX Orin are provided [here](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-10-now-available/72048) and the L4T container is published [here](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-pytorch)\n\nThey require JetPack 4.2 and above, and [@dusty-nv](https://github.com/dusty-nv) and [@ptrblck](https://github.com/ptrblck) are maintaining them.\n\n\n### From Source\n\n#### Prerequisites\nIf you are installing from source, you will need:\n- Python 3.9 or later\n- A compiler that fully supports C++17, such as clang or gcc (gcc 9.4.0 or newer is required, on Linux)\n- Visual Studio or Visual Studio Build Tool (Windows only)\n\n\\* PyTorch CI uses Visual C++ BuildTools, which come with Visual Studio Enterprise,\nProfessional, or Community Editions. You can also install the build tools from\nhttps://visualstudio.microsoft.com/visual-cpp-build-tools/. The build tools *do not*\ncome with Visual Studio Code by default.\n\n\\* We highly recommend installing an [Anaconda](https://www.anaconda.com/download) environment. You will get a high-quality BLAS library (MKL) and you get controlled dependency versions regardless of your Linux distro.\n\nAn example of environment setup is shown below:\n\n* Linux:\n\n```bash\n$ source <CONDA_INSTALL_DIR>/bin/activate\n$ conda create -y -n <CONDA_NAME>\n$ conda activate <CONDA_NAME>\n```\n\n* Windows:\n\n```bash\n$ source <CONDA_INSTALL_DIR>\\Scripts\\activate.bat\n$ conda create -y -n <CONDA_NAME>\n$ conda activate <CONDA_NAME>\n$ call \"C:\\Program Files\\Microsoft Visual Studio\\<VERSION>\\Community\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64\n```\n\n##### NVIDIA CUDA Support\nIf you want to compile with CUDA support, [select a supported version of CUDA from our support matrix](https://pytorch.org/get-started/locally/), then install the following:\n- [NVIDIA CUDA](https://developer.nvidia.com/cuda-downloads)\n- [NVIDIA cuDNN](https://developer.nvidia.com/cudnn) v8.5 or above\n- [Compiler](https://gist.github.com/ax3l/9489132) compatible with CUDA\n\nNote: You could refer to the [cuDNN Support Matrix](https://docs.nvidia.com/deeplearning/cudnn/reference/support-matrix.html) for cuDNN versions with the various supported CUDA, CUDA driver and NVIDIA hardware\n\nIf you want to disable CUDA support, export the environment variable `USE_CUDA=0`.\nOther potentially useful environment variables may be found in `setup.py`.\n\nIf you are building for NVIDIA's Jetson platforms (Jetson Nano, TX1, TX2, AGX Xavier), Instructions to install PyTorch for Jetson Nano are [available here](https://devtalk.nvidia.com/default/topic/1049071/jetson-nano/pytorch-for-jetson-nano/)\n\n##### AMD ROCm Support\nIf you want to compile with ROCm support, install\n- [AMD ROCm](https://rocm.docs.amd.com/en/latest/deploy/linux/quick_start.html) 4.0 and above installation\n- ROCm is currently supported only for Linux systems.\n\nBy default the build system expects ROCm to be installed in `/opt/rocm`. If ROCm is installed in a different directory, the `ROCM_PATH` environment variable must be set to the ROCm installation directory. The build system automatically detects the AMD GPU architecture. Optionally, the AMD GPU architecture can be explicitly set with the `PYTORCH_ROCM_ARCH` environment variable [AMD GPU architecture](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/reference/system-requirements.html#supported-gpus)\n\nIf you want to disable ROCm support, export the environment variable `USE_ROCM=0`.\nOther potentially useful environment variables may be found in `setup.py`.\n\n##### Intel GPU Support\nIf you want to compile with Intel GPU support, follow these\n- [PyTorch Prerequisites for Intel GPUs](https://www.intel.com/content/www/us/en/developer/articles/tool/pytorch-prerequisites-for-intel-gpus.html) instructions.\n- Intel GPU is supported for Linux and Windows.\n\nIf you want to disable Intel GPU support, export the environment variable `USE_XPU=0`.\nOther potentially useful environment variables may be found in `setup.py`.\n\n#### Get the PyTorch Source\n```bash\ngit clone --recursive https://github.com/pytorch/pytorch\ncd pytorch\n# if you are updating an existing checkout\ngit submodule sync\ngit submodule update --init --recursive\n```\n\n#### Install Dependencies\n\n**Common**\n\n```bash\nconda install cmake ninja\n# Run this command from the PyTorch directory after cloning the source code using the “Get the PyTorch Source“ section below\npip install -r requirements.txt\n```\n\n**On Linux**\n\n```bash\npip install mkl-static mkl-include\n# CUDA only: Add LAPACK support for the GPU if needed\nconda install -c pytorch magma-cuda121  # or the magma-cuda* that matches your CUDA version from https://anaconda.org/pytorch/repo\n\n# (optional) If using torch.compile with inductor/triton, install the matching version of triton\n# Run from the pytorch directory after cloning\n# For Intel GPU support, please explicitly `export USE_XPU=1` before running command.\nmake triton\n```\n\n**On MacOS**\n\n```bash\n# Add this package on intel x86 processor machines only\npip install mkl-static mkl-include\n# Add these packages if torch.distributed is needed\nconda install pkg-config libuv\n```\n\n**On Windows**\n\n```bash\npip install mkl-static mkl-include\n# Add these packages if torch.distributed is needed.\n# Distributed package support on Windows is a prototype feature and is subject to changes.\nconda install -c conda-forge libuv=1.39\n```\n\n#### Install PyTorch\n**On Linux**\n\nIf you would like to compile PyTorch with [new C++ ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html) enabled, then first run this command:\n```bash\nexport _GLIBCXX_USE_CXX11_ABI=1\n```\n\nPlease **note** that starting from PyTorch 2.5, the PyTorch build with XPU supports both new and old C++ ABIs. Previously, XPU only supported the new C++ ABI. If you want to compile with Intel GPU support, please follow [Intel GPU Support](#intel-gpu-support).\n\nIf you're compiling for AMD ROCm then first run this command:\n```bash\n# Only run this if you're compiling for ROCm\npython tools/amd_build/build_amd.py\n```\n\nInstall PyTorch\n```bash\nexport CMAKE_PREFIX_PATH=\"${CONDA_PREFIX:-'$(dirname $(which conda))/../'}:${CMAKE_PREFIX_PATH}\"\npython setup.py develop\n```\n\n**On macOS**\n\n```bash\npython3 setup.py develop\n```\n\n**On Windows**\n\nIf you want to build legacy python code, please refer to [Building on legacy code and CUDA](https://github.com/pytorch/pytorch/blob/main/CONTRIBUTING.md#building-on-legacy-code-and-cuda)\n\n**CPU-only builds**\n\nIn this mode PyTorch computations will run on your CPU, not your GPU\n\n```cmd\npython setup.py develop\n```\n\nNote on OpenMP: The desired OpenMP implementation is Intel OpenMP (iomp). In order to link against iomp, you'll need to manually download the library and set up the building environment by tweaking `CMAKE_INCLUDE_PATH` and `LIB`. The instruction [here](https://github.com/pytorch/pytorch/blob/main/docs/source/notes/windows.rst#building-from-source) is an example for setting up both MKL and Intel OpenMP. Without these configurations for CMake, Microsoft Visual C OpenMP runtime (vcomp) will be used.\n\n**CUDA based build**\n\nIn this mode PyTorch computations will leverage your GPU via CUDA for faster number crunching\n\n[NVTX](https://docs.nvidia.com/gameworks/content/gameworkslibrary/nvtx/nvidia_tools_extension_library_nvtx.htm) is needed to build Pytorch with CUDA.\nNVTX is a part of CUDA distributive, where it is called \"Nsight Compute\". To install it onto an already installed CUDA run CUDA installation once again and check the corresponding checkbox.\nMake sure that CUDA with Nsight Compute is installed after Visual Studio.\n\nCurrently, VS 2017 / 2019, and Ninja are supported as the generator of CMake. If `ninja.exe` is detected in `PATH`, then Ninja will be used as the default generator, otherwise, it will use VS 2017 / 2019.\n<br/> If Ninja is selected as the generator, the latest MSVC will get selected as the underlying toolchain.\n\nAdditional libraries such as\n[Magma](https://developer.nvidia.com/magma), [oneDNN, a.k.a. MKLDNN or DNNL](https://github.com/oneapi-src/oneDNN), and [Sccache](https://github.com/mozilla/sccache) are often needed. Please refer to the [installation-helper](https://github.com/pytorch/pytorch/tree/main/.ci/pytorch/win-test-helpers/installation-helpers) to install them.\n\nYou can refer to the [build_pytorch.bat](https://github.com/pytorch/pytorch/blob/main/.ci/pytorch/win-test-helpers/build_pytorch.bat) script for some other environment variables configurations\n\n\n```cmd\ncmd\n\n:: Set the environment variables after you have downloaded and unzipped the mkl package,\n:: else CMake would throw an error as `Could NOT find OpenMP`.\nset CMAKE_INCLUDE_PATH={Your directory}\\mkl\\include\nset LIB={Your directory}\\mkl\\lib;%LIB%\n\n:: Read the content in the previous section carefully before you proceed.\n:: [Optional] If you want to override the underlying toolset used by Ninja and Visual Studio with CUDA, please run the following script block.\n:: \"Visual Studio 2019 Developer Command Prompt\" will be run automatically.\n:: Make sure you have CMake >= 3.12 before you do this when you use the Visual Studio generator.\nset CMAKE_GENERATOR_TOOLSET_VERSION=14.27\nset DISTUTILS_USE_SDK=1\nfor /f \"usebackq tokens=*\" %i in (`\"%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -version [15^,17^) -products * -latest -property installationPath`) do call \"%i\\VC\\Auxiliary\\Build\\vcvarsall.bat\" x64 -vcvars_ver=%CMAKE_GENERATOR_TOOLSET_VERSION%\n\n:: [Optional] If you want to override the CUDA host compiler\nset CUDAHOSTCXX=C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.27.29110\\bin\\HostX64\\x64\\cl.exe\n\npython setup.py develop\n\n```\n\n##### Adjust Build Options (Optional)\n\nYou can adjust the configuration of cmake variables optionally (without building first), by doing\nthe following. For example, adjusting the pre-detected directories for CuDNN or BLAS can be done\nwith such a step.\n\nOn Linux\n```bash\nexport CMAKE_PREFIX_PATH=\"${CONDA_PREFIX:-'$(dirname $(which conda))/../'}:${CMAKE_PREFIX_PATH}\"\npython setup.py build --cmake-only\nccmake build  # or cmake-gui build\n```\n\nOn macOS\n```bash\nexport CMAKE_PREFIX_PATH=\"${CONDA_PREFIX:-'$(dirname $(which conda))/../'}:${CMAKE_PREFIX_PATH}\"\nMACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py build --cmake-only\nccmake build  # or cmake-gui build\n```\n\n### Docker Image\n\n#### Using pre-built images\n\nYou can also pull a pre-built docker image from Docker Hub and run with docker v19.03+\n\n```bash\ndocker run --gpus all --rm -ti --ipc=host pytorch/pytorch:latest\n```\n\nPlease note that PyTorch uses shared memory to share data between processes, so if torch multiprocessing is used (e.g.\nfor multithreaded data loaders) the default shared memory segment size that container runs with is not enough, and you\nshould increase shared memory size either with `--ipc=host` or `--shm-size` command line options to `nvidia-docker run`.\n\n#### Building the image yourself\n\n**NOTE:** Must be built with a docker version > 18.06\n\nThe `Dockerfile` is supplied to build images with CUDA 11.1 support and cuDNN v8.\nYou can pass `PYTHON_VERSION=x.y` make variable to specify which Python version is to be used by Miniconda, or leave it\nunset to use the default.\n\n```bash\nmake -f docker.Makefile\n# images are tagged as docker.io/${your_docker_username}/pytorch\n```\n\nYou can also pass the `CMAKE_VARS=\"...\"` environment variable to specify additional CMake variables to be passed to CMake during the build.\nSee [setup.py](./setup.py) for the list of available variables.\n\n```bash\nmake -f docker.Makefile\n```\n\n### Building the Documentation\n\nTo build documentation in various formats, you will need [Sphinx](http://www.sphinx-doc.org) and the\nreadthedocs theme.\n\n```bash\ncd docs/\npip install -r requirements.txt\nmake html\nmake serve\n```\n\nRun `make` to get a list of all available output formats.\n\nIf you get a katex error run `npm install katex`.  If it persists, try\n`npm install -g katex`\n\n> Note: if you installed `nodejs` with a different package manager (e.g.,\n`conda`) then `npm` will probably install a version of `katex` that is not\ncompatible with your version of `nodejs` and doc builds will fail.\nA combination of versions that is known to work is `node@6.13.1` and\n`katex@0.13.18`. To install the latter with `npm` you can run\n```npm install -g katex@0.13.18```\n\n### Previous Versions\n\nInstallation instructions and binaries for previous PyTorch versions may be found\non [our website](https://pytorch.org/previous-versions).\n\n\n## Getting Started\n\nThree-pointers to get you started:\n- [Tutorials: get you started with understanding and using PyTorch](https://pytorch.org/tutorials/)\n- [Examples: easy to understand PyTorch code across all domains](https://github.com/pytorch/examples)\n- [The API Reference](https://pytorch.org/docs/)\n- [Glossary](https://github.com/pytorch/pytorch/blob/main/GLOSSARY.md)\n\n## Resources\n\n* [PyTorch.org](https://pytorch.org/)\n* [PyTorch Tutorials](https://pytorch.org/tutorials/)\n* [PyTorch Examples](https://github.com/pytorch/examples)\n* [PyTorch Models](https://pytorch.org/hub/)\n* [Intro to Deep Learning with PyTorch from Udacity](https://www.udacity.com/course/deep-learning-pytorch--ud188)\n* [Intro to Machine Learning with PyTorch from Udacity](https://www.udacity.com/course/intro-to-machine-learning-nanodegree--nd229)\n* [Deep Neural Networks with PyTorch from Coursera](https://www.coursera.org/learn/deep-neural-networks-with-pytorch)\n* [PyTorch Twitter](https://twitter.com/PyTorch)\n* [PyTorch Blog](https://pytorch.org/blog/)\n* [PyTorch YouTube](https://www.youtube.com/channel/UCWXI5YeOsh03QvJ59PMaXFw)\n\n## Communication\n* Forums: Discuss implementations, research, etc. https://discuss.pytorch.org\n* GitHub Issues: Bug reports, feature requests, install issues, RFCs, thoughts, etc.\n* Slack: The [PyTorch Slack](https://pytorch.slack.com/) hosts a primary audience of moderate to experienced PyTorch users and developers for general chat, online discussions, collaboration, etc. If you are a beginner looking for help, the primary medium is [PyTorch Forums](https://discuss.pytorch.org). If you need a slack invite, please fill this form: https://goo.gl/forms/PP1AGvNHpSaJP8to1\n* Newsletter: No-noise, a one-way email newsletter with important announcements about PyTorch. You can sign-up here: https://eepurl.com/cbG0rv\n* Facebook Page: Important announcements about PyTorch. https://www.facebook.com/pytorch\n* For brand guidelines, please visit our website at [pytorch.org](https://pytorch.org/)\n\n## Releases and Contributing\n\nTypically, PyTorch has three minor releases a year. Please let us know if you encounter a bug by [filing an issue](https://github.com/pytorch/pytorch/issues).\n\nWe appreciate all contributions. If you are planning to contribute back bug-fixes, please do so without any further discussion.\n\nIf you plan to contribute new features, utility functions, or extensions to the core, please first open an issue and discuss the feature with us.\nSending a PR without discussion might end up resulting in a rejected PR because we might be taking the core in a different direction than you might be aware of.\n\nTo learn more about making a contribution to Pytorch, please see our [Contribution page](CONTRIBUTING.md). For more information about PyTorch releases, see [Release page](RELEASE.md).\n\n## The Team\n\nPyTorch is a community-driven project with several skillful engineers and researchers contributing to it.\n\nPyTorch is currently maintained by [Soumith Chintala](http://soumith.ch), [Gregory Chanan](https://github.com/gchanan), [Dmytro Dzhulgakov](https://github.com/dzhulgakov), [Edward Yang](https://github.com/ezyang), and [Nikita Shulga](https://github.com/malfet) with major contributions coming from hundreds of talented individuals in various forms and means.\nA non-exhaustive but growing list needs to mention: [Trevor Killeen](https://github.com/killeent), [Sasank Chilamkurthy](https://github.com/chsasank), [Sergey Zagoruyko](https://github.com/szagoruyko), [Adam Lerer](https://github.com/adamlerer), [Francisco Massa](https://github.com/fmassa), [Alykhan Tejani](https://github.com/alykhantejani), [Luca Antiga](https://github.com/lantiga), [Alban Desmaison](https://github.com/albanD), [Andreas Koepf](https://github.com/andreaskoepf), [James Bradbury](https://github.com/jamesb93), [Zeming Lin](https://github.com/ebetica), [Yuandong Tian](https://github.com/yuandong-tian), [Guillaume Lample](https://github.com/glample), [Marat Dukhan](https://github.com/Maratyszcza), [Natalia Gimelshein](https://github.com/ngimel), [Christian Sarofeen](https://github.com/csarofeen), [Martin Raison](https://github.com/martinraison), [Edward Yang](https://github.com/ezyang), [Zachary Devito](https://github.com/zdevito).\n\nNote: This project is unrelated to [hughperkins/pytorch](https://github.com/hughperkins/pytorch) with the same name. Hugh is a valuable contributor to the Torch community and has helped with many things Torch and PyTorch.\n\n## License\n\nPyTorch has a BSD-style license, as found in the [LICENSE](LICENSE) file.\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cuda_nvrtc_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=a178759ebb095827bd30ef56598ec182b85547f1508941a3d560eb7ea1fbf338",
+          "hashes": {
+            "sha256": "a178759ebb095827bd30ef56598ec182b85547f1508941a3d560eb7ea1fbf338"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cuda-nvrtc-cu12",
+        "version": "12.4.127",
+        "summary": "NVRTC native runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "NVRTC native runtime libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cuda_runtime_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=64403288fa2136ee8e467cdc9c9427e0434110899d07c779f25b5c068934faa5",
+          "hashes": {
+            "sha256": "64403288fa2136ee8e467cdc9c9427e0434110899d07c779f25b5c068934faa5"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cuda-runtime-cu12",
+        "version": "12.4.127",
+        "summary": "CUDA Runtime native Libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "CUDA Runtime native Libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=9dec60f5ac126f7bb551c055072b69d85392b13311fcc1bcda2202d172df30fb",
+          "hashes": {
+            "sha256": "9dec60f5ac126f7bb551c055072b69d85392b13311fcc1bcda2202d172df30fb"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cuda-cupti-cu12",
+        "version": "12.4.127",
+        "summary": "CUDA profiling tools runtime libs.",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "Provides libraries to enable third party tools using GPU profiling APIs.\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cudnn_cu12-9.1.0.70-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=165764f44ef8c61fcdfdfdbe769d687e06374059fbb388b6c89ecb0e28793a6f",
+          "hashes": {
+            "sha256": "165764f44ef8c61fcdfdfdbe769d687e06374059fbb388b6c89ecb0e28793a6f"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cudnn-cu12",
+        "version": "9.1.0.70",
+        "summary": "cuDNN runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_dist": [
+          "nvidia-cublas-cu12"
+        ],
+        "requires_python": ">=3",
+        "description": "cuDNN runtime libraries containing primitives for deep neural networks.\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=2fc8da60df463fdefa81e323eef2e36489e1c94335b5358bcb38360adf75ac9b",
+          "hashes": {
+            "sha256": "2fc8da60df463fdefa81e323eef2e36489e1c94335b5358bcb38360adf75ac9b"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cublas-cu12",
+        "version": "12.4.5.8",
+        "summary": "CUBLAS native runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "CUBLAS native runtime libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cufft_cu12-11.2.1.3-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=f083fc24912aa410be21fa16d157fed2055dab1cc4b6934a0e03cba69eb242b9",
+          "hashes": {
+            "sha256": "f083fc24912aa410be21fa16d157fed2055dab1cc4b6934a0e03cba69eb242b9"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cufft-cu12",
+        "version": "11.2.1.3",
+        "summary": "CUFFT native runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "CUFFT native runtime libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_curand_cu12-10.3.5.147-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=a88f583d4e0bb643c49743469964103aa59f7f708d862c3ddb0fc07f851e3b8b",
+          "hashes": {
+            "sha256": "a88f583d4e0bb643c49743469964103aa59f7f708d862c3ddb0fc07f851e3b8b"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-curand-cu12",
+        "version": "10.3.5.147",
+        "summary": "CURAND native runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "CURAND native runtime libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=19e33fa442bcfd085b3086c4ebf7e8debc07cfe01e11513cc6d332fd918ac260",
+          "hashes": {
+            "sha256": "19e33fa442bcfd085b3086c4ebf7e8debc07cfe01e11513cc6d332fd918ac260"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cusolver-cu12",
+        "version": "11.6.1.9",
+        "summary": "CUDA solver native runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_dist": [
+          "nvidia-cublas-cu12",
+          "nvidia-nvjitlink-cu12",
+          "nvidia-cusparse-cu12"
+        ],
+        "requires_python": ">=3",
+        "description": "CUDA solver native runtime libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cusparse_cu12-12.3.1.170-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=ea4f11a2904e2a8dc4b1833cc1b5181cde564edd0d5cd33e3c168eff2d1863f1",
+          "hashes": {
+            "sha256": "ea4f11a2904e2a8dc4b1833cc1b5181cde564edd0d5cd33e3c168eff2d1863f1"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cusparse-cu12",
+        "version": "12.3.1.170",
+        "summary": "CUSPARSE native runtime libraries",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_dist": [
+          "nvidia-nvjitlink-cu12"
+        ],
+        "requires_python": ">=3",
+        "description": "CUSPARSE native runtime libraries\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_cusparselt_cu12-0.6.2-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=df2c24502fd76ebafe7457dbc4716b2fec071aabaed4fb7691a201cde03704d9",
+          "hashes": {
+            "sha256": "df2c24502fd76ebafe7457dbc4716b2fec071aabaed4fb7691a201cde03704d9"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-cusparselt-cu12",
+        "version": "0.6.2",
+        "summary": "NVIDIA cuSPARSELt",
+        "description_content_type": "text/x-rst",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "machine learning",
+          "high-performance computing"
+        ],
+        "home_page": "https://developer.nvidia.com/cusparselt",
+        "author": "NVIDIA Corporation",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "classifier": [
+          "Topic :: Scientific/Engineering",
+          "Environment :: GPU :: NVIDIA CUDA",
+          "Environment :: GPU :: NVIDIA CUDA :: 12"
+        ],
+        "description": "###################################################################################\ncuSPARSELt: A High-Performance CUDA Library for Sparse Matrix-Matrix Multiplication\n###################################################################################\n\n**NVIDIA cuSPARSELt** is a high-performance CUDA library dedicated to general matrix-matrix operations in which at least one operand is a sparse matrix:\n\n.. math::\n\n   D = Activation(\\alpha op(A) \\cdot op(B) + \\beta op(C) + bias) \\cdot scale\n\nwhere :math:`op(A)/op(B)` refers to in-place operations such as transpose/non-transpose, and :math:`alpha, beta, scale` are scalars.\n\nThe *cuSPARSELt APIs* allow flexibility in the algorithm/operation selection, epilogue, and matrix characteristics, including memory layout, alignment, and data types.\n\n**Download:** `developer.nvidia.com/cusparselt/downloads <https://developer.nvidia.com/cusparselt/downloads>`_\n\n**Provide Feedback:** `Math-Libs-Feedback@nvidia.com <mailto:Math-Libs-Feedback@nvidia.com?subject=cuSPARSELt-Feedback>`_\n\n**Examples**:\n`cuSPARSELt Example 1 <https://github.com/NVIDIA/CUDALibrarySamples/tree/master/cuSPARSELt/matmul>`_,\n`cuSPARSELt Example 2 <https://github.com/NVIDIA/CUDALibrarySamples/tree/master/cuSPARSELt/matmul_advanced>`_\n\n**Blog post**:\n\n- `Exploiting NVIDIA Ampere Structured Sparsity with cuSPARSELt <https://developer.nvidia.com/blog/exploiting-ampere-structured-sparsity-with-cusparselt/>`_\n- `Structured Sparsity in the NVIDIA Ampere Architecture and Applications in Search Engines <https://developer.nvidia.com/blog/structured-sparsity-in-the-nvidia-ampere-architecture-and-applications-in-search-engines/>`__\n- `Making the Most of Structured Sparsity in the NVIDIA Ampere Architecture <https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31552/>`__\n\n================================================================================\nKey Features\n================================================================================\n\n* *NVIDIA Sparse MMA tensor core* support\n* Mixed-precision computation support:\n\n    +--------------+----------------+-----------------+-------------+\n    | Input A/B    | Input C        | Output D        | Compute     |\n    +==============+================+=================+=============+\n    | `FP32`       | `FP32`         | `FP32`          | `FP32`      |\n    +--------------+----------------+-----------------+-------------+\n    | `FP16`       | `FP16`         | `FP16`          | `FP32`      |\n    +              +                +                 +-------------+\n    |              |                |                 | `FP16`      |\n    +--------------+----------------+-----------------+-------------+\n    | `BF16`       | `BF16`         | `BF16`          | `FP32`      |\n    +--------------+----------------+-----------------+-------------+\n    | `INT8`       | `INT8`         | `INT8`          | `INT32`     |\n    +              +----------------+-----------------+             +\n    |              | `INT32`        | `INT32`         |             |\n    +              +----------------+-----------------+             +\n    |              | `FP16`         | `FP16`          |             |\n    +              +----------------+-----------------+             +\n    |              | `BF16`         | `BF16`          |             |\n    +--------------+----------------+-----------------+-------------+\n    | `E4M3`       | `FP16`         | `E4M3`          | `FP32`      |\n    +              +----------------+-----------------+             +\n    |              | `BF16`         | `E4M3`          |             |\n    +              +----------------+-----------------+             +\n    |              | `FP16`         | `FP16`          |             |\n    +              +----------------+-----------------+             +\n    |              | `BF16`         | `BF16`          |             |\n    +              +----------------+-----------------+             +\n    |              | `FP32`         | `FP32`          |             |\n    +--------------+----------------+-----------------+-------------+\n    | `E5M2`       | `FP16`         | `E5M2`          | `FP32`      |\n    +              +----------------+-----------------+             +\n    |              | `BF16`         | `E5M2`          |             |\n    +              +----------------+-----------------+             +\n    |              | `FP16`         | `FP16`          |             |\n    +              +----------------+-----------------+             +\n    |              | `BF16`         | `BF16`          |             |\n    +              +----------------+-----------------+             +\n    |              | `FP32`         | `FP32`          |             |\n    +--------------+----------------+-----------------+-------------+\n\n* Matrix pruning and compression functionalities\n* Activation functions, bias vector, and output scaling\n* Batched computation (multiple matrices in a single run)\n* GEMM Split-K mode\n* Auto-tuning functionality (see `cusparseLtMatmulSearch()`)\n* NVTX ranging and Logging functionalities\n\n================================================================================\nSupport\n================================================================================\n\n* *Supported SM Architectures*: `SM 8.0`, `SM 8.6`, `SM 8.9`, `SM 9.0`\n* *Supported CPU architectures and operating systems*:\n\n+------------+--------------------+\n| OS         | CPU archs          |\n+============+====================+\n| `Windows`  | `x86_64`           |\n+------------+--------------------+\n| `Linux`    | `x86_64`, `Arm64`  |\n+------------+--------------------+\n\n\n================================================================================\nDocumentation\n================================================================================\n\nPlease refer to https://docs.nvidia.com/cuda/cusparselt/index.html for the cuSPARSELt documentation.\n\n================================================================================\nInstallation\n================================================================================\n\nThe cuSPARSELt wheel can be installed as follows:\n\n.. code-block:: bash\n\n   pip install cusparselt-cuXX\n\nwhere XX is the CUDA major version (currently CUDA 12 only is supported).\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_nccl_cu12-2.21.5-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=8579076d30a8c24988834445f8d633c697d42397e92ffc3f63fa26766d25e0a0",
+          "hashes": {
+            "sha256": "8579076d30a8c24988834445f8d633c697d42397e92ffc3f63fa26766d25e0a0"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-nccl-cu12",
+        "version": "2.21.5",
+        "summary": "NVIDIA Collective Communication Library (NCCL) Runtime",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "NCCL (pronounced \"Nickel\") is a stand-alone library of standard collective communication routines for GPUs, implementing all-reduce, all-gather, reduce, broadcast, and reduce-scatter. It has been optimized to achieve high bandwidth on any platform using PCIe, NVLink, NVswitch, as well as networking using InfiniBand Verbs or TCP/IP sockets.\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_nvtx_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=781e950d9b9f60d8241ccea575b32f5105a5baf4c2351cab5256a24869f12a1a",
+          "hashes": {
+            "sha256": "781e950d9b9f60d8241ccea575b32f5105a5baf4c2351cab5256a24869f12a1a"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-nvtx-cu12",
+        "version": "12.4.127",
+        "summary": "NVIDIA Tools Extension",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "A C-based API for annotating events, code ranges, and resources in your applications. Applications which integrate NVTX can use the Visual Profiler to capture and visualize these events and ranges.\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/nvidia_nvjitlink_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=06b3b9b25bf3f8af351d664978ca26a16d2c5127dbd53c0497e28d1fb9611d57",
+          "hashes": {
+            "sha256": "06b3b9b25bf3f8af351d664978ca26a16d2c5127dbd53c0497e28d1fb9611d57"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.1",
+        "name": "nvidia-nvjitlink-cu12",
+        "version": "12.4.127",
+        "summary": "Nvidia JIT LTO Library",
+        "keywords": [
+          "cuda",
+          "nvidia",
+          "runtime",
+          "machine learning",
+          "deep learning"
+        ],
+        "home_page": "https://developer.nvidia.com/cuda-zone",
+        "author": "Nvidia CUDA Installer Team",
+        "author_email": "cuda_installer@nvidia.com",
+        "license": "NVIDIA Proprietary Software",
+        "license_file": [
+          "License.txt"
+        ],
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Intended Audience :: Education",
+          "Intended Audience :: Science/Research",
+          "License :: Other/Proprietary License",
+          "Natural Language :: English",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3 :: Only",
+          "Topic :: Scientific/Engineering",
+          "Topic :: Scientific/Engineering :: Mathematics",
+          "Topic :: Scientific/Engineering :: Artificial Intelligence",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Operating System :: Microsoft :: Windows",
+          "Operating System :: POSIX :: Linux"
+        ],
+        "requires_python": ">=3",
+        "description": "NVIDIA compiler library for JIT LTO functionality.\n"
+      }
+    },
+    {
+      "download_info": {
+        "url": "file:///data/Users/zrh/data/hhu-ai-avatar/cache/wheelhouse/c51-cu124-v1/triton-3.2.0-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+        "archive_info": {
+          "hash": "sha256=468a01c9aa6e18fe2bba49c5e5002c1fd5f61b1af891c0594eaf446fe1aaae10",
+          "hashes": {
+            "sha256": "468a01c9aa6e18fe2bba49c5e5002c1fd5f61b1af891c0594eaf446fe1aaae10"
+          }
+        }
+      },
+      "is_direct": true,
+      "is_yanked": false,
+      "requested": true,
+      "metadata": {
+        "metadata_version": "2.2",
+        "name": "triton",
+        "version": "3.2.0",
+        "dynamic": [
+          "author",
+          "author-email",
+          "classifier",
+          "home-page",
+          "keywords",
+          "provides-extra",
+          "summary"
+        ],
+        "summary": "A language and compiler for custom Deep Learning operations",
+        "keywords": [
+          "Compiler",
+          "Deep Learning"
+        ],
+        "home_page": "https://github.com/triton-lang/triton/",
+        "author": "Philippe Tillet",
+        "author_email": "phil@openai.com",
+        "classifier": [
+          "Development Status :: 4 - Beta",
+          "Intended Audience :: Developers",
+          "Topic :: Software Development :: Build Tools",
+          "License :: OSI Approved :: MIT License",
+          "Programming Language :: Python :: 3.9",
+          "Programming Language :: Python :: 3.10",
+          "Programming Language :: Python :: 3.11",
+          "Programming Language :: Python :: 3.12",
+          "Programming Language :: Python :: 3.13"
+        ],
+        "requires_dist": [
+          "cmake>=3.20; extra == \"build\"",
+          "lit; extra == \"build\"",
+          "autopep8; extra == \"tests\"",
+          "flake8; extra == \"tests\"",
+          "isort; extra == \"tests\"",
+          "numpy; extra == \"tests\"",
+          "pytest; extra == \"tests\"",
+          "scipy>=1.7.1; extra == \"tests\"",
+          "llnl-hatchet; extra == \"tests\"",
+          "matplotlib; extra == \"tutorials\"",
+          "pandas; extra == \"tutorials\"",
+          "tabulate; extra == \"tutorials\""
+        ],
+        "provides_extra": [
+          "build",
+          "tests",
+          "tutorials"
+        ]
+      }
+    }
+  ],
+  "environment": {
+    "implementation_name": "cpython",
+    "implementation_version": "3.10.12",
+    "os_name": "posix",
+    "platform_machine": "x86_64",
+    "platform_release": "5.15.0-140-generic",
+    "platform_system": "Linux",
+    "platform_version": "#150-Ubuntu SMP Sat Apr 12 06:00:09 UTC 2025",
+    "python_full_version": "3.10.12",
+    "platform_python_implementation": "CPython",
+    "python_version": "3.10",
+    "sys_platform": "linux"
+  }
+}
