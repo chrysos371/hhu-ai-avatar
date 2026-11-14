@@ -1,0 +1,30 @@
+....F................................................................... [ 26%]
+........................................................................ [ 53%]
+........................................................................ [ 79%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_ test_record_queries_use_unique_current_id_and_actual_read_without_model[\u63d0\u9192\u7f16\u53f71\u73b0\u5728\u53d6\u6d88\u4e86\u5417\uff1f] _
+
+lab = (<avatar.brain.memory.MemoryStore object at 0x7fd504678310>, <avatar.lab.source_read_dispatch.SourceReadDispatchSession object at 0x7fd50467b310>)
+text = '提醒编号1现在取消了吗？'
+
+    @pytest.mark.parametrize('text',[
+        '提醒编号1现在是什么状态？','请核对提醒编号999是否还存在。',
+        '我想看编号1的提醒记录。','提醒编号1现在取消了吗？',
+        '已经取消的提醒编号1是否还存在？',
+    ])
+    def test_record_queries_use_unique_current_id_and_actual_read_without_model(lab,text):
+        memory,session=lab;session.begin_turn(text)
+        before,changes=business(memory),memory._conn.total_changes
+        trace=[];memory._conn.set_trace_callback(trace.append)
+        plan=session.plan()
+>       assert plan.target.route=='read_state' and not plan.metadata['model_required']
+E       AssertionError: assert ('no_read' == 'read_state'
+E         
+E         - read_state
+E         + no_read)
+
+tests/test_source_read_dispatch.py:54: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_source_read_dispatch.py::test_record_queries_use_unique_current_id_and_actual_read_without_model[\u63d0\u9192\u7f16\u53f71\u73b0\u5728\u53d6\u6d88\u4e86\u5417\uff1f]
+1 failed, 270 passed in 1.76s
