@@ -157,6 +157,7 @@ def historical(ref, names):
 def verify_freeze(path, expected):
     path = Path(path).resolve()
     require(path == (WORK / "freeze-v1.json").resolve(), "C52 registered freeze path required")
+    require(path.is_file(), "C52 frozen execution descriptor missing")
     require(type(expected) is str and re.fullmatch("[0-9a-f]{64}", expected) is not None
         and sha(path) == expected, "C52 freeze SHA differs")
     frozen = read(path)
