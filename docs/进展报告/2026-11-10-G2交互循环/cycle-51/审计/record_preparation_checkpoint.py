@@ -13,15 +13,16 @@ def read(path):
 
 
 def main():
-    output = BASE / "审计/工作目录/005-真实分词预检/preparation-observation-v1.json"
+    output = BASE / "审计/工作目录/005-真实分词预检/preparation-observation-v2.json"
     assert not output.exists()
     current = snapshot()
     binding = read(BASE / "审计/工作目录/002-当前软件回归/python-first-binding.json")
     previous = binding["source_git_sha256"]
     assert all(current.get(name) == value for name, value in previous.items())
-    new = {name: value for name, value in current.items() if name not in previous}
-    assert set(new) == {"evals/interaction/cycle-52/correction-transfer-cases.json",
-        "evals/interaction/cycle-52/correction-transfer-protocol.json"}
+    assert current == previous
+    new = {name: digest(ROOT / name) for name in (
+        "evals/interaction/cycle-52/correction-transfer-cases.json",
+        "evals/interaction/cycle-52/correction-transfer-protocol.json")}
     texts, hashes = evaluation_texts()
     cases = read(ROOT / "evals/interaction/cycle-52/correction-transfer-cases.json")["cases"]
     rejected = []
