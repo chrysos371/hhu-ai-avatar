@@ -1,5 +1,6 @@
 """One fresh process for one frozen C52 stage; no stage or model retries."""
 import argparse
+from contextlib import contextmanager
 import importlib.metadata
 import json
 import os
@@ -36,6 +37,17 @@ def process_allocation(selected):
     require(own and all(line.split(",")[1].strip() == selected["uuid"] for line in own),
         "actual model process GPU UUID differs")
     return {"pid": os.getpid(), "selected": selected, "own_compute_rows": own}
+
+
+def uuid_lease(lease, selected):
+    @contextmanager
+    def scoped(gpus, count):
+        require(gpus == [selected["index"]] and count == 1, "registered single-GPU lease differs")
+        with lease(gpus, count):
+            # Keep the original NVML-index lock/resource checks, bind CUDA by its actual UUID.
+            os.environ["CUDA_VISIBLE_DEVICES"] = selected["uuid"]
+            yield
+    return scoped
 
 
 def environment_check(frozen):
@@ -86,7 +98,7 @@ def evaluate(stage, protocol, selected, folder):
     from avatar.lab.common import write_json
     backend = None
     try:
-        with gpu_lease([selected["index"]], 1):
+        with uuid_lease(gpu_lease, selected)([selected["index"]], 1):
             path = local_model(entry)
             backend = TransformersBackend(path, settings, adapter=adapter, gpu_count=1)
             write_new(folder / "gpu-allocation.json", process_allocation(selected))
@@ -152,11 +164,13 @@ def training_stage(stage, selected, folder):
     import avatar.lab.training as training
     from capture_probe import observed_probe
     original = training._probe
+    original_lease = training.gpu_lease
     def probe(model, tokenizer, row, torch):
         write_new(folder / "gpu-allocation.json", process_allocation(selected))
         return observed_probe(original, model, tokenizer, row, torch, folder / "actual-probe.json",
             expect_trainable=stage == "train")
     training._probe = probe
+    training.gpu_lease = uuid_lease(original_lease, selected)
     try:
         if stage == "train":
             result = training.train(DATA, LOCK, "4b", TOKENIZATION / "training-config-v1.json",
@@ -169,6 +183,7 @@ def training_stage(stage, selected, folder):
         write_new(folder / "stage-result.json", result)
     finally:
         training._probe = original
+        training.gpu_lease = original_lease
 
 
 def run(args):
@@ -177,6 +192,7 @@ def run(args):
     previous_stage_check(args.stage, args.expected_freeze_sha256)
     protocol = protocol_check()
     selected, cards = choose_gpu(args.gpu)
+    os.environ["CUDA_VISIBLE_DEVICES"] = selected["uuid"]
     # Set before importing Avatar/config; both phases use the original synthetic-data persona.
     os.environ.update(AVATAR_NAME="小海", AVATAR_PERSONA="一个温柔又有点好奇心的AI伙伴",
         EMBEDDING_MODEL="", HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
