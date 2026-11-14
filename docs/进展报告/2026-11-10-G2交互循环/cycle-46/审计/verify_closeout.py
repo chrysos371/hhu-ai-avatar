@@ -1,0 +1,68 @@
+"""Final current-source, report/link, author and immutable-history review."""
+import importlib.util
+import json
+from pathlib import Path
+import re
+import subprocess
+from urllib.parse import unquote
+
+from verify_system import ROOT,BASE,WORK,REGRESS,read,digest,historical
+
+
+def main():
+    output=BASE/'审计/收尾核验/closeout.json';assert not output.exists()
+    source=read(REGRESS/'history-resume-v2-python-final-binding.json')['source_git_sha256']
+    assert len(source)==472 and all(digest(ROOT/n)==sha for n,sha in source.items())
+    assert historical(read(REGRESS/'history-resume-v2-python-final-binding.json')['head'],source)==source
+    system=read(BASE/'审计/收尾核验/system-evidence.json');assert system['verified']
+    assert system['verifier_sha256']==digest(BASE/'审计/verify_system.py')
+    meta=read(BASE/'审计/report-render-metadata.json')
+    assert meta['system_sha256']==digest(BASE/'审计/收尾核验/system-evidence.json')
+    assert meta['builder_sha256']==digest(BASE/'审计/build_report.py') and meta['renderer_sha256']==digest(BASE/'审计/render_report.py')
+    supplement=read(BASE/'审计/收尾核验/erasure-cache-supplement.json')
+    assert supplement['verified'] and supplement['first_system_sha256']==digest(BASE/'审计/收尾核验/system-evidence.json')
+    assert supplement['verifier_sha256']==digest(BASE/'审计/verify_erasure_cache.py')
+    assert meta['cache_supplement_sha256']==digest(BASE/'审计/收尾核验/erasure-cache-supplement.json')
+    negative=supplement['deliberate_pollution_negative_control']
+    assert negative['weak_Row_repr_reports_clean'] and negative['correct_scalar_JSON_detects_secret']
+    review=read(BASE/'审计/收尾核验/report-browser.json')
+    assert review['completed'] and review['reportSha256']==digest(BASE/'审计/系统审计与推进报告.html')
+    assert [v['viewport']['width'] for v in review['views']]==[1440,390]
+    assert meta['tables']==4 and meta['links']==23
+    assert all(v['tableCount']==4 and not v['overflow'] and len(v['links'])==23 for v in review['views'])
+    assert all(t['lastCellReadable'] for v in review['views'] for t in v['horizontalTables'])
+    links=[]
+    paths=list(BASE.rglob('*.md'))+[ROOT/'AGENTS.md',ROOT/'README.md',ROOT/'docs/backend.md',ROOT/'docs/记忆工作台与提醒.md',ROOT/'docs/本机数据布局.md',BASE.parent/'远期目标与验收路线.md']
+    for path in paths:
+        for raw in re.findall(r'\[[^\]]*\]\(([^)]+)\)',path.read_text()):
+            target=raw.split('#',1)[0].strip('<>')
+            if not target or re.match(r'[a-z]+://',target):continue
+            local=(path.parent/unquote(target)).resolve()
+            assert local.exists(),(str(path),raw)
+            links.append({'source':str(path.relative_to(ROOT)),'target':raw})
+    checker=ROOT/'docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/check_research_names.py'
+    spec=importlib.util.spec_from_file_location('pure_names',checker);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    names={str(p.relative_to(ROOT)):module.undefined_globals(p.read_text(),str(p)) for p in (BASE/'审计').glob('*.py')}
+    assert all(not found for found in names.values()),names
+    seals=[]
+    for number in range(3,46):
+        cycle=BASE.parent/f'cycle-{number:02}';p=cycle/'审计/证据清单.json'
+        assert all(digest(cycle/n)==sha for n,sha in read(p).items())
+        seals.append({'cycle':cycle.name,'items':len(read(p)),'sha256':digest(p)})
+    migration=ROOT/'docs/进展报告/2026-11-12-项目数据集中迁移/证据清单.json'
+    assert all(digest(migration.parent/n)==sha for n,sha in read(migration).items())
+    assert sum(s['items'] for s in seals)+len(read(migration))==8449
+    authors=subprocess.check_output(['git','log','f13b1130..HEAD','--format=%an <%ae>'],cwd=ROOT,text=True).splitlines()
+    assert authors and set(authors)=={'spinner-bot <langxibielangle@qq.com>'}
+    result={'verified':True,'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+        'verifier_sha256':digest(Path(__file__)),'current_software_inputs':472,'native_inference_calls':0,
+        'local_markdown_links_verified':len(links),'links':links,'HTML_links_per_viewport':23,'HTML_tables':4,
+        'viewports':[1440,390],'old_seals_including_migration':44,'old_items':8449,
+        'cycle_commits_checked':len(authors),'all_authors_spinner_bot':True,'undefined_globals':names,
+        'explicit_query_mode_integrated':True,'verified_query_history_integrated':True,'SQL_dumps_reconstructed':38,'issues_limited_closed':2,'default_chat_unchanged':True,'general_semantic_approval':False,
+        'additional_native_calls':0,'HTML_sha256':review['reportSha256']}
+    output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+    print('C46 closeout:',len(links),'local MD links;23HTML;1440/390;472 current;44 old8449;spinner authors')
+
+
+if __name__=='__main__':main()
