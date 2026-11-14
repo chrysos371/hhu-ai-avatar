@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "-B",
+    "-c",
+    "import json,runpy,sys\nfrom pathlib import Path\nscript=sys.argv[1];sys.argv=sys.argv[1:]\nsys.path.insert(0,str(Path(script).parent))\ntry:\n runpy.run_path(script,run_name='__main__')\nexcept BaseException as error:\n print(json.dumps({'rejected':True,'error_type':type(error).__name__,'error_message':str(error),'torch_imported':'torch' in sys.modules,'peft_imported':'peft' in sys.modules}))\n raise\nraise AssertionError('CLI unexpectedly returned without rejection')\n",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/run_execution.py",
+    "--freeze",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/003-真实执行输入/freeze-v1.json",
+    "--expected-freeze-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000",
+    "--stage",
+    "unknown"
+  ],
+  "returncode": 2,
+  "stdout": "{\"rejected\": true, \"error_type\": \"SystemExit\", \"error_message\": \"2\", \"torch_imported\": false, \"peft_imported\": false}\n",
+  "stderr": "usage: run_execution.py [-h] --freeze FREEZE --expected-freeze-sha256\n                        EXPECTED_FREEZE_SHA256 --stage\n                        {before,train,reload,after} [--gpu GPU]\nrun_execution.py: error: argument --stage: invalid choice: 'unknown' (choose from 'before', 'train', 'reload', 'after')\n",
+  "module_observation": {
+    "rejected": true,
+    "error_type": "SystemExit",
+    "error_message": "2",
+    "torch_imported": false,
+    "peft_imported": false
+  },
+  "expected_error_type": "SystemExit",
+  "expected_message": "invalid choice: 'unknown'",
+  "direct_argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "-B",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/run_execution.py",
+    "--freeze",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/003-真实执行输入/freeze-v1.json",
+    "--expected-freeze-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000",
+    "--stage",
+    "unknown"
+  ],
+  "direct_returncode": 2,
+  "direct_stdout": "",
+  "direct_stderr": "usage: run_execution.py [-h] --freeze FREEZE --expected-freeze-sha256\n                        EXPECTED_FREEZE_SHA256 --stage\n                        {before,train,reload,after} [--gpu GPU]\nrun_execution.py: error: argument --stage: invalid choice: 'unknown' (choose from 'before', 'train', 'reload', 'after')\n"
+}

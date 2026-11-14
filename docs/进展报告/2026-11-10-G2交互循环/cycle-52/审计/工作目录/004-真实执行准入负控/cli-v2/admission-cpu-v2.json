@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "scope": "four paired normal/wrapped actual CLI refusals with exact error type/reason, plus CPU fixtures",
+  "actual_CLI_processes": 8,
+  "normal_and_wrapped_reasons_matched": true,
+  "actual_CLI_refusals": [
+    "unready_C51_freeze",
+    "missing_actual_freeze",
+    "wrong_freeze_path",
+    "unknown_stage"
+  ],
+  "CPU_faults_rejected": [
+    {
+      "control": "float_training_steps",
+      "rejected": true,
+      "reason": "C52 training contract changed: max_steps"
+    },
+    {
+      "control": "boolean_sampling_cap",
+      "rejected": true,
+      "reason": "C52 sampling contract changed: generation_cap_per_phase"
+    },
+    {
+      "control": "float_sampling_cap",
+      "rejected": true,
+      "reason": "C52 sampling contract changed: generation_cap_per_phase"
+    },
+    {
+      "control": "analysis_adapter_enabled",
+      "rejected": true,
+      "reason": "C52 training contract changed: analysis_adapter_enabled"
+    },
+    {
+      "control": "repeated_stage_attempt",
+      "rejected": true,
+      "reason": "stage already attempted or later stage started; no retries"
+    },
+    {
+      "control": "training_before_independent_baseline_retirement",
+      "rejected": true,
+      "reason": "previous stage has not independently verified and retired: before"
+    },
+    {
+      "control": "explicit_busy_GPU_no_CPU_fallback",
+      "rejected": true,
+      "reason": "no currently idle GPU with 36,000MiB free; no CPU fallback"
+    }
+  ],
+  "automatic_idle_GPU_fixture_selected": 7,
+  "fixture_GPU_indices_not_current_inventory": true,
+  "no_real_output_created": true,
+  "model_constructions": 0,
+  "GPU_allocations": 0,
+  "training_steps": 0,
+  "actual_model_hook_verified": false,
+  "source_sha256": {
+    "probe_capture_validation.py": "bcffa6c55df8aa6192ba19c1954dfc199b22e8ca4438714b31a86e03598f2483",
+    "run_execution.py": "b6f7980a1353051e420e8c275c6dd179f5dabdbb16dee087f0e0023e35a14acc",
+    "capture_probe.py": "64c27e305f3d6109163b5aa99ebc38e5d2271b54d3374f7da0cb61876e3d9bd8",
+    "capture_transformers.py": "93c1e5542f29a94a9fafe7e37d59e72202422406dc1a5bb18acad2bcacc54a97",
+    "execution_common.py": "a3a64a958251be03d48dda8bb4d220a6422e3bef0538ae0029cecd5caaa8e6c8",
+    "probe_execution_admission.py": "9771f7b5e4b293ebc1dbd4ea3d6606be568b6dd9c2d0ed40a104a8ef7a16bae2",
+    "replay_common.py": "44a3a32395927995f2b692c18666ce4cae29468e8c15e34b2fd1b27c586f197e",
+    "probe_protocol_bindings.py": "46076175304cd64789e35031c0908b846e69fc067e9732cff2d2400c7a1d1c0c",
+    "freeze_execution.py": "61a52549a16fa9a687fb1ec8911b327db2337c920cbaabde91f132dc69cf2958",
+    "verify_replay_artifacts.py": "3f0df7057696baa6e066b54fb3f03e715522a71d907a03d232172d57a630295f",
+    "verify_execution.py": "b42e966a7ffb0180ea24d420fcf6a66e10a23b30ce3af3fa42d86668e42e1386",
+    "rehearse_replay.py": "40574571b86b1c65578a0aead2fdf6f8ea23db7ec6c9e7816870e04760450201"
+  },
+  "head": "fa236f8dfbf41f28d3941d7d1ba4935c0892507a"
+}

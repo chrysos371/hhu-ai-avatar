@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "-B",
+    "-c",
+    "import json,runpy,sys\nfrom pathlib import Path\nscript=sys.argv[1];sys.argv=sys.argv[1:]\nsys.path.insert(0,str(Path(script).parent))\ntry:\n runpy.run_path(script,run_name='__main__')\nexcept BaseException as error:\n print(json.dumps({'rejected':True,'error_type':type(error).__name__,'error_message':str(error),'torch_imported':'torch' in sys.modules,'peft_imported':'peft' in sys.modules}))\n raise\nraise AssertionError('CLI unexpectedly returned without rejection')\n",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/freeze_execution.py",
+    "--c51-seal-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "returncode": 1,
+  "stdout": "{\"rejected\": true, \"error_type\": \"ValueError\", \"error_message\": \"C51 independent environment admission missing\", \"torch_imported\": false, \"peft_imported\": false}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n  File \"/usr/lib/python3.10/runpy.py\", line 289, in run_path\n    return _run_module_code(code, init_globals, run_name,\n  File \"/usr/lib/python3.10/runpy.py\", line 96, in _run_module_code\n    _run_code(code, mod_globals, init_globals,\n  File \"/usr/lib/python3.10/runpy.py\", line 86, in _run_code\n    exec(code, run_globals)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/freeze_execution.py\", line 32, in <module>\n    main(parser.parse_args().c51_seal_sha256)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/freeze_execution.py\", line 11, in main\n    preparation_check(seal)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/execution_common.py\", line 105, in preparation_check\n    environment = reader.admitted_environment()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/environment_receipt.py\", line 39, in admitted_environment\n    require(ADMISSION.is_file(), \"C51 independent environment admission missing\")\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/environment_receipt.py\", line 15, in require\n    raise ValueError(message)\nValueError: C51 independent environment admission missing\n",
+  "module_observation": {
+    "rejected": true,
+    "error_type": "ValueError",
+    "error_message": "C51 independent environment admission missing",
+    "torch_imported": false,
+    "peft_imported": false
+  },
+  "expected_error_type": "ValueError",
+  "expected_message": "C51 independent environment admission missing",
+  "direct_argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "-B",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/freeze_execution.py",
+    "--c51-seal-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "direct_returncode": 1,
+  "direct_stdout": "",
+  "direct_stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/freeze_execution.py\", line 32, in <module>\n    main(parser.parse_args().c51_seal_sha256)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/freeze_execution.py\", line 11, in main\n    preparation_check(seal)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/execution_common.py\", line 105, in preparation_check\n    environment = reader.admitted_environment()\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/environment_receipt.py\", line 39, in admitted_environment\n    require(ADMISSION.is_file(), \"C51 independent environment admission missing\")\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/environment_receipt.py\", line 15, in require\n    raise ValueError(message)\nValueError: C51 independent environment admission missing\n"
+}
