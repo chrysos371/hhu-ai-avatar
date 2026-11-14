@@ -105,6 +105,7 @@ def main():
             path = data.parent / name
             assert path.resolve().is_relative_to(data.parent.resolve()) and sha(path) == value
             raw_files += 1
+    assert raw_files == 1100
     cache_path = WORK / "008-CUDA完整依赖缓存/wheel-cache-independent-v1.json"
     cache = read(cache_path)
     assert cache["verified"] and cache["wheel_count"] == 15
@@ -142,6 +143,8 @@ def main():
     names = set(software)
     names.update((eval_name, "evals/interaction/cycle-52/correction-transfer-protocol.json"))
     names.update(str(p.relative_to(ROOT)) for p in proofs)
+    names.update(str(p.relative_to(ROOT)) for folder in (WORK, C52 / "审计/工作目录")
+        for p in folder.rglob("*") if p.is_file())
     names.update(str(p.relative_to(ROOT)) for p in (BASE / "审计").glob("*.py"))
     names.update(str(p.relative_to(ROOT)) for p in (C52 / "审计").glob("*.py"))
     current = {name: sha(ROOT / name) for name in names}
