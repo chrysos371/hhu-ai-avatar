@@ -12,9 +12,6 @@ def observed_probe(original, model, tokenizer, row, torch, output, *, expect_tra
         "parameters": parameter.numel()} for name, parameter in model.named_parameters() if parameter.requires_grad]
     report["actual_trainable_parameters"] = trainable
     report["expect_trainable"] = expect_trainable
-    require(bool(trainable) is expect_trainable, "actual probe trainability differs from stage")
-    require(all(".lora_" in item["name"] and any(target in item["name"] for target in (".q_proj.", ".v_proj."))
-        for item in trainable), "base or unregistered target parameter remains trainable")
     state = {"inside_generate": False}
     original_generate = model.generate
 
@@ -53,6 +50,9 @@ def observed_probe(original, model, tokenizer, row, torch, output, *, expect_tra
     hook = model.register_forward_pre_hook(forward_hook, with_kwargs=True)
     model.generate = generate
     try:
+        require(bool(trainable) is expect_trainable, "actual probe trainability differs from stage")
+        require(all(".lora_" in item["name"] and any(target in item["name"] for target in (".q_proj.", ".v_proj."))
+            for item in trainable), "base or unregistered target parameter remains trainable")
         result = original(model, tokenizer, row, torch)
         require(len(report["direct_forwards"]) == len(report["generations"]) == 1,
             "probe call count differs")
