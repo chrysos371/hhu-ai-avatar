@@ -99,6 +99,8 @@ def run(args):
             engine = LLMEngine(base_url=actual['url'],api_key='local-eval-only',model=args.model,timeout=120,max_retries=0)
             engine._client.close(); engine._client = OpenAI(base_url=actual['url'],api_key='local-eval-only',
                 timeout=120,max_retries=0,http_client=client)
+            assert engine._client.max_retries == 0
+            report['SDK_max_retries'] = engine._client.max_retries
             for index in range(2):
                 context.clear(); context.update(phase='warmup',repetition=0,case=str(index+1),arm=None,call_role='warmup')
                 messages = [{'role':'user','content':'只回复“预热完成”。'}]
@@ -169,6 +171,8 @@ def run(args):
             report['frozen_current_after_execution'] = all(digest(ROOT/n) == sha for n,sha in frozen['sha256'].items())
             report['weight_sha256_after_execution'] = digest(model_path)
             report['weight_identity_after_execution'] = report['weight_sha256_after_execution'] == spec['sha256']
+            report['primary_gate_passed'] = (report['primary_gate_passed'] and report['frozen_current_after_execution']
+                and report['weight_identity_after_execution'])
             report['seconds_including_model_load_and_proof'] = time.monotonic()-started
             report['artifacts_sha256'] = {str(p.relative_to(output)):digest(p) for p in output.rglob('*') if p.is_file() and p.name != 'evaluation.json'}
             write(output/'evaluation.json',report)

@@ -48,6 +48,7 @@ def verify(model_id):
     output = WORK/(short+'-verification.json'); assert not output.exists()
     folder = BASE/'实验'/(short+'-development-v2')
     data = read(folder/'evaluation.json'); assert data['completed'] and data['cleanup_passed']
+    assert data['frozen_current_after_execution'] and data['weight_identity_after_execution'] and data['SDK_max_retries'] == 0
     freeze_path = WORK/(short+'-freeze-v2.json'); frozen = read(freeze_path)
     assert digest(freeze_path) == data['freeze_sha256']
     assert historical(frozen['source_ref'],frozen['sha256']) == frozen['sha256']
