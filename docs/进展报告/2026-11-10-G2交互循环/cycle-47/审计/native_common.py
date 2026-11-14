@@ -98,7 +98,8 @@ def required_inputs(model_id):
     selected.update(str(p.relative_to(ROOT)) for p in (BASE/'审计').glob('*.py'))
     for folder in ('001-实模方案调查','002-当前软件与浏览器','003-受控实模管线'):
         selected.update(str(p.relative_to(ROOT)) for p in (BASE/'审计/工作目录'/folder).rglob('*') if p.is_file())
-    selected.update(str(p.relative_to(ROOT)) for p in (RUNTIME,WEIGHTS,WORK/'admission.json',REFERENCE))
+    selected.update(str(p.relative_to(ROOT)) for p in (RUNTIME,WEIGHTS,WORK/'admission.json',WORK/'sse-controlled-v2.json',REFERENCE))
+    selected.update(str(p.relative_to(ROOT)) for p in (WORK/'negative-cli-inputs').rglob('*') if p.is_file())
     for short in ('4b','14b'):
         selected.update(str((WORK/(short+suffix)).relative_to(ROOT)) for suffix in
             ('-embedded-chat-template.jinja','-template-metadata.json'))

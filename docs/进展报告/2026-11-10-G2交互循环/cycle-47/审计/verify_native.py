@@ -152,6 +152,7 @@ def verify(model_id):
                         assert messages == receipt['messages']
                         assert [dict(r) for r in conn.execute('SELECT * FROM memory_fragments')] == receipt['facts_after']
                     else:
+                        assert [dict(r) for r in conn.execute('SELECT * FROM memory_fragments')] == receipt['facts_before']
                         records = expected_business['memory_reminders']
                         if case['seed']['status_at_query'] == 'missing': assert not records
                         else: assert records[0]['status'] == case['seed']['status_at_query']
