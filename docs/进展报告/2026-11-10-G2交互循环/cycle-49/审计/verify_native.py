@@ -48,6 +48,24 @@ def projection(conn):
         for name in ('memory_reminders','memory_reminder_deliveries','memory_action_receipts')}
 
 
+def registered_order(cases,protocol,repetition):
+    result = []
+    for index,case in enumerate(cases.values()):
+        offset = (index+repetition-1)%3
+        arms = protocol['arms'][offset:]+protocol['arms'][:offset]
+        result.extend((case['id'],arm) for arm in arms)
+    return result
+
+
+def primary_passes(transport,stops,source_ok,facts_ok,modes_ok,scores,protocol):
+    flags = (transport,source_ok,facts_ok,modes_ok)
+    if (any(type(value) is not bool for value in flags) or not all(flags)
+            or type(stops) is not int or stops != 326 or type(scores) is not dict):
+        return False
+    score = scores.get(protocol['primary_candidate'])
+    return type(score) is int and score == 54
+
+
 def inspect_observations(path,receipt,case,arm):
     observations = receipt['query_observations']; ordinary = receipt['ordinary_result']
     calls = receipt['actual_model_interface_calls']; SQL_count = 0
@@ -203,10 +221,7 @@ def verify(model_id):
     seen = []; SQL_count = query_turns = 0
     for repetition in range(1,4):
         group = read(folder/f'repetition-{repetition}/group.json'); assert group['completed']
-        order = []
-        for index,case in enumerate(cases.values()):
-            arms = protocol['arms'] if (index+repetition)%2 == 0 else list(reversed(protocol['arms']))
-            order.extend((case['id'],arm) for arm in arms)
+        order = registered_order(cases,protocol,repetition)
         assert [(r['case'],r['arm']) for r in group['trials']] == order
         for row in group['trials']:
             path = folder/row['folder']; receipt = read(path/'receipt.json')
@@ -253,7 +268,7 @@ def verify(model_id):
     stops = sum(t['finish_reason']=='stop' for t in traces)
     assert data['actual_native_calls'] == 326 and data['native_raw_stop_count'] == stops
     transport = data['completed'] and data['cleanup_passed'] and all(t['outcome']=='completed' for t in traces)
-    primary = transport and stops==146 and source_ok and facts_ok and modes_ok and scores[protocol['primary_candidate']]==36
+    primary = primary_passes(transport,stops,source_ok,facts_ok,modes_ok,scores,protocol)
     assert data['transport_passed'] == transport and data['primary_gate_passed'] == primary
     result = {'verified':True,'model_id':model_id,'evaluation_sha256':digest(folder/'evaluation.json'),
         'verifier_sha256':digest(Path(__file__)),'freeze_sha256':digest(freeze_path),'frozen_inputs':len(frozen['sha256']),
