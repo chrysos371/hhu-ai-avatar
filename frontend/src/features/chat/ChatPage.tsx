@@ -20,6 +20,7 @@ export function ChatPage() {
   const name = persona.data?.data.name ?? "角色";
   const [text, setText] = useState("");
   const [useWeb, setUseWeb] = useState(false);
+  const [reminderQuery, setReminderQuery] = useState(false);
   const [voiceBusy, setVoiceBusy] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const activeTurn = useRef<{ id: string; controller: AbortController } | null>(null);
@@ -55,6 +56,7 @@ export function ChatPage() {
       const controller = new AbortController();
       activeTurn.current = { id: input.request_id, controller };
       return streamTurn({ request_id: input.request_id, text: input.text, use_web: input.use_web,
+        ...(input.mode ? { mode: input.mode } : {}),
         ...(input.expected_context ? { expected_context: input.expected_context } : {}) }, controller.signal,
         piece => { if (history.isCurrent(input.epoch)) setMessages(rows => rows.map((row, i) => i === input.index ? { ...row, text: row.text + piece } : row)); });
     },
@@ -84,7 +86,7 @@ export function ChatPage() {
       const owns = submittedTurn.current === input.request_id;
       if (owns) { submittedTurn.current = null; queuedInput.current = null; }
       if (activeTurn.current?.id === input.request_id) activeTurn.current = null;
-      if (owns) setUseWeb(false);
+      if (owns) { setUseWeb(false); setReminderQuery(false); }
       const invalidated = !history.isCurrent(input.epoch);
       if (invalidated && owns) resetMutation.current();
       if (error?.name !== 'AbortError' || invalidated) void history.refresh();
@@ -108,6 +110,7 @@ export function ChatPage() {
   };
   function enqueue(value: string, allowWeb: boolean, controlChoice?: SpeakerChoice) {
     if (!value.trim() || send.isPending || submittedTurn.current !== null || voiceBusy || !history.ready) return false;
+    if (reminderQuery && !controlChoice && value.length > 2000) return false;
     const context = history.context;
     if (!controlChoice && !context) return false;
     const expected = !controlChoice && context ? {
@@ -118,7 +121,9 @@ export function ChatPage() {
     const id = crypto.randomUUID(); submittedTurn.current = id;
     history.markContextPending();
     setMessages((m) => [...m, { role: "user", text: value }, { role: "assistant", text: "", pending: true }]);
-    const input = { request_id: id, text: value, use_web: allowWeb, index, epoch: history.epoch.current, controlChoice,
+    const queryMode = reminderQuery && !controlChoice;
+    const input: ChatTurnInput = { request_id: id, text: value, use_web: queryMode ? false : allowWeb, index, epoch: history.epoch.current, controlChoice,
+      ...(queryMode ? { mode: 'reminder_query' as const } : {}),
       ...(expected ? { expected_context: expected } : {}) };
     queuedInput.current = input; send.mutate(input);
     return true;
@@ -184,6 +189,10 @@ export function ChatPage() {
               <small>{m.role === "user" ? "你" : name}</small>
               {m.created_at !== undefined && <small className="timestamp"> · {formatTime(m.created_at)}</small>}
               <div>{m.text}</div>
+              {m.result?.reminder_query?.mode === 'reminder_query' && <p className="muted" data-reminder-query={m.result.reminder_query.route}>
+                提醒查询 · {{ read_state: '记录状态', read_policy: '运行与送达条件', clarify_reference: '请补充编号',
+                  clarify_intent: '请明确查询目标', no_read: '未查询记录' }[m.result.reminder_query.route ?? ''] ?? '本轮结果'}
+              </p>}
               {m.pending && <small>正在生成；最终回复会完成检查后替换此草稿。</small>}
               {m.cancelled && <small>已停止，未完成的助手内容不存入记忆。</small>}
               {m.role === 'assistant' && !m.pending && !m.cancelled && !m.redacted && (m.result || m.id !== undefined) && <button type="button" className="button secondary speech-read"
@@ -218,23 +227,31 @@ export function ChatPage() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder={`说说现在的想法，或交给${name}一个具体任务…`}
-              maxLength={4000}
+              maxLength={reminderQuery ? 2000 : 4000}
               disabled={send.isPending}
             />
           </div>
+          <label className="checkbox-row">
+            <input type="checkbox" checked={reminderQuery}
+              onChange={e => { setReminderQuery(e.target.checked); if (e.target.checked) setUseWeb(false); }}
+              disabled={send.isPending || voiceBusy} />
+            本轮仅查询提醒
+          </label>
+          {reminderQuery && <p className="muted">可查询具体编号的状态或运行、送达条件。不会设置、取消或外发提醒。查询回复会保存在对话记录中。限2000字。</p>}
+          {reminderQuery && text.length > 2000 && <p role="alert">这段消息超过2000字，请缩短后查询。</p>}
           <div className="section-top" style={{ marginBottom: 0 }}>
             <label className="checkbox-row">
               <input
                 type="checkbox"
                 checked={useWeb}
                 onChange={(e) => setUseWeb(e.target.checked)}
-                disabled={send.isPending || voiceBusy || !history.context?.real_actions_for_new_turn}
+                disabled={reminderQuery || send.isPending || voiceBusy || !history.context?.real_actions_for_new_turn}
               />
               本轮允许联网工具
             </label>
             <button
               className="button"
-              disabled={send.isPending || voiceBusy || !text.trim() || !history.ready || !history.context}
+              disabled={send.isPending || voiceBusy || !text.trim() || !history.ready || !history.context || reminderQuery && text.length > 2000}
             >
               <Send size={14} />
               {send.isPending ? "等待回复…" : "发送消息"}

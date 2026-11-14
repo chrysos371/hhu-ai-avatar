@@ -78,3 +78,45 @@ it('allows explicit confirmation from unverified context and admits only one imm
     await waitFor(() => expect(document.querySelector('[data-speaker-context]')).toHaveAttribute('data-speaker-context', 'current_user'));
   } finally { control.client.clear(); }
 });
+
+it('captures reminder-only mode on submission, disables web and resets the next turn', async () => {
+  const control = await setup();
+  try {
+    fireEvent.click(screen.getByLabelText('本轮允许联网工具'));
+    fireEvent.click(screen.getByLabelText('本轮仅查询提醒'));
+    expect(screen.getByLabelText('本轮允许联网工具')).toBeDisabled();
+    expect(screen.getByLabelText('本轮允许联网工具')).not.toBeChecked();
+    fireEvent.change(screen.getByLabelText('消息'), { target: { value: '提醒编号1状态？' } });
+    fireEvent.click(screen.getByRole('button', { name: '发送消息' }));
+    await waitFor(() => expect(control.ready()).toBe(true));
+    const posts = control.fetcher.mock.calls.filter(([url]) => url.endsWith('/turns'));
+    expect(JSON.parse(posts[0][1]!.body as string)).toMatchObject({ mode: 'reminder_query', use_web: false, text: '提醒编号1状态？' });
+    expect(screen.getByLabelText('本轮仅查询提醒')).toBeDisabled();
+    await act(async () => control.finish());
+    await waitFor(() => expect(screen.getByLabelText('本轮仅查询提醒')).not.toBeChecked());
+  } finally { control.client.clear(); }
+});
+
+it('keeps independent speaker controls in chat mode even with reminder mode selected', async () => {
+  const control = await setup('unverified');
+  try {
+    fireEvent.click(screen.getByLabelText('本轮仅查询提醒'));
+    fireEvent.click(screen.getByRole('button', { name: '以本人说话' }));
+    await waitFor(() => expect(control.ready()).toBe(true));
+    const body = JSON.parse(control.fetcher.mock.calls.find(([url]) => url.endsWith('/turns'))![1]!.body as string);
+    expect(body.text).toBe('回到现实。'); expect(body.mode).toBeUndefined();
+    await act(async () => control.finish());
+  } finally { control.client.clear(); }
+});
+
+it('preserves a long chat draft but refuses query submission until shortened', async () => {
+  const control = await setup();
+  try {
+    fireEvent.change(screen.getByLabelText('消息'), { target: { value: '字'.repeat(2001) } });
+    fireEvent.click(screen.getByLabelText('本轮仅查询提醒'));
+    expect(screen.getByLabelText('消息')).toHaveValue('字'.repeat(2001));
+    expect(screen.getByRole('alert')).toHaveTextContent('超过2000字');
+    expect(screen.getByRole('button', { name: '发送消息' })).toBeDisabled();
+    expect(control.fetcher.mock.calls.filter(([url]) => url.endsWith('/turns'))).toHaveLength(0);
+  } finally { control.client.clear(); }
+});

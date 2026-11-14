@@ -137,6 +137,8 @@ export interface KnowledgeDraft {
   draft: Draft;
 }
 export interface ChatResult {
+  reminder_query?: { version: number; mode?: 'reminder_query'; route?: string;
+    source_message_id: number; revision: number; business_mutations: false };
   conversation?: { session_id: string; revision: number; user_message_id: number; assistant_message_id: number };
   reply: string;
   emotion: string;

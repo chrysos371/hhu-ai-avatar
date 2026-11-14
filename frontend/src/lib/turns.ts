@@ -2,7 +2,7 @@ import { ApiError, apiRequest, readToken } from "./api";
 import type { ChatResult } from "./types";
 
 export interface ExpectedContext { instance_id: string; revision: number; context_cursor: number }
-export interface TurnInput { request_id: string; text: string; use_web: boolean; expected_context?: ExpectedContext }
+export interface TurnInput { request_id: string; text: string; use_web: boolean; expected_context?: ExpectedContext; mode?: 'chat' | 'reminder_query' }
 export async function cancelTurn(id: string) {
   return apiRequest("/turns/" + encodeURIComponent(id) + "/cancel", {
     method: "POST", body: {}, keepalive: true,
