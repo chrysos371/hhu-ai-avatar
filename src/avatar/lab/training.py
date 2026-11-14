@@ -296,6 +296,8 @@ def train(data, lock_path, model_name, config, output, *, gpus):
                 model.train()
                 optimizer.zero_grad(set_to_none=True)
                 loss_sum = 0.0
+                sample_ids = []
+                supervised_tokens = 0
                 for index in batch_ids:
                     item = examples[index]
                     batch = {
@@ -307,6 +309,8 @@ def train(data, lock_path, model_name, config, output, *, gpus):
                         raise ValueError("Non-finite training loss")
                     (loss / len(batch_ids)).backward()
                     loss_sum += loss.item() / len(batch_ids)
+                    sample_ids.append(item["id"])
+                    supervised_tokens += sum(value != -100 for value in item["labels"])
                 grad = torch.nn.utils.clip_grad_norm_(
                     params, 1.0, error_if_nonfinite=True
                 )
@@ -317,6 +321,8 @@ def train(data, lock_path, model_name, config, output, *, gpus):
                         "loss": loss_sum,
                         "gradient_norm": float(grad),
                         "samples": len(batch_ids),
+                        "sample_ids": sample_ids,
+                        "supervised_tokens": supervised_tokens,
                     }
                 )
                 write_json(output / "steps.json", log)
