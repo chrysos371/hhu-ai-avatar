@@ -1,0 +1,62 @@
+............................F.                                           [100%]
+=================================== FAILURES ===================================
+_ test_polluted_metadata_does_not_become_model_context[observed_at-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000] _
+
+field = 'observed_at', value = 100000000000000000...0000000000000000000
+
+    @pytest.mark.parametrize('field,value', [
+        ('version', 1), ('version', True), ('mode', 'chat'), ('route', 'read_policy'),
+        ('reason', 'forged'), ('source_message_id', True), ('source_message_id', 99),
+        ('revision', False), ('revision', 1), ('session_id', 'other'),
+        ('model_calls', False), ('model_calls', 1), ('business_mutations', True),
+        ('semantic_intent_verified', True), ('business_data_read', 1),
+        ('arguments', {'reminder_id': True}), ('arguments', {'reminder_id': 2}),
+        ('evidence', {}), ('observed_at', True), ('observed_at', float('nan')),
+        ('observed_at', float('inf')), ('observed_at', -1), ('observed_at', 1e300), ('observed_at', 10**400),
+    ])
+    def test_polluted_metadata_does_not_become_model_context(field, value):
+        text, result = actual_query()
+        result['reminder_query'][field] = value
+>       assert envelope(text, result) is None
+
+tests/test_query_history.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_query_history.py:27: in envelope
+    return query_history_content(result['reply'], result['reminder_query'], text=text,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+reply = '未找到编号1的提醒记录。'
+metadata = {'version': 2, 'kind': 'status', 'source_message_id': 1, 'revision': 0, ...}
+text = '提醒编号1现在是什么状态？', source_message_id = 1, session_id = 'history-source'
+revision = 0, scope = 'current_user', turn_tools_allowed = True
+
+    def query_history_content(reply, metadata, *, text, source_message_id, session_id,
+                              revision, scope, turn_tools_allowed):
+        """Return a model-context envelope or None for a mismatched query record.
+    
+        Public/persisted original reply text is never changed. In particular this
+        does not refresh an old observation against the current reminders table.
+        """
+        if (not isinstance(reply, str) or not reply.strip() or type(metadata) is not dict
+                or type(source_message_id) is not int or not 0 < source_message_id <= 2**63-1
+                or type(revision) is not int or not 0 <= revision <= 2**63-1
+                or not isinstance(session_id, str) or not session_id
+                or scope != 'current_user' or turn_tools_allowed is not True
+                or type(metadata.get('version')) is not int or metadata['version'] != 2
+                or metadata.get('mode') != 'reminder_query'
+                or type(metadata.get('source_message_id')) is not int
+                or metadata['source_message_id'] != source_message_id
+                or type(metadata.get('revision')) is not int or metadata['revision'] != revision
+                or metadata.get('session_id') != session_id
+                or type(metadata.get('model_calls')) is not int or metadata['model_calls'] != 0
+                or metadata.get('business_mutations') is not False
+                or metadata.get('semantic_intent_verified') is not False):
+            return None
+        observed = metadata.get('observed_at')
+>       if type(observed) not in (int, float) or not math.isfinite(observed) or not 0 < observed <= 253402300799:
+E       OverflowError: int too large to convert to float
+
+src/avatar/brain/query_history.py:37: OverflowError
+=========================== short test summary info ============================
+FAILED tests/test_query_history.py::test_polluted_metadata_does_not_become_model_context[observed_at-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]
+1 failed, 29 passed in 0.90s

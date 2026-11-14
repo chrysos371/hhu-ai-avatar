@@ -52,7 +52,7 @@ def test_five_actual_query_types_have_model_only_historical_snapshot_envelopes(t
     ('semantic_intent_verified', True), ('business_data_read', 1),
     ('arguments', {'reminder_id': True}), ('arguments', {'reminder_id': 2}),
     ('evidence', {}), ('observed_at', True), ('observed_at', float('nan')),
-    ('observed_at', float('inf')), ('observed_at', -1), ('observed_at', 1e300),
+    ('observed_at', float('inf')), ('observed_at', -1), ('observed_at', 1e300), ('observed_at', 10**400),
 ])
 def test_polluted_metadata_does_not_become_model_context(field, value):
     text, result = actual_query()
