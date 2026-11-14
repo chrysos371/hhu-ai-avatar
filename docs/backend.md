@@ -2,7 +2,7 @@
 
 本机环境、模型、运行数据与缓存已迁至`/data/Users/zrh/data/hhu-ai-avatar`，代码仍在repo/hhu-ai-avatar。默认记忆库为集中根的artifacts/memory.db；旧data入口仅相对软链接。启动使用`./scripts/project-python -m avatar.web`，历史记录路径解析与完整位置见[本机数据布局](本机数据布局.md)。
 
-## C45 显式提醒查询模式（审计中，2026-11-14）
+## C45 显式提醒查询模式（系统复核通过，2026-11-14）
 
 SDK调用 `avatar.respond("提醒编号1现在是什么状态？", mode="reminder_query")`；默认mode="chat"。`POST /api/v1/chat` 和 `POST /api/v1/turns` 可传同名mode（turns仍需request_id），返回或SSE最终result的reminder_query.version=2，包含mode、route、reason、arguments、有限evidence、source_message_id/session_id/revision、observed_at、model_calls=0及semantic_intent_verified=false。route为read_state/read_policy/clarify_reference/clarify_intent/no_read。只有read_state读取提醒业务表，所有查询分支跳过认知/生成、事实抽取、知识检索和自动到期认领；聊天源与答复仍保存。
 
