@@ -45,6 +45,7 @@ def test_exact_frame_patterns_were_registered_before_implementation():
     '提醒编号1现在是什么状态？','请核对提醒编号999是否还存在。',
     '我想看编号1的提醒记录。','提醒编号1现在取消了吗？',
     '已经取消的提醒编号1是否还存在？',
+    '取消的提醒编号1是否还存在？',
 ])
 def test_record_queries_use_unique_current_id_and_actual_read_without_model(lab,text):
     memory,session=lab;session.begin_turn(text)
@@ -114,6 +115,7 @@ def test_intent_clarification_does_not_falsely_ask_for_missing_id(lab,text,reaso
     '我的提醒程序已经退出了。','我还保存着提醒编号1。',
     '请帮我取消提醒编号1，好吗？','帮我把提醒编号1取消掉。',
     '请现在取消提醒编号1。','现在取消提醒编号1。',
+    '现在把提醒编号1取消。',
     '帮我写一段代码查询提醒编号1。','生成一段检查提醒编号1的代码。',
     '请帮我给老师发一封邮件提醒他。','替我通过短信提醒老师。',
     '不要查询提醒编号1。','你好，今天聊点轻松的事情。',
