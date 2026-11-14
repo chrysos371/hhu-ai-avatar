@@ -76,8 +76,17 @@ def evaluation_texts(root=None):
         suite_texts = []
         if isinstance(cases, list):
             for case in cases:
-                if isinstance(case, dict) and isinstance(case.get("turns"), list):
+                if not isinstance(case, dict):
+                    continue
+                if isinstance(case.get("turns"), list):
                     suite_texts.extend(text for text in case["turns"] if isinstance(text, str))
+                # Query/history suites reach actual model turns through these
+                # named inputs. Protect both text and the containing file hash;
+                # expected answers and review metadata are not input prompts.
+                for field in ("query_text", "followup_text"):
+                    text = case.get(field)
+                    if isinstance(text, str) and text.strip():
+                        suite_texts.append(text)
         if isinstance(value, dict):
             for field in ('positive_fixtures', 'negative_fixtures'):
                 fixtures = value.get(field, [])
