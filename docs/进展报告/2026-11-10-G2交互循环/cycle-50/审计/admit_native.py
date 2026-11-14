@@ -16,6 +16,10 @@ from run_native import require_trial_transport
 
 def main():
     output = WORK/'admission.json'; assert not output.exists()
+    prerequisites = [RUNTIME,WEIGHTS,WORK/'sse-controlled-v1.json']
+    prerequisites += [WORK/(short+suffix) for short in ('4b','14b') for suffix in ('-embedded-chat-template.jinja','-template-metadata.json')]
+    missing = [str(p) for p in prerequisites if not p.is_file()]
+    if missing: raise ValueError('C50 preparation incomplete; wait for successful predecessor: '+repr(missing))
     protocol = protocol_check(); source = snapshot()
     head = subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     assert historical(head,source) == source
