@@ -99,6 +99,9 @@ def required_inputs(model_id):
     for folder in ('001-实模方案调查','002-当前软件与浏览器','003-受控实模管线'):
         selected.update(str(p.relative_to(ROOT)) for p in (BASE/'审计/工作目录'/folder).rglob('*') if p.is_file())
     selected.update(str(p.relative_to(ROOT)) for p in (RUNTIME,WEIGHTS,WORK/'admission.json',REFERENCE))
+    for short in ('4b','14b'):
+        selected.update(str((WORK/(short+suffix)).relative_to(ROOT)) for suffix in
+            ('-embedded-chat-template.jinja','-template-metadata.json'))
     selected.add('docs/进展报告/2026-11-10-G2交互循环/cycle-40/审计/工作目录/001-工具调用调查/embedded-chat-template.jinja')
     if model_id == 'qwen3-14b-q4_k_m':
         folder = BASE/'实验/4b-development-v2'
