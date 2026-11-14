@@ -154,7 +154,8 @@ def training_stage(stage, selected, folder):
     original = training._probe
     def probe(model, tokenizer, row, torch):
         write_new(folder / "gpu-allocation.json", process_allocation(selected))
-        return observed_probe(original, model, tokenizer, row, torch, folder / "actual-probe.json")
+        return observed_probe(original, model, tokenizer, row, torch, folder / "actual-probe.json",
+            expect_trainable=stage == "train")
     training._probe = probe
     try:
         if stage == "train":

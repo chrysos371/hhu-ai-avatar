@@ -136,6 +136,12 @@ def verify_training(stage, folder):
     probe = read(folder / "actual-probe.json")
     require(probe["completed"] is True and len(probe["direct_forwards"]) == len(probe["generations"]) == 1,
         "actual existing probe count differs")
+    require(probe["expect_trainable"] is (stage == "train")
+        and bool(probe["actual_trainable_parameters"]) is (stage == "train"), "actual probe trainability differs")
+    if stage == "train":
+        require(sum(p["parameters"] for p in probe["actual_trainable_parameters"]) == manifest["trainable_parameters"]
+            and all(".lora_" in p["name"] and any(target in p["name"] for target in (".q_proj.", ".v_proj."))
+                for p in probe["actual_trainable_parameters"]), "actual trainable parameter scope differs")
     require(probe["logits_file_sha256"] == sha(folder / "actual-probe.pt"), "probe logits changed")
     result = {"optimizer_steps": 44, "train_samples": 176, "dev_samples": 44,
         "additional_probe_generations": 1, "additional_probe_direct_forwards": 1,

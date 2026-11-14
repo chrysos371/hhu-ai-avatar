@@ -2,12 +2,19 @@
 from execution_common import require, write_new, sha
 
 
-def observed_probe(original, model, tokenizer, row, torch, output):
+def observed_probe(original, model, tokenizer, row, torch, output, *, expect_trainable):
     from peft.tuners.lora.layer import LoraLayer
     expected = tokenizer.apply_chat_template(row["messages"][:-1], tokenize=True,
         add_generation_prompt=True, enable_thinking=False)
     report = {"scope": "actual existing final-reply save/reload probe, no extra calls",
         "source_id": row["id"], "direct_forwards": [], "generations": [], "completed": False}
+    trainable = [{"name": name, "shape": list(parameter.shape), "dtype": str(parameter.dtype),
+        "parameters": parameter.numel()} for name, parameter in model.named_parameters() if parameter.requires_grad]
+    report["actual_trainable_parameters"] = trainable
+    report["expect_trainable"] = expect_trainable
+    require(bool(trainable) is expect_trainable, "actual probe trainability differs from stage")
+    require(all(".lora_" in item["name"] and any(target in item["name"] for target in (".q_proj.", ".v_proj."))
+        for item in trainable), "base or unregistered target parameter remains trainable")
     state = {"inside_generate": False}
     original_generate = model.generate
 
