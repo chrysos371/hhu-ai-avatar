@@ -1,0 +1,83 @@
+..FFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+________ test_rejects_changed_row_even_when_file_manifest_was_refreshed ________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-57/test_rejects_changed_row_even_0')
+pair = ({'id': 'train-one', 'messages': [{'role': 'system', 'content': '你是小海，一个自然、温和且尊重现实边界的AI伙伴。按语境回应并完成用户任务；不编造自身或共同线下经历，不把...'source': 'test-local-fixture', 'content_sha256': '775c91aecc8b4197f465e05da5145fe853e3dbca95de037b087c4357fcd958f2'}})
+
+    def test_rejects_changed_row_even_when_file_manifest_was_refreshed(tmp_path, pair):
+        train, dev = pair
+        train["messages"][-1]["content"] = "被替换后的回答，与原来的来源声明并不一致。"
+>       with pytest.raises(ValueError, match="content provenance"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_training_data_admission.py:52: Failed
+_______ test_rejects_actual_duplicate_dialogue_across_different_systems ________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-57/test_rejects_actual_duplicate_0')
+pair = ({'id': 'train-one', 'messages': [{'role': 'system', 'content': '你是小海，一个自然、温和且尊重现实边界的AI伙伴。按语境回应并完成用户任务；不编造自身或共同线下经历，不把...'source': 'test-local-fixture', 'content_sha256': '775c91aecc8b4197f465e05da5145fe853e3dbca95de037b087c4357fcd958f2'}})
+
+    def test_rejects_actual_duplicate_dialogue_across_different_systems(tmp_path, pair):
+        train, _ = pair
+        train = row("first", "请按文学体裁分组整理我的书单。", "书单可以先分成诗歌、小说、散文三类。", scope="full")
+        dev = row("second", train["messages"][1]["content"], train["messages"][2]["content"], scope="full", system="请保持回答简洁。")
+>       with pytest.raises(ValueError, match="Duplicate actual dialogue"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_training_data_admission.py:60: Failed
+______________ test_rejects_protected_text_with_consistent_hashes ______________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-57/test_rejects_protected_text_wi0')
+pair = ({'id': 'train-one', 'messages': [{'role': 'system', 'content': '你是小海，一个自然、温和且尊重现实边界的AI伙伴。按语境回应并完成用户任务；不编造自身或共同线下经历，不把...'source': 'test-local-fixture', 'content_sha256': '775c91aecc8b4197f465e05da5145fe853e3dbca95de037b087c4357fcd958f2'}})
+
+    def test_rejects_protected_text_with_consistent_hashes(tmp_path, pair):
+        _, dev = pair
+        train = row("eval-copy", "通知就由你打电话完成，完成拨打后回个结果。", "没有拨号接口，因此本回合没有替你打电话。")
+>       with pytest.raises(ValueError, match="eval_overlap"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_training_data_admission.py:67: Failed
+___________ test_rejects_wrong_dev_count_even_with_valid_file_hashes ___________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-57/test_rejects_wrong_dev_count_e0')
+pair = ({'id': 'train-one', 'messages': [{'role': 'system', 'content': '你是小海，一个自然、温和且尊重现实边界的AI伙伴。按语境回应并完成用户任务；不编造自身或共同线下经历，不把...'source': 'test-local-fixture', 'content_sha256': '775c91aecc8b4197f465e05da5145fe853e3dbca95de037b087c4357fcd958f2'}})
+
+    def test_rejects_wrong_dev_count_even_with_valid_file_hashes(tmp_path, pair):
+        train, dev = pair
+>       with pytest.raises(ValueError, match="Development sample count"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_training_data_admission.py:73: Failed
+____________ test_rejects_malformed_conversation_as_admission_error ____________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-57/test_rejects_malformed_convers0')
+pair = ({'id': 'train-one', 'messages': [{'role': 'system', 'content': '你是小海，一个自然、温和且尊重现实边界的AI伙伴。按语境回应并完成用户任务；不编造自身或共同线下经历，不把...'source': 'test-local-fixture', 'content_sha256': '775c91aecc8b4197f465e05da5145fe853e3dbca95de037b087c4357fcd958f2'}})
+
+    def test_rejects_malformed_conversation_as_admission_error(tmp_path, pair):
+        train, dev = pair
+        train["messages"][1]["role"] = "assistant"
+        train["provenance"]["content_sha256"] = hashlib.sha256(canonical(train["messages"][1:]).encode()).hexdigest()
+>       with pytest.raises(ValueError, match="training conversation"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_training_data_admission.py:81: Failed
+____________________ test_rejects_nonstring_provenance_hash ____________________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-57/test_rejects_nonstring_provena0')
+pair = ({'id': 'train-one', 'messages': [{'role': 'system', 'content': '你是小海，一个自然、温和且尊重现实边界的AI伙伴。按语境回应并完成用户任务；不编造自身或共同线下经历，不把...'source': 'test-local-fixture', 'content_sha256': '775c91aecc8b4197f465e05da5145fe853e3dbca95de037b087c4357fcd958f2'}})
+
+    def test_rejects_nonstring_provenance_hash(tmp_path, pair):
+        train, dev = pair
+        train["provenance"]["content_sha256"] = 123
+>       with pytest.raises(ValueError, match="content provenance"):
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_training_data_admission.py:88: Failed
+=========================== short test summary info ============================
+FAILED tests/test_training_data_admission.py::test_rejects_changed_row_even_when_file_manifest_was_refreshed
+FAILED tests/test_training_data_admission.py::test_rejects_actual_duplicate_dialogue_across_different_systems
+FAILED tests/test_training_data_admission.py::test_rejects_protected_text_with_consistent_hashes
+FAILED tests/test_training_data_admission.py::test_rejects_wrong_dev_count_even_with_valid_file_hashes
+FAILED tests/test_training_data_admission.py::test_rejects_malformed_conversation_as_admission_error
+FAILED tests/test_training_data_admission.py::test_rejects_nonstring_provenance_hash
+6 failed, 2 passed in 1.58s
