@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "scope": "C51 B isolated package and pinned trainable base preparation, no training or quality evaluation",
+  "data_root": "/data/Users/zrh/data/hhu-ai-avatar",
+  "environment": "envs/hhu-ai-avatar-train",
+  "python": "/usr/bin/python3.10",
+  "torch": {
+    "version": "2.6.0+cu124",
+    "index": "https://download.pytorch.org/whl/cu124"
+  },
+  "requirements": [
+    "training/requirements-eval.txt",
+    "requirements.txt"
+  ],
+  "python_dependencies_source": "https://pypi.org/simple",
+  "model": {
+    "repo": "Qwen/Qwen3-4B",
+    "revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "local_name": "Qwen3-4B",
+    "sha256": {
+      "model-00001-of-00003.safetensors": "328a91d3122359d5547f9d79521205bc0a46e1f79a792dfe650e99fc2d651223",
+      "model-00002-of-00003.safetensors": "6cd087b316306a68c562436b5492edbcf6e16c6dba3a1308279caa5a58e21ca5",
+      "model-00003-of-00003.safetensors": "e4bf436957184f4eeb86a80e9db394503f1f56446b2e6b7edeac5b81470f4ca1"
+    }
+  },
+  "sources": [
+    "https://pytorch.org/get-started/previous-versions/",
+    "https://huggingface.co/Qwen/Qwen3-4B/tree/1cfa9a7208912126459214e8b04321603b3df60c"
+  ],
+  "validation": [
+    "actual pip reports and freeze, pip check, CPU imports of torch/transformers/PEFT/LMFE and tokenization",
+    "pin returned Hub revision; LFS file SHA256 must match prior base-model manifest; Git blobs for config/tokenizer/index must match upstream pinned metadata",
+    "read safetensors headers and index mappings without materializing tensors; all index shards are locked and no missing weight paths",
+    "ordinary/native environment package metadata must remain unchanged; data volume and auxiliary paths remain centralized",
+    "no LLM model construction, CUDA allocation, gradient updates or default model change in these two setup runners"
+  ],
+  "whole_experiment_wallclock_cutoff": null,
+  "model_constructions": 0,
+  "training_steps": 0,
+  "default_activation_authorized": false
+}
