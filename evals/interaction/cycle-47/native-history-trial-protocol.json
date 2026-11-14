@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "scope": "actual stateful SDK Avatar query then native cognition+generation, raw authorized history vs framed authorized history",
+  "cases": "evals/interaction/cycle-47/native-history-cases.json",
+  "cases_sha256": "0c16dbb0955f619b25c00ca446d6180c32cb5c7b6b87e47526f3e3f6065fe315",
+  "model_registry": "evals/interaction/cycle-47/model-registry.json",
+  "model_registry_sha256": "5821320e601e98104910bf937a0fe0d2c63523185325b33abb6d2c491266a152",
+  "arms": [
+    "authorized_raw_history",
+    "verified_snapshot_history"
+  ],
+  "primary_candidate": "verified_snapshot_history",
+  "sampling": {
+    "repetitions": 3,
+    "cases_per_repetition": 8,
+    "arms": 2,
+    "native_calls_per_trial": 2,
+    "trials_per_model": 48,
+    "query_turns_per_model": 48,
+    "ordinary_turns_per_model": 48,
+    "warmups_per_model": 2,
+    "max_native_calls_per_model": 98,
+    "models": 2,
+    "max_total_native_calls": 196,
+    "SQL_dumps_per_model": 96,
+    "arm_first_order": "alternate by case index plus repetition; 4/4 first positions each repetition",
+    "whole_experiment_wallclock_cutoff": null,
+    "extra_model_retries": 0
+  },
+  "source_flow": "fresh actual MemoryStore and SDK per arm/case; actual query first installs durable speaker basis, 0 model; actor changes record after query; ordinary followup alone calls native cognition then generation; no tools/web enabled",
+  "baseline_contract": "Both arms first call original production query_history_content validation. Baseline only returns original raw reply after validation; candidate returns exact production envelope. Same authorization and business read gates. Explicit isolated context manager, no production factory opt-in.",
+  "scoring": {
+    "strict_JSON": "exact six keys, no prefix/fence/duplicate key/non-finite values; typed enum/booleans/null-or-name; parsed raw model generation and final Avatar reply separately",
+    "primary_gate": "candidate final typed expected contract 24/24 per model, 0 model/error fallback, 0 unauthorized business changes or unsupported user facts, exact model/source/runtime/native identity; baseline comparison descriptive",
+    "contract_limit": "finite user-requested JSON answers about sourced observations, not universal natural conversation semantics",
+    "expected_label_not_model_input": true,
+    "analysis_mode_required": "llm",
+    "generation_mode_required": "llm",
+    "history_not_current": "independent actor changes are not shown to model; existing ordinary due query may occur but future/cancelled records yield no due reminders",
+    "business_scope": "query and ordinary must preserve corresponding post-actor business projection; actor mutation recorded separately",
+    "facts": "no assertion of real user identity/preferences in followups; no new memory_fragments expected; malformed/unsupported model facts counted and actual stores inspected"
+  },
+  "stage_gate": "4B and14B each independent committed freeze descriptor; run serially; semantic failure in4B does not suppress planned14B scale observation, infrastructure/source failure stops that run. Do not tune between models.",
+  "protected_executed_at_registration": false,
+  "protected_partition_authorized": false,
+  "default_model_change_authorized": false,
+  "materials": "eight newly phrased structured diagnostics drawn from previously researched failure categories, development only; not independent human holdout"
+}
