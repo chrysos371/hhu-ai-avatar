@@ -1,0 +1,222 @@
+[
+  {
+    "label": "wrong-sha",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "0000000000000000000000000000000000000000000000000000000000000000",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/wrong-sha.json",
+    "fixture_sha256": "6dd5eb56b164dfd5242d498c90ad5fc10f71e1b9b42d20a1314987d6e6885265",
+    "expected_rejection": "C47 descriptor SHA differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 123, in verify_freeze\n    raise ValueError('C47 descriptor SHA differs')\nValueError: C47 descriptor SHA differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "protected-true",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "9063b56a4d140f5af2ba035351802fc563f3f079271ee79e9f34570263056ac9",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/protected-true.json",
+    "fixture_sha256": "9063b56a4d140f5af2ba035351802fc563f3f079271ee79e9f34570263056ac9",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "protected-zero",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "c6bd7c57185f7f9e30062b9873dc1bc5414bdb67a492308a40efb8d58dc1fa9a",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/protected-zero.json",
+    "fixture_sha256": "c6bd7c57185f7f9e30062b9873dc1bc5414bdb67a492308a40efb8d58dc1fa9a",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "protected-null",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "6753470b9c7c361a037b668e33a2f5d2a34e4e4a2136d01d879ad9992de5c905",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/protected-null.json",
+    "fixture_sha256": "6753470b9c7c361a037b668e33a2f5d2a34e4e4a2136d01d879ad9992de5c905",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "version-bool",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "3dd2178c87114eac872bed21b77554141d0d8682d00c2876c6c87f6a20bb51e0",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/version-bool.json",
+    "fixture_sha256": "3dd2178c87114eac872bed21b77554141d0d8682d00c2876c6c87f6a20bb51e0",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "repetitions-bool",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "bad2858077121444d55f58d40e9ad93409df25009c0f6b9da8facb9ed66b3d64",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/repetitions-bool.json",
+    "fixture_sha256": "bad2858077121444d55f58d40e9ad93409df25009c0f6b9da8facb9ed66b3d64",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "repetitions-float",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "33ad3b97e4ce35f15e14ada46747eaa97015c43be76601e4fcfda1b85209cd04",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/repetitions-float.json",
+    "fixture_sha256": "33ad3b97e4ce35f15e14ada46747eaa97015c43be76601e4fcfda1b85209cd04",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "native-cap-bool",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "69478f464002115dc114fb35df531c496f61a3fcb82f0750bf089c03c7bd9e09",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/native-cap-bool.json",
+    "fixture_sha256": "69478f464002115dc114fb35df531c496f61a3fcb82f0750bf089c03c7bd9e09",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "native-cap-float",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "54aba3fd1651d6e8fc79a4606e50bd1f5d9c5d39a2f786b51f4a2d7a96c3975b",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/native-cap-float.json",
+    "fixture_sha256": "54aba3fd1651d6e8fc79a4606e50bd1f5d9c5d39a2f786b51f4a2d7a96c3975b",
+    "expected_rejection": "authorization differs",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 133, in verify_freeze\n    raise ValueError('C47 model partition sampling or output authorization differs')\nValueError: C47 model partition sampling or output authorization differs\n",
+    "provider_output_created": false
+  },
+  {
+    "label": "retired-fixture",
+    "argv": [
+      "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+      "--freeze",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+      "--expected-freeze-sha256",
+      "6dd5eb56b164dfd5242d498c90ad5fc10f71e1b9b42d20a1314987d6e6885265",
+      "--model",
+      "qwen3-4b-q4_k_m",
+      "--output",
+      "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+    ],
+    "fixture": "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/negative-cli-inputs/retired-fixture.json",
+    "fixture_sha256": "6dd5eb56b164dfd5242d498c90ad5fc10f71e1b9b42d20a1314987d6e6885265",
+    "expected_rejection": "descriptor retired",
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 125, in verify_freeze\n    raise ValueError('C47 descriptor retired; do not repeat native inference')\nValueError: C47 descriptor retired; do not repeat native inference\n",
+    "provider_output_created": false
+  }
+]
