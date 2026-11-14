@@ -6,7 +6,7 @@ from html.parser import HTMLParser
 import json
 from pathlib import Path
 import urllib.request
-from urllib.parse import unquote, urlsplit, urldefrag
+from urllib.parse import unquote, urlsplit, urldefrag, urljoin
 
 from packaging.requirements import Requirement
 from packaging.tags import sys_tags
@@ -33,14 +33,16 @@ def sha(raw):
 
 def main():
     protocol = json.loads((WORK / "registry-protocol-v1.json").read_text())
-    output = WORK / "wheel-registry-v1.json"
+    output = WORK / "wheel-registry-v2.json"
+    raw_folder = WORK / "metadata-v2"
+    raw_folder.mkdir(exist_ok=False)
     assert not output.exists()
     ranks = {tag: n for n, tag in enumerate(sys_tags())}
     def fetch(url, name):
         with urllib.request.urlopen(url, timeout=60) as response:
             raw = response.read(protocol["metadata_max_bytes"] + 1)
         assert len(raw) <= protocol["metadata_max_bytes"]
-        path = WORK / name
+        path = raw_folder / name
         assert not path.exists()
         path.write_bytes(raw)
         return raw
@@ -49,7 +51,7 @@ def main():
         raw = fetch(index, package + "-index-v1.html.txt")
         matches = []
         for link in Links(raw).links:
-            url, fragment = urldefrag(link["href"])
+            url, fragment = urldefrag(urljoin(index, link["href"]))
             filename = unquote(Path(urlsplit(url).path).name)
             if exact is not None and filename != exact:
                 continue
