@@ -9,7 +9,8 @@ import sys
 import time
 
 from execution_common import (ROOT, BASE, ASSETS, RUN, DATA, LOCK, TOKENIZATION,
-    STAGES, verify_freeze, protocol_check, preparation_check, read, sha, write_new, require)
+    STAGES, WORK, verify_freeze, protocol_check, preparation_check, read, sha, write_new, require,
+    historical, verify_training_binding)
 
 
 def gpu_cards():
@@ -54,6 +55,12 @@ def previous_stage_check(stage, freeze_sha):
         proof = read(path)
         require(proof["execution_verified"] is True and proof["process_retired"] is True
             and proof["freeze_sha256"] == freeze_sha, "previous execution proof differs")
+        committed = WORK / (previous + "-verified.json")
+        require(committed.is_file() and sha(committed) == sha(path), "commit previous stage proof before continuing")
+        name = str(committed.relative_to(ROOT))
+        require(historical("HEAD", [name]) == {name: sha(committed)}, "previous stage proof is not committed")
+    if stage in ("reload", "after"):
+        verify_training_binding()
     require(not any((RUN / "ledger" / (later + "-start.json")).exists()
         for later in STAGES[position:]), "stage already attempted or later stage started; no retries")
 

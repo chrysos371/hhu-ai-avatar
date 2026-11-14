@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 from execution_common import (ROOT, BASE, RUN, LOCK, DATA, TOKENIZATION, STAGES,
-    read, sha, write_new, require, verify_freeze)
+    read, sha, write_new, require, verify_freeze, training_binding_files, verify_training_binding)
 
 
 def retired(marker):
@@ -140,12 +140,14 @@ def verify_training(stage, folder):
     result = {"optimizer_steps": 44, "train_samples": 176, "dev_samples": 44,
         "additional_probe_generations": 1, "additional_probe_direct_forwards": 1,
         "saved_adapter_tensors": len(tensors), "dev_loss_is_not_quality": True}
+    result.update({key: sha(path) for key, path in training_binding_files().items()})
     actual = torch.load(folder / "actual-probe.pt", map_location="cpu", weights_only=True)
     saved = torch.load(RUN / "adapter/probe.pt", map_location="cpu", weights_only=True)
     require(torch.allclose(saved, actual, atol=1e-4, rtol=1e-4), "independent saved logits differ")
     if stage == "train":
         require(torch.equal(saved, actual), "captured training probe logits differ from trainer save")
     else:
+        verify_training_binding()
         reload = read(RUN / "adapter/reload-verification.json")
         train = read(RUN / "train/actual-probe.json")
         require(reload["passed"] is True and reload["generation_identical"] is True

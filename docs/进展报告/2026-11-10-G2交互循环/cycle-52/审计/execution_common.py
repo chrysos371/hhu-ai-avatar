@@ -140,3 +140,17 @@ def verify_freeze(path, expected):
     for name, value in frozen["external_data_sha256"].items():
         require(sha(DATA.parent / name) == value, "C52 external dataset changed")
     return frozen
+
+
+def training_binding_files():
+    return {"training_manifest_sha256": RUN / "adapter/manifest.json",
+        "optimizer_log_sha256": RUN / "adapter/steps.json",
+        "adapter_model_sha256": RUN / "adapter/adapter/adapter_model.safetensors",
+        "adapter_config_sha256": RUN / "adapter/adapter/adapter_config.json",
+        "saved_probe_sha256": RUN / "adapter/probe.pt"}
+
+
+def verify_training_binding():
+    proof = read(RUN / "ledger/train-verified.json")
+    require(all(proof[key] == sha(path) for key, path in training_binding_files().items()),
+        "previously verified training artifacts changed")
