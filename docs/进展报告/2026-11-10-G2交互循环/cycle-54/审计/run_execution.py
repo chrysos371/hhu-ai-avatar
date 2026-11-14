@@ -77,6 +77,12 @@ def previous_stage_check(stage, freeze_sha):
         require(committed.is_file() and sha(committed) == sha(path), "commit previous stage proof before continuing")
         name = str(committed.relative_to(ROOT))
         require(historical("HEAD", [name]) == {name: sha(committed)}, "previous stage proof is not committed")
+        manifest = RUN / previous / "artifact-manifest.json"
+        require(proof["artifact_manifest"] == str(manifest)
+            and sha(manifest) == proof["artifact_manifest_sha256"], "previous raw manifest changed")
+        require(all((manifest.parent / n).resolve().is_relative_to(manifest.parent.resolve())
+            and sha(manifest.parent / n) == v for n, v in read(manifest).items()),
+            "previous raw artifacts changed")
     if stage in ("reload", "new_adapter"):
         verify_training_binding()
     require(not any((RUN / "ledger" / (later + "-start.json")).exists()
