@@ -1,0 +1,53 @@
+{
+  "verified": true,
+  "head": "5106154a6726d3e7ad878bad374d4ca8e4a58f0a",
+  "verifier_sha256": "d4ea29b89a2f879c34652c99d19d011d382708cb5e09746849c653aeb82272a7",
+  "first_system_sha256": "5db6fc6e48fd069c60e70b298653de47512a52b087f5a9d66339746988d83a65",
+  "scope": "supplements only the Row-repr cache absence assertion; first system output retained",
+  "cases": [
+    {
+      "arm": "sdk",
+      "before": {
+        "SQL_sha256": "57da7139e413abdba73af8dd110122d1f34abd5ae4c718c75de962e69c15d791",
+        "result_rows": 0,
+        "secret_in_actual_JSON": false,
+        "JSON_sha256": []
+      },
+      "after": {
+        "SQL_sha256": "ae0bcb54fd11cdabd6ac4a7fc5d8ac4fa7183ba07af3e104d15e2e9cbbd9fac8",
+        "result_rows": 0,
+        "secret_in_actual_JSON": false,
+        "JSON_sha256": []
+      }
+    },
+    {
+      "arm": "web",
+      "before": {
+        "SQL_sha256": "c6b110a523188f389dc7f9960555543e161ec557ea51795f351d57557eb35697",
+        "result_rows": 2,
+        "secret_in_actual_JSON": true,
+        "JSON_sha256": [
+          "8a06c1c2247fc737f7fa9958db2d5edc517c2175e1c86b78697a0ef54727c83b",
+          "624ab50294197d1749b0faca04b799d668c5501e52dde5858a3e9b1272e7c214"
+        ]
+      },
+      "after": {
+        "SQL_sha256": "12e9f9df853b52ce5d60d053e09f2a508d14bc1de61f3997e930f816faeb9c40",
+        "result_rows": 2,
+        "secret_in_actual_JSON": false,
+        "JSON_sha256": [
+          "f6b388d5b93917151180ee973e11f1d31011278dcbe71ce0b67d9dd02b64a714",
+          "4262f2bd90b1b1ae8010d24374f1e8de722942fc871331bdc79510bc9b8e8b35"
+        ]
+      }
+    }
+  ],
+  "deliberate_pollution_negative_control": {
+    "weak_Row_repr_reports_clean": true,
+    "correct_scalar_JSON_detects_secret": true
+  },
+  "C46_002_limited_closed": true,
+  "issues_limited_closed_after_supplement": 2,
+  "additional_native_calls": 0,
+  "SQL_dumps_reread_not_newly_collected": 4
+}
