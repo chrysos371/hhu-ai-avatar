@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "scope": "actual explicit reminder_query SDK HTTP SSE Web integration; finite previously seen queries, not blind semantics",
+  "mode": "reminder_query",
+  "max_characters": 2000,
+  "use_web": false,
+  "browser_seed": "C45浏览器专用查询控制",
+  "browser_cases": [
+    {
+      "text": "提醒编号{id}能通过短信送给我吗？",
+      "route": "read_policy"
+    },
+    {
+      "text": "提醒编号{id}现在是什么状态？",
+      "route": "read_state"
+    },
+    {
+      "text": "这条提醒取消了吗？",
+      "route": "clarify_reference"
+    },
+    {
+      "text": "提醒编号{id}状态和程序运行条件是什么？",
+      "route": "clarify_intent"
+    },
+    {
+      "text": "请取消提醒编号{id}",
+      "route": "no_read"
+    }
+  ],
+  "browser_viewports": [
+    1440,
+    390
+  ],
+  "native_inference_authorized": false,
+  "ordinary_history_scope": "saved query reply may enter subsequent ordinary chat; query turn itself no model",
+  "required_boundaries": [
+    "one actual user source",
+    "no business writes in query turn",
+    "no model in query turn",
+    "captured submission mode",
+    "no web tools",
+    "independent speaker controls in chat mode",
+    "mode-aware durable dedup",
+    "privacy cancellation stale source publication checks"
+  ]
+}
