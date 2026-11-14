@@ -1,0 +1,72 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C43 政策问题依据、缺参澄清与系统审计</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C43 政策问题依据、缺参澄清与系统审计</h1><p class="meta">2026-11-14｜持续Goal active｜spinner-bot</p><p class="verdict">74native/96SQL；基线41/48、候选47/48，主门槛失败/保护未跑/默认未接入。2239/1、192、18/16通过；1夹具限定关闭/1语义开放。</p>
+<section><h2>结论：缺参澄清改善，状态读取目标仍不充分</h2>
+<p>C43新增隔离政策问题依据层，保留C41/C42服务作基线。相对C42 eligible_complete，主候选policy_grounded仅收紧政策工具的提供和执行：实际当前源先通过旧参数/权限门槛，未引用和非代码部分还须含有限运行主体/通道依据；单条记录指代与状态词并存时不能用政策代答。状态编号绑定与缺编号澄清仍沿用原机制。这是有限规则与模型协作，不是一般语义意图证明，默认Avatar/Web未接入。</p>
+<p>先登记16开发题（10重用＋6新增）、两个分支及固定主候选，再实现/控制与真实4B三重复。实际基线41/48、候选47/48：候选修正missing-reference-status和reference-delivered-state的6个重复错政策结果，明确澄清由6/12变12/12；需要读取的24个回合两臂仍各23/24。两个候选共同的一次错状态发生在有编号通道问题，主候选未达48/48，12题保护不运行。</p>
+<p>“提醒编号1能通过短信送给我吗？”预期读取运行/通道政策，第二重复中两臂却都读取了编号1的取消记录并发布状态/标题。原文确有编号、参数合法、数据真实，仍然是操作目标错误；14次实际状态SELECT中2次属于该错域。只检查编号依据不足以证明用户在请求读记录。</p>
+<p>96实际来源/SQLite分支中，54可信数据答复（14状态SQL＋40固定政策）、18明确澄清、24规则无读。基线6次政策资料虽真实却对应缺参状态问题；候选0此类错政策，但仍有1次错状态。两臂各12个规则免模型回合，不能计成模型正确决策；native实际各36，正确模型回合基线29/36、候选35/36，另2次预热独立计数。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>分支</th><th>最终任务</th><th>native /规则跳过</th><th>需要读取</th><th>缺参明确澄清</th><th>语义错误</th></tr></thead><tbody>
+<tr><td>baseline_complete（C42基线）</td><td>41/48</td><td>36 / 12</td><td>23/24</td><td>6/12</td><td>6错政策＋1错状态</td></tr>
+<tr><td>policy_grounded（事先固定主候选）</td><td>47/48</td><td>36 / 12</td><td>23/24</td><td>12/12</td><td>0错政策＋1错状态；门槛失败</td></tr>
+</tbody></table></div>
+<p><a href="../../../../../evals/interaction/cycle-43/policy-question-evidence-contract.json">先登记政策问题依据</a></p>
+<p><a href="../../../../../evals/interaction/cycle-43/policy-question-trial-protocol.json">双分支开发与保护协议</a></p>
+<p><a href="../../../../../src/avatar/lab/policy_question_catalogue.py">政策依据与独立执行门槛实现</a></p>
+<p><a href="../../../../../tests/test_policy_question_catalogue.py">40新增控制</a></p>
+<p><a href="../实验/development-v1/evaluation.json">真实开发总结果</a></p>
+<p><a href="../实验/development-v1/repetition-2/numbered-reference-channel/policy_grounded/evaluation.json">第二重复错状态完整分支</a></p>
+</section>
+<section><h2>同输入路线翻转与原生/SQL来源核验</h2>
+<p>固定同一Qwen3-4B-Q4_K_M、temperature0、seed42、8192上下文、每次选择256 token上限；三重复、每轮16题中两臂先执行位置8/8平衡，独立来源/SQLite分支，不共享模型提案、无额外重试。576输入绑定Git7c5bd978，开发描述符SHA2aa6cdbb…先提交。按实际40441MiB空闲/0%选择GPU2 UUID GPU-e7f8224e-43d7-f7d6-10ff-8412dc30aa9e，进程实际4096MiB，PID170544退出0且GPU无残留。</p>
+<p>74 native＝2预热＋基线36＋主候选36，全部原生stop。预写独立核验首次通过74请求体/SDK/raw一一对应、74实际嵌入模板重渲染、96 SQLdump重建、来源/session/revision/语境/目录/固定渲染核平。20实际项目模块、8映射冻结库、54安装库身份一致，业务表和来源提交后写计数不变；没有claim、ACK、创建、取消或外发动作。内存SQLite为合成数据，不证明个人数据/磁盘重启持久性。</p>
+<p>编号通道题两臂×三重复共6次调用，请求体SHA只有1种、实际模板SHA只有1种；第一/第三重复4次POLICY，第二重复2次STATE。记录到的温度0/seed42不足以承诺逐字或路线重复；本轮未做缓存/数值/历史状态专项实验，不能把差异原因归给某一因素。去不透明call ID后32个题×分支组中30组三重复相同，不同的正是该题两臂。</p>
+<p>基线重用C42已见10题中的18次native请求体、实际模板与原稿均逐项相同。这部分不是新的独立模型样本；新6题是实现前预登记开发诊断。实际CLI使用故意构造的未批准保护描述符在主候选门槛处拒绝，未建provider/输出。原开发描述符随后退役并实际验证重启拒绝；没有改判据、挑有利重复或改选基线推广。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>层级</th><th>实际证据</th><th>限制</th></tr></thead><tbody>
+<tr><td>原生与lab结果</td><td>74生成 /96分支</td><td>72正式选择＋2预热；原稿全部保留</td></tr>
+<tr><td>真实读取与澄清</td><td>14状态SQL /40政策 /18澄清</td><td>含2错状态、6错政策；参数合法≠任务正确</td></tr>
+<tr><td>相同输入的路线差异</td><td>6同请求体/模板；POLICY4 /STATE2</td><td>原因未定位，不宣称温度0或seed保证路线确定</td></tr>
+<tr><td>来源/二进制/历史</td><td>74模板 /96dump /20模块 /8映射库 /54库</td><td>自动程序复核不等于独立真人盲评</td></tr>
+<tr><td>保护与产品</td><td>12保护未跑 /默认未接入</td><td>实际门槛拒绝/描述符退役，无额外native</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/004-原生政策依据实验/development-freeze.json">576输入冻结</a></p>
+<p><a href="工作目录/004-原生政策依据实验/development-verification.json">预写独立核验</a></p>
+<p><a href="../实验/development-v1/provider-kernel-proof.json">实际进程/GPU/映射库</a></p>
+<p><a href="../实验/development-v1/provider-trace.jsonl">全部native raw/适配trace</a></p>
+<p><a href="工作目录/005-系统复核/catalogue-accounting.json">分项/同输入翻转/历史核对</a></p>
+<p><a href="工作目录/004-原生政策依据实验/protected-and-retirement-verification.json">实际保护和退役拒绝</a></p>
+</section>
+<section><h2>完整当前回归、负控、问题与迁移后留痕</h2>
+<p>新增40控制及旧reader/catalogue/native wire共222通过；当前完整Python2239 passed/1 skipped（131.82秒测试）、前端37文件/192通过、type/build通过，默认Chromium18通过/16可选跳过。各455输入与启动Git及结束字节一致；实际浏览器9模块、C36隐私/C39查询两协议、5bundle核平。维护范围5应用结果另存原件，不当全suite总调用数。</p>
+<p>10组脚本接口控制共32尝试、41实际SQLite分支/41 SQL重建、5状态SELECT，0HTTP/SDK模型生成。包含直接错误政策/未提供工具、错误编号/附加权限字段、模型原稿虚假保证不发布、预设异常、gold污染不改变执行、生成前后公共forget取消旧源；两臂独立来源与先执行位置平衡。另1次实际SDK回环HTTP SSE（3事件/stop）验证同客户端采集，0模型。</p>
+<p>新政策执行器独立重新检查实际源，不能靠模型提交权限、元数据或直接函数名绕过目录。元数据版本2保存有限词段与真实源绑定，副本/伪造对象不改实际门槛；引用/代码不提供运行词依据，caller事务不提交、旧目录/来源变化/取消/遗忘/发布前检查沿用原机制。新增checkpoint重入控制阻止旧政策结果跨到新源发布。状态与澄清继承基线，不能把此处的政策限定称全部读取语义已解决。</p>
+<p>001/P3是两个新事务测试夹具漏created_at，首2 failed/220 passed在触达事务门槛前NOT NULL失败。先615ba39e保留精确首代码/日志，再只补两条INSERT，ca1b251c锚定修后字节，同222控制全部通过，未修改真实schema或候选模块。002/P2编号通道误读状态仍开放，原稿/SQL与相同输入路线差异完整保留。41旧seal/7289项和9集中数据入口只读核对有效，无旧封存回写；环境/模型/缓存/运行数据仍归/data/Users/zrh/data/hhu-ai-avatar，spinner-bot小步提交/串行推送。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>项目/单项</th><th>结果</th><th>验收范围</th></tr></thead><tbody>
+<tr><td>完整当前软件</td><td>2239/1；192；18/16；type/build</td><td>455稳定输入、实际模块/协议/bundle一致</td></tr>
+<tr><td>受控通路/SDK</td><td>32脚本尝试/41 SQL；另1实际HTTP SSE</td><td>0native，不冒真实模型质量效果</td></tr>
+<tr><td>C43-001 /P3</td><td>夹具限定关闭</td><td>首2失败保留；补时间戳后222通过</td></tr>
+<tr><td>C43-002 /P2</td><td>语义开放</td><td>主候选1次错状态；同输入路线翻转原因未知</td></tr>
+<tr><td>迁移与历史</td><td>41旧seal/7289项、9入口有效</td><td>只读核对，不重新执行旧写入器</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/002-当前软件与浏览器/policy-evidence-python-final-binding.json">完整Python绑定</a></p>
+<p><a href="工作目录/002-当前软件与浏览器/policy-evidence-frontend-final-binding.json">完整前端绑定</a></p>
+<p><a href="工作目录/002-当前软件与浏览器/policy-evidence-browser-final-binding.json">完整浏览器绑定</a></p>
+<p><a href="工作目录/003-受控政策依据/controlled-summary.json">10组控制汇总</a></p>
+<p><a href="问题单/001-事务测试夹具漏写消息创建时间.md">001夹具修复单</a></p>
+<p><a href="问题单/002-有编号的通道问题仍被读取状态代答.md">002语义问题单</a></p>
+<p><a href="工作目录/001-政策问题依据调查/service-first.log">首失败原日志</a></p>
+<p><a href="收尾核验/system-evidence.json">全系统核验</a></p>
+</section>
+<section><h2>下一循环：双向约束读取目标，验证必要的模型职责</h2>
+<p>下一轮先登记单条状态与运行/通道条件的双向目标边界。有编号并不自动授权该回合请求状态；只有一个可信目标及确定参数时，还应实验比较是否需要模型再选择一次。比较有限规则直接路由与模型选择，分别记规则判定、原生调用数、实际SQL、澄清与任务质量，不能把规则收益叫模型能力提升。</p>
+<p>登记材料必须包含有编号通道、缺参状态、普通询问、非查询陈述、引用/否定/角色、含多目标的问法与模糊目标。已见C43开发误读只能作开发材料；新保护独立冻结，不改判据追求通过。默认C39显式查询继续可用，研究候选尚不进入默认产品。真正应用集成还须核来源不双写、自动claim_due前的分支、Web/SDK/取消/遗忘/并发与DOM实际结果。</p>
+<p>持续Goal active。一般动作/外发语义C19-P1、自由人声/物理麦克风ASR、中文口型/ü/声调、跨OS PAD和多日稳定仍各自开放，本轮没有对应验收数据，不宣称已解决或整体代际跃迁。先封存本轮，再在新目录自主研究与实验，保持指定作者、小步及时提交、按实际余量使用单provider GPU，无整轮墙钟截止。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>优先级</th><th>推进方向</th><th>预先要求的证据</th></tr></thead><tbody>
+<tr><td>P1当前</td><td>双向读取目标/专用查询模式</td><td>参数依据＋操作依据；含非查询/混合目标负控</td></tr>
+<tr><td>P1对照</td><td>有限规则直接路由与模型选择必要性</td><td>原生/规则回合与语义收益独立计数；新保护不调优</td></tr>
+<tr><td>P2集成</td><td>真实应用查询能力</td><td>开发/保护先过，再实际Web/SDK/隐私/取消/并发/DOM</td></tr>
+<tr><td>持续远期</td><td>听—思—演—记与设备/PAD/多日</td><td>每一结论分层实测，局部工程通过不替代整体提升</td></tr>
+</tbody></table></div>
+<p><a href="../../远期目标与验收路线.md">远期目标与验收路线</a></p>
+<p><a href="../计划.md">本轮预登记计划</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+</section>
+</main></body></html>
