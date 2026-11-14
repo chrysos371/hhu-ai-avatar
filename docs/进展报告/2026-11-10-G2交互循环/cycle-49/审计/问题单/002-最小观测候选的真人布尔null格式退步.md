@@ -7,3 +7,5 @@
 [独立核验](../工作目录/004-原生准入/4b-verification.json) / [首邮件候选原件](../../实验/4b-development-v1/repetition-1/external-send-minimal_observation/receipt.json) / [首前瞻重查原件](../../实验/4b-development-v1/repetition-1/forward-cancelled-then-completed-minimal_observation/receipt.json)。这些null不是模型声称真人已读/完成，严格field_checks全部false也不能当全部事实断言错误；不修补null后重算主分。当前实际业务/用户事实均未被模型改动。
 
 优化目标：先区分格式约束与语义事实，后续另登记结构化生成传输或完整表达约束的对照；不能把CPU脚本返回标准JSON当实模合格，也不据本轮共同字段变化推断某个删除字段唯一导致退步。两模型之间源码/题目/评分不改。
+
+- 14B独立补充：三臂54/54格式均有效，未复现4B的19条最小臂格式拒绝；最小45/54仍失败属于语义残留。故本单严格限于所测4B配置，不以模型规模推断全部问题已解决。见[14B核验](../工作目录/004-原生准入/14b-verification.json)。
