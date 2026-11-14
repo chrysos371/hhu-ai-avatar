@@ -33,6 +33,16 @@ def main():
     environment = admitted_environment()
     admission = read(ADMISSION)
     environment_source, _ = successful_source(admission["preparation_source"])
+    if admission["preparation_source"].startswith("environment-v4/"):
+        retirement_path = PREPARATION / "environment-v3/operator-retirement-v1.json"
+        retirement = read(retirement_path)
+        assert environment["prior_retirement_sha256"] == sha(retirement_path)
+        assert retirement["verified"] and retirement["parent_process_retired"] and retirement["child_process_retired"]
+        assert retirement["actual_parent_tool_exit_code"] == 1 and retirement["actual_child_returncode"] == -15
+        assert retirement["source_terminal_sha256"] == sha(PREPARATION / "environment-v3/environment-v3.json")
+    transfer_retirement = read(PREPARATION / "range-first-retirement-v1.json")
+    assert transfer_retirement["verified"] and transfer_retirement["actual_tool_exit_code"] == 143
+    assert transfer_retirement["operator_finalized_report_sha256"] == sha(PREPARATION / "range-first-shard-v1.json")
     cross_path = WORK / "005-真实分词预检/training-tokenizer-crosscheck-v1.json"
     cross = read(cross_path)
     mask_path = WORK / "005-真实分词预检/mask-preflight-v1.json"
