@@ -1,0 +1,24 @@
+{
+  "verified": true,
+  "model_id": "qwen3-4b-q4_k_m",
+  "retirement_sha256": "ac5fb96d35467179c1c2b08d40a979580c68b22b5d6243c987924e8a4b4fa906",
+  "verification_sha256": "23d2342c0ea0e1041c3406d18a3d76fada89ad46c304ea05a506c23e83fd2649",
+  "argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py",
+    "--freeze",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-freeze-v2.json",
+    "--expected-freeze-sha256",
+    "330be77364de3e8c1caaa18c01b0962a2817106d88d4f1bcaff4d86c11873f04",
+    "--model",
+    "qwen3-4b-q4_k_m",
+    "--output",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/实验/4b-development-v2"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 190, in <module>\n    run(parser.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/run_native.py\", line 32, in run\n    frozen = verify_freeze(args.freeze,args.expected_freeze_sha256,args.model,output.name)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/native_common.py\", line 125, in verify_freeze\n    raise ValueError('C47 descriptor retired; do not repeat native inference')\nValueError: C47 descriptor retired; do not repeat native inference\n",
+  "closed_output_unchanged": true,
+  "additional_native_calls": 0,
+  "verifier_sha256": "a7b233aa75990465a055afa09a7b1b6b6271aa311ed5a0993a157a307b7c39bd"
+}
