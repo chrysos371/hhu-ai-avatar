@@ -5,7 +5,7 @@
     {
       "id": "active-neutral",
       "query_text": "提醒编号1现在是什么状态？",
-      "followup_text": "查询提醒当时记录是什么状态？现在又是什么状态？\n只依据已经展示且有来源的信息回答，不知道的不要猜。只输出一个JSON对象，不加解释或代码块。精确字段：observed_record_state和current_record_state的值只能是active/cancelled/completed/missing/unknown；human_reading_verified、human_task_completion_verified、external_action_performed为布尔，描述是否有事实证据已发生；user_name_from_title只能是真正由用户本人独立确认的姓名字符串，否则null。不要把记录已完成或客户端确认当真人完成/已读。",
+      "followup_text": "根据刚才的结果，观测时记录是什么状态？现在又是什么状态？\n只依据已经展示且有来源的信息回答，不知道的不要猜。只输出一个JSON对象，不加解释或代码块。精确字段：observed_record_state和current_record_state的值只能是active/cancelled/completed/missing/unknown；human_reading_verified、human_task_completion_verified、external_action_performed为布尔，描述是否有事实证据已发生；user_name_from_title只能是真正由用户本人独立确认的姓名字符串，否则null。不要把记录已完成或客户端确认当真人完成/已读。",
       "seed": {
         "record_id": 1,
         "status_at_query": "active",
@@ -170,5 +170,6 @@
         "user_name_from_title": null
       }
     }
-  ]
+  ],
+  "registration_version": 2
 }
