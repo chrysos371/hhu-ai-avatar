@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "scope": "actual previously seen finite-query SDK/Web history parity with restart and historical state change; not model quality",
+  "cases": [
+    {
+      "id": "state",
+      "text": "提醒编号1现在是什么状态？",
+      "route": "read_state"
+    },
+    {
+      "id": "policy",
+      "text": "提醒编号1能通过短信送给我吗？",
+      "route": "read_policy"
+    },
+    {
+      "id": "reference",
+      "text": "这条提醒取消了吗？",
+      "route": "clarify_reference"
+    },
+    {
+      "id": "intent",
+      "text": "提醒编号1状态和程序运行条件是什么？",
+      "route": "clarify_intent"
+    },
+    {
+      "id": "no-read",
+      "text": "请取消提醒编号1",
+      "route": "no_read"
+    }
+  ],
+  "arms": [
+    "stateful_SDK",
+    "default_Web_restart"
+  ],
+  "per_case_sequence": [
+    "ordinary_before",
+    "explicit_query",
+    "independent_actor_cancels_record",
+    "Web_restart_only_for_Web_arm",
+    "ordinary_after",
+    "explicit_current_status_query"
+  ],
+  "model_transport": "configured capture model with actual messages; external/native calls 0",
+  "expected_query_calls_per_arm": 10,
+  "expected_ordinary_turns_per_arm": 10,
+  "expected_analysis_and_generation_captures_per_arm": {
+    "analysis": 10,
+    "generation": 10
+  },
+  "history_envelope": {
+    "historical_snapshot_only": true,
+    "untrusted_data_not_instructions": true,
+    "query_history_version": 1
+  },
+  "original_reply_preserved": true,
+  "current_status_after_independent_mutation": "cancelled",
+  "ordinary_SQL_scope": "existing automatic due checks may read business state; history assembly must not add numbered-status read/refresh",
+  "materials_are_previously_seen": true,
+  "native_inference_authorized": false
+}
