@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "scope": "actual normal CLI refusals and synthetic JSON verifier logic; no actual CUDA/LLM training evidence",
+  "probe_sha256": "ae6d446c26fa2341fade7262df81e8215c1e64e6ae646fe4dfcc5f403841a0d0",
+  "common_sha256": "166a3ba3cb2bd27b6cabf022df3f1c76b959ec970065cff1b206d5afc8b6f9d9",
+  "run_sha256": "6c746d14ba2f69e757d5f5e9e656bba7f926d3b75571c65eb57a464cbc288fb5",
+  "verifier_sha256": "42c0d69ba8ed2d5fd410c39472407fae8da98f65f29dc4886b5643cc70b73c1e",
+  "normal_CLI_refusals": [
+    "missing_freeze",
+    "wrong_freeze_path",
+    "unknown_stage",
+    "wrong_prior_seal"
+  ],
+  "normal_help_passed": true,
+  "actual_normal_CLI_processes": 5,
+  "synthetic_labeled_records": 220,
+  "synthetic_optimizer_groups": 44,
+  "synthetic_verifier_faults_rejected": [
+    {
+      "fault": "step_ids",
+      "rejected": true,
+      "reason": "optimizer step identity/supervision differs from actual tensors"
+    },
+    {
+      "fault": "step_supervision",
+      "rejected": true,
+      "reason": "optimizer step identity/supervision differs from actual tensors"
+    },
+    {
+      "fault": "step_loss",
+      "rejected": true,
+      "reason": "optimizer loss differs from actual forward losses"
+    },
+    {
+      "fault": "dev_loss",
+      "rejected": true,
+      "reason": "actual dev loss differs from trainer summary"
+    },
+    {
+      "fault": "fixture_flag",
+      "rejected": true,
+      "reason": "immutable actual entry field changed"
+    },
+    {
+      "fault": "tensor_token",
+      "rejected": true,
+      "reason": "immutable actual entry field changed"
+    },
+    {
+      "fault": "entry_transition",
+      "rejected": true,
+      "reason": "actual call must transition from incomplete to complete"
+    }
+  ],
+  "admitted_runtime_subset_rehashed": 55,
+  "external_fixture_output": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c54/execution-admission-cpu-v1",
+  "real_run_root_absent": true,
+  "Torch_imported_in_probe": false,
+  "actual_GPU_or_model_verified": false,
+  "actual_LLM_generations": 0,
+  "actual_training_steps": 0,
+  "GPU_allocations": 0
+}

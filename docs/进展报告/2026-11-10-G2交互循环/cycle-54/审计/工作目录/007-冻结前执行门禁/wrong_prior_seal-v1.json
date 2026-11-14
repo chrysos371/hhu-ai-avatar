@@ -1,0 +1,15 @@
+{
+  "name": "wrong_prior_seal",
+  "argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "-B",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-54/审计/freeze_execution.py",
+    "--c53-seal-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "actual_returncode": 1,
+  "expected_reason": "C54 explicit sealed C53 identity required",
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-54/审计/freeze_execution.py\", line 25, in <module>\n    main(parser.parse_args().c53_seal_sha256)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-54/审计/freeze_execution.py\", line 9, in main\n    require(seal==SEALS[53],'C54 explicit sealed C53 identity required')\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-54/审计/execution_common.py\", line 34, in require\n    if not condition:raise ValueError(message)\nValueError: C54 explicit sealed C53 identity required\n",
+  "normal_CLI_not_runpy_wrapper": true
+}
