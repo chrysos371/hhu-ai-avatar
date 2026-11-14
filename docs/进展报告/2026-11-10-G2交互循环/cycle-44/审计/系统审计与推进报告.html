@@ -1,0 +1,74 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C44 有源直接查询、严格类型保护与系统审计</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}</style></head><body><main><h1>C44 有源直接查询、严格类型保护与系统审计</h1><p class="meta">2026-11-14｜持续Goal active｜spinner-bot</p><p class="verdict">候选开发72/72、保护18/18、0模型；基线54/72与12/18。79native/180SQL独立核平，2290/1、192、18/16通过；2限定关闭/1实际交付开放，默认尚未接入。</p>
+<section><h2>受限专用查询管线通过开发与自动保留集</h2>
+<p>C44在专用只读提醒查询模式中增加实际源绑定的类型计划与直接路由，候选不调用模型。查询目标不再由“有编号”单独决定：运行/通道问题读政策，明确记录目标读绑定编号；缺编号请求编号，混合/不明确目标使用独立意图澄清类型；非查询、写入和外发请求固定无读。实际执行入口仍在真实源SQLite快照内重新检查目标，旧计划/伪造对象/来源变化不能授权读取。C41/C42/C43基线保留，默认产品未接入。</p>
+<p>先登记v1后49新增控制揭示时间副词误拒，原1 failed/270 passed和精确代码保留；CPU-only v1明确退役，v2在改实现前限定时间副词框架并增加两开发反例，保护不变。v2开发24题×3重复：基线54/72、候选72/72；独立开发核验全部门槛通过后另立显式true授权的保护描述符，18题基线12/18、候选18/18，独立保护核验也通过。</p>
+<p>候选共90/90严格类型结果、0模型：39可信数据答复（13次实际状态SELECT＋26政策）、17明确编号澄清、7目标澄清、26无读、1来源拒绝；63直接读取或澄清与其余控制分账。基线75正式模型选择，另14规则跳过和1来源拒绝，79实际原生调用含两阶段各2次预热。不能把规则正确叫模型正确。</p>
+<p>双臂同时改变有限查询/写入frame、双向目标、显式意图澄清与模型职责。基线没有新增意图澄清工具，严格类型成绩包含能力覆盖差异；这套共同变化的结果不证明纯模型改善或单因素“删掉模型”因果。24开发题中有16旧题和8诊断（含已见CPU反例），自动保留18题也不等于独立真人盲评、通用语义或真实设备验收。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>阶段/分支</th><th>严格类型结果</th><th>正式模型调用</th><th>规则无读/跳过</th><th>直接读取/澄清</th><th>来源拒绝</th></tr></thead><tbody>
+<tr><td>开发 C43模型基线</td><td>54/72</td><td>60</td><td>12</td><td>0</td><td>0</td></tr>
+<tr><td>开发 source_dispatch</td><td>72/72</td><td>0</td><td>21</td><td>51</td><td>0</td></tr>
+<tr><td>保护 C43模型基线</td><td>12/18</td><td>15</td><td>2</td><td>0</td><td>1</td></tr>
+<tr><td>保护 source_dispatch</td><td>18/18</td><td>0</td><td>5</td><td>12</td><td>1</td></tr>
+</tbody></table></div>
+<p><a href="../../../../../evals/interaction/cycle-44/source-read-dispatch-contract.json">先登记v2来源/目标契约</a></p>
+<p><a href="../../../../../evals/interaction/cycle-44/source-read-dispatch-trial-protocol.json">开发/保护严格类型协议</a></p>
+<p><a href="../../../../../src/avatar/lab/source_read_dispatch.py">直接路由隔离实现</a></p>
+<p><a href="../../../../../tests/test_source_read_dispatch.py">51新增控制</a></p>
+<p><a href="工作目录/004-原生基线与直接路由/development-verification.json">独立开发核验</a></p>
+<p><a href="工作目录/004-原生基线与直接路由/protected-verification.json">独立保护核验</a></p>
+</section>
+<section><h2>79实际原生调用、180SQL快照与授权链均核平</h2>
+<p>开发冻结760输入/source6c9f8abb/描述符538260e6…，保护冻结1067输入/source590e476b/描述符a2f9aa40…，与Git历史和实际字节匹配，整个执行过程未改算法、材料、评分或门槛。模型仅C43基线使用：同一Qwen3-4B-Q4_K_M、temperature0/seed42/8192上下文/256 token上限，串行、固定轮数、无额外重试。开发每轮两臂先执行位置12/12平衡；保护9/9。</p>
+<p>预写独立程序首次核验62开发＋17保护实际请求/SDK/raw与79嵌入模板重渲染、180真实内存SQLite dump重建、来源/版本/语境/目录/计划/固定渲染。两阶段均21实际项目模块、8映射冻结库、54安装库核实。实际分配和清理绑定各自PID/argv/maps/GPU UUID，提供方退出0且无残留；按启动实际余量选卡，不固定6–7或静默CPU替代。采证耗时包含加载/哈希/归档，本轮不宣称纯推理速度或延迟改善。</p>
+<p>服务规划/执行/发布路径严格限制业务读取：候选仅正确状态查询做1次状态SELECT，政策与各类澄清/无读均不额外查业务；审计器的前后业务投影另标阶段，不混成用户操作。180分支共42次状态SELECT，其中候选13、基线29；业务表与来源提交后写计数不变，无claim/ACK/创建/取消或外发。合成播种的真实内存SQLite不证明个人数据或磁盘耐久。</p>
+<p>实际CLI已验证6种分区/显式保护授权位矛盾在创建provider/输出前拒绝；开发主门槛真后，protected＋false授权位仍被拒。保护必须独立true授权并绑定开发核验SHA。开发、保护结束后都退役描述符并实际CLI拒绝重启。没有靠把注册时protected_executed_at_registration:false改成true获得权限，该字段保留其历史事实。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>实测项目</th><th>数量/结果</th><th>解释</th></tr></thead><tbody>
+<tr><td>原生基线与预热</td><td>62开发＋17保护＝79，全部stop</td><td>候选始终0模型；无追加修复</td></tr>
+<tr><td>来源/真实SQL结果</td><td>144开发＋36保护＝180 dump</td><td>真实SQLite、合成行；42状态SELECT中候选13</td></tr>
+<tr><td>二进制/模块</td><td>每阶段21模块/8映射库/54安装库</td><td>模型文件/配置/GPU进程身份绑定</td></tr>
+<tr><td>权限与旧执行拒绝</td><td>6预准入矛盾负控＋开发通过后false保护拒绝</td><td>双阶段独立描述符；退役CLI验证通过</td></tr>
+<tr><td>通过范围</td><td>有限专用模式90/90；默认未接入</td><td>不称通用语义/真人或整体代际跃迁</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/004-原生基线与直接路由/development-freeze-v2.json">开发760输入冻结</a></p>
+<p><a href="工作目录/004-原生基线与直接路由/protected-freeze-v2.json">保护1067输入冻结</a></p>
+<p><a href="../实验/development-v2/provider-trace.jsonl">开发原生完整trace</a></p>
+<p><a href="../实验/protected-v2/provider-trace.jsonl">保护原生完整trace</a></p>
+<p><a href="工作目录/005-系统复核/dispatch-accounting.json">阶段/类型/基线错误明细</a></p>
+<p><a href="工作目录/004-原生基线与直接路由/preflight-stage-controls.json">实际CLI授权位负控</a></p>
+</section>
+<section><h2>失败完整保留，软件与交付缺口分开审计</h2>
+<p>v2修后51新增控制＋旧222共273通过；完整当前Python2290 passed/1 skipped（132.15秒测试）、37文件/192前端、type/build、默认Chromium18通过/16可选跳过，各460输入与启动Git及结束字节一致。浏览器实际9模块/C36隐私与C39查询两协议/5bundle核平，5维护应用结果另存原件。候选独立API拒绝错误目标、合法编号不能绕过目标约束、caller事务不提交、来源重入/取消/遗忘/旧计划/伪造视图均有控制。</p>
+<p>当前13组脚本控制25接口尝试/60实际SQLite分支与60重建/11状态SELECT，无HTTP/SDK模型生成。首控制器误期望旧基线分数15，实际C43基线19，先保留paired-first48原件，后补只读重建48；原程序中止前没保存最终head/model_records，诊断明确说明由工具执行时序及Git406c09d1字节重建来源，20 model_used行另计。只改断言后新paired通过，未改采样/评分/候选。</p>
+<p>001/P2是v1规则设计误拒“提醒编号1现在取消了吗？”；退役v1、预登记v2、仅修时间副词框架并加两控制，CPU限定关闭。002/P3是上述控制器断言错误，限定关闭。003/P2实际交付仍开放：真实未配置SDK两条自然问法未返回reminder_query可信元数据，现有严格显式解析器不匹配；仅这两句/该配置的探测，不对所有模型/Web设置作结论。隔离通过不等于实际用户已经能使用新模式。</p>
+<p>42旧seal/7661项与9集中数据入口只读核对有效，旧封存不回写。环境/模型/缓存/运行数据继续集中/data/Users/zrh/data/hhu-ai-avatar，代码repo/hhu-ai-avatar。每组结束控制/原生重复及时分步提交与串行推送，作者spinner-bot；所有原失败、版本退役、实际源和判断依据留痕。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>项目/问题</th><th>状态</th><th>证据与范围</th></tr></thead><tbody>
+<tr><td>完整当前软件</td><td>2290/1；192；18/16；type/build</td><td>460稳定输入；可选浏览器16项未跑</td></tr>
+<tr><td>C44-001 时间副词状态误拒</td><td>CPU限定关闭</td><td>首1失败/270通过保留；v2登记后273通过</td></tr>
+<tr><td>C44-002 控制器基线断言</td><td>审计器限定关闭</td><td>首48原件/20使用行与新60控制分账</td></tr>
+<tr><td>C44-003 默认产品交付</td><td>开放/P2</td><td>实际SDK两自然问法无可信查询元数据</td></tr>
+<tr><td>历史与数据布局</td><td>42旧seal/7661项、9入口有效</td><td>只读核对；0旧资料回写</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/002-当前软件与浏览器/dispatch-v2-python-final-binding.json">完整Python绑定</a></p>
+<p><a href="工作目录/002-当前软件与浏览器/dispatch-v2-browser-final-binding.json">完整默认浏览器绑定</a></p>
+<p><a href="工作目录/003-受控直接路由/controlled-summary.json">13当前组与额外首失败汇总</a></p>
+<p><a href="问题单/001-写入框架误拒带时间副词的状态询问.md">001规则误拒与修复</a></p>
+<p><a href="问题单/002-脚本对照预期分数误用旧基线.md">002控制器断言修复</a></p>
+<p><a href="问题单/003-通过实验的查询模式尚未接入实际SDK与Web.md">003交付缺口</a></p>
+<p><a href="工作目录/005-系统复核/default-integration-gap.json">实际未配置SDK探测</a></p>
+<p><a href="收尾核验/system-evidence.json">系统交叉核验</a></p>
+</section>
+<section><h2>下一循环：交付真实SDK与Web查询链路</h2>
+<p>下一轮围绕003进入实际应用接入，先登记API/界面专用只读模式与可复现实验：用户源只录入一次，绑定实际session/revision/本人语境，在自动claim_due之前分支；实际状态/运行政策/两类澄清/无读须通过SDK、HTTP/流式元数据和DOM到达用户，不能只再做一批lab微型通过。</p>
+<p>集成须覆盖取消、遗忘、源变化、caller事务、重试/并发和SDK情绪epoch清理；明确本轮零模型与后续对话上下文的数据范围，用实际探测决定数据/标题如何进入持久记忆或模型，不猜测效果。普通聊天、写作、原显式查询/列表/创建流程的行为分别验证，有限模式不冒一般意图证明。</p>
+<p>持续Goal active，封存后进入新周期。一般动作/外发语义C19-P1、自由人声/物理麦克风ASR、中文口型/ü/声调、跨OS PAD、多日稳定仍各自开放；本轮无相应验收，不将这个受限查询里程碑宣布成整体代际跃迁。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>优先级</th><th>下一步</th><th>完成证据</th></tr></thead><tbody>
+<tr><td>P1交付</td><td>真实SDK/HTTP/Web专用查询模式</td><td>实际用户源不双写、自动认领前分支、可信元数据与DOM一致</td></tr>
+<tr><td>P1边界</td><td>取消/遗忘/并发/事务/epoch</td><td>真实路径红测与复测，源变化不发布旧结果</td></tr>
+<tr><td>P2对话与记忆</td><td>定义查询数据/标题后续上下文</td><td>实际数据流与回归，独立说明0模型范围</td></tr>
+<tr><td>持续远期</td><td>听—思—演—记及设备/多日</td><td>分层实测和系统审计，达到完整目标前保持Goal active</td></tr>
+</tbody></table></div>
+<p><a href="../../远期目标与验收路线.md">远期目标与验收路线</a></p>
+<p><a href="../计划.md">本轮计划与比较边界</a></p>
+<p><a href="../进展.md">全过程进展</a></p>
+</section>
+</main></body></html>
