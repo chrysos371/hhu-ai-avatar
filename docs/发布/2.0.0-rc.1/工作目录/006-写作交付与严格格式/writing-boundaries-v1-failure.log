@@ -1,0 +1,36 @@
+...........F...                                                          [100%]
+=================================== FAILURES ===================================
+____ test_corrupt_requirement_metadata_never_restores_values[cursor-broken] ____
+
+column = 'cursor', value = 'broken'
+
+    @pytest.mark.parametrize('column,value', [('cursor', 'broken'), ('source_ids', '{}'),
+        ('source_ids', '[true]'), ('format_version', 77)])
+    def test_corrupt_requirement_metadata_never_restores_values(column, value):
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('正文。'), capability_contract_enabled=True)
+            bot.respond('帮我写一封邮件，署名用【甲】。')
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_writing_requirements SET ' + column + '=?', (value,))
+>           result = bot.respond('再短一点。')
+
+tests/test_writing_requirement_boundaries.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avatar/main.py:648: in respond
+    self.writing_requirement_store.observe(self._response_frame)
+src/avatar/brain/writing_requirements.py:107: in observe
+    prior = self._ids(previous[6], frame.root_id, previous[3])
+src/avatar/brain/writing_requirements.py:90: in _ids
+    or any(type(i) is not int or not 0 < i <= cursor for i in ids)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f91f72628f0>
+
+>   or any(type(i) is not int or not 0 < i <= cursor for i in ids)
+    or ids != sorted(set(ids)) or ids[0] != root):
+E   TypeError: '<=' not supported between instances of 'int' and 'str'
+
+src/avatar/brain/writing_requirements.py:90: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_writing_requirement_boundaries.py::test_corrupt_requirement_metadata_never_restores_values[cursor-broken]
+1 failed, 14 passed in 1.14s
