@@ -1,0 +1,209 @@
+FFFFFF......F.                                                           [100%]
+=================================== FAILURES ===================================
+_ test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-370 + 590 = 960-960] _
+
+question = '更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。', raw = '370 + 590 = 960'
+expected = '960'
+
+    @pytest.mark.parametrize('question,raw,expected', [
+        (BUDGET, '370 + 590 = 960', '960'),
+        (BUDGET, '590 + 370 = 960。', '960'),
+        (BUDGET, '960。', '960'),
+        ('12.50加2.25是多少？请只输出数值。', '12.50 + 2.25 = 14.75', '14.75'),
+        (BUDGET, '无法确认。', '无法确认'),
+        ('负10加3是多少？只回答数字。', '-10 + 3 = -7', '-7'),
+    ])
+    def test_source_requested_number_format_keeps_value_and_all_delivery_layers(question, raw, expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            if question == BUDGET and raw != '无法确认。':
+                bot.respond('排版预算上限为370元，场地预算上限为640元。请只确认。')
+                bot.respond('更正：场地预算上限改为590元，排版不变。请只确认。')
+            pieces = []
+            result = bot.respond(question, on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == expected
+E           AssertionError: assert '370 + 590 = 960' == '960'
+E             
+E             - 960
+E             + 370 + 590 = 960
+
+tests/test_number_reply_contract.py:31: AssertionError
+_ test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-590 + 370 = 960\u3002-960] _
+
+question = '更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。', raw = '590 + 370 = 960。'
+expected = '960'
+
+    @pytest.mark.parametrize('question,raw,expected', [
+        (BUDGET, '370 + 590 = 960', '960'),
+        (BUDGET, '590 + 370 = 960。', '960'),
+        (BUDGET, '960。', '960'),
+        ('12.50加2.25是多少？请只输出数值。', '12.50 + 2.25 = 14.75', '14.75'),
+        (BUDGET, '无法确认。', '无法确认'),
+        ('负10加3是多少？只回答数字。', '-10 + 3 = -7', '-7'),
+    ])
+    def test_source_requested_number_format_keeps_value_and_all_delivery_layers(question, raw, expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            if question == BUDGET and raw != '无法确认。':
+                bot.respond('排版预算上限为370元，场地预算上限为640元。请只确认。')
+                bot.respond('更正：场地预算上限改为590元，排版不变。请只确认。')
+            pieces = []
+            result = bot.respond(question, on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == expected
+E           AssertionError: assert '590 + 370 = 960。' == '960'
+E             
+E             - 960
+E             + 590 + 370 = 960。
+
+tests/test_number_reply_contract.py:31: AssertionError
+_ test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-960\u3002-960] _
+
+question = '更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。', raw = '960。', expected = '960'
+
+    @pytest.mark.parametrize('question,raw,expected', [
+        (BUDGET, '370 + 590 = 960', '960'),
+        (BUDGET, '590 + 370 = 960。', '960'),
+        (BUDGET, '960。', '960'),
+        ('12.50加2.25是多少？请只输出数值。', '12.50 + 2.25 = 14.75', '14.75'),
+        (BUDGET, '无法确认。', '无法确认'),
+        ('负10加3是多少？只回答数字。', '-10 + 3 = -7', '-7'),
+    ])
+    def test_source_requested_number_format_keeps_value_and_all_delivery_layers(question, raw, expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            if question == BUDGET and raw != '无法确认。':
+                bot.respond('排版预算上限为370元，场地预算上限为640元。请只确认。')
+                bot.respond('更正：场地预算上限改为590元，排版不变。请只确认。')
+            pieces = []
+            result = bot.respond(question, on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == expected
+E           AssertionError: assert '960。' == '960'
+E             
+E             - 960
+E             + 960。
+E             ?    +
+
+tests/test_number_reply_contract.py:31: AssertionError
+_ test_source_requested_number_format_keeps_value_and_all_delivery_layers[12.50\u52a02.25\u662f\u591a\u5c11\uff1f\u8bf7\u53ea\u8f93\u51fa\u6570\u503c\u3002-12.50 + 2.25 = 14.75-14.75] _
+
+question = '12.50加2.25是多少？请只输出数值。', raw = '12.50 + 2.25 = 14.75'
+expected = '14.75'
+
+    @pytest.mark.parametrize('question,raw,expected', [
+        (BUDGET, '370 + 590 = 960', '960'),
+        (BUDGET, '590 + 370 = 960。', '960'),
+        (BUDGET, '960。', '960'),
+        ('12.50加2.25是多少？请只输出数值。', '12.50 + 2.25 = 14.75', '14.75'),
+        (BUDGET, '无法确认。', '无法确认'),
+        ('负10加3是多少？只回答数字。', '-10 + 3 = -7', '-7'),
+    ])
+    def test_source_requested_number_format_keeps_value_and_all_delivery_layers(question, raw, expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            if question == BUDGET and raw != '无法确认。':
+                bot.respond('排版预算上限为370元，场地预算上限为640元。请只确认。')
+                bot.respond('更正：场地预算上限改为590元，排版不变。请只确认。')
+            pieces = []
+            result = bot.respond(question, on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == expected
+E           AssertionError: assert '12.50 + 2.25 = 14.75' == '14.75'
+E             
+E             - 14.75
+E             + 12.50 + 2.25 = 14.75
+
+tests/test_number_reply_contract.py:31: AssertionError
+_ test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-\u65e0\u6cd5\u786e\u8ba4\u3002-\u65e0\u6cd5\u786e\u8ba4] _
+
+question = '更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。', raw = '无法确认。'
+expected = '无法确认'
+
+    @pytest.mark.parametrize('question,raw,expected', [
+        (BUDGET, '370 + 590 = 960', '960'),
+        (BUDGET, '590 + 370 = 960。', '960'),
+        (BUDGET, '960。', '960'),
+        ('12.50加2.25是多少？请只输出数值。', '12.50 + 2.25 = 14.75', '14.75'),
+        (BUDGET, '无法确认。', '无法确认'),
+        ('负10加3是多少？只回答数字。', '-10 + 3 = -7', '-7'),
+    ])
+    def test_source_requested_number_format_keeps_value_and_all_delivery_layers(question, raw, expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            if question == BUDGET and raw != '无法确认。':
+                bot.respond('排版预算上限为370元，场地预算上限为640元。请只确认。')
+                bot.respond('更正：场地预算上限改为590元，排版不变。请只确认。')
+            pieces = []
+            result = bot.respond(question, on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == expected
+E           AssertionError: assert '无法确认。' == '无法确认'
+E             
+E             - 无法确认
+E             + 无法确认。
+E             ?     +
+
+tests/test_number_reply_contract.py:31: AssertionError
+_ test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u8d1f10\u52a03\u662f\u591a\u5c11\uff1f\u53ea\u56de\u7b54\u6570\u5b57\u3002--10 + 3 = -7--7] _
+
+question = '负10加3是多少？只回答数字。', raw = '-10 + 3 = -7', expected = '-7'
+
+    @pytest.mark.parametrize('question,raw,expected', [
+        (BUDGET, '370 + 590 = 960', '960'),
+        (BUDGET, '590 + 370 = 960。', '960'),
+        (BUDGET, '960。', '960'),
+        ('12.50加2.25是多少？请只输出数值。', '12.50 + 2.25 = 14.75', '14.75'),
+        (BUDGET, '无法确认。', '无法确认'),
+        ('负10加3是多少？只回答数字。', '-10 + 3 = -7', '-7'),
+    ])
+    def test_source_requested_number_format_keeps_value_and_all_delivery_layers(question, raw, expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            if question == BUDGET and raw != '无法确认。':
+                bot.respond('排版预算上限为370元，场地预算上限为640元。请只确认。')
+                bot.respond('更正：场地预算上限改为590元，排版不变。请只确认。')
+            pieces = []
+            result = bot.respond(question, on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == expected
+E           AssertionError: assert '-10 + 3 = -7' == '-7'
+E             
+E             - -7
+E             + -10 + 3 = -7
+
+tests/test_number_reply_contract.py:31: AssertionError
+____ test_number_contract_buffers_raw_expression_until_verified_final_value ____
+
+    def test_number_contract_buffers_raw_expression_until_verified_final_value():
+        class Parts(Recorder):
+            finished = False
+            def stream_chat(self, messages, *, on_delta=None, **kwargs):
+                self.native.append(messages)
+                for part in ['370 + ', '590 = ', '960。']:
+                    on_delta(part)
+                self.finished = True
+                return '370 + 590 = 960。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Parts('unused')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            observed = []
+            result = bot.respond(BUDGET, cancel=CancellationToken(),
+                on_delta=lambda text: observed.append((engine.finished, text)))
+>           assert observed == [(True, '960')]
+E           AssertionError: assert [(False, '370 + 590 = 960。')] == [(True, '960')]
+E             
+E             At index 0 diff: (False, '370 + 590 = 960。') != (True, '960')
+E             Use -v to get more diff
+
+tests/test_number_reply_contract.py:71: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_number_reply_contract.py::test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-370 + 590 = 960-960]
+FAILED tests/test_number_reply_contract.py::test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-590 + 370 = 960\u3002-960]
+FAILED tests/test_number_reply_contract.py::test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-960\u3002-960]
+FAILED tests/test_number_reply_contract.py::test_source_requested_number_format_keeps_value_and_all_delivery_layers[12.50\u52a02.25\u662f\u591a\u5c11\uff1f\u8bf7\u53ea\u8f93\u51fa\u6570\u503c\u3002-12.50 + 2.25 = 14.75-14.75]
+FAILED tests/test_number_reply_contract.py::test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u66f4\u6b63\u540e\u4e24\u9879\u9884\u7b97\u4e0a\u9650\u5408\u8ba1\u662f\u591a\u5c11\u5143\uff1f\u53ea\u56de\u7b54\u6570\u5b57\uff1b\u6ca1\u6709\u8d44\u6599\u5219\u56de\u7b54\u65e0\u6cd5\u786e\u8ba4\u3002-\u65e0\u6cd5\u786e\u8ba4\u3002-\u65e0\u6cd5\u786e\u8ba4]
+FAILED tests/test_number_reply_contract.py::test_source_requested_number_format_keeps_value_and_all_delivery_layers[\u8d1f10\u52a03\u662f\u591a\u5c11\uff1f\u53ea\u56de\u7b54\u6570\u5b57\u3002--10 + 3 = -7--7]
+FAILED tests/test_number_reply_contract.py::test_number_contract_buffers_raw_expression_until_verified_final_value
+7 failed, 7 passed in 0.88s
