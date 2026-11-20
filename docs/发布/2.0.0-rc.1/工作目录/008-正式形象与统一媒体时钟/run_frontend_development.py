@@ -3,10 +3,7 @@ import argparse
 from hashlib import sha256
 import io
 import json
-import os
 from pathlib import Path
-import re
-import shutil
 import subprocess
 import tarfile
 import time
@@ -45,13 +42,13 @@ def main():
     path.write_text(json.dumps(proof,ensure_ascii=False,indent=2)+'\n')
     started=time.monotonic()
     try:
-        steps=[('typecheck',['exec','--','tsc','--noEmit']),('lint',['run','lint']),
+        steps=[('typecheck',['exec','--','tsc','--noEmit','--project',str(ROOT/'frontend/tsconfig.json')]),('lint',['run','lint']),
             ('unit',['run','test','--','--run']),('build',['run','build','--','--outDir',str(raw/'ui')])]
         for name,options in steps:
             tick=time.monotonic();argv=[str(ROOT/'scripts/frontend.sh'),*options]
             with (raw/(name+'.log')).open('x') as output:
-                result=subprocess.run(argv,cwd=ROOT,stdout=output,stderr=subprocess.STDOUT)
-            proof['steps'].append(dict(name=name,argv=argv,actual_returncode=result.returncode,
+                result=subprocess.run(argv,cwd=ROOT/'frontend',stdout=output,stderr=subprocess.STDOUT)
+            proof['steps'].append(dict(name=name,argv=argv,cwd=str(ROOT/'frontend'),actual_returncode=result.returncode,
                 seconds=time.monotonic()-tick,log_sha256=digest(raw/(name+'.log'))))
             assert result.returncode==0,name+' failed; original retained'
             print(name,'actual exit',result.returncode,flush=True)
