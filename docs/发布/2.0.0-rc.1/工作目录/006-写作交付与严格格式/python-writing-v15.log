@@ -1,0 +1,92 @@
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........FF.............................................................. [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+s....................................................................... [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+...............                                                          [100%]
+=================================== FAILURES ===================================
+_____________ test_fixture_binds_own_worktree_before_imports[src] ______________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-164/test_fixture_binds_own_worktre0')
+inherited = 'src'
+
+    @pytest.mark.parametrize('inherited', ['src', '/definitely-not-this-project'])
+    def test_fixture_binds_own_worktree_before_imports(tmp_path,inherited):
+        env=dict(os.environ);env['PYTHONPATH']=inherited
+        output=tmp_path/'binding.json';env['AVATAR_E2E_RUNTIME_EVIDENCE']=str(output)
+        result=subprocess.run([sys.executable,str(ROOT/'tests/helpers/serve_admin_e2e.py'),'--check-project-runtime'],
+                              cwd=ROOT/'frontend',env=env,capture_output=True,text=True,check=True,timeout=15)
+        data=json.loads(result.stdout)
+        assert data==json.loads(output.read_text())
+>       assert data['project_root']==str(ROOT) and data['frontend_dir']==str(ROOT/'frontend/dist')
+E       AssertionError: assert ('/data/Users/...hhu-ai-avatar' == '/data/Users/...hhu-ai-avatar'
+E         
+E           /data/Users/zrh/repo/hhu-ai-avatar and '/data/Users/...pment-dist-v2' == '/data/Users/...frontend/dist'
+E         
+E         - /data/Users/zrh/repo/hhu-ai-avatar/frontend/dist
+E         + /data/Users/zrh/data/hhu-ai-avatar/frontend/renderer-development-dist-v2)
+
+tests/test_e2e_runtime_binding.py:22: AssertionError
+_ test_fixture_binds_own_worktree_before_imports[/definitely-not-this-project] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-164/test_fixture_binds_own_worktre1')
+inherited = '/definitely-not-this-project'
+
+    @pytest.mark.parametrize('inherited', ['src', '/definitely-not-this-project'])
+    def test_fixture_binds_own_worktree_before_imports(tmp_path,inherited):
+        env=dict(os.environ);env['PYTHONPATH']=inherited
+        output=tmp_path/'binding.json';env['AVATAR_E2E_RUNTIME_EVIDENCE']=str(output)
+        result=subprocess.run([sys.executable,str(ROOT/'tests/helpers/serve_admin_e2e.py'),'--check-project-runtime'],
+                              cwd=ROOT/'frontend',env=env,capture_output=True,text=True,check=True,timeout=15)
+        data=json.loads(result.stdout)
+        assert data==json.loads(output.read_text())
+>       assert data['project_root']==str(ROOT) and data['frontend_dir']==str(ROOT/'frontend/dist')
+E       AssertionError: assert ('/data/Users/...hhu-ai-avatar' == '/data/Users/...hhu-ai-avatar'
+E         
+E           /data/Users/zrh/repo/hhu-ai-avatar and '/data/Users/...pment-dist-v2' == '/data/Users/...frontend/dist'
+E         
+E         - /data/Users/zrh/repo/hhu-ai-avatar/frontend/dist
+E         + /data/Users/zrh/data/hhu-ai-avatar/frontend/renderer-development-dist-v2)
+
+tests/test_e2e_runtime_binding.py:22: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_e2e_runtime_binding.py::test_fixture_binds_own_worktree_before_imports[src]
+FAILED tests/test_e2e_runtime_binding.py::test_fixture_binds_own_worktree_before_imports[/definitely-not-this-project]
+2 failed, 3036 passed, 1 skipped in 198.80s (0:03:18)
