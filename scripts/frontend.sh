@@ -15,7 +15,8 @@ if [[ "${1:-}" == "run" && "${2:-}" == "e2e" ]]; then
   if [[ -d "$browser_libs/extracted/usr/lib/x86_64-linux-gnu" ]]; then export LD_LIBRARY_PATH="$browser_libs/extracted/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"; fi
   if [[ -f "$browser_libs/fontconfig.xml" ]]; then export FONTCONFIG_FILE="$browser_libs/fontconfig.xml"; fi
 fi
-local_npm="$asset_root/runtime/npm10/package/bin/npm-cli.js"
+local_npm="$asset_root/runtime/node-v22.14.0-linux-x64/lib/node_modules/npm/bin/npm-cli.js"
+if [[ ! -f "$local_npm" ]]; then local_npm="$asset_root/runtime/npm10/package/bin/npm-cli.js"; fi
 if [[ "${1:-}" == "install" || "${1:-}" == "ci" ]]; then
   if [[ -f "$asset_root/runtime/npm-registry-ipv4.cjs" ]]; then export NODE_OPTIONS="${NODE_OPTIONS:-} --require=$asset_root/runtime/npm-registry-ipv4.cjs"; fi
 fi

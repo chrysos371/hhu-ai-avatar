@@ -9,8 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 from avatar.paths import project_data_root
 
-LINKS = {'data': 'artifacts', 'models': 'models', 'frontend/node_modules': 'frontend/node_modules',
-    'frontend/dist': 'frontend/dist', 'frontend/test-results': 'frontend/test-results',
+LINKS = {'data': 'artifacts', 'models': 'models',
+    'frontend/node_modules': 'frontend/release-renderer-dev-v1/node_modules',
+    'frontend/dist': 'frontend/renderer-development-dist-v1', 'frontend/test-results': 'frontend/test-results',
     '.pytest_cache': 'cache/pytest', '.test-tmp': 'tmp/tests',
     '.runtime': 'tmp/legacy-checkout-runtime',
     'src/hhu_ai_avatar.egg-info': 'cache/build-metadata/hhu_ai_avatar.egg-info'}

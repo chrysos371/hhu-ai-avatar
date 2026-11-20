@@ -8,7 +8,7 @@ const assets = process.env.HHU_AVATAR_DATA_ROOT
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   // AudioWorklet modules must remain same-origin files under our strict CSP.
-  build: { assetsInlineLimit: 0, outDir: resolve(assets, "frontend/dist"), emptyOutDir: true },
+  build: { assetsInlineLimit: 0, outDir: resolve(assets, "frontend/renderer-development-dist-v1"), emptyOutDir: true },
   server: {
     host: "127.0.0.1",
     port: 5173,
