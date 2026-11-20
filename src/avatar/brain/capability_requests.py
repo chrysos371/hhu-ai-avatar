@@ -42,6 +42,8 @@ def explicit_unavailable_request(text, *, fictional=False):
     if not isinstance(text, str) or fictional:
         return None
     clean = _mask_quoted(text).strip()
+    if re.match(r'^(?:请)?提醒我', clean):
+        return None  # A reminder title may mention an external action by the user.
     if (not clean or _WRITING.search(clean) or _NEGATED.search(clean)
             or _HOW_TO.search(clean) or not _ACTOR.match(clean) or not _SEND.search(clean)):
         return None
