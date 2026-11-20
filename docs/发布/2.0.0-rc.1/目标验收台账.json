@@ -1,0 +1,89 @@
+{
+  "source": "既有远期目标与验收路线的六层及跨层判据，加用户本次发布指令；不新增远期目标",
+  "release_version_candidate": "2.0.0-rc.1",
+  "formal_release_allowed": false,
+  "goals": [
+    {
+      "id": "G01",
+      "name": "记忆与实际操作",
+      "existing_acceptance": "来源/归属/版本/删除取消及真实副作用去重",
+      "status": "needs_verification",
+      "evidence": []
+    },
+    {
+      "id": "G02",
+      "name": "交互时钟",
+      "existing_acceptance": "暂停/跳转/速率/分段/取消与实际媒体显示一致",
+      "status": "needs_verification",
+      "evidence": []
+    },
+    {
+      "id": "G03",
+      "name": "语音与形象",
+      "existing_acceptance": "中文识别/音素口型/正式形象统一时间协议及真人ü/声调",
+      "status": "needs_verification",
+      "evidence": [],
+      "authorized_deferred_subgoals": [
+        "真人音素/ü/声调和物理口型校准"
+      ],
+      "required_temporary_evidence": [
+        "已注明来源的自动ASR/信号口型/形象时间协议验证"
+      ]
+    },
+    {
+      "id": "G04",
+      "name": "生成与交付",
+      "existing_acceptance": "未见场景、逐轮来源、自然度与任务充分性/独立判断",
+      "status": "needs_verification",
+      "evidence": [],
+      "authorized_deferred_subgoals": [
+        "独立真人质量判断"
+      ],
+      "required_temporary_evidence": [
+        "明示非人工的来源/边界/交付和自然度评审，不冒称盲真人"
+      ]
+    },
+    {
+      "id": "G05",
+      "name": "稳定使用",
+      "existing_acceptance": "固定事件/故障重启资源/真实观察时长与多日闭环",
+      "status": "needs_verification",
+      "evidence": [],
+      "authorized_deferred_subgoals": [
+        "真实多日持续观察"
+      ],
+      "required_temporary_evidence": [
+        "固定事件轮数/实际短程时长/故障重启资源验收"
+      ]
+    },
+    {
+      "id": "G06",
+      "name": "真实设备体验",
+      "existing_acceptance": "目标设备麦克风、播放、视觉听感与独立真人记录",
+      "status": "deferred_by_user",
+      "evidence": [],
+      "authorized_deferred_subgoals": [
+        "物理麦克风/播放视觉听感与独立真人记录"
+      ],
+      "required_temporary_evidence": [
+        "受控浏览器和已注明来源音频；不标物理通过"
+      ]
+    },
+    {
+      "id": "G07",
+      "name": "已有代际提升判据",
+      "existing_acceptance": "跨层质量/可靠性/速度可复现改进，关键不变量无退步",
+      "status": "needs_verification",
+      "evidence": []
+    },
+    {
+      "id": "R01",
+      "name": "用户本次发布交付",
+      "existing_acceptance": "完整版本/说明/启动/版本基础设施/归档不删除/全部门控后发布暂停",
+      "status": "needs_verification",
+      "evidence": []
+    }
+  ],
+  "authorized_deferrals": "用户延期验收授权.json",
+  "next_start_tasks": "下次启动待办.md"
+}
