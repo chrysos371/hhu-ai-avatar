@@ -17,6 +17,8 @@ import sys
 import tarfile
 import zipfile
 
+from release_frontend import build_frontend
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
 from avatar import __version__
@@ -95,10 +97,12 @@ def build(output):
         unpack(raw, staging)
         env = dict(os.environ, SOURCE_DATE_EPOCH=subprocess.check_output(
             ['git', 'show', '-s', '--format=%ct', ref], cwd=ROOT, text=True).strip())
-        with (output/'frontend-build.log').open('x') as log:
-            subprocess.run([str(ROOT/'scripts/frontend.sh'), 'run', 'build', '--',
-                '--outDir', str(output/'frontend')], cwd=ROOT, env=env,
-                stdout=log, stderr=subprocess.STDOUT, check=True)
+        frontend = build_frontend(staging/'frontend', output, data, env)
+        state['frontend_build'] = dict(tool_versions=frontend['tool_versions'],
+            installed_file_count=frontend['installed_file_count'],
+            installed_manifest_sha256=frontend['installed_manifest_sha256'],
+            provenance_sha256=sha(output/'frontend-provenance.json'),
+            toolchain_sha256=frontend['toolchain_sha256'])
         if not check_frontend(output/'frontend')['available']:
             raise ValueError('Frontend build is incomplete')
         ui = {str(p.relative_to(output/'frontend')): sha(p)
@@ -107,7 +111,8 @@ def build(output):
             raise ValueError('Do not bundle external asset symlinks')
         shutil.copytree(output/'frontend', staging/'src/avatar/static')
         write(staging/'src/avatar/release-build.json', dict(source_ref=ref,
-            source_sha256=before, ui_sha256=ui, artifact_status=state['artifact_status']))
+            source_sha256=before, ui_sha256=ui, frontend_build=state['frontend_build'],
+            artifact_status=state['artifact_status']))
         with (output/'python-build.log').open('x') as log:
             subprocess.run([sys.executable, '-B', '-m', 'build', '--no-isolation',
                 '--sdist', '--wheel', '--outdir', str(output/'dist')], cwd=staging,
