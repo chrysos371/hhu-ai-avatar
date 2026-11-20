@@ -623,6 +623,7 @@ class Avatar:
         if self._task_context_revision != turn_context_revision:
             self.tasks.current = None
             self._task_context_revision = turn_context_revision
+        history_reader = None
         def checkpoint_context():
             self._checkpoint()
             revision = self.memory.context_revision
@@ -633,6 +634,8 @@ class Avatar:
                 raise Cancelled('context changed before response continuation')
             if self._writing_requirements is not None:
                 self.writing_requirement_store.ensure_current(self._writing_requirements, self._response_frame)
+            if history_reader is not None:
+                history_reader.ensure_current()
         def emit_checked(piece):
             checkpoint_context()
             if on_delta:
@@ -691,6 +694,7 @@ class Avatar:
                           if boundary.reply is None and control is None else None)
         query_reply = None
         query_reader = None
+        history_reply = None
         reported_sender_reply = None
         if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
@@ -723,6 +727,16 @@ class Avatar:
                 # The read snapshot has released. An external privacy writer may
                 # now be visible; never publish a result from the old source epoch.
                 checkpoint_context()
+            if (self.capability_contract_enabled and boundary.reply is None and control is None
+                    and reminder_query is None and capability_request is None and reported_sender_reply is None
+                    and not use_web and self.speaker_scope.scope == 'current_user'
+                    and self.speaker_scope.allows_actions and not self.boundaries.fiction):
+                from .brain.reminder_history import HistoryReader, request_kind
+                if request_kind(user_text) is not None:
+                    history_reader = HistoryReader(self.memory, text=user_text,
+                        user_id=self._current_message_id, session_id=self.session_id, revision=turn_context_revision)
+                    history_reply = history_reader.result
+                    checkpoint_context()
             if boundary.reply is not None:
                 self.emotion.update(user_text)
             elif control is not None:
@@ -783,13 +797,13 @@ class Avatar:
             except ValueError as exc:
                 reminder_error = str(exc)
                 cancelled_reminder_id = None
-        self._turn_facts = ([] if control is not None or reminder_query is not None
+        self._turn_facts = ([] if control is not None or reminder_query is not None or history_reply is not None
                             or capability_request is not None or reported_sender_reply is not None
                             else self.memory.recall(query=user_text, limit=5))
         self._knowledge_context=[];self._knowledge_degraded=False
         knowledge_store=self._admin_store()
         if (knowledge_store and boundary.reply is None and control is None and reminder_query is None
-                and capability_request is None and reported_sender_reply is None):
+                and capability_request is None and reported_sender_reply is None and history_reply is None):
             try:
                 from .brain.knowledge import KnowledgeService
                 self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
@@ -797,7 +811,7 @@ class Avatar:
                 self._knowledge_degraded=True
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
         if (self.summary_enabled and control is None and reminder_query is None
-                and capability_request is None and reported_sender_reply is None):
+                and capability_request is None and reported_sender_reply is None and history_reply is None):
             self.summaries.refresh(self.session_id)
         writing_delivery_active = bool(self._writing_requirements is not None
             and self._writing_requirements.source_verified and boundary.reply is None
@@ -817,7 +831,7 @@ class Avatar:
                                if boundary.reply is None and control is None and reminder_query is None
                                and capability_request is None and reported_sender_reply is None
                                and self.speaker_scope.allows_actions and not writing_delivery_active
-                               and not writing_source_unverified else [])
+                               and not writing_source_unverified and history_reply is None else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
@@ -844,6 +858,8 @@ class Avatar:
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
         if reported_sender_reply is not None:
             response_source_ids.update(reported_sender_reply.source_message_ids)
+        if history_reply is not None:
+            response_source_ids.update(history_reply.source_message_ids)
         if self._response_frame is not None and self._response_frame.frame == 'writing':
             response_source_ids.add(self._response_frame.root_id)
         if self._writing_requirements is not None:
@@ -927,6 +943,9 @@ class Avatar:
         elif capability_request is not None:
             reply = capability_request.reply()
             generation_mode = 'rules_capability_request'
+        elif history_reply is not None:
+            reply = history_reply.reply
+            generation_mode = 'rules_reminder_history'
         elif use_web:
             from .tools.web_agent import WebAgent
             if self.web_agent is None:
@@ -1175,6 +1194,9 @@ class Avatar:
                 raise Cancelled('context changed before reply commit')
             checkpoint_context()
             context_reply = reply
+            if history_reply is not None:
+                from .brain.reminder_history import content as history_content
+                context_reply = history_content(reply, history_reply.metadata)
             if query_reply is not None and query_reply.metadata.get('mode') == 'reminder_query':
                 if query_reader is not None:
                     query_reader.ensure_current()
@@ -1301,6 +1323,8 @@ class Avatar:
             result['reported_communication'] = reported_sender_reply.metadata()
         if query_reply is not None:
             result['reminder_query'] = query_reply.metadata
+        if history_reply is not None:
+            result['reminder_history'] = history_reply.metadata
         if query_reader is not None:
             query_reader.ensure_current()
         if control is not None:
@@ -1319,6 +1343,12 @@ class Avatar:
         if self.role_state_store is not None:
             self.role_state_store.save(self.emotion, source=result['conversation'],
                 scope=self.speaker_scope.scope, checkpoint=checkpoint_context)
+        if self.capability_contract_enabled:
+            # SDK completion records use the same source validation as Web.
+            # Web may subsequently enrich this exact reply with transport data.
+            from .brain.conversations import ConversationStore
+            ConversationStore(self.memory).record_result(result)
+            checkpoint_context()
         return result
 
     def respond_audio(

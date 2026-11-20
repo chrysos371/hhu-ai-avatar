@@ -106,7 +106,7 @@ class ConversationContextStore:
                 or result['generation_mode'] not in {
                     'llm', 'rules', 'rules_speaker_control', 'rules_speaker_scope', 'rules_reminder_query',
                     'llm_writing_repaired', 'llm_capability_guarded', 'rules_writing_artifact', 'rules_writing_validation',
-                    'rules_capability_request', 'rules_reported_sender', 'llm_format_guarded'}
+                    'rules_capability_request', 'rules_reported_sender', 'llm_format_guarded', 'rules_reminder_history'}
                 or type(source.get('revision')) is not int or source['revision'] != revision
                 or type(source.get('user_message_id')) is not int
                 or source['user_message_id'] != user['id']
@@ -116,6 +116,13 @@ class ConversationContextStore:
             return None
         if not self._dependencies_valid(assistant['id'], user['id']):
             return None
+        if result['generation_mode'] == 'rules_reminder_history':
+            from .reminder_history import verified_content
+            content = verified_content(self.memory, result, user_id=user['id'], assistant_id=assistant['id'],
+                text=user['content'], scope=scope, revision=revision)
+            if content is None:
+                return None
+            result['_delivery_history_context'] = content
         if (result.get('writing_delivery') is not None or result['generation_mode'] in {
                 'llm_writing_repaired', 'rules_writing_artifact', 'rules_writing_validation'}):
             from .writing_history import verified_content
