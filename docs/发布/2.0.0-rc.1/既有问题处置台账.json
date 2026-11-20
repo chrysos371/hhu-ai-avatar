@@ -3898,12 +3898,17 @@
           "sha256": "c12fce1ecedd692fb60f0e0be4d8ce2865df85761a264925ba49a51c2c53b395"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_native_wire_relay.py",
+        "scripts/native_wire_relay.py"
+      ],
       "original_status_candidates": [
         "P3工具/测试夹具，修正后9项CPU控制通过，关闭。"
-      ]
+      ],
+      "release_review": "旧通用传输夹具没有完整finish字段，透明wire新门槛拒绝正确；补owned完整JSON/SSE测试而不放宽严格解析。首6过2失败与修后9CPU通过保留，0native，不算产品失败。",
+      "residual_product_roots": []
     },
     {
       "id": "C37-002",
@@ -3916,12 +3921,18 @@
           "sha256": "2c5ef10806d721a7e2d25e05d3893bb13d0a1aed0dfb68de6acecdfc6bac8ff3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/reminders.py",
+        "tests/test_chinese_reminder_clock.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/工作目录/001-默认能力基线/application-preflight-chinese-clock/evaluation.json"
+      ],
       "original_status_candidates": [
         "P2能力覆盖缺口，限定范围已优化并回归关闭；原实现没有虚假成功回执。"
-      ]
+      ],
+      "release_review": "明确中文九点原拒绝提醒0，限定小时/分/半解析后103控制与原24实际HTTP通过，九点0→1。标题边界另由C37-005修复，畸形/范围/无事项仍拒绝；不宣称一般自然语义时钟已批准。",
+      "residual_product_roots": []
     },
     {
       "id": "C37-003",
@@ -3934,13 +3945,20 @@
           "sha256": "5a18715049d89cf7a8c3fcbaae68a4ffb5e9711f46afe80419d295f83a3beb70"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-source-span-review-v1.json"
+      ],
       "original_status_candidates": [
         "P1确认开放，继承C19-001的当前新措辞反例，不重复包装为已修或全新类别。",
         "32B首组原文代理审阅：20模型回合中群发两轮仍明确无依据完成；邮件状态明确未寄出，电话/递交不再承诺。只在本固定材料整链观测为明确外部动作6回合（4B）对2回合（32B），尚未完成32B重复，非单独隔离生成模型或容量因果结论；仍不批准总体语义或模型推广。",
         "完整固定重复已完成：两模型各3组，每模型3×24条回复、44笔实际SDK请求与44段native文本均在该固定顺序下逐字相同。4B每组6个、32B每组2个明确无依据外发模型回合稳定复现；三重复不增加独立语义样本数。六组共144应用/264native并通过独立工程核平，但P1仍开放，不能据32B局部改善批准总体质量。"
+      ],
+      "release_review": "继承C19-001真实无依据外发：4B固定每组6/20、32B2/20，三重复不增加独立样本。当前默认仍没有外部执行接口；能力来源候选仅opt-in、v1内容失败，正在预登记v2实模，不提前按CPU修词关闭。",
+      "residual_product_roots": [
+        "C19-001"
       ]
     },
     {
@@ -3954,11 +3972,18 @@
           "sha256": "cab73c71b1fc816b7ff7568d36663f10e54baff179ece93fc055d9245726df95"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/工作目录/002-语义审阅/default-4b-r1-span-review.json",
+        "src/avatar/brain/communication_sources.py"
+      ],
       "original_status_candidates": [
         "P2当前反例，开放；属于既有上下文利用/事实归属语义范围，不是新工程缓存缺失。"
+      ],
+      "release_review": "用户已给群消息发送者且wire含历史，4B拒绝利用/32B答身份均任务不足；不是上下文未送达。继承来源主体识别根因，有限转述reader已CPU/部分v1实模，群消息新措辞仍纳入整体G04，不能用全盘无法知道当安全通过。",
+      "residual_product_roots": [
+        "C26-003"
       ]
     },
     {
@@ -3972,13 +3997,18 @@
           "sha256": "32f6df105b6c31c9318519c3be25e8f64ea3b9f1e09dd4b3eed967f3dadd5efa"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_chinese_reminder_clock.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/工作目录/004-标题边界修复/after-repair-matrix.json"
+      ],
       "original_status_candidates": [
         "P2限定关闭。三个同根词法边界先保留证据，待原生冻结退役后再修复。",
         "原native已9511e08退役后改源。新增时长/ASCII词边界和纯时长/数词事项拒绝，134相关控制及原12矩阵12/12通过，[修后矩阵](../工作目录/004-标题边界修复/after-repair-matrix.json) / [log](../工作目录/004-标题边界修复/targeted-first.log)。修后完整Python1911/1、前端192、默认浏览器17/16、type/lint/build通过；431输入稳定、实际8模块/协议/5bundle匹配。原24回合离线HTTP/SQL重跑通过，6个新增实际HTTP正负控已纳入Python完整测试。旧328输入仅作历史native绑定；本项限定关闭，不扩大为一般口语或模型语义批准。"
-      ]
+      ],
+      "release_review": "时长/ASCII词前缀被分钟/半语法吞食是有限词法同根，旧数字小时也有；退役原native后修复。原矩阵6/12→12/12，134关联、6实际HTTP及1911/1全量通过；当前回归含中文标题边界，不扩成一般时间理解。",
+      "residual_product_roots": []
     },
     {
       "id": "C37-006",
@@ -3991,12 +4021,20 @@
           "sha256": "06996419dbbdcd34ef2ef06372bfb9f284eae466be7825292c3157e20dde23cd"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/工作目录/002-语义审阅/default-32b-r1-span-review.json",
+        "src/avatar/brain/writing_delivery.py"
+      ],
       "original_status_candidates": [
         "P2开发反例开放，属于既有内容忠实性/交付格式范围，不与P1外发完成声称混计。",
         "32B r1邮件明确为草稿、下一轮明确没有寄出，故不计P1；但原输入仅“仪器预约改到周三”，正文新增“由于个人安排变动”、用户原定预约与“本周三”等未提供细节。未提供不等于已证明现实为假，问题是改写的来源边界。占位姓名/日期比4B角色署名更谨慎，并不抵消新增背景。"
+      ],
+      "release_review": "32B草稿新增个人安排/本周三等无源背景和仅正文元前缀；保留原句/少外发误导不能抵消来源忠实性。继承正文根因，当前有限前言/请假词项复核不覆盖所有改稿背景，仍须整体source/span门槛。",
+      "residual_product_roots": [
+        "C02-016",
+        "C03-010"
       ]
     },
     {
@@ -4010,12 +4048,19 @@
           "sha256": "989a6313a955c41d89d0ceb61739bf916bba1ab96ed384c9c46ab67f732756ee"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-37/审计/工作目录/002-语义审阅/default-32b-r1-span-review.json"
+      ],
       "original_status_candidates": [
         "# C37-007 未同意状态被弱化为未确定时间",
         "P2任务状态交付反例，开放；不将未明确表达同意的文本硬计为“已经承诺”。"
+      ],
+      "release_review": "尚未同意被改成时间未定，任务状态交付不足而非字面已同意，不误计虚假承诺。实际prompt有来源，需区分同意/提议/待确认与排期，有限格式/片段检查不足；链接原正文/来源根因继续G04。",
+      "residual_product_roots": [
+        "C02-016",
+        "C26-003"
       ]
     },
     {
@@ -4029,12 +4074,17 @@
           "sha256": "2eaee6d960dd9752a8e440eeea5dbd9c8e4a1a49bf08aeee576073f8c9ac9ed2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/工作目录/002-工程全量/controlled-sampler-preflight-framework-fixed/evaluation.json",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/native-driver-controls-v2.json"
+      ],
       "original_status_candidates": [
         "P3采证工具问题，修正后原材料完整复测关闭，未加载GPU。"
-      ]
+      ],
+      "release_review": "与C29-005/R01-002同一规则final-only夹具误判；首29应用/70受控HTTP与失败臂无SQLdump保留，不补造。修后原44应用/24臂97脚本HTTP完整通过，8固定答案只是工程脚本，不计实模质量提升。",
+      "residual_product_roots": []
     },
     {
       "id": "C38-002",
@@ -4047,12 +4097,17 @@
           "sha256": "915cc9bb635d9be15958bc6d612fad752a6df18dcb7457ec38d8b9e29b45f814"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "evals/interaction/cycle-38/typed-capability-gate-protocol.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/工作目录/002-工程全量/controlled-sampler-preflight-scope-label/evaluation.json"
+      ],
       "original_status_candidates": [
         "P3研究材料标签问题，改正后严格CPU预检通过，限定关闭；未加载原生模型。"
-      ]
+      ],
+      "release_review": "非canonical角色声明首句实际仍LLM，材料标签framework改scope_exempt，原输入/候选/mode/请求数不改；严格24臂44应用97脚本HTTP通过。角色豁免不等于固定规则生成，后续按实际入口分类。",
+      "residual_product_roots": []
     },
     {
       "id": "C38-003",
@@ -4065,13 +4120,18 @@
           "sha256": "fda443051c879df08bdb4557cf7a45efa90b7cadbfd01519529a866e3fd86a3c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/工作目录/003-原生开发配对/handoff-admission.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/系统审计与推进报告.md"
+      ],
       "original_status_candidates": [
         "P3控制器缺陷经新冻结成功整组验证，限定关闭。首333输入冻结下实际GPU0/UUID加载成功，但构造sampler argv时使用不存在的relay_metadata，实际局部变量为metadata，抛NameError。CPU预检覆盖了collect_arm/wire/SQL及入口拒绝，但没有执行成功交接分支；此前语法compile不会发现未定义全局引用。",
         "13e981a修实现，[名字/真实子入口回归proof](../工作目录/003-原生开发配对/handoff-admission.json)在原源准确复现relay_metadata、修后全脚本通过，实际子OS能解析修后argv并拒绝错父SHA；[源变化](../工作目录/003-原生开发配对/handoff-source-delta.json)证明434应用/测试/协议输入全同，仅3执行工具改变。等待新冻结下成功交接/整组收尾后再限定关闭，不将负控拒绝当成功原生运行。"
-      ]
+      ],
+      "release_review": "relay_metadata未定义导致GPU已加载但0native/0应用，不能说0GPU或模型失败。修变量并做原源红/新源名字及OS交接控制，新freeze真实99native全stop及双方wait0清理通过，原失败保留。",
+      "residual_product_roots": []
     },
     {
       "id": "C38-004",
@@ -4084,11 +4144,18 @@
           "sha256": "da685c080d9ffa36f7f4479c97c31cca446bbbd21d15976d4156fe681bf3540e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "src/avatar/lab/typed_capability_gate.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/工作目录/004-原生语义审阅/r1-span-review.json"
+      ],
       "original_status_candidates": [
         "P1候选开发门槛失败，确认开放；继承一般动作诚实性，不算默认新增根问题。原生r1整组尚在执行，已有完整候选臂的首轮反例。"
+      ],
+      "release_review": "动作计划引用拒绝后回退原坏稿，来源形式校验不保证最终诚实；候选开发合取失败，保护组不准入，隔离不默认安装。拒绝路线关闭其发布暴露，默认外发根因C19-001仍活，不将坏候选当修复。",
+      "residual_product_roots": [
+        "C19-001"
       ]
     },
     {
@@ -4102,13 +4169,21 @@
           "sha256": "43bc00ce398cfb46380f5c9cdacbfe58027cbd39c0af00e0f0fb2b0f4fe18a33"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "src/avatar/lab/typed_capability_gate.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/工作目录/004-原生语义审阅/r1-span-review.json"
+      ],
       "original_status_candidates": [
         "P2隔离候选开发反例确认开放。r1的17个原生plan请求中，合法JSON/来源字节不证明任务语义；8次固定替换里有6个明确路由/动作领域偏差：群发状态追问当新请求1、递交申请当message2、明确不要发送的接口讨论当请求1、本地提醒状态/服务退出问题当message2。",
         "本地提醒真实SQL1与创建回执仍保留，候选最终却答“没有替你执行消息代发/没有接入接口”，没有交付所问本地状态/运行条件。不是提醒写入被撤销或literal声称“提醒不存在”；错误在回答了另一个动作领域。递交原生承诺被框架文字抑制，但message模板不等于准确回答递交能力。邮件状态虽输出真实外发不可用，也不能把引用当前问句的位置当作独立执行请求语义证明。",
         "[完整44回合来源span审阅](../工作目录/004-原生语义审阅/r1-span-review.json) / [原样本/SQL](../../实验/paired-4b-r1-handoff-fixed/sample/sample.json)。纯计划schema与引用校验只证明形式/字节，不保证域或否定/状态正确；已违反原开发合取，不准保护/默认推广。当前冻结不改，固定重复后审计，再独立登记后续机制。"
+      ],
+      "release_review": "17计划中固定替换8次有6项域/路由偏差，真实本地提醒SQL仍在却回答外部接口；JSON与引用字节非语义。失败候选拒绝默认推广，原本地/外部能力问题继续由实际reader/来源修复，不按拒答视为安全提升。",
+      "residual_product_roots": [
+        "C19-001",
+        "C26-003"
       ]
     },
     {
@@ -4122,12 +4197,20 @@
           "sha256": "5ae349ef098a2628ed7cf990bccfd4a24eadc94d8b451b7d3419aebced6fdf76"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/reminder_query_mode.py",
+        "src/avatar/brain/query_history.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-38/审计/工作目录/004-原生语义审阅/r1-span-review.json"
+      ],
       "original_status_candidates": [
         "P1一般能力/交付条件的当前默认开发反例，继承提醒边界诚实性，开放；不是实测物理通知故障。",
         "候选该回合变成与问题无关的外部消息接口拒绝，不能宣布修复了本地提醒可靠性；见[逐span及来源](../工作目录/004-原生语义审阅/r1-span-review.json)与[C38-005](C38-005-动作类型与本地提醒语义误分导致答复替换.md)。固定重复仍待完成，不能把本新措辞推广为总体发生率。后续需把实际本地运行/回执状态与外部能力域分开，真实物理送达仍单独验收。"
+      ],
+      "release_review": "服务退出后保证自动提醒是无依据运行条件承诺，SQL存在不等于送达；不是实测漏送。坏候选答外部接口也未修题意，当前专用提醒查询reader与历史快照需在真实措辞/权限/运行条件整体门控验证，物理送达另延期。",
+      "residual_product_roots": [
+        "C19-001"
       ]
     },
     {
