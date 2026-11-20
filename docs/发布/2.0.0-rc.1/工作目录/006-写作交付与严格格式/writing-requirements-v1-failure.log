@@ -1,0 +1,153 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_signature_body_and_sentence_requirements_bind_actual_distinct_user_sources _
+
+    def test_signature_body_and_sentence_requirements_bind_actual_distinct_user_sources():
+        with closing(MemoryStore(':memory:')) as memory:
+            instance = bot(memory)
+            first = instance.respond('帮我写一条请假短信，署名用【姓名】，只给正文。')
+>           one = requirements(first)
+
+tests/test_writing_requirement_sources.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'conversation': {'session_id': '12a23244310f415999ed74768d1099f9', 'revision': 0, 'user_message_id': 1, 'assistant_message_id': 2}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...}
+
+    def requirements(result):
+        data = result.get('writing_requirements')
+>       assert data is not None, 'actual source requirements must be inspectable'
+E       AssertionError: actual source requirements must be inspectable
+E       assert None is not None
+
+tests/test_writing_requirement_sources.py:19: AssertionError
+_ test_material_constraint_survives_forty_polish_turns_and_real_database_reopen _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-94/test_material_constraint_survi0')
+
+    def test_material_constraint_survives_forty_polish_turns_and_real_database_reopen(tmp_path):
+        path = str(tmp_path/'writing.db')
+        with closing(MemoryStore(path)) as memory:
+            instance = bot(memory)
+            root = instance.respond('帮我给老师写一封邮件，署名用【作者】，只给正文。')['conversation']['user_message_id']
+            count = instance.respond('保留原意，压缩到两句话。')['conversation']['user_message_id']
+            for _ in range(40):
+>               data = requirements(instance.respond('再短一点。'))
+
+tests/test_writing_requirement_sources.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'conversation': {'session_id': '74464288c7524204b1c0abd92bca262b', 'revision': 0, 'user_message_id': 5, 'assistant_message_id': 6}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...}
+
+    def requirements(result):
+        data = result.get('writing_requirements')
+>       assert data is not None, 'actual source requirements must be inspectable'
+E       AssertionError: actual source requirements must be inspectable
+E       assert None is not None
+
+tests/test_writing_requirement_sources.py:19: AssertionError
+____ test_current_replacement_release_and_new_root_do_not_revive_old_fields ____
+
+    def test_current_replacement_release_and_new_root_do_not_revive_old_fields():
+        with closing(MemoryStore(':memory:')) as memory:
+            instance = bot(memory)
+            instance.respond('帮我写请假短信，署名用【姓名】，只给正文。')
+>           changed = requirements(instance.respond('再短一点，署名改成【编号】。'))
+
+tests/test_writing_requirement_sources.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'conversation': {'session_id': '2098feeae6a742f79f7928b308e8aa55', 'revision': 0, 'user_message_id': 3, 'assistant_message_id': 4}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...}
+
+    def requirements(result):
+        data = result.get('writing_requirements')
+>       assert data is not None, 'actual source requirements must be inspectable'
+E       AssertionError: actual source requirements must be inspectable
+E       assert None is not None
+
+tests/test_writing_requirement_sources.py:19: AssertionError
+__ test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls ___
+
+    def test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls():
+        with closing(MemoryStore(':memory:')) as memory:
+            instance = bot(memory)
+            result = instance.respond('帮我写一段说明，原样包含“署名用【小明】，压缩到两句话”。')
+>           data = requirements(result)
+
+tests/test_writing_requirement_sources.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'conversation': {'session_id': '8be84bafdc694b49b468142b219e0643', 'revision': 0, 'user_message_id': 1, 'assistant_message_id': 2}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...}
+
+    def requirements(result):
+        data = result.get('writing_requirements')
+>       assert data is not None, 'actual source requirements must be inspectable'
+E       AssertionError: actual source requirements must be inspectable
+E       assert None is not None
+
+tests/test_writing_requirement_sources.py:19: AssertionError
+_ test_actual_forget_of_any_required_source_invalidates_recovered_constraints[root] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-94/test_actual_forget_of_any_requ0')
+which = 'root'
+
+    @pytest.mark.parametrize('which', ['root', 'sentence'])
+    def test_actual_forget_of_any_required_source_invalidates_recovered_constraints(tmp_path, which):
+        with closing(MemoryStore(str(tmp_path/'forget.db'))) as memory:
+            instance = bot(memory)
+            root = instance.respond('帮我写一封请假邮件，署名用【姓名】。')['conversation']['user_message_id']
+            count = instance.respond('保留原意，压缩到两句话。')['conversation']['user_message_id']
+            fragment = memory.remember('有来源的控制', source_message_id=root if which == 'root' else count)
+            with closing(MemoryStore(memory.db_path)) as writer:
+                writer.forget(fragment)
+            result = instance.respond('再短一点。')
+>           data = requirements(result)
+
+tests/test_writing_requirement_sources.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'conversation': {'session_id': '353bf9de774045af9aeb23473ab0c2b5', 'revision': 1, 'user_message_id': 5, 'assistant_message_id': 6}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...}
+
+    def requirements(result):
+        data = result.get('writing_requirements')
+>       assert data is not None, 'actual source requirements must be inspectable'
+E       AssertionError: actual source requirements must be inspectable
+E       assert None is not None
+
+tests/test_writing_requirement_sources.py:19: AssertionError
+_ test_actual_forget_of_any_required_source_invalidates_recovered_constraints[sentence] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-94/test_actual_forget_of_any_requ1')
+which = 'sentence'
+
+    @pytest.mark.parametrize('which', ['root', 'sentence'])
+    def test_actual_forget_of_any_required_source_invalidates_recovered_constraints(tmp_path, which):
+        with closing(MemoryStore(str(tmp_path/'forget.db'))) as memory:
+            instance = bot(memory)
+            root = instance.respond('帮我写一封请假邮件，署名用【姓名】。')['conversation']['user_message_id']
+            count = instance.respond('保留原意，压缩到两句话。')['conversation']['user_message_id']
+            fragment = memory.remember('有来源的控制', source_message_id=root if which == 'root' else count)
+            with closing(MemoryStore(memory.db_path)) as writer:
+                writer.forget(fragment)
+            result = instance.respond('再短一点。')
+>           data = requirements(result)
+
+tests/test_writing_requirement_sources.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+result = {'conversation': {'session_id': 'fe0249faa6fa44ee879dbc8468d59de4', 'revision': 1, 'user_message_id': 5, 'assistant_message_id': 6}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...}
+
+    def requirements(result):
+        data = result.get('writing_requirements')
+>       assert data is not None, 'actual source requirements must be inspectable'
+E       AssertionError: actual source requirements must be inspectable
+E       assert None is not None
+
+tests/test_writing_requirement_sources.py:19: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_requirement_sources.py::test_signature_body_and_sentence_requirements_bind_actual_distinct_user_sources
+FAILED tests/test_writing_requirement_sources.py::test_material_constraint_survives_forty_polish_turns_and_real_database_reopen
+FAILED tests/test_writing_requirement_sources.py::test_current_replacement_release_and_new_root_do_not_revive_old_fields
+FAILED tests/test_writing_requirement_sources.py::test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls
+FAILED tests/test_writing_requirement_sources.py::test_actual_forget_of_any_required_source_invalidates_recovered_constraints[root]
+FAILED tests/test_writing_requirement_sources.py::test_actual_forget_of_any_required_source_invalidates_recovered_constraints[sentence]
+6 failed in 0.91s
