@@ -7,6 +7,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.main import Avatar
 from avatar.brain.communication_sources import reported_sender
 from avatar.cancellation import Cancelled
+from avatar.brain.emotion import EmotionEngine
 from test_capability_prompt_lab import Recorder
 
 
@@ -92,3 +93,53 @@ def test_direct_source_reader_does_not_write_or_commit_callers_transaction():
         memory._conn.commit()
         with pytest.raises(Cancelled):
             reported_sender(memory, **args)
+
+
+def test_privacy_change_inside_source_read_clears_old_automatic_affect(tmp_path, monkeypatch):
+    import avatar.brain.communication_sources as sources
+    with closing(MemoryStore(str(tmp_path / 'source-read.db'))) as memory:
+        engine = Recorder('收到。')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        bot.emotion = EmotionEngine(clock=lambda: 0)
+        first = bot.respond('我刚才自己发了短信。')['conversation']['user_message_id']
+        fact = memory.remember_user('备注', '原始发送报告', source_message_id=first)
+        bot.emotion.observe(-.6, .7, text='有效的既有观测')
+        assert bot.emotion.user_state.valence == -.6
+        counts = len(engine.analysis), len(engine.native)
+        original = sources.reported_sender
+        def changed(*args, **kwargs):
+            with closing(MemoryStore(memory.db_path)) as writer:
+                writer.forget(fact)
+            return original(*args, **kwargs)
+        monkeypatch.setattr(sources, 'reported_sender', changed)
+        with pytest.raises(Cancelled):
+            bot.respond('是谁发的短信？')
+        assert (len(engine.analysis), len(engine.native)) == counts
+        assert bot.emotion.context_revision == memory.context_revision == 1
+        assert bot.emotion.user_state.valence == bot.emotion.state.arousal == 0
+        assert bot.emotion._observation_text == ''
+
+
+@pytest.mark.parametrize('question', [
+    '我很难过，是谁发的短信？',
+    '我真的撑不住了，到底是谁发送的？',
+    '是谁发的短信？我现在很害怕。',
+])
+def test_mixed_sender_question_retains_regular_cognition(question):
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Recorder('我们可以一起看看你现在的感受。')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        result = bot.respond(question)
+        assert result['analysis_mode'] != 'rules_reported_sender'
+        assert len(engine.analysis) == len(engine.native) == 1
+
+
+def test_pure_sender_read_does_not_replace_existing_affect_with_rule_zero():
+    with closing(MemoryStore(':memory:')) as memory:
+        bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True)
+        bot.emotion = EmotionEngine(clock=lambda: 0)
+        bot.respond('我刚才自己发了短信。')
+        bot.emotion.observe(-.6, .7, text='既有有效观测')
+        previous = bot.emotion.user_state.valence, bot.emotion.user_state.arousal, bot.emotion._observation_text
+        bot.respond('是谁发的短信？')
+        assert (bot.emotion.user_state.valence, bot.emotion.user_state.arousal, bot.emotion._observation_text) == previous
