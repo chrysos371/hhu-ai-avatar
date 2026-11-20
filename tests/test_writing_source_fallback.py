@@ -8,6 +8,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken, Cancelled
 from avatar.main import Avatar
 from test_writing_delivery_contract import Replies
+from writing_history_assertions import assert_writing_context
 
 
 @pytest.mark.parametrize('count', [1,2,3])
@@ -24,7 +25,7 @@ def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(
         assert len(re.findall(r'[。！？!?]+', result['reply'])) == count
         assert not result['writing_delivery']['final_issues']
         assert result['writing_delivery']['model_repair_issues']
-        assert memory.get_short_term()[-1]['content'] == result['reply']
+        assert_writing_context(memory, result['reply'])
         assert not result['tool_calls'] and not result['action_receipts']['items']
         assert memory._conn.execute('SELECT COUNT(*) FROM memory_action_receipts').fetchone()[0] == 0
 

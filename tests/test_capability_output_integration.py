@@ -7,6 +7,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
+from writing_history_assertions import assert_writing_context
 
 
 @pytest.mark.parametrize('draft', ['我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
@@ -52,7 +53,8 @@ def test_draft_tail_service_offer_is_removed_before_sse_and_storage():
         pieces = []
         result = bot.respond('帮我给同学写一条今天的请假短信。', cancel=CancellationToken(), on_delta=pieces.append)
         assert result['reply'].strip() == '同学你好，我今天需要请假。'
-        assert ''.join(pieces) == memory.get_short_term()[-1]['content'] == result['reply']
+        assert ''.join(pieces) == result['reply']
+        assert_writing_context(memory, result['reply'])
         assert all(pieces) and result['capability_contract']['output_rules'] == ['unsupported_external_offer']
 
 

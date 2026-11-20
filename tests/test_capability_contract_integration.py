@@ -9,6 +9,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken, Cancelled
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
+from writing_history_assertions import assert_writing_context
 
 
 @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
@@ -42,7 +43,8 @@ def test_known_creative_protective_regressions_keep_stream_final_and_storage(tex
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         pieces = []
         result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append)
-        assert result['reply'] == ''.join(pieces) == memory.get_short_term()[-1]['content'] == reply
+        assert result['reply'] == ''.join(pieces) == reply
+        assert_writing_context(memory, reply)
         assert result['generation_mode'] == 'llm' and len(engine.native) == len(engine.analysis) == 1
         assert '运行时能力/回执数据' in engine.native[0][0]['content']
         assert not result['action_receipts']['items']

@@ -8,6 +8,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken, Cancelled
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
+from writing_history_assertions import assert_writing_context
 
 
 class Replies(Recorder):
@@ -45,7 +46,7 @@ def test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_examp
         pieces = []
         result = bot.respond(user_text, cancel=CancellationToken(), on_delta=pieces.append)
         assert result['reply'] == ''.join(pieces) == corrected
-        assert memory.get_short_term()[-1]['content'] == corrected
+        assert_writing_context(memory, corrected)
         assert len(engine.native) == 2
         review = result['writing_delivery']
         assert review['repair_attempted'] and review['repair_succeeded']
