@@ -32,6 +32,11 @@ class SourceArtifact:
 def build_fallback(requirements, *, current_text, fictional=False):
     if not requirements.source_verified or not requirements.sources:
         return None
+    if requirements.verbatim_literal is not None:
+        reply = requirements.verbatim_literal
+        if requirements.signature:
+            reply += '\n' + requirements.signature
+        return SourceArtifact(reply, 'explicit_verbatim_literal_v1', requirements.source_message_ids)
     count = requirements.sentence_count
     if count not in (None, 1, 2, 3):
         return None

@@ -837,6 +837,20 @@ class Avatar:
         buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
                         or self.final_reply_reviewer is not None or number_requested or writing_delivery_active)
         writing_delivery_result = None
+        writing_direct = None
+        if writing_delivery_active:
+            from .brain.writing_delivery import inspect as inspect_writing, fingerprint, repair_instruction
+            fictional_writing = self.boundaries.fiction or self.speaker_scope.scope == 'fictional_character'
+            if (self._writing_requirements.verbatim_literal is not None
+                    or fictional_writing and self._writing_requirements.author_role in ('老师','导师')):
+                from .brain.writing_templates import build_fallback
+                candidate = build_fallback(self._writing_requirements, current_text=user_text,
+                    fictional=fictional_writing)
+                checkpoint_context()
+                if (candidate is not None and candidate.template in
+                        ('explicit_verbatim_literal_v1','explicit_fiction_counterparty_reply_v1')
+                        and not inspect_writing(candidate.reply, self._writing_requirements, fictional=fictional_writing)):
+                    writing_direct = candidate
         streamed_prefix = []
         capability_output_rules = ()
         grounding_action = None
@@ -897,6 +911,16 @@ class Avatar:
         elif profile_reply is not None:
             reply, grounding_action = profile_reply, lookup_action
             generation_mode = 'profile_lookup' if lookup_action in {'name_lookup', 'preference_lookup'} else 'profile_grounded'
+        elif writing_direct is not None:
+            reply = writing_direct.reply
+            generation_mode = 'rules_writing_artifact'
+            writing_delivery_result = dict(version=1, semantic_verifier=False, stream_buffered=True,
+                scope='direct_explicit_source_artifact', initial_issues=[], final_issues=[],
+                repair_attempted=False, repair_succeeded=False, repair_error=None, repair_mode=None,
+                model_repair_issues=[], draft_sha256=None, repair_sha256=None,
+                source_fallback=dict(used=True, phase='direct_source', template=writing_direct.template,
+                    source_message_ids=list(writing_direct.source_message_ids), semantic_verifier=False,
+                    model_repair_succeeded=None))
         elif self._llm_available:
             try:
                 if cancel is not None and hasattr(self.llm, 'stream_chat'):
@@ -991,8 +1015,6 @@ class Avatar:
                     repair_error = type(exc).__name__
                     logger.warning('任务修正失败，保留原回复与检查记录')
         if writing_delivery_active and generation_mode == 'llm':
-            from .brain.writing_delivery import inspect as inspect_writing, fingerprint, repair_instruction
-            fictional_writing = self.boundaries.fiction or self.speaker_scope.scope == 'fictional_character'
             initial_issues = inspect_writing(reply, self._writing_requirements, fictional=fictional_writing)
             writing_delivery_result = dict(version=1, semantic_verifier=False, stream_buffered=True,
                 scope='source_bound_signature_chinese_sentence_format_and_known_leave_details',
@@ -1086,6 +1108,7 @@ class Avatar:
                     generation_mode = 'rules_writing_artifact'
                     writing_delivery_result['final_issues'] = []
                     writing_delivery_result['source_fallback'] = dict(used=True, template=fallback.template,
+                        phase='after_model_repair',
                         source_message_ids=list(fallback.source_message_ids), semantic_verifier=False,
                         model_repair_succeeded=False)
                 else:

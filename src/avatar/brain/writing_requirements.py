@@ -101,6 +101,20 @@ class WritingRequirements:
             tracker.update(text, writing_root=index == 0)
         return tracker.current
 
+    @property
+    def verbatim_literal(self):
+        if not self.source_verified or len(self.sources) != 1:
+            return None
+        found = re.fullmatch(r'(?:请)?原样(?:写出|输出)(?:这句话|这句(?:小说)?台词|这段话)?[：:\s]*'
+            r'(?:“([^“”\n]{1,120})”|「([^「」\n]{1,120})」|"([^"\n]{1,120})")[。！!]?\s*',
+            self.sources[0][1])
+        if found:
+            value = next(x for x in found.groups() if x is not None)
+            contract = self.literal_contract
+            if contract is not None and contract.required_literals == [value]:
+                return value
+        return None
+
     def data(self):
         contract = self.literal_contract
         return dict(version=1, source_verified=self.source_verified, signature=self.signature,
@@ -108,6 +122,7 @@ class WritingRequirements:
                     source_message_ids=list(self.source_message_ids), reason=self.reason,
                     signature_omitted=self.signature_omitted, forbidden_signatures=list(self.forbidden_signatures),
                     author_role=self.author_role,
+                    verbatim_literal=self.verbatim_literal,
                     required_literals=list(contract.required_literals) if contract else [],
                     forbidden_literals=list(contract.forbidden_literals) if contract else [],
                     semantic_verifier=False)

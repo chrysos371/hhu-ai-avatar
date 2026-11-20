@@ -42,6 +42,10 @@ def inspect(reply, requirements, *, fictional=False):
         issues.append('released_signature')
     if not body:
         issues.append('empty_body')
+    if requirements.verbatim_literal is not None and body not in (
+            requirements.verbatim_literal, '“'+requirements.verbatim_literal+'”',
+            '「'+requirements.verbatim_literal+'」', '"'+requirements.verbatim_literal+'"'):
+        issues.append('verbatim_literal_changed')
     if requirements.sentence_count is not None:
         # Chinese terminal punctuation clusters; a final unpunctuated fragment
         # counts once. A verified separate signature line is not a sentence.
