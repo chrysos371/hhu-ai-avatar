@@ -3405,13 +3405,18 @@
           "sha256": "7e2be7bf948113cbcbbeaf513d7b449b0d879cc3c93218c5f1c72989ba421ecc"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/002-工作约定去重/整理后核验.json",
+        "AGENTS.md"
+      ],
       "original_status_candidates": [
         "P3文档维护；按文档整理范围关闭，已在本轮独立整理，不修改实验输入或历史封存。",
         "AGENTS.md现90023字节/506行/58个二级标题，其中48个为历史日期交接；项目介绍从第405行才开始。旧的“未运行”与后续“已完成”并列堆积，当前状态需不断靠优先级解释。此处只量化结构和查找入口，未做真人阅读耗时或模型准确率实验，不虚报效率百分比。"
-      ]
+      ],
+      "release_review": "旧工作约定90023字节/506行/58标题→11578/124/12，项目参考尾段保持；只关闭原结构整理，当前顶端有限发布约定优先，未声称真人阅读提速。",
+      "residual_product_roots": []
     },
     {
       "id": "C33-002",
@@ -3424,15 +3429,23 @@
           "sha256": "91074c82026f6c5cb358ff8292af9ed07d7644d02324d7a6a9f73b64f8f2ffdf"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_defect",
+      "release_impact": "release_goal_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/003-角色状态连续性补审/4b-posthoc-continuity.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/003-角色状态连续性补审/32b-posthoc-continuity.json",
+        "src/avatar/brain/emotion.py"
+      ],
       "original_status_candidates": [
         "P2工程推进目标；开放。PAD未持久化是C29已披露限制，此处以C33实际数据补审，不重复包装成已修复问题，不声称真人体验缺陷已验证。",
         "这说明文本历史恢复与数值角色状态连续性是两个独立层次。当前只读代号请求本身中性，不把其用户情绪0判作错误；模型先前PAD也不是人类情绪金标准。",
         "证据：[事后范围说明](../工作目录/003-角色状态连续性补审/事后分析范围.md)、[完整48组数值](../工作目录/003-角色状态连续性补审/4b-posthoc-continuity.json)、[来源与执行版本](../工作目录/003-角色状态连续性补审/执行版本-4b.json)、[4B主实验独立绑定](../工作目录/001-共享历史隐含情绪/4b-independent-binding.json)。32B完整结果已补充：36/48组旧角色PAD非0、所有新OS初始0；当前分析probe21组用户/角色为0、27组非0。后者含候选同样委托原分析的21组及两臂观测不同的6组，不能把“6组差异”误当“仅6组非0”。原4B证据保持不变。",
         "默认恢复目前保留来源可验证的对话窗口，角色PAD仍是新服务的进程内状态；在本批27组发生了非零旧数值到新初始0的重置。未证明该重置造成真人感知退化，也未证明持久化一定提高一般语义或陪伴质量。C31候选仍隔离，本轮不因此改冻结产品源或运行中的实验。",
         "下一循环可先登记角色状态连续性的受控before/after，再决定实现：仅恢复同隐私版本、同作用域、有效完成来源的有限角色数值，按真实时间衰减；删除、红删、取消、断裂或损坏不得回放旧情绪。明确用户当次观测与角色表达状态分离，不把过去用户情绪强加给当前请求。旧库/数值非有限/时间异常/显式关闭等边界需受控故障验证，随后全产品回归与实际模型输入/输出审阅。"
+      ],
+      "release_review": "真实共享历史4B27/48、32B36/48旧非零角色PAD，新OS均初始0；文本恢复不等于角色数值连续。仍须实现同隐私版本/作用域/有效完成来源的有限角色快照、实际时间衰减及损坏/取消/遗忘保护；不能恢复过去用户观测为当前，也不声称真人体验改进。",
+      "residual_product_roots": [
+        "C33-002"
       ]
     },
     {
@@ -3446,14 +3459,18 @@
           "sha256": "89f13e6d8d0f2c1f6ee1f3993d811d1ea279cd3bc4b07e68c2de6aa7bb0d7282"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/005-运行中快照误入暂存/纠正与原快照清单.json"
+      ],
       "original_status_candidates": [
         "P3过程问题；按暂存范围纠正关闭，原始事件与后续整轮核验分开。",
         "资料提交71407a7使用过宽C33目录暂存范围，误收运行中的32B根报告、提供方日志/trace及部分组文件。根报告completed为False；不能把该快照当完整结果，既有已关闭组的小步提交要求也应继续执行。",
         "纠正不改写历史、不删除运行文件、不重启或修改实验：将该次新加入32B路径移出Git index，原提交继续可达；根部原字节复制为独立checkpoint，全部原路径/大小/SHA与原提交绑定。随后只用闭合组白名单脚本分组提交，完整总报告待结束独立核验后再加入。341冻结输入再次通过；后续须整轮验证真实SDK/SQL/状态/清理，不能用快照替代。"
-      ]
+      ],
+      "release_review": "过宽暂存误入运行中材料已纠正index，原提交/checkpoint与SHA保留；之后只提交闭合组，整轮结束后独立核验。关闭原过程问题，不把partial视为实验成功，不删除或改写旧提交。",
+      "residual_product_roots": []
     },
     {
       "id": "C33-004",
@@ -3466,16 +3483,24 @@
           "sha256": "b35995d8353cfee0de061eed580ed2df0ab95a1fab7766c9635292a72414b8da"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/emotion.py",
+        "tests/test_emotion_revision.py",
+        "tests/test_avatar_emotion_revision.py",
+        "tests/test_web_emotion_revision.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/系统审计与推进报告.md"
+      ],
       "original_status_candidates": [
         "P2确认的进程内状态失效问题；开放。本轮产品源冻结未改，下一循环优先修复，先于任何情绪持久化扩展。",
         "但三次GET /api/v1/emotion仍返回旧用户观测[-0.4,0.3]与非零自动角色PAD；后续中性请求将用户观测更新为0，角色PAD仍约[0.04999,-0.19996]。该后续回复仅关联新用户来源3，旧来源1已红删。不是原始语句泄漏或真人情绪判断实验，但数值派生状态没有随来源失效，不能声称所有自动情绪已清理。",
         "[完整六控制原HTTP/SSE/SQL数据，筛case=forget_completed_source](../工作目录/004-遗忘与取消情绪状态补审/controlled-http-state.json)、[执行版本](../工作目录/004-遗忘与取消情绪状态补审/执行版本.json)、[事前方案](../工作目录/004-遗忘与取消情绪状态补审/补审方案.json)。另外三次取消控制不能混算成遗忘故障率。",
         "默认Web复用server.emotion；当前context revision变化同步主要清短期文本，自动情绪API没有用当前隐私版本过滤该进程内状态。EmotionEngine对中性输入保留角色状态，因而旧来源数值会延续到后续回复。源码与真实HTTP观测相符；新OS初始0不能解决同一服务内的失效路径。",
         "建立自动情绪与当前来源版本/作用域的失效边界，覆盖情绪API、概览/旧state入口、后续回复及诊断事件。遗忘/纠错后不得再次提供失效的自动数值或让其进入新模型输入。保留用户当次观测与角色表达区分，明确人工override与自动状态来源不同；不撤销合法已提交事实/提醒，取消也不等价于遗忘。"
-      ]
+      ],
+      "release_review": "C34已实现原始回合revision绑定，隐私变化清自动角色/用户观测/能量；Web所有状态读与回复后finally拒绝迟到旧epoch。人工override独立，合法取消观测不回滚；当前实际HTTP及Avatar回归覆盖，前端传播另见C34-004，不混算后端复发。",
+      "residual_product_roots": []
     },
     {
       "id": "C33-005",
@@ -3488,14 +3513,20 @@
           "sha256": "004cafaf508e2f225bb67fec5f5c0d5bfc594615da57c83b01e6e2b846ecbc08"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_measurement_process_scope_product_quality_separate",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/backend.md",
+        "tests/test_avatar_emotion_revision.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/004-遗忘与取消情绪状态补审/controlled-http-state.json"
+      ],
       "original_status_candidates": [
         "P3文档边界；按现有行为披露范围关闭，不作为必须回滚的功能缺陷，不与C33-004遗忘失效混算。",
         "[原HTTP/SSE/SQL，筛case=cancel_after_analysis](../工作目录/004-遗忘与取消情绪状态补审/controlled-http-state.json)。这证明当前发布/保留行为，不证明取消失效：既有契约是取消生成，已接受用户消息可能保留，合法已提交动作不撤销。这里取消发生在认知之后，不能自行升级承诺为撤销全部已发生观测，更不能默认回滚已提交事实/提醒。",
         "此前进展把这组观察称为“需取消回滚”过强，原描述保留并已追加勘误。后端说明补充实际边界，不宣称取消后的数值一定清零；若后续另行设计完成回合快照或观测事件，应明确发布时点与来源依赖，新登记实验，不追改旧结果。来源被遗忘/隐私版本变化后的残留仍是独立C33-004开放P2问题。"
-      ]
+      ],
+      "release_review": "取消生成不等于撤销已接受用户观测或已提交事实/提醒；三实际控制保留来源且无完成助手，语义按既有契约披露。只关闭文档边界，隐私来源失效仍须清自动状态；将来跨OS只恢复有效完成来源，不能追改此历史。",
+      "residual_product_roots": []
     },
     {
       "id": "C33-006",
@@ -3508,12 +3539,17 @@
           "sha256": "2b4113140c932776521f97845c70691228738b5fc999add4ec381313389aeda7"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/001-共享历史隐含情绪/32b-independent-binding.json",
+        "src/avatar/main.py"
+      ],
       "original_status_candidates": [
         "C31-002的后续证据；P2候选保护问题继续开放，不重复统计一个新缺陷。候选仍只在审计worker中安装，默认产品未启用。"
-      ]
+      ],
+      "release_review": "继承C31-002风险：32B6/48观测/风格改变，4B无差异不证明普遍中性；两模型答案48/48同不等于情绪行为一致。拒绝默认安装跳过认知候选，不把模型非零当真人金标，不另算独立根因。",
+      "residual_product_roots": []
     },
     {
       "id": "C34-001",
@@ -3526,12 +3562,17 @@
           "sha256": "e44e5bac1ec48a9d6eee4dbd7b59a272a67053d6745e52c84f8126abf3c9413f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-driver-controls-v2.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/系统审计与推进报告.md"
+      ],
       "original_status_candidates": [
         "P3采证工具问题；按采证器范围已修并验证。首个4B before在单独回到现实的规则确认上断言失败：借用的只读成本finish假设每个result都存在与reply完全相同的text delta，但本规则控制只有完整result事件。原生请求6次全部保留，3个应用提交均有result（前两LLM、后一rules_speaker_control），驱动turns_completed在断言后才累加故仅2，不能照抄为真实完成数。"
-      ]
+      ],
+      "release_review": "与C29-005/R01-002同一规则result-only采证断言。保留首6native partial；修后CPU8及全4回合/8native/1OS通过，生成路径仍要求delta/final一致，不重复计产品根因。",
+      "residual_product_roots": []
     },
     {
       "id": "C34-002",
@@ -3544,12 +3585,17 @@
           "sha256": "eedef39fe9add9ceb7f1926ea566bc78cd171ad750e8a0a90b005fda7a0d48f4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/002-系统回归/browser-dist-archive.json",
+        "docs/发布/2.0.0-rc.1/工作目录/004-版本与启动基础设施/candidate-build-v4-proof.json"
+      ],
       "original_status_candidates": [
         "P3采证流程问题，已关闭。没有模型/产品故障或测试结果改变。"
-      ]
+      ],
+      "release_review": "ignored frontend/dist不能冒充Git路径；原冻结在模型前拒绝，已提交归档副本及路径映射并核平实际运行SHA。当前candidate构建也分别绑定归档输入、新依赖和实际UI字节；关闭来源流程，未追认旧ignored路径入Git。",
+      "residual_product_roots": []
     },
     {
       "id": "C34-003",
@@ -3562,12 +3608,17 @@
           "sha256": "cfbdc5576ff1213511c0831667dcdfd70306d3da8a24357ea1bcfa4df8039c5f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/003-浏览器情绪缓存补审/first-failure-version.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-34/审计/工作目录/003-浏览器情绪缓存补审/v2/browser-cache-observations.json"
+      ],
       "original_status_candidates": [
         "P3采证脚本问题；鉴权打开方式已修正，原失败保留，不统计为产品隐私故障。"
-      ]
+      ],
+      "release_review": "首浏览器入口漏fragment鉴权属脚本前置故障，0native且未执行遗忘，不能算隐私故障样本。修正带token启动/清fragment与正确wait参数，新v2三次实际完成后暴露C34-004；原失败保留，不据此声称缓存已修。",
+      "residual_product_roots": []
     },
     {
       "id": "C34-004",
@@ -3580,14 +3631,22 @@
           "sha256": "6e26521da81d3ce1c45f63c2fbd7ab0ca0b3ff4fe551661c17bbabdf39037c06"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/lib/usePrivateStateQuery.ts",
+        "frontend/src/lib/usePrivateStateQuery.test.tsx",
+        "frontend/e2e/state-privacy.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/审计/收尾核验/browser-independent-proof.json",
+        "docs/发布/2.0.0-rc.1/工作目录/004-版本与启动基础设施/frontend-clean-v3-result.json"
+      ],
       "original_status_candidates": [
         "P2确认，开放；C33-004后端修复后的前端传播边界，下一周期优先。不是后端数值失效复发，不重复统计为新的模型语义缺陷。",
         "3次均确认SQL源红删、revision0→1，新GET /api/v1/emotion自动/用户观测均0。但DOM自动状态、实际表达和最近用户观测在约1.034–1.047秒仍原值；约9.847–9.862秒才由既有轮询更新为0。截图中旧自动/实际表达P0.05/A-0.20、旧用户观测P-0.30/A-0.25。后端已清除不能立即使浏览器已绘制数值失效。",
         "对有源自动情绪/趋势/仪表盘缓存建立隐私版本屏障：收到更高版本或实例变化时立即隐藏旧派生数据，取消旧请求，防迟到旧响应回填，重新读取当前版本。普通消息游标变化保留合法状态。首次版本同步失败应明示不可用，不能继续以旧数值冒称当前。"
-      ]
+      ],
+      "release_review": "C35前端版本屏障修后情绪/概览各3次1秒窗旧DOM3/3→0/3；8类故障正控通过，两工具失败保留。C36纳入日常默认浏览器，当前hook对版本变化/不可用先隐藏、取消缓存、epoch拒迟到，已编辑草稿/override独立；不是SQL提交瞬时同步离线屏幕保证，最终当前浏览器门控仍待。",
+      "residual_product_roots": []
     },
     {
       "id": "C35-000",
