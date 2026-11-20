@@ -26,10 +26,17 @@ def until(predicate):
 
 @pytest.mark.parametrize('code',[0,7])
 def test_provider_preserves_actual_exit_and_immutable_terminal(tmp_path,code):
-    folder=tmp_path/'provider';argv=[sys.executable,'-B','-c',f'import time; print("ready",flush=True); time.sleep(.15); raise SystemExit({code})']
+    folder=tmp_path/'provider';gate=tmp_path/'allow-exit'
+    program=('from pathlib import Path; import sys,time; print("ready",flush=True); '
+        'gate=Path(sys.argv[1]); exec("while not gate.exists(): time.sleep(.01)"); '
+        f'raise SystemExit({code})')
+    argv=[sys.executable,'-B','-c',program,str(gate)]
     with (tmp_path/'provider.log').open('x') as log:
         process,proof=owned.start_provider(tuple(argv),folder,cwd=ROOT,env=dict(os.environ),stdout=log)
-        with pytest.raises(ValueError,match='Wait'):owned.finish_provider(process,folder)
+        try:
+            with pytest.raises(ValueError,match='Wait'):owned.finish_provider(process,folder)
+        finally:
+            gate.touch()
         assert process.wait(timeout=10)==code
         terminal=owned.finish_provider(process,folder)
     assert proof['payload_argv_observed'] and proof['provider_identity']['argv']==argv
@@ -89,3 +96,17 @@ def test_provider_argv_is_not_a_shell_string(tmp_path):
     with pytest.raises(ValueError,match='explicit argv'):
         owned.start_provider('python -V',tmp_path/'not-created',cwd=ROOT,env={},stdout=subprocess.DEVNULL)
     assert not (tmp_path/'not-created').exists()
+
+
+def test_running_provider_reports_actual_kernel_protection(tmp_path):
+    program=('import sys,time; sys.path.insert(0,sys.argv[1]); '
+        'from serve_local_model_eval import parent_death_signal; '
+        'print(parent_death_signal(),flush=True); time.sleep(.2)')
+    directory=tmp_path/'provider'
+    with (tmp_path/'provider.log').open('x') as log:
+        process,proof=owned.start_provider([sys.executable,'-B','-c',program,str(ROOT/'scripts')],
+            directory,cwd=ROOT,env=dict(os.environ),stdout=log)
+        assert process.wait(timeout=10)==0
+        owned.finish_provider(process,directory)
+    assert (tmp_path/'provider.log').read_text().strip()=='9'
+    assert proof['payload_argv_observed']
