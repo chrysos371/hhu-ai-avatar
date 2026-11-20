@@ -1,0 +1,149 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+_ test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[1] _
+
+count = 1
+
+    @pytest.mark.parametrize('count', [1,2,3])
+    def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(count):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '因个人原因请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(f'麻烦给导师写一封请假邮件，署名用【申请人】，改成{count}句话，只给正文。')
+>           assert result['generation_mode'] == 'rules_writing_artifact'
+E           AssertionError: assert 'rules_writing_validation' == 'rules_writing_artifact'
+E             
+E             - rules_writing_artifact
+E             + rules_writing_validation
+
+tests/test_writing_source_fallback.py:19: AssertionError
+_ test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[2] _
+
+count = 2
+
+    @pytest.mark.parametrize('count', [1,2,3])
+    def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(count):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '因个人原因请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(f'麻烦给导师写一封请假邮件，署名用【申请人】，改成{count}句话，只给正文。')
+>           assert result['generation_mode'] == 'rules_writing_artifact'
+E           AssertionError: assert 'rules_writing_validation' == 'rules_writing_artifact'
+E             
+E             - rules_writing_artifact
+E             + rules_writing_validation
+
+tests/test_writing_source_fallback.py:19: AssertionError
+_ test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[3] _
+
+count = 3
+
+    @pytest.mark.parametrize('count', [1,2,3])
+    def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(count):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '因个人原因请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(f'麻烦给导师写一封请假邮件，署名用【申请人】，改成{count}句话，只给正文。')
+>           assert result['generation_mode'] == 'rules_writing_artifact'
+E           AssertionError: assert 'rules_writing_validation' == 'rules_writing_artifact'
+E             
+E             - rules_writing_artifact
+E             + rules_writing_validation
+
+tests/test_writing_source_fallback.py:19: AssertionError
+_____ test_given_event_stays_verbatim_and_unprovided_duration_is_not_added _____
+
+    def test_given_event_stays_verbatim_and_unprovided_duration_is_not_added():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['明天请假一天。', '明天参加家里的活动，请假一天。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond('帮我写一条请假短信，我明天要参加家里的活动，只给正文。')
+>           assert result['generation_mode'] == 'rules_writing_artifact'
+E           AssertionError: assert 'rules_writing_validation' == 'rules_writing_artifact'
+E             
+E             - rules_writing_artifact
+E             + rules_writing_validation
+
+tests/test_writing_source_fallback.py:36: AssertionError
+_ test_unhandled_material_perspective_or_status_never_silently_dropped[\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u5fc5\u987b\u4fdd\u7559\u201c\u4e0d\u53ef\u4e22\u5931\u7d20\u6750\u201d\u3002] _
+
+request_text = '帮我写一条请假短信，必须保留“不可丢失素材”。'
+
+    @pytest.mark.parametrize('request_text', [
+        '帮我写一条请假短信，必须保留“不可丢失素材”。',
+        '替姐姐给老师写一封请假邮件。',
+        '帮我写一条请假短信，明确说明尚未获批准。',
+    ])
+    def test_unhandled_material_perspective_or_status_never_silently_dropped(request_text):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '今天身体不适。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(request_text)
+            assert result['generation_mode'] == 'rules_writing_validation'
+>           assert not result['writing_delivery']['source_fallback']['used']
+E           KeyError: 'source_fallback'
+
+tests/test_writing_source_fallback.py:52: KeyError
+_ test_unhandled_material_perspective_or_status_never_silently_dropped[\u66ff\u59d0\u59d0\u7ed9\u8001\u5e08\u5199\u4e00\u5c01\u8bf7\u5047\u90ae\u4ef6\u3002] _
+
+request_text = '替姐姐给老师写一封请假邮件。'
+
+    @pytest.mark.parametrize('request_text', [
+        '帮我写一条请假短信，必须保留“不可丢失素材”。',
+        '替姐姐给老师写一封请假邮件。',
+        '帮我写一条请假短信，明确说明尚未获批准。',
+    ])
+    def test_unhandled_material_perspective_or_status_never_silently_dropped(request_text):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '今天身体不适。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(request_text)
+>           assert result['generation_mode'] == 'rules_writing_validation'
+E           AssertionError: assert 'llm' == 'rules_writing_validation'
+E             
+E             - rules_writing_validation
+E             + llm
+
+tests/test_writing_source_fallback.py:51: AssertionError
+_ test_unhandled_material_perspective_or_status_never_silently_dropped[\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u660e\u786e\u8bf4\u660e\u5c1a\u672a\u83b7\u6279\u51c6\u3002] _
+
+request_text = '帮我写一条请假短信，明确说明尚未获批准。'
+
+    @pytest.mark.parametrize('request_text', [
+        '帮我写一条请假短信，必须保留“不可丢失素材”。',
+        '替姐姐给老师写一封请假邮件。',
+        '帮我写一条请假短信，明确说明尚未获批准。',
+    ])
+    def test_unhandled_material_perspective_or_status_never_silently_dropped(request_text):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '今天身体不适。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(request_text)
+            assert result['generation_mode'] == 'rules_writing_validation'
+>           assert not result['writing_delivery']['source_fallback']['used']
+E           KeyError: 'source_fallback'
+
+tests/test_writing_source_fallback.py:52: KeyError
+_ test_fictional_counterparty_author_and_receipt_do_not_become_real_execution __
+
+    def test_fictional_counterparty_author_and_receipt_do_not_become_real_execution():
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '老师您好，我已将邮件发送给您，希望您能尽快回复。'
+            engine = Replies(['开始吧。', bad, bad])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('我来扮演小说角色。')
+            result = bot.respond('我已把邮件发给老师，接着写对方回复。')
+>           assert result['writing_requirements']['author_role'] == '老师'
+E           KeyError: 'author_role'
+
+tests/test_writing_source_fallback.py:62: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_writing_source_fallback.py::test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[1]
+FAILED tests/test_writing_source_fallback.py::test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[2]
+FAILED tests/test_writing_source_fallback.py::test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[3]
+FAILED tests/test_writing_source_fallback.py::test_given_event_stays_verbatim_and_unprovided_duration_is_not_added
+FAILED tests/test_writing_source_fallback.py::test_unhandled_material_perspective_or_status_never_silently_dropped[\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u5fc5\u987b\u4fdd\u7559\u201c\u4e0d\u53ef\u4e22\u5931\u7d20\u6750\u201d\u3002]
+FAILED tests/test_writing_source_fallback.py::test_unhandled_material_perspective_or_status_never_silently_dropped[\u66ff\u59d0\u59d0\u7ed9\u8001\u5e08\u5199\u4e00\u5c01\u8bf7\u5047\u90ae\u4ef6\u3002]
+FAILED tests/test_writing_source_fallback.py::test_unhandled_material_perspective_or_status_never_silently_dropped[\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u660e\u786e\u8bf4\u660e\u5c1a\u672a\u83b7\u6279\u51c6\u3002]
+FAILED tests/test_writing_source_fallback.py::test_fictional_counterparty_author_and_receipt_do_not_become_real_execution
+8 failed in 0.91s
