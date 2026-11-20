@@ -1,0 +1,22 @@
+..F...................................                                   [100%]
+=================================== FAILURES ===================================
+_ test_ordinary_reply_cannot_assert_or_offer_unavailable_execution[\u6211\u53ef\u4ee5\u66ff\u4f60\u62e8\u6253\u7535\u8bdd\u8054\u7cfb\u5ba4\u53cb\u3002] _
+
+reply = '我可以替你拨打电话联系室友。'
+
+    @pytest.mark.parametrize('reply', [
+        '我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
+        '我可以替你拨打电话联系室友。', '已经帮你发送短信。',
+        '我没有短信接口，但我已经发出短信了。', '需要我帮你发送邮件吗？',
+        '我会到时提醒你。',
+    ])
+    def test_ordinary_reply_cannot_assert_or_offer_unavailable_execution(reply):
+        checked = review_output(reply)
+>       assert checked.rules and checked.reply != reply
+E       AssertionError: assert (())
+E        +  where () = GuardedOutput(reply='我可以替你拨打电话联系室友。', rules=()).rules
+
+tests/test_capability_output.py:15: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_capability_output.py::test_ordinary_reply_cannot_assert_or_offer_unavailable_execution[\u6211\u53ef\u4ee5\u66ff\u4f60\u62e8\u6253\u7535\u8bdd\u8054\u7cfb\u5ba4\u53cb\u3002]
+1 failed, 37 passed in 0.78s
