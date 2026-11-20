@@ -1,0 +1,27 @@
+.............F.......................................................... [ 75%]
+........................                                                 [100%]
+=================================== FAILURES ===================================
+_ test_mixed_sender_question_retains_regular_cognition[\u6211\u771f\u7684\u6491\u4e0d\u4f4f\u4e86\uff0c\u5230\u5e95\u662f\u8c01\u53d1\u9001\u7684\uff1f] _
+
+question = '我真的撑不住了，到底是谁发送的？'
+
+    @pytest.mark.parametrize('question', [
+        '我很难过，是谁发的短信？',
+        '我真的撑不住了，到底是谁发送的？',
+        '是谁发的短信？我现在很害怕。',
+    ])
+    def test_mixed_sender_question_retains_regular_cognition(question):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('我们可以一起看看你现在的感受。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(question)
+            assert result['analysis_mode'] != 'rules_reported_sender'
+>           assert len(engine.analysis) == len(engine.native) == 1
+E           assert 0 == 1
+E            +  where 0 = len([])
+E            +    where [] = <test_capability_prompt_lab.Recorder object at 0x7f649cb9d7b0>.native
+
+tests/test_reported_sender_contract.py:134: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reported_sender_contract.py::test_mixed_sender_question_retains_regular_cognition[\u6211\u771f\u7684\u6491\u4e0d\u4f4f\u4e86\uff0c\u5230\u5e95\u662f\u8c01\u53d1\u9001\u7684\uff1f]
+1 failed, 95 passed in 1.39s
