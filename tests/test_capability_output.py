@@ -10,6 +10,7 @@ from avatar.brain.capability_output import review_output
     '我没有短信接口，但我已经发出短信了。', '需要我帮你发送邮件吗？',
     '我会到时提醒你。',
     '我已经把安排发到群里了。', '我可以帮你发邮件。', '我已经发了短信。',
+    '这套系统在运行时可以处理提醒并尝试发送短信。',
 ])
 def test_ordinary_reply_cannot_assert_or_offer_unavailable_execution(reply):
     checked = review_output(reply)
@@ -22,6 +23,7 @@ def test_ordinary_reply_cannot_assert_or_offer_unavailable_execution(reply):
     '根据你说的，你已经发送了短信。', '他说邮件已发送。',
     '“邮件已发送”只是你给的原文。', '如果发送短信，需要在自己的手机中操作。',
     '我可以发给你三个建议。', '我可以在这里发送代码示例。',
+    '我可以帮你修改要发送的短信内容。', '邮件服务系统可以发送邮件。',
 ])
 def test_negation_quotation_reporting_and_in_chat_text_are_preserved(reply):
     assert review_output(reply).reply == reply
