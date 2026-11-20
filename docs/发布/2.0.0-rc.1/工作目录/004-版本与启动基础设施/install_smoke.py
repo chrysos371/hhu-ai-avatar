@@ -23,7 +23,7 @@ ROOT = Path('/data/Users/zrh/repo/hhu-ai-avatar')
 ASSETS = Path('/data/Users/zrh/data/hhu-ai-avatar')
 HERE = Path(__file__).resolve().parent
 BUILD = ASSETS/'artifacts/release/candidate-build-v1'
-OUT = ASSETS/'artifacts/release/install-smoke-v1'
+OUT = ASSETS/'artifacts/release/install-smoke-v2'
 LEGACY = '349160c2'
 
 
@@ -107,12 +107,12 @@ def run_server(env, number):
             assert code == 200 and b'event: result\n' in stream
             records = [json.loads(line[6:]) for line in stream.decode().splitlines() if line.startswith('data: ')]
             final = records[-1]
-            assert final['reply'] and final['trace']['generation_mode'] == 'rules_unconfigured'
+            assert final['reply'] and final['generation_mode'] == final['trace']['decision']['generation_mode'] == 'rules_unconfigured'
             assert request(base, token, '/api/v1/turns', payload)[0] == 202
             page = json.loads(request(base, token, '/api/v1/conversation')[1])['data']
             assert len(page['items']) == number*2
             return dict(run=number, installed_console=str(command[0]), http_auth_required=True,
-                ui_assets_verified=len(provenance['ui_sha256']), generation_mode=final['trace']['generation_mode'],
+                ui_assets_verified=len(provenance['ui_sha256']), generation_mode=final['generation_mode'],
                 conversation_items=len(page['items']), duplicate_did_not_reexecute=True)
         finally:
             if child.poll() is None:
