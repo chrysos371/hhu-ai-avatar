@@ -30,7 +30,7 @@ async function snapshot(player, canvas) {
       await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
       const page = await context.newPage(); page.setDefaultTimeout(15000);
       page.on('pageerror', error => report.page_errors.push({ viewport, message: error.message }));
-      page.on('console', message => { if (message.type() === 'error') report.console_errors.push({ viewport, message: message.text() }); });
+      page.on('console', message => { if (message.type() === 'error') report.console_errors.push({ viewport, message: message.text(), location: message.location() }); });
       const row = { viewport, samples: [], pause_ms: [], same_canvas_recovered: false, disposed: false };
       report.viewports.push(row);
       try {

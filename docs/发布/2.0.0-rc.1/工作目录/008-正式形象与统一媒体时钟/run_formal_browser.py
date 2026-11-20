@@ -7,6 +7,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import socket
 import subprocess
@@ -26,27 +27,32 @@ import run_frozen_capability_job as jobs
 def digest(path):return sha256(path.read_bytes()).hexdigest()
 
 
-def snapshot():
+def snapshot(extra=()):
     names=subprocess.check_output(['git','ls-files','-z'],cwd=ROOT).decode().split('\0')
     selected={p for p in names if p.startswith(('src/','scripts/','tests/','frontend/','evals/','training/'))
         or p=='pyproject.toml' or p.startswith('requirements') and p.endswith('.txt')}
     selected.update(str(p.relative_to(ROOT)) for p in (Path(__file__),HERE/'formal_browser.cjs',HERE/'浏览器门控协议-v1.md'))
+    selected.update(str(p.relative_to(ROOT)) for p in extra)
     return {p:digest(ROOT/p) for p in sorted(selected)}
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--version',type=int,required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--version',type=int,required=True)
+    parser.add_argument('--ui-proof',default='development-ui-promotion-v1.json')
+    parser.add_argument('--failure-control',action='store_true');args=parser.parse_args()
     assert 1<=args.version<=99
+    assert re.fullmatch(r'development-ui-promotion-v[1-9][0-9]*\.json',args.ui_proof)
+    extra=(HERE/args.ui_proof,)
     raw=ASSETS/'artifacts/release'/('formal-browser-v'+str(args.version));raw.mkdir(parents=True,exist_ok=False)
     proof_path=HERE/('formal-browser-v'+str(args.version)+'.json');assert not proof_path.exists()
-    before=snapshot();head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+    before=snapshot(extra);head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     archive=subprocess.check_output(['git','archive','--format=tar',head,'--',*before],cwd=ROOT)
     with tarfile.open(fileobj=io.BytesIO(archive)) as stream:
         assert {m.name:sha256(stream.extractfile(m).read()).hexdigest() for m in stream if m.isfile()}==before
     assert not any(p and p.startswith(('src/','scripts/','tests/','frontend/','evals/')) for p in subprocess.check_output(
         ['git','ls-files','--others','--exclude-standard','-z'],cwd=ROOT).decode().split('\0'))
     ui={str(p.relative_to(ROOT/'frontend/dist')):digest(p) for p in (ROOT/'frontend/dist').rglob('*') if p.is_file()}
-    assert ui==json.loads((HERE/'development-ui-promotion-v1.json').read_text())['ui_sha256']
+    assert ui==json.loads((HERE/args.ui_proof).read_text())['ui_sha256']
     env=os.environ.copy();env.update(PYTHONPATH=str(ROOT/'src'),HHU_AVATAR_DATA_ROOT=str(ASSETS),
         PLAYWRIGHT_BROWSERS_PATH=str(ASSETS/'runtime/playwright'),AVATAR_E2E_RUNTIME_EVIDENCE=str(raw/'server-runtime.json'),
         AVATAR_E2E_RETAIN_STATE=str(raw/'server-state'),AVATAR_E2E_CAPABILITY_CONTRACT='1',AVATAR_E2E_ROLE_STATE='1')
@@ -62,11 +68,12 @@ def main():
     with socket.socket() as check:
         check.settimeout(1);assert check.connect_ex(('127.0.0.1',18765))!=0,'refuse occupied fixture port'
     proof=dict(passed=False,source_ref=head,source_sha256=before,source_unchanged=False,ui_sha256=ui,
+        failure_control=args.failure_control,ui_proof=args.ui_proof,completed_browser_viewports=0,
         node_sha256=digest(node),core_python=sys.executable,
         core_versions={p:importlib.metadata.version(p) for p in ('openai','httpx','numpy')},
         actual_native_model_calls=0,physical_or_human_approval=False,whole_stage_deadline=None,raw_root=str(raw))
     proof_path.write_text(json.dumps(proof,ensure_ascii=False,indent=2)+'\n')
-    server=None;probe=None;server_identity=None;probe_identity=None;started=time.monotonic()
+    server=None;probe=None;server_identity=None;probe_identity=None;failure=None;started=time.monotonic()
     with ExitStack() as stack:
         try:
             server_log=stack.enter_context((raw/'server.log').open('x'))
@@ -83,34 +90,43 @@ def main():
                 assert time.monotonic()-ready_started<30,'fixture readiness engineering boundary'
                 time.sleep(.1)
             probe_log=stack.enter_context((raw/'probe.log').open('x'))
-            probe,launch=start_provider([str(node),str(HERE/'formal_browser.cjs'),str(raw)],raw/'probe-edge',
+            command=([str(node),'-e','setTimeout(()=>process.exit(7),200)'] if args.failure_control
+                else [str(node),str(HERE/'formal_browser.cjs'),str(raw)])
+            probe,launch=start_provider(command,raw/'probe-edge',
                 cwd=ROOT,env=env,stdout=probe_log,process_role='browser_probe')
             probe_identity=launch['provider_identity'];proof['probe_launch']=launch
             proof['actual_probe_wait_code']=probe.wait()
             proof['probe_terminal']=finish_provider(probe,raw/'probe-edge')
             assert proof['actual_probe_wait_code']==0,'browser failures retained'
             browser=json.loads((raw/'browser-result.json').read_text());assert browser['passed']
+            proof['completed_browser_viewports']=sum(row.get('disposed') is True for row in browser['viewports'])
             proof['browser_summary']={k:v for k,v in browser.items() if k not in ('viewports',)}
             proof['browser_executable_sha256']=digest(Path(browser['executable']))
-            proof['source_unchanged']=snapshot()==before;assert proof['source_unchanged']
+            proof['source_unchanged']=snapshot(extra)==before;assert proof['source_unchanged']
             proof['passed']=True
         except BaseException as error:
-            proof['error']=repr(error);raise
+            proof['error']=repr(error);failure=error
         finally:
             for child,identity,name in ((probe,probe_identity,'probe'),(server,server_identity,'server')):
                 if child is None:continue
-                if child.poll() is None:jobs.signal_owned_child(child,identity,signal.SIGINT)
-                try:code=child.wait(timeout=30)
-                except subprocess.TimeoutExpired:
-                    jobs.signal_owned_child(child,identity,signal.SIGKILL);code=child.wait()
-                proof['actual_'+name+'_wait_code']=code
-                terminal=raw/(name+'-edge')/'terminal.json'
-                if not terminal.exists():proof[name+'_terminal']=finish_provider(child,raw/(name+'-edge'))
-                proof[name+'_identity_retired']=not jobs.matches(identity)
-                if code!=0 or not proof[name+'_identity_retired']:proof['passed']=False
+                try:
+                    if child.poll() is None:jobs.signal_owned_child(child,identity,signal.SIGINT)
+                    try:code=child.wait(timeout=30)
+                    except subprocess.TimeoutExpired:
+                        jobs.signal_owned_child(child,identity,signal.SIGKILL);code=child.wait()
+                    proof['actual_'+name+'_wait_code']=code
+                    terminal=raw/(name+'-edge')/'terminal.json'
+                    if not terminal.exists():proof[name+'_terminal']=finish_provider(child,raw/(name+'-edge'))
+                    proof[name+'_identity_retired']=not jobs.matches(identity)
+                    if code!=0 or not proof[name+'_identity_retired']:proof['passed']=False
+                except BaseException as error:
+                    proof['passed']=False;proof[name+'_cleanup_error']=repr(error);failure=failure or error
             proof['seconds_including_fixture_and_cleanup']=time.monotonic()-started
     proof['raw_sha256']={str(p.relative_to(raw)):digest(p) for p in sorted(raw.rglob('*')) if p.is_file()}
+    proof['source_unchanged']=snapshot(extra)==before
+    proof['finalized_after_cleanup']=True
     proof_path.write_text(json.dumps(proof,ensure_ascii=False,indent=2)+'\n')
+    if failure is not None:raise failure
     assert proof['passed']
     print('Formal browser passed; source inputs',len(before),'raw files',len(proof['raw_sha256']))
 
