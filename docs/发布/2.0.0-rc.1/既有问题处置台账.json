@@ -4569,12 +4569,19 @@
           "sha256": "f165dcf1deada77415ff6e475b299a9642a0f2b83e373c67c98b34d254d1ed72"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "scripts/lab/owned_provider.py",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/provider链修复结论.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/normal-result-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/manager_sigkill-result-v1.json"
+      ],
       "original_status_candidates": [
         "P1，OPEN，真实CPU链复现；实际GPU provider尚未验证。"
-      ]
+      ],
+      "release_review": "四个显式provider边、冻结传递依赖、加载后PR9、CPU三层与两个真实GPU正常/manager硬终止门控通过；丢失原父wait不伪造。"
     },
     {
       "id": "DOC-001",
