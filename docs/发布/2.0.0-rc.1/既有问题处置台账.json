@@ -15,13 +15,20 @@
           "sha256": "e1c5d77480656d3c673fb0f5be1e2fd8176e61a7b1650d27bad757f2462545ec"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/brain/boundaries.py",
+        "tests/test_boundaries.py::test_current_risk_is_not_suppressed_by_separate_historical_clause",
+        "tests/test_boundaries.py::test_historical_risk_without_current_intent_does_not_route_as_crisis"
+      ],
       "original_status_candidates": [
         "- **等级：** P1 · 高",
         "- **状态：** 静态控制流确认；未执行运行时复现"
-      ]
+      ],
+      "release_review": "当前/历史混合句危机分支已按分句处理；当前风险不能被历史标记整体抑制。"
     },
     {
       "id": "AUD-002",
@@ -34,13 +41,22 @@
           "sha256": "412b21d29fb2f6637c0e3f81269d118ade9e1569eb4de2ea1cdb0dc89211b4bf"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/main.py",
+        "tests/test_main.py::test_reminder_commands_and_close_in_real_pipeline",
+        "tests/test_reminders.py",
+        "tests/test_reminder_transaction_boundary.py",
+        "tests/test_speaker_actions.py"
+      ],
       "original_status_candidates": [
         "- **等级：** P1 · 高",
         "- **状态：** 静态调用链确认；未执行有副作用的复现"
-      ]
+      ],
+      "release_review": "模型/MCP只读工具不含创建/取消写入口；明确当轮用户请求走规则写与事务/归属门禁。"
     },
     {
       "id": "AUD-003",
@@ -53,13 +69,19 @@
           "sha256": "a63fbbf908cb26054a49a195f12f30c2c9f86ebba97df09b1935c91a2d2c910b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/tools/local_tools.py",
+        "tests/test_local_tools.py::test_nested_documents_work_without_python312_path_api"
+      ],
       "original_status_candidates": [
         "- **等级：** P1 · 高（受支持环境中的功能中断）",
         "- **状态：** 静态 API/调用点确认；未切换解释器运行"
-      ]
+      ],
+      "release_review": "Path.is_junction采用getattr兼容，并保持解析后授权根包含限制；不据此宣称所有Python/OS组合已实机验证。"
     },
     {
       "id": "AUD-004",
@@ -72,15 +94,22 @@
           "sha256": "0658b39e6cf1f77326dff5d420a97475f56c0099f90deff59b46fe3da976fec1"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/main.py",
+        "tests/test_main.py::test_audio_entrypoint_transcribes_and_returns_lipsync_frames",
+        "tests/test_main.py::test_audio_entrypoint_requires_asr_and_nonempty_transcript"
+      ],
       "original_status_candidates": [
         "- **等级：** P2 · 中（功能完整性 / 文档准确性）",
         "- **状态：** 静态调用图确认；未运行 ASR/TTS 设备链路",
         "语音识别、语音合成、口型分析类均已实现并在项目文档中列为已完成模块，但当前 `Avatar.respond()` 主流程只接受文本；ASR 实例没有被调用，TTS 只生成 MP3 文件，口型引擎没有消费生成音频，也没有把口型帧返回给调用者。因此项目具备独立组件，不具备 README 所表达的 ASR→LLM→TTS→口型参数端到端闭环。",
         "- `EdgeTTSEngine` 输出 MP3；`utils/audio.py` 的标准库加载路径只支持 WAV，任意格式需可选 `librosa`，当前编排没有调用 `load_audio()`。"
-      ]
+      ],
+      "release_review": "respond_audio已串接ASR文件转写和respond/TTS/解码口型API；软件夹具通过。真实ASR/声音与正式渲染的剩余整体验收归G03，物理部分用户延期。"
     },
     {
       "id": "AUD-005",
@@ -93,14 +122,21 @@
           "sha256": "b5b6d495dbadba6edaa155660a5442e413ffd08e1e10ae39fc59a1093d21f905"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/face/lipsync.py",
+        "tests/test_lipsync.py::test_silent_audio_returns_finite_closed_frames",
+        "tests/test_lipsync.py::test_low_level_noise_does_not_become_full_scale_mouth_motion"
+      ],
       "original_status_candidates": [
         "# AUD-005 · 全零音频被计算为张嘴状态",
         "- **等级：** P2 · 中",
         "- **状态：** 静态数值路径确认；未运行音频用例"
-      ]
+      ],
+      "release_review": "静音/绝对底噪和无效共振峰不再产生虚假张嘴；不将信号回归当中文真人音素校准。"
     },
     {
       "id": "AUD-006",
@@ -113,13 +149,20 @@
           "sha256": "9bf1c7b28798ab3c07dfbb3f42128d85f115653f2217a0d7237bb43870450af1"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/brain/memory.py",
+        "tests/test_memory.py::test_nonempty_query_without_searchable_terms_does_not_return_global_memories",
+        "tests/test_memory.py::test_recall_no_query_returns_by_importance"
+      ],
       "original_status_candidates": [
         "- **等级：** P2 · 中",
         "- **状态：** 静态控制流确认；未运行 SQLite 示例"
-      ]
+      ],
+      "release_review": "非空查询过滤后无词返回空；无查询列表仍保留按重要度列举。"
     },
     {
       "id": "AUD-007",
@@ -132,16 +175,23 @@
           "sha256": "7a3cbe23c58a7d59e5403de447ee6ddedc159f404fe4d73b3a34c5c2385b2f26"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/brain/emotion.py",
+        "tests/test_emotion_strategy.py::test_default_role_emotion_half_life_is_five_minutes",
+        "tests/test_emotion_revision.py"
+      ],
       "original_status_candidates": [
         "- **等级：** P2 · 中（默认行为与产品预期需确认）",
         "- **状态：** 由实现公式静态计算；预期时间尺度未定义",
         "角色情绪的时间衰减使用实际经过的秒数作为指数：`(1 - decay) ** elapsed`。默认 `decay=0.15` 因此每秒保留 85%，对应半衰期约 4.27 秒；经过 10 秒只保留约 19.7%，经过 30 秒只保留约 0.76%。若“情绪连贯、自然平复”预期覆盖普通对话间隔（几十秒至数分钟），默认状态会过快回到基线。",
         "- `src/avatar/brain/emotion.py:177-198` 每次观测都会先按实际空闲秒数衰减角色状态。",
         "- `tests/test_emotion_strategy.py:35-58` 使用 `decay=0.5` 和 1～2 秒人工时钟断言公式行为；没有校验生产默认值在典型 30 秒或数分钟对话间隔中的状态保留。"
-      ]
+      ],
+      "release_review": "默认角色半衰期明确为300秒，显式decay保持兼容；参数透明且有时钟回归，不宣称300秒是用户研究最优值。"
     },
     {
       "id": "AUD-008",
@@ -154,13 +204,20 @@
           "sha256": "06a3e72468690cd70ee5c21dfad21beb28704421a3928cd37fdc014929bbb073"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "audit/2026-11-10-completed-components/11项修复与优化汇总.md",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/python-provider-v1-binding.json",
+        "src/avatar/web.py",
+        "tests/test_web.py::test_slow_chat_does_not_block_reminder_poll",
+        "tests/test_web_concurrency.py"
+      ],
       "original_status_candidates": [
         "- **等级：** P2 · 中（可用性与提醒时效）",
         "- **状态：** 静态服务调用路径确认；未做压力或延迟测量"
-      ]
+      ],
+      "release_review": "线程HTTP和有界请求允许慢聊天期间轮询；共享状态仍串行保护。网络/物理/多日可靠性不能由单个并发夹具证明。"
     },
     {
       "id": "C01-001",
