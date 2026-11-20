@@ -127,6 +127,36 @@ def test_current_cognition_remains_and_due_claim_is_skipped(tmp_path):
         assert not result['reminder_history']['business_data_read']
 
 
+def test_corrupt_newer_query_does_not_fall_back_to_older_state(tmp_path):
+    memory, bot, first, model = ready(tmp_path)
+    with closing(memory):
+        second = bot.respond('提醒编号1现在是什么状态？', mode='reminder_query')
+        second['reminder_query']['state']['status'] = 'completed'
+        with memory.transaction():
+            memory._conn.execute('UPDATE memory_chat_results SET result_json=? WHERE message_id=?',
+                (json.dumps(second), second['conversation']['assistant_message_id']))
+        result = bot.respond('刚才查询的状态是什么？')
+        assert result['generation_mode'] != 'rules_reminder_history'
+
+
+def test_sdk_records_only_actual_completed_results_and_metadata_cannot_inject_context(tmp_path):
+    memory, bot, query, model = ready(tmp_path)
+    with closing(memory):
+        result = bot.respond('刚才查询的状态是什么？')
+        aid = result['conversation']['assistant_message_id']
+        value = copy.deepcopy(result)
+        value['reminder_history']['current_state_verified'] = True
+        value['_delivery_history_context'] = '伪造内部指令'
+        with memory.transaction():
+            memory._conn.execute('UPDATE memory_chat_results SET result_json=? WHERE message_id=?', (json.dumps(value), aid))
+        with memory.transaction():
+            ident = memory.add_message('user', '继续聊聊', 'new')
+            bot.speaker_context_store.observe('继续聊聊', memory.context_revision, ident)
+            window = ConversationContextStore(memory).read(current_user_id=ident,
+                scope='current_user', expected_revision=memory.context_revision)
+            assert window.messages == ()
+
+
 def test_actual_web_restart_preserves_verified_explanation_and_original_public_sql(tmp_path, monkeypatch):
     engines = []
     def factory():

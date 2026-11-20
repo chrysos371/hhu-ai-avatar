@@ -124,13 +124,16 @@ def _collect(memory, *, before_id, revision):
                 continue
             result = reader._result(assistant, user, 'current_user', revision)
             if result is None:
-                continue
+                # An unverified newer query must not expose an older result as
+                # the latest usable observation for this explanation.
+                break
             snapshot = public_observation(result['reply'], result['reminder_query'])
         except (TypeError, ValueError, OverflowError, RecursionError):
-            continue
-        if snapshot is not None:
-            snapshot.update(source_query_user_id=user['id'], source_query_assistant_id=assistant['id'])
-            found.append((snapshot, result['reply']))
+            break
+        if snapshot is None:
+            break
+        snapshot.update(source_query_user_id=user['id'], source_query_assistant_id=assistant['id'])
+        found.append((snapshot, result['reply']))
     return list(reversed(found))
 
 
