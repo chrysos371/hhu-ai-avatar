@@ -1,0 +1,24 @@
+.....................F.................................                  [100%]
+=================================== FAILURES ===================================
+__ test_unsuccessful_later_response_never_becomes_durable_completion[cancel] ___
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-132/test_unsuccessful_later_respon0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb97072e7a0>
+failure = 'cancel'
+
+    @pytest.mark.parametrize('failure', ['cancel', 'tts'])
+    def test_unsuccessful_later_response_never_becomes_durable_completion(tmp_path, monkeypatch, failure):
+        db = str(tmp_path/'failure.db')
+        bot = Avatar(db_path=db, llm=Offline(), role_state_enabled=True, summary_enabled=False)
+        try:
+            bot.respond('我很开心。')
+            old = tuple(bot.memory._conn.execute('SELECT * FROM memory_role_state').fetchone())
+            if failure == 'cancel':
+                token = CancellationToken()
+>               original = bot._rule_reply
+E               AttributeError: 'Avatar' object has no attribute '_rule_reply'
+
+tests/test_role_state_integration.py:52: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_role_state_integration.py::test_unsuccessful_later_response_never_becomes_durable_completion[cancel]
+1 failed, 54 passed in 9.01s

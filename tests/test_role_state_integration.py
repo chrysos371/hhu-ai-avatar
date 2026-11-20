@@ -49,12 +49,12 @@ def test_unsuccessful_later_response_never_becomes_durable_completion(tmp_path, 
         old = tuple(bot.memory._conn.execute('SELECT * FROM memory_role_state').fetchone())
         if failure == 'cancel':
             token = CancellationToken()
-            original = bot._rule_reply
+            original = bot._fallback_reply
             def cancelled(*args, **kwargs):
                 value = original(*args, **kwargs)
                 token.cancel()
                 return value
-            monkeypatch.setattr(bot, '_rule_reply', cancelled)
+            monkeypatch.setattr(bot, '_fallback_reply', cancelled)
             with pytest.raises(Cancelled): bot.respond('我很难过。', cancel=token)
         else:
             class BrokenTTS:
@@ -84,6 +84,38 @@ def test_web_startup_state_and_chat_retain_role_after_restart(tmp_path, monkeypa
         result = run_chat(second, '聊聊窗外。')
         assert result['valence'] > 0 and result['user_valence'] == 0
     finally: second.server_close()
+
+
+def test_fictional_role_restores_only_verified_scope_and_exit_resets_old_scope(tmp_path):
+    db = str(tmp_path/'fiction.db')
+    first = Avatar(db_path=db, llm=Offline(), role_state_enabled=True, summary_enabled=False)
+    try:
+        first.respond('我来扮演一个虚构角色。')
+        first.respond('我很开心。')
+        old = first.emotion.state.valence
+        assert old > .1
+    finally: first.memory.close()
+    second = Avatar(db_path=db, llm=Offline(), role_state_enabled=True, summary_enabled=False)
+    try:
+        assert second._restored_role_scope == 'fictional_character'
+        assert old*.98 < second.emotion.state.valence <= old
+        result = second.respond('回到现实')
+        assert result['valence'] == result['arousal'] == 0
+        assert result['speaker_attribution']['scope'] == 'current_user'
+    finally: second.memory.close()
+
+
+def test_corrupt_speaker_basis_cannot_restore_mood_even_with_valid_snapshot(tmp_path):
+    db = str(tmp_path/'scope.db')
+    first = Avatar(db_path=db, llm=Offline(), role_state_enabled=True)
+    try:
+        first.respond('我很开心。')
+        with first.memory.transaction():
+            first.memory._conn.execute("UPDATE memory_web_speaker_state SET source_ids_json='[true]'")
+    finally: first.memory.close()
+    second = Avatar(db_path=db, llm=Offline(), role_state_enabled=True)
+    try: assert second.emotion.state.valence == 0 and second._restored_role_scope is None
+    finally: second.memory.close()
 
 
 @pytest.mark.parametrize('factory', [Avatar, create_server])

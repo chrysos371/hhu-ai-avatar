@@ -651,7 +651,7 @@ def create_server(
         from .brain.role_state import RoleStateStore
         memory = MemoryStore(db_path)
         try:
-            RoleStateStore(memory).restore(initial_emotion)
+            RoleStateStore(memory).restore(initial_emotion, scope=None)
         finally:
             memory.close()
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,

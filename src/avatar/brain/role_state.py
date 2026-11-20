@@ -33,6 +33,7 @@ class RoleStateStore:
 
     def __init__(self, memory, *, wallclock=time):
         self.memory, self.conn, self.wallclock = memory, memory._conn, wallclock
+        self.last_restored_scope = None
         with memory.transaction():
             self.conn.execute('CREATE TABLE IF NOT EXISTS memory_role_state '
                 '(id INTEGER PRIMARY KEY CHECK(id=1), payload TEXT NOT NULL, payload_sha256 TEXT NOT NULL)')
@@ -98,6 +99,7 @@ class RoleStateStore:
             return True
 
     def restore(self, engine, *, scope='current_user'):
+        self.last_restored_scope = None
         owned = not self.conn.in_transaction
         if owned:
             self.conn.execute('BEGIN')
@@ -108,7 +110,15 @@ class RoleStateStore:
             data = decode(row[0])
             if (type(data) is not dict or set(data) != {'version','source','scope','saved_at','role','sources'}
                     or type(data['version']) is not int or data['version'] != 1
-                    or scope != 'current_user' or data['scope'] != scope or not self._pair(data['source'])):
+                    or not self._pair(data['source'])):
+                return False
+            if scope is None or scope == 'fictional_character':
+                from .speaker_context import SpeakerContextStore
+                actual_scope = SpeakerContextStore(self.memory).read(data['source']['session_id'])['scope']
+                if scope is not None and actual_scope != scope:
+                    return False
+                scope = actual_scope
+            if scope not in ('current_user', 'fictional_character') or data['scope'] != scope:
                 return False
             if encode(data['sources']) != encode(self._sources(data['source'])):
                 return False
@@ -117,6 +127,7 @@ class RoleStateStore:
                     for x in (now, saved)) or saved > now):
                 return False
             engine.restore_role_snapshot(data['role'], elapsed=now-saved, revision=data['source']['revision'])
+            self.last_restored_scope = scope
             return True
         except (ValueError, TypeError, KeyError, OverflowError):
             return False

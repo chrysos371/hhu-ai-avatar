@@ -131,7 +131,7 @@ class EmotionEngine:
         if type(revision) is not int or revision < 0:
             raise ValueError('Emotion context revision must be a nonnegative integer')
 
-    def bind_context_revision(self, revision: int) -> bool:
+    def bind_context_revision(self, revision: int, *, force: bool = False) -> bool:
         """Clear automatic state when its source revision is unknown or stale.
 
         Keep the configured clock and decay policy. A normal message at the
@@ -139,7 +139,7 @@ class EmotionEngine:
         completed before a subsequent generation cancellation.
         """
         self._validate_revision(revision)
-        if self._context_revision == revision:
+        if self._context_revision == revision and not force:
             return False
         now = self._clock()
         self._state = EmotionState()

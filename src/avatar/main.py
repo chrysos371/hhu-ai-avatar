@@ -109,10 +109,12 @@ class Avatar:
         self._turn_context_revision = None
         self.emotion = EmotionEngine()
         self.role_state_store = None
+        self._restored_role_scope = None
         if role_state_enabled:
             from .brain.role_state import RoleStateStore
             self.role_state_store = RoleStateStore(memory)
-            self.role_state_store.restore(self.emotion)
+            self.role_state_store.restore(self.emotion, scope=None)
+            self._restored_role_scope = self.role_state_store.last_restored_scope
         self.asr = asr or TextInputEngine()
         self.llm = llm or LLMEngine()
         self.tts = tts or EdgeTTSEngine()
@@ -122,6 +124,9 @@ class Avatar:
         self.boundaries = BoundaryPolicy()
         self.speaker_scope = SpeakerScope()
         self.speaker_context_store = None
+        if role_state_enabled:
+            from .brain.speaker_context import SpeakerContextStore
+            self.speaker_context_store = SpeakerContextStore(memory)
         # Installed by the standard Web path only, after current-source admission.
         self.conversation_context_store = None
         self._history_source_ids = set()
@@ -647,6 +652,10 @@ class Avatar:
                     user_text, turn_context_revision, self._current_message_id)
             else:
                 self.speaker_scope.observe(user_text, turn_context_revision, source_id=self._current_message_id)
+            if self._restored_role_scope is not None:
+                if self.speaker_scope.scope != self._restored_role_scope:
+                    self.emotion.bind_context_revision(turn_context_revision, force=True)
+                self._restored_role_scope = None
             if self.conversation_context_store is not None:
                 window = self.conversation_context_store.read(
                     current_user_id=self._current_message_id,
