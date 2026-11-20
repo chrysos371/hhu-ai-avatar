@@ -13,7 +13,7 @@ from .facts import _mask_quoted
 _LITERAL = re.compile(r'【[^【】\n]{1,40}】|“[^“”\n]{1,120}”|「[^「」\n]{1,120}」|『[^『』\n]{1,120}』|"[^"\n]{1,120}"|\'[^\'\n]{1,120}\'')
 _OPERATION = re.compile(
     r'不必包含|无需包含|不用包含|不必保留|无需保留|不用保留|不要保留|不要包含|不得包含|禁止包含|'
-    r'原样保留|原样输出|必须包含|删除|删掉|保留|留作|留为|不要改|不得改|别改|包含')
+    r'原样保留|原样输出|原样写出|必须包含|删除|删掉|保留|留作|留为|不要改|不得改|别改|包含')
 _FORBID = {'不用保留', '不要保留', '不要包含', '不得包含', '禁止包含', '删除', '删掉'}
 _RELEASE = {'不必包含', '无需包含', '不用包含', '不必保留', '无需保留'}
 
@@ -41,7 +41,7 @@ class TaskTracker:
     def __init__(self):
         self.current = None
 
-    def update(self, text):
+    def update(self, text, *, writing_root=False):
         clean = _instructions(text)
         meta = bool(re.match(r'^(?:请)?(?:再|先|另外|顺便)?(?:解释|分析|评价|点评|讨论|判断|翻译|问|聊)|^我想(?:再)?(?:问|知道|聊)', clean.strip())
                     or re.search(r'什么意思|是指什么|如何理解|怎么理解', clean))
@@ -49,7 +49,7 @@ class TaskTracker:
         if meta and not explicit_rewrite:
             self.current = None
             return
-        writing = bool(re.search(r'(?:写|拟|改写|润色|起草|修改).{0,24}(?:消息|短信|邮件|申请|正文|通知|回复|段话|文字|说明|台词|句子|句话|标语|提醒)|'
+        writing = writing_root or bool(re.search(r'(?:写|拟|改写|润色|起草|修改).{0,24}(?:消息|短信|邮件|申请|正文|通知|回复|段话|文字|说明|台词|句子|句话|标语|提醒)|'
                                  r'(?:消息|短信|邮件|申请|正文|通知|说明|台词|句子|句话|标语|提醒).{0,12}(?:写|拟|改写|润色)', clean))
         continuation = bool(re.match(
             r'^(?:再(?:写|改|短|长|精简|润色|正式|口语|自然|删|加|补|换|保留)|'

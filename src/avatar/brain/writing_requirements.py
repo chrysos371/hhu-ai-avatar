@@ -85,14 +85,31 @@ class WritingRequirements:
 
     @property
     def author_role(self):
-        return author_role(self.sources) if self.source_verified else None
+        explicit = author_role(self.sources) if self.source_verified else None
+        contract = self.literal_contract
+        return explicit or (contract.perspective if contract and contract.perspective else None)
+
+    @property
+    def literal_contract(self):
+        if not self.source_verified:
+            return None
+        from .tasks import TaskTracker
+        tracker = TaskTracker()
+        for index, (_, text) in enumerate(self.sources):
+            # ResponseFrames already validated the actual root, including
+            # direct reply forms which need no separate old experiment flag.
+            tracker.update(text, writing_root=index == 0)
+        return tracker.current
 
     def data(self):
+        contract = self.literal_contract
         return dict(version=1, source_verified=self.source_verified, signature=self.signature,
                     sentence_count=self.sentence_count, body_only=self.body_only,
                     source_message_ids=list(self.source_message_ids), reason=self.reason,
                     signature_omitted=self.signature_omitted, forbidden_signatures=list(self.forbidden_signatures),
                     author_role=self.author_role,
+                    required_literals=list(contract.required_literals) if contract else [],
+                    forbidden_literals=list(contract.forbidden_literals) if contract else [],
                     semantic_verifier=False)
 
 

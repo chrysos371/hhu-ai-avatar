@@ -26,6 +26,10 @@ def inspect(reply, requirements, *, fictional=False):
     if not isinstance(reply, str) or not reply.strip():
         return ('empty_body',)
     issues = []
+    contract = requirements.literal_contract
+    if contract is not None:
+        issues.extend('missing_literal:' + value for value in contract.required_literals if value not in reply)
+        issues.extend('forbidden_literal:' + value for value in contract.forbidden_literals if value in reply)
     lines = reply.strip().splitlines()
     body = reply.strip()
     signature = requirements.signature
