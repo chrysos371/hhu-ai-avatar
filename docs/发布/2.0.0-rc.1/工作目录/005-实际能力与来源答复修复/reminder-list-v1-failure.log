@@ -1,0 +1,78 @@
+F.....FFF                                                                [100%]
+=================================== FAILURES ===================================
+_____ test_automatic_numbered_query_enters_context_as_historical_snapshot ______
+
+    def test_automatic_numbered_query_enters_context_as_historical_snapshot():
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('不应调用'))
+            bot.respond('查询提醒编号1')
+>           assert '历史提醒查询快照' in memory.get_short_term()[-1]['content']
+E           AssertionError: assert '历史提醒查询快照' in '未找到编号1的提醒记录。'
+
+tests/test_reminder_list_snapshots.py:18: AssertionError
+__ test_actual_list_is_bounded_counts_all_statuses_and_does_not_commit_caller __
+
+    def test_actual_list_is_bounded_counts_all_statuses_and_does_not_commit_caller():
+        with closing(MemoryStore(':memory:')) as memory:
+            store = ReminderStore(memory)
+            for index in range(23):
+                memory._conn.execute('INSERT INTO memory_reminders(title,due_at,created_at,status) VALUES (?,?,?,?)',
+                    (f'事项{index}', time.time()+600, time.time(), ['active','cancelled','completed'][index % 3]))
+            memory._conn.commit()
+            ident = memory.add_message('user', '列出提醒', 'source')
+            context = QuerySource(ident, 'source', memory.context_revision, 'current_user', True)
+            changes = memory._conn.total_changes
+            memory._conn.execute('BEGIN')
+            try:
+>               answer = resolve_query(store, parse_query('列出提醒'), '列出提醒', context)
+
+tests/test_reminder_list_snapshots.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+store = <avatar.brain.reminders.ReminderStore object at 0x7fe402b7ada0>
+command = None, text = '列出提醒'
+context = QuerySource(source_message_id=1, session_id='source', revision=0, scope='current_user', turn_tools_allowed=True)
+checkpoint = None
+
+    def resolve_query(store, command, text, context, *, checkpoint=None):
+        """Read under caller's snapshot or a private read transaction; no commits.
+    
+        The caller must recheck its response epoch after this transaction releases,
+        before publishing. This snapshot does not guarantee future immutable state.
+        """
+        if (type(command) is not ReminderQuery or command != parse_query(text)
+                or command.reminder_id is not None and type(command.reminder_id) is not int):
+>           raise Cancelled('reminder query does not match current source text')
+E           avatar.cancellation.Cancelled: reminder query does not match current source text
+
+src/avatar/brain/reminder_queries.py:68: Cancelled
+______________ test_role_list_does_not_read_real_reminder_records ______________
+
+    def test_role_list_does_not_read_real_reminder_records():
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('不应猜本机状态'))
+            bot.respond('我来扮演小说角色。')
+            result = bot.respond('列出提醒')
+>           assert result['generation_mode'] == 'rules_speaker_scope'
+E           AssertionError: assert 'llm' == 'rules_speaker_scope'
+E             
+E             - rules_speaker_scope
+E             + llm
+
+tests/test_reminder_list_snapshots.py:59: AssertionError
+__ test_empty_snapshot_is_actual_absence_without_permanent_or_delivery_claim ___
+
+    def test_empty_snapshot_is_actual_absence_without_permanent_or_delivery_claim():
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('我已发短信提醒'))
+            result = bot.respond('列出提醒')
+>           assert result['reminder_query']['record_count'] == 0
+E           KeyError: 'reminder_query'
+
+tests/test_reminder_list_snapshots.py:67: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_list_snapshots.py::test_automatic_numbered_query_enters_context_as_historical_snapshot
+FAILED tests/test_reminder_list_snapshots.py::test_actual_list_is_bounded_counts_all_statuses_and_does_not_commit_caller
+FAILED tests/test_reminder_list_snapshots.py::test_role_list_does_not_read_real_reminder_records
+FAILED tests/test_reminder_list_snapshots.py::test_empty_snapshot_is_actual_absence_without_permanent_or_delivery_claim
+4 failed, 5 passed in 0.79s
