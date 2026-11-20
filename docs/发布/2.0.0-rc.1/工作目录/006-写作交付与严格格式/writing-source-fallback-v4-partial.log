@@ -1,0 +1,62 @@
+............................F.........FF................................ [ 28%]
+........................................................................ [ 57%]
+........................................................................ [ 86%]
+..................................                                       [100%]
+=================================== FAILURES ===================================
+__________ test_exhausted_repair_does_not_publish_known_invalid_draft __________
+
+    def test_exhausted_repair_does_not_publish_known_invalid_draft():
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '今天身体不适，申请请假。'
+            engine = Replies([bad, bad])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('帮我写一条请假短信，只给正文。', cancel=CancellationToken(), on_delta=pieces.append)
+            assert len(engine.native) == 2
+            assert bad not in result['reply'] and bad not in ''.join(pieces)
+>           assert result['generation_mode'] == 'rules_writing_validation'
+E           AssertionError: assert 'rules_writing_artifact' == 'rules_writing_validation'
+E             
+E             - rules_writing_validation
+E             + rules_writing_artifact
+
+tests/test_writing_delivery_contract.py:67: AssertionError
+_______ test_invalid_or_empty_second_attempt_stops_without_third_call[] ________
+
+failed_repair = ''
+
+    @pytest.mark.parametrize('failed_repair', ['', '今天身体不适，申请请假。'])
+    def test_invalid_or_empty_second_attempt_stops_without_third_call(failed_repair):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适，申请请假。', failed_repair])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond('帮我写一条请假短信，只给正文。')
+>           assert result['generation_mode'] == 'rules_writing_validation' and len(engine.native) == 2
+E           AssertionError: assert ('rules_writing_artifact' == 'rules_writing_validation'
+E             
+E             - rules_writing_validation
+E             + rules_writing_artifact)
+
+tests/test_writing_delivery_contract.py:158: AssertionError
+_ test_invalid_or_empty_second_attempt_stops_without_third_call[\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002] _
+
+failed_repair = '今天身体不适，申请请假。'
+
+    @pytest.mark.parametrize('failed_repair', ['', '今天身体不适，申请请假。'])
+    def test_invalid_or_empty_second_attempt_stops_without_third_call(failed_repair):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适，申请请假。', failed_repair])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond('帮我写一条请假短信，只给正文。')
+>           assert result['generation_mode'] == 'rules_writing_validation' and len(engine.native) == 2
+E           AssertionError: assert ('rules_writing_artifact' == 'rules_writing_validation'
+E             
+E             - rules_writing_validation
+E             + rules_writing_artifact)
+
+tests/test_writing_delivery_contract.py:158: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_delivery_contract.py::test_exhausted_repair_does_not_publish_known_invalid_draft
+FAILED tests/test_writing_delivery_contract.py::test_invalid_or_empty_second_attempt_stops_without_third_call[]
+FAILED tests/test_writing_delivery_contract.py::test_invalid_or_empty_second_attempt_stops_without_third_call[\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002]
+3 failed, 247 passed in 17.30s
