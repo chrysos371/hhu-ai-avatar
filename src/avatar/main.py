@@ -743,7 +743,10 @@ class Avatar:
         response_source_ids.update(self.speaker_scope.context_source_ids)
         response_source_ids.update(self._history_source_ids)
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
-        if self.capability_contract_enabled:
+        if (self.capability_contract_enabled and boundary.reply is None and control is None
+                and reminder_query is None and self.speaker_scope.scope != 'unverified'
+                and not speaker_tool_blocked and reminder is None and cancelled_reminder_id is None
+                and not reminder_error and (not use_web or capability_request is not None)):
             self._capability_sources = frozenset(response_source_ids)
             self._read_capabilities(user_text)
         # 4. LLM 回复（无 key 与调用故障分别标记）
