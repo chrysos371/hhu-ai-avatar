@@ -258,10 +258,12 @@ class Avatar:
 
     def _guard_capability_output(self, reply):
         from .brain.capability_output import review_output
+        self._checkpoint_prompt_context()
         frame = self._response_frame
         root = self.response_frames.root_text(frame) if frame is not None else ''
         return review_output(reply, frame=frame.frame if frame is not None else 'unverified',
-            root_text=root, fictional=self.boundaries.fiction or self.speaker_scope.scope == 'fictional_character')
+            root_text=root, fictional=(self.boundaries.fiction and not self.boundaries.literary_analysis)
+                or self.speaker_scope.scope == 'fictional_character')
 
     def _extract_facts(self, text: str) -> None:
         """从用户输入提取简单事实写入长期记忆（规则版，LLM 不可用时的回退）。"""
@@ -854,8 +856,10 @@ class Avatar:
                                     prefix = ''.join(streamed_prefix)
                                     if not safe.startswith(prefix):
                                         raise Cancelled('source-bound output prefix changed during review')
-                                    emit_checked(safe[len(prefix):])
-                                    streamed_prefix.append(safe[len(prefix):])
+                                    delta = safe[len(prefix):]
+                                    if delta:
+                                        emit_checked(delta)
+                                        streamed_prefix.append(delta)
                                 else:
                                     safe, _ = self.boundaries.review_output(sentence)
                                     emit_checked(safe)
