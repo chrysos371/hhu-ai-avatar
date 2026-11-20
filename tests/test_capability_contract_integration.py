@@ -12,7 +12,8 @@ from test_capability_prompt_lab import Recorder
 
 
 @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
-    '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？'])
+    '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+    '等我把消息写好，你能替我发送吗？'])
 def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
     engine = Recorder('已帮你发送成功，稍后再帮你联系。')
     with closing(MemoryStore(':memory:')) as memory:
