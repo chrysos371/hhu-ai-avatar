@@ -1,7 +1,9 @@
 """One source-bound full regression for writing source and numeric format contract; no whole-stage cutoff."""
 from hashlib import sha256
+import argparse
 import io
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -24,7 +26,11 @@ def snapshot():
 
 
 def main():
-    proof_path=HERE/'python-writing-v1-binding.json';log=HERE/'python-writing-v1.log'
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--name', default='python-writing-v1')
+    name=parser.parse_args().name
+    assert re.fullmatch(r'python-writing-v[1-9][0-9]*',name),'versioned run name required'
+    proof_path=HERE/(name+'-binding.json');log=HERE/(name+'.log')
     assert not proof_path.exists() and not log.exists(),'retain previous run;do not overwrite'
     before=snapshot();head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     raw=subprocess.check_output(['git','archive','--format=tar',head,'--',*before],cwd=ROOT)
