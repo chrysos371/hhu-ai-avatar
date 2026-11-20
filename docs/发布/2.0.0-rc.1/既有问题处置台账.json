@@ -5073,13 +5073,17 @@
           "sha256": "3aceb1c5bb600902991b3238871cf8f03a79664bc24237cbfd27e07b3629f906"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_audit_tool_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/001-材料与来源调查/registered-oracle-red.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/001-材料与来源调查/registered-oracle-fixed.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜审计工具CPU范围限定关闭，0模型构造/0native",
         "候选/题目/金标/轮数不变，未冻结或启动原生模型，未回写C48。后续准入必须绑定本红测/修后证据及当前核验器SHA，工具范围限定关闭，不代表真实模型语义通过。"
-      ]
+      ],
+      "release_review": "原核验器两臂顺序9/0/9及146/36旧门槛，实际AST红测；修后实际函数6/6/6、326/54及8负控拒绝。只关闭旧核验器，不是模型通过。"
     },
     {
       "id": "C49-002",
@@ -5092,12 +5096,16 @@
           "sha256": "a367d69bba29b098da3debe88cfbd8ca008bb484766e6ac003d12127c172e1cb"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "C47-002",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/004-原生准入/4b-verification.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/004-原生准入/14b-verification.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜4B实测开放，14B继续原登记"
-      ]
+      ],
+      "release_review": "4B最小臂35/54格式有效，19条人类布尔null整条拒绝；14B无此格式问题。生产未接失败minimal投影，不把null格式错当已读断言，也不补值改旧分。"
     },
     {
       "id": "C49-003",
@@ -5110,15 +5118,19 @@
           "sha256": "3a77c4d10940225b61d927ff3deefff35b8d8994f6eb37f0662f122452b0698f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C47-002、C48-004",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/004-原生准入/4b-verification.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/004-原生准入/14b-verification.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜4B实测开放",
         "最小历史已标kind=not_observed，source/status/ACK均null。4B旧政策题observed_state三次unknown正确，但仍把政策源1/ACK false当状态观测；新无编号政策题三次把observed_state说missing，source/ACK也错。C48对照两政策题观测missing各3次，生产包装观测unknown但源/ACK未全正确。明确数据类型并不自动保证模型遵循。",
         "[独立字段/分组计数](../工作目录/004-原生准入/4b-verification.json) / [新政策最小臂实际原件](../../实验/4b-development-v1/repetition-1/forward-policy-without-id-minimal_observation/receipt.json)。实际两政策查询均无编号状态SELECT，SQL里有合成记录但没有把其状态送模型；不是业务读取“找不到记录”。问句/历史细节同时变化，不能把差异唯一归因于无编号词面。",
         "- 14B最小臂旧12题已见回归36/36全对（含旧政策），新无编号政策观测状态只有1/3正确、2次missing；其政策来源和ACK字段均正确。新取消再完成重查另1次把观测ACK=false写null。新开发共9/18，不把已见满分扩大为前瞻或真人盲评通过。"
-      ]
+      ],
+      "release_review": "显式not_observed仍被解释为missing或携带政策来源/ACK；14B旧题36/36不覆盖新无编号2/3错。未观测与实际查无记录必须分开，当前历史包装不冒语义成功。"
     },
     {
       "id": "C49-004",
@@ -5131,14 +5143,17 @@
           "sha256": "d857a247b0393d592d4c999b98bce0f14a8fffaa839f785398a4a01e1ffaede0"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C19-001、C48-002",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜有限契约开放，关联C19-P1及C48-002",
         "4B原JSON对象中的mail_sms_phone_sent=true分别生产7次、C48对照3次、最小6次。最小臂邮件和前瞻短信各3次，实际路径没有任何邮件/短信/电话发送器或操作；生成字段不是执行回执。邮件当前状态还会被说completed、短信active，而普通回答没有新编号状态观测。最小臂这些对象同时有真人布尔null格式失败，仍需单列其中显式不实发送字段，不能因格式不合格便忽略已输出声明。",
         "- 14B三臂原JSON发送true为3/9/6：生产仅短信3次；C48对照邮件/短信/电话各3；最小邮件0、短信/电话各3。最小相对C48对照改善邮件，但电话相对生产从0/3错变3/3错；三臂current字段54/54均unknown正确，不复现4B当前状态误断。无真实外发，仍不能默认启用；不同版本共同改变字段，未唯一证明负向提示或某个字段的因果机理。"
-      ]
+      ],
+      "release_review": "真实无外发；原JSON真值4B三臂7/3/6、14B3/9/6，格式失败不能掩盖显式发送断言；typed/minimal均隔离，当前能力与来源契约待最终实模。"
     },
     {
       "id": "C49-005",
@@ -5151,12 +5166,16 @@
           "sha256": "5c85b9b841da8f465d21773bd191a038e685810292a33b10f472724bb519321f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_audit_tool_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/工作目录/006-汇总计数核验/system-evidence-first.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-49/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：CPU审计工具限定关闭；非模型质量通过。"
-      ]
+      ],
+      "release_review": "原system各模型常量146与独立proof326矛盾，顶层652原本正确；改直接读取proof并断言各326与合计。原件保留，不动原trace/SQL/分数。"
     },
     {
       "id": "C50-001",
@@ -5169,12 +5188,15 @@
           "sha256": "8b25b2a6ce1ad10fc0357c66244bf0a3e21ec18d6c8826e8c8287551152b4c9b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_execution_order_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：CPU流程限定关闭，无模型语义结论。"
-      ]
+      ],
+      "release_review": "未等权重前驱导致缺文件、后续shell继续；实际0native。原失败保留，前置快速拒绝及prepare→模板→准入串行0通过，不能变成模型红绿。"
     },
     {
       "id": "C50-002",
@@ -5187,12 +5209,15 @@
           "sha256": "5520f476dca91fa3e6c76cc147d3697a790dd6e67241aff7f83cd4c314ba9f55"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C19-001",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：开放，首4B重复的代理审阅；待完整重复/14B与独立wire/SQL核验。"
-      ]
+      ],
+      "release_review": "完整216条span代理审阅，4B不实外发各5/3/6，14B0/0/6，所有臂代拟/小说6/6保留。436generate含4warmups不等432正式；非独立真人。"
     },
     {
       "id": "C50-003",
@@ -5205,13 +5230,17 @@
           "sha256": "54e5047f2b5fdcceba6ca10b16d91da7bd2cf845f2eb83d6aa5e003a7658991b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C47-002",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/4b-repetition-1-agent-review.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：开放，4B第1轮观察，待完整来源复核；后验发现，不回写旧评分。",
         "该时间标签问题属于来源字段解释，八字段C49没有测这个维度；不能用旧JSON状态通过覆盖它。待两个模型全组审阅后汇总，不在本批修提示或改材料。"
-      ]
+      ],
+      "release_review": "4B7条把2099 due_at当记录时间，生产设定时间1条仅含混；14B未复现。来源日期标签仍需当前门控，不拿历史八字段分数覆盖。"
     },
     {
       "id": "C50-004",
@@ -5224,15 +5253,18 @@
           "sha256": "1120e68815c44e8d6b5cb8c12305428a2f0a3bd3cbc294c4cce1553388bd0828"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C47-002",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "# 004 普通追问把历史记录说成目前状态",
         "状态：开放，限定本批代理审阅，随最终wire/SQL复核。",
         "4B C48对照邮件回合3/3拒绝发送但说“目前active”，当时独立actor已取消、普通追问没有新读取。14B最小首轮active说“目前仍处于激活状态”，生产missing说“系统中没有相关记录”，后者的旧缺失后实际已创建。",
         "原件与逐条字符span见[原文审阅目录](../工作目录/005-原文审阅)。条件句/未指明历史归属单列含混，不一概硬判当前断言。真实业务没有误写；问题是生成叙述不能代替当前状态读取。完整重复后再汇总，不中途调参。"
-      ]
+      ],
+      "release_review": "4B对照邮件目前active3条；14B生产missing3+active1、对照active1、最小active1，均缺新状态读取。当前与历史分列，条件/含混不强判。"
     },
     {
       "id": "C50-005",
@@ -5245,12 +5277,16 @@
           "sha256": "2d49c56d67f6db349ac4617a4093c3bd2247d319d29e98fdb1c6ca9924feffd4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C19-001",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/14b-repetition-2-agent-review.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/14b-repetition-3-agent-review.json"
+      ],
       "original_status_candidates": [
         "状态：开放，后验新增维度；不回写预登记计数或门槛。"
-      ]
+      ],
+      "release_review": "14B两个实际span声称系统可尝试短信，后验能力轴与既定实际发送/未来承诺分账；不是实际外发，不回写主分。当前无发送器能力路由需验证。"
     },
     {
       "id": "C50-006",
@@ -5263,13 +5299,16 @@
           "sha256": "5493f4230ce4f436dc766c9dc5326e429a248451d8aac1fa903d46c00e26fb37"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_report_link_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/closeout.json"
+      ],
       "original_status_candidates": [
         "状态：CPU报告流程限定关闭；发生在整轮系统复核之后。",
         "系统system-evidence.json计数是此问题发生前的1流程限定关闭/4开放快照；最终报告及closeout在其上增加006，最终2限定关闭/4开放。"
-      ]
+      ],
+      "release_review": "目录链接被文件校验拒绝，后续shell未停也失败；保留实际工具摘录性质。改6文件索引后实际4表22链接/1440与390通过，报告新增问题与此前system快照差异已明确。"
     },
     {
       "id": "C51-001",
