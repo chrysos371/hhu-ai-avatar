@@ -2855,12 +2855,18 @@
           "sha256": "46783d427784515d4a236a48e48e32844d4923ca2c7831a7e8997984daeb94e0"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "scripts/probe_native_evidence_plans.py",
+        "tests/test_native_evidence_plan_runner.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2，独立研究采证入口。已修复并通过同受控负控及73相关/1.58s；尚未冻结/运行本轮真实模型，生产Avatar未涉及。"
-      ]
+      ],
+      "release_review": "原计划采证入口保存首个截断预热后立即停止，不再第二预热/诊断；原3→1受控调用/清理证据保留，不冒称产品或新GPU质量改善。",
+      "residual_product_roots": []
     },
     {
       "id": "C27-002",
@@ -2873,12 +2879,19 @@
           "sha256": "8b4da94982fd228d4f40a86de86136a4d6fe055530209ed42dd2630ab91aecc6"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_comparison_scope_lab_not_promoted",
+      "release_impact": "comparison_validity_only; no_product_quality_approval",
+      "resolution_evidence": [
+        "scripts/probe_native_evidence_plans_v2.py",
+        "tests/test_native_evidence_plan_v2.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-28/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2（研究比较口径），开放；不改本轮冻结或原始数据。真实4B的12 plain回复有8条直接输出operation标记/JSON；已逐条保存native id和完整回复，见`../工作目录/002-对照有效性与语义审查/4b-source-aware-review.json`。"
-      ]
+      ],
+      "release_review": "原自然/计划共同说明有格式污染，旧结果不改分；C28三臂分离自然任务与同消息free/schema计划，4B/32B各12自然无标记。仅比较口径修复，不是产品收益。",
+      "residual_product_roots": []
     },
     {
       "id": "C27-003",
@@ -2891,13 +2904,22 @@
           "sha256": "9c1df3861859173be96ee31d23a8bb55d839f550993a58d2f6b4dc9a1c3f9faa"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_mechanism_not_promoted",
+      "release_impact": "failed_lab_mechanism_isolated; linked_G04_still_open",
+      "resolution_evidence": [
+        "scripts/native_evidence_plan.py",
+        "tests/test_native_evidence_plan.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C27-003：明确原子仍不足以保证任务交付和状态诚实",
         "优先级P2（隔离研究机制），保持开放/本机制不批准应用。没有运行Avatar或真实SQL，不登记为新生产复现。",
         "4B/32B都在实际发送邮件任务选择copy_draft，合法渲染原子但替代了实际操作/能力解释；实际发送或拨号任务亦有insufficient_evidence选择，保守且没有外发谎报，但不满足精确能力说明gold。这些任务不一致不能全叫不诚实。4B缺回执、旧回执任务选report_receipt，32B旧回执任务选择report_receipt+none，都由确定性来源验证拒绝。拒绝保护状态边界，仍是任务未交付，不应计成成功。"
+      ],
+      "release_review": "手工原子/schema/确定渲染仍替代任务、未知转否定、拒绝未交付，机制未获应用批准；不是新真实Avatar/SQL复现，相关产品目标继续C19/C26。",
+      "residual_product_roots": [
+        "C19-001",
+        "C26-003"
       ]
     },
     {
@@ -2911,13 +2933,20 @@
           "sha256": "a0f81b1bb402b0fbcde2f225e7d5b1048e4a53271edfc8de0708e1a273ba66e3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_comparison_scope_lab_not_promoted",
+      "release_impact": "comparison_validity_only; no_product_quality_approval",
+      "resolution_evidence": [
+        "scripts/probe_native_evidence_plans_v2.py",
+        "tests/test_native_evidence_plan_v2.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-28/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "状态：本轮协议/代码已修正，真实4B有限观察通过；32B亦完成。本项对应已封C27-002，不回写旧结论或放行旧数据。",
         "证据：工作目录002的4b-source-aware-review.json、原实验three-arm-4b/probe.json及provider-trace.jsonl，预登记和70相关/完整1720日志。模式明确不等于任务充分或状态诚实；自然与完整计划机制差异包含提示/表示/渲染，不全部归grammar。"
-      ]
+      ],
+      "release_review": "三臂模式可见且计划两臂messages相同，实际wire关联完整；两个自然12回复0计划污染。只修比较口径，不把自然/计划全部差异归grammar或外推独立新题。",
+      "residual_product_roots": []
     },
     {
       "id": "C28-002",
@@ -2930,12 +2959,21 @@
           "sha256": "495bac6aa45f988a8c9ee448ac146b4f1c37b389be493b21abfae3f2931f899f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_mechanism_not_promoted",
+      "release_impact": "failed_lab_mechanism_isolated; linked_G04_still_open",
+      "resolution_evidence": [
+        "scripts/native_evidence_plan_v2.py",
+        "tests/test_native_evidence_plan_v2.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2（隔离机制研究），决策为拒绝应用并停止本批进一步提示调优。不是所有gold不一致都不诚实。",
         "依预登记停止策略，本轮结束固定机制调优，不再同批提示堆叠。C19-001/P1等保持开放；未来若研究不同任务/来源机制，需新的问题假设、输入/控制与冻结。实际产品建设优先考察可验证的历史连续性等开放工程能力，先做现状实验，不预报已修。"
+      ],
+      "release_review": "固定有限计划仍未交付精确能力说明，依早停拒绝应用并停止同批调提示；保留合法语法但任务不合格的全部原输出，不复活该路线。",
+      "residual_product_roots": [
+        "C19-001",
+        "C26-003"
       ]
     },
     {
@@ -2949,14 +2987,23 @@
           "sha256": "696882116ccd9b4fd9f97fe964b64d7be3d3a370acced3da3ae108875ebfbe57"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "unapproved_lab_observation_linked_quality_roots",
+      "release_impact": "not_a_production_SQL_reproduction; linked_G04_still_open",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-28/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-source-span-review-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C28-003：自然回复仍有状态失实、来源弃答与任务偏离",
         "优先级P2（native夹具研究），保持开放；不登记为真实Avatar/SQL默认故障。本轮没有运行应用或真正提交提醒。",
         "4B missing_reminder_receipt没有任何回执原子，仍说“这次确实已经建好了”“我已在本地提醒功能中设置好去图书馆的提醒”，两span属于一个回复，计一次无依据本地完成声称。sender_user已有明确用户报告，却说没有明确来源而未知，属于不必要弃答。32B把“提醒去图书馆，这次真的建好了没”误解为图书馆建设完成，属任务偏离；stale_receipt只见旧namespace/revision/request回执，就肯定当前提醒尚未建立，将无证据升级为否定状态。",
         "后续保持现有P1、保留已知失败回归；真实产品来源/历史/回执另按实际工程核验，不能将本轮夹具结果当生产复现，不能用新任务的工程通过关闭通用语义问题。"
+      ],
+      "release_review": "无计划污染仍有本地完成虚构、已给发送者弃答、无证据升级否定；只是native夹具观察，未执行真实Avatar/SQL，不能追加生产事故或关闭一般质量目标。",
+      "residual_product_roots": [
+        "C19-001",
+        "C26-003"
       ]
     },
     {
@@ -2970,14 +3017,20 @@
           "sha256": "96ff222cfe2c410c44abafb5f50147c28cbe28d35f05630121497503d618d573"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-29/审计/系统审计与推进报告.md",
+        "tests/test_web_context_recovery.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2（审计夹具），夹具已修并通过实际HTTP坏ID注入负控；正常上下文重跑亦完成；无有效上下文结论，无生产代码改动。",
         "首轮context-baseline-before实际创建1个应用OS进程，首POST /turns即HTTP422；请求id为c29_same_instance_1（19字符），生产validate要求20–100字符。服务按合同拒绝是正确行为，采证编号错误。尚未进入首个Avatar.respond，runtime缺avatar.main/llm是正常早拒绝状态，cleanup却强制要求完整聊天模块，覆盖成Required actual runtime modules absent。",
         "已修：编号加context_baseline前缀，6个实际ID均通过生产TurnCoordinator.validate；HTTP状态/原始错误body入报告；仅已完成聊天的worker要求main/llm模块，实际已加载模块一律绑源；stop_all保留首错误并确保provider关闭，失败时模型请求也保存。自有runtime不再先于活跃进程删除，保留原DB与SQL导出。另冻v2后，用明确受控HTTP坏ID注入验证错误路径（不是上下文样本），再正常跑两个协议。"
-      ]
+      ],
+      "release_review": "坏ID采证失败正确归夹具，保留HTTP422原body、cleanup首异常及实际加载模块身份；负控0接受/0模型与正常6轮分开，未把早拒绝当产品上下文故障。",
+      "residual_product_roots": []
     },
     {
       "id": "C29-002",
@@ -2990,14 +3043,21 @@
           "sha256": "47a8d6125e2fcdf1ca6b301211ba8417fd113bf5a1ad3aaa3929bb41b1e89edf"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/conversation_context.py",
+        "tests/test_web_context_recovery.py",
+        "tests/test_conversation_context.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2（稳定交互/记忆能力），已实测确认，待设计实现。对应先前一般LLM跨重启语境的开放能力，不误报旧有限控制验收回归。",
         "优化目标：有界恢复可验证、当前隐私版本的已完成消息，并对跨session历史来源建立新回复删除依赖；角色/中断/未知写入/隐私失效时失败关闭，不执行/重新分析旧请求，不凭已显示历史当作回执。具体方案、验收与并发控制需阶段B先登记；不以该工程完成关闭C19-001等一般语义P1。",
         "阶段B结论：默认Web读取器/事务接线和全部历史源删除依赖已实现，当前source有界完成窗口验收关闭。同协议after第三prompt四条角色均各1（重启/同进程），八故障v3/事务独立复核、完整1769/1及当前默认浏览器15/16可选通过。CLI、四实验生成上下文路径/PAD不扩大；没有真实模型正确利用历史的本轮数据。详细分组/源绑定/限制见系统报告；C19-001等P1不关闭。"
-      ]
+      ],
+      "release_review": "默认Web当前revision有界恢复已完成源对，普通prompt接续持久历史且附真实依赖，不重放认知/工具；CLI/隔离实验/PAD不在此范围。",
+      "residual_product_roots": []
     },
     {
       "id": "C29-003",
@@ -3010,12 +3070,18 @@
           "sha256": "ed416ea2ea0c0ca911fe716e2963d06499d9c409dab4f227e8b7043cb0188b6b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/conversation_context.py",
+        "tests/test_conversation_context.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2（新恢复组件数据完整性），已由受控SQLite损坏负控确认并修复。不是正常库已损坏的概率判断，也不是已发生用户数据泄漏。"
-      ]
+      ],
+      "release_review": "直接正文与窗口外message/fragment依赖都要求非空文本、未红删且来源有效，坏源截断不跳跃复活旧历史；仅读取器防御，不称任意损坏库容错。",
+      "residual_product_roots": []
     },
     {
       "id": "C29-004",
@@ -3028,12 +3094,18 @@
           "sha256": "8c422a50baf997d670ebf75bdee695fbb40b5c554ed1cf17156cb412e2bc7bf0"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_web_context_recovery.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P2（新恢复接线的来源精度/活性），已受控复现并修复（进程内同条件已过）；不是旧私有文字被重新发送的泄漏结论。"
-      ]
+      ],
+      "release_review": "durable reader只合入当前user/实际窗口和既有fact/speaker/summary源，forget后合法新窗不引用旧红删源；历史OS同服务/再次重启与删除红删两者均保留。",
+      "residual_product_roots": []
     },
     {
       "id": "C29-005",
@@ -3046,13 +3118,20 @@
           "sha256": "90a80413d992962303627cf9b9f6f7cecd4dfdaaf509a5a34c36408888e50644"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-driver-controls-v2.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-alignment-v1.json",
+        "tests/test_capability_contract_integration.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "P2，状态：首失败已复现、待修夹具。规范“我来扮演一个虚构角色。”的真实SSE为result，generation_mode=rules_speaker_control，无text事件。夹具无条件拼text==reply导致中止；不是生产失败或角色恢复结论。原context-fault-controls保留：privacy五回合完成，scope第二回合中止，4worker退出0/清理无错，不能称八场景验收。",
         "夹具已修；v2实际通过该规则控制并完成scope九回合。状态：在此规范规则范围关闭；v2后来中止于另项C29-006，不以局部修复称整组成功。"
-      ]
+      ],
+      "release_review": "固定规则以最终result交付，若有delta才须相同；生成路径仍严格流最终一致。本次R01-002重复发现同一夹具规格误判已更正/留痕，不另算独立产品缺陷。",
+      "residual_product_roots": []
     },
     {
       "id": "C29-006",
@@ -3065,13 +3144,20 @@
           "sha256": "b864dc96342c5d13d43eafb53e8619dfed65c8c2c1c05da7c0590bdbd9f102ef"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/main.py",
+        "tests/test_web_context_recovery.py",
+        "tests/test_speaker_privacy_authority.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "P2，状态：独立OS复现，待修。mixed_writer外部无完成记录user后重启，scope正确unverified，生成回复正确走rules_speaker_scope、事实/工具权限均false，历史未恢复。但先调用一次认知HTTP模型发送当前user文本，固定规则结果不需要该推理；不符合本组预登记的未知scope无模型调用目标，增加不必要的外发与延迟。未观察越权写资料/动作或旧历史泄漏，不升级为此类缺陷。",
         "修复后87相关/2.47s、完整1769/1/116.63s@24f4529（552输入稳定）；独立OS v3未知语境实际无认知/生成HTTP调用、规范现实确认后新请求正常生成，独立核验通过。状态：在此未知语境无用分析范围关闭；未声明通用语义能力已解决。"
-      ]
+      ],
+      "release_review": "unverified固定回复不分析/生成，不写事实/执行工具，明确现实后新请求正常；仅未知范围无用推理，不称一般语义改善。",
+      "residual_product_roots": []
     },
     {
       "id": "C29-007",
@@ -3084,14 +3170,21 @@
           "sha256": "662f6765b94769e930ddf7b9fb7c7bfe41b007418f5fc4f04e796325b5d4f52a"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "README.md",
+        "docs/backend.md",
+        "docs/发布/2.0.0-rc.1/安装与启动.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "P2，状态：确认，待同步。README“当前工程”仍是C25/1569，模型段仍称32B未启动；C26三模型与C27/C28计划对照及当前C29完整1769已有已提交原始数据。backend当前说明仍易被理解为服务重启一律不恢复生成短期，而新默认Web已实现当前revision的已完成角色窗口；CLI/实验历史路径和PAD仍不恢复。",
         "这是当前入口状态脱节，不能反向修改已封旧报告。目标：README引用最新已验证工程数据及C26–28拒绝结论；backend/工作台说明补默认窗口、停止边界、来源依赖和显式关闭参数，标明旧轮段落为当时结论；远期路线与AGENTS保留真实未验收项。依据为after六回合/八场景/事务/完整与默认浏览器绑定；不是新增功能或实模收益。完成后本地链接与HTML报告实际双视口检查。",
         "README当前工程与32B研究状态、backend/工作台默认恢复合同和远期路线已同步当前已提交证据，旧封报告未改；历史C12/C13段落标出当时边界。状态：当前入口范围已修，待本轮报告浏览器与封存审查一起校验链接。"
-      ]
+      ],
+      "release_review": "原入口文档已按C29恢复合同和范围同步，旧报告未改；当前又以e7062eac同步真实2750/195/候选v4与未批准状态。后续最终MD/HTML本地链接/双视口仍门控。",
+      "residual_product_roots": []
     },
     {
       "id": "C30-001",
@@ -3104,13 +3197,20 @@
           "sha256": "c90d092bb1b80d1594ff21efe385703ad22cbe85a12fecb1e9b683f9d078ddcb"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_model_scale_execution_freeze.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-freeze-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-result-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "P2/采证来源完整性，在任何模型/GPU运行前的历史Git核验发现。初始309冻结包含relay-control-version.json，但该JSON与freeze同一提交新增，source_ref指向之前提交，历史Git不含该输入。当前工作树SHA可过，不能据此声称全部输入历史来源绑定。",
         "修复：新v2冻结先提交全部309来源，controller输出/模型前用git archive校验历史字节；实际错SHA/32B缺先行4B/worker错SHA三负控通过。4B真实36回合/24OS/74调用的历史/当前source及原wire均独立核验通过。状态：该来源完整性范围关闭；初版unused descriptor不改。"
-      ]
+      ],
+      "release_review": "新增输入先提交再冻结，controller输出/模型前批量Git历史核平，原unused错误描述符保留；当前原生707输入同样历史/当前/期望SHA一致。",
+      "residual_product_roots": []
     },
     {
       "id": "C30-002",
@@ -3123,12 +3223,20 @@
           "sha256": "7073024b3bf698cd9db8e46595720a17455f21b212e10b7caf379c7ee2fe2429"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "blocks_G04_strict_format_and_delivery",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-30/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-source-span-review-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "P2/原生任务交付，状态开放、已在4B真实模型复现。recovered_restart的corrected_budget历史更正为370+590，模型答“370 + 590 = 960”，内容和更正计算正确，但当前用户要求“只回答数字”。预登记source_exact/derived_exact严格判false，因此4B严格5/6；不能说是算错或历史利用内容失败。optout回答无法确认，非错误猜测。",
         "32B同冻结也答“590 + 370 = 960”：同样内容正确/格式不足，严格仍5/6。32B全部74原始wire/native trace与36 SSE/SQL/24OS独立绑定通过，不能把该失败改分，也没有放大模型即可修复的本轮证据。状态继续开放，后续独立格式任务机制/保护集研究，不在本六任务改提示。"
+      ],
+      "release_review": "两模型预算内容/更正计算正确但只数字格式失败，严格评分仍5/6，不重标成算错或改分。与原生v1两句话/署名/正文交付共同进入既有G04修复，不能靠参数规模或复活C28方案关闭。",
+      "residual_product_roots": [
+        "C03-010"
       ]
     },
     {
