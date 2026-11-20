@@ -157,3 +157,13 @@ def test_invalid_or_empty_second_attempt_stops_without_third_call(failed_repair)
         result = bot.respond('帮我写一条请假短信，只给正文。')
         assert result['generation_mode'] == 'rules_writing_validation' and len(engine.native) == 2
         assert result['writing_delivery']['final_issues']
+
+
+@pytest.mark.parametrize('draft,expected_calls', [('不是生病，因【原因】申请请假。', 1), ('因为生病申请请假。', 2)])
+def test_negative_user_source_supports_negative_draft_but_not_opposite_positive_claim(draft, expected_calls):
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Replies([draft, '因【原因】申请请假。'])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        result = bot.respond('帮我写一条请假短信，不是生病，原因留空，只给正文。')
+        assert len(engine.native) == expected_calls
+        assert result['reply'] == (draft if expected_calls == 1 else '因【原因】申请请假。')

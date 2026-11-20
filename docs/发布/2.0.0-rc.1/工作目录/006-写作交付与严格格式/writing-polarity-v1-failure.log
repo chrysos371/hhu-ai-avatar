@@ -1,0 +1,21 @@
+................F.                                                       [100%]
+=================================== FAILURES ===================================
+_ test_negative_user_source_supports_negative_draft_but_not_opposite_positive_claim[\u4e0d\u662f\u751f\u75c5\uff0c\u56e0\u3010\u539f\u56e0\u3011\u7533\u8bf7\u8bf7\u5047\u3002-1] _
+
+draft = '不是生病，因【原因】申请请假。', expected_calls = 1
+
+    @pytest.mark.parametrize('draft,expected_calls', [('不是生病，因【原因】申请请假。', 1), ('因为生病申请请假。', 2)])
+    def test_negative_user_source_supports_negative_draft_but_not_opposite_positive_claim(draft, expected_calls):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([draft, '因【原因】申请请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond('帮我写一条请假短信，不是生病，原因留空，只给正文。')
+>           assert len(engine.native) == expected_calls
+E           assert 2 == 1
+E            +  where 2 = len([[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...d": false, "forbidden_signatures": [], "semantic_verifier": false}, "failed_checks": ["unsupported_source_detail"]}'}]])
+E            +    where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...d": false, "forbidden_signatures": [], "semantic_verifier": false}, "failed_checks": ["unsupported_source_detail"]}'}]] = <test_writing_delivery_contract.Replies object at 0x7f8e83f62860>.native
+
+tests/test_writing_delivery_contract.py:168: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_delivery_contract.py::test_negative_user_source_supports_negative_draft_but_not_opposite_positive_claim[\u4e0d\u662f\u751f\u75c5\uff0c\u56e0\u3010\u539f\u56e0\u3011\u7533\u8bf7\u8bf7\u5047\u3002-1]
+1 failed, 17 passed in 0.97s
