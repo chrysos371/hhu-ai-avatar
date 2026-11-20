@@ -103,7 +103,22 @@ def test_ordinary_result_cannot_inject_private_envelope_field_and_old_explicit_q
         assert window.messages[-1].content == result['reply']
     with closing(MemoryStore(':memory:')) as memory:
         _, result = completed(memory, '查询提醒编号1', query=False)
-        assert result['reminder_query']['version'] == 1
+        assert result['reminder_query']['version'] == 2
+        window = recovered(memory)
+        assert '历史提醒查询快照' in window.messages[-1].content
+    with closing(MemoryStore(':memory:')) as memory:
+        # Real legacy renderer metadata remains excluded, rather than changing
+        # the old record's version to pretend historical source validation.
+        from avatar.brain.reminder_queries import _render_query, ReminderQuery, QuerySource
+        _, result = completed(memory, '查询提醒编号1', query=False)
+        source = result['conversation']
+        legacy = _render_query(memory._conn, ReminderQuery('status', 1), QuerySource(
+            source['user_message_id'], source['session_id'], source['revision'], 'current_user', True))
+        assert legacy.metadata['version'] == 1 and legacy.reply == result['reply']
+        value = dict(result, reminder_query=legacy.metadata)
+        with memory.transaction():
+            memory._conn.execute('UPDATE memory_chat_results SET result_json=? WHERE message_id=?',
+                (json.dumps(value, ensure_ascii=False), source['assistant_message_id']))
         assert recovered(memory).messages == ()
 
 
