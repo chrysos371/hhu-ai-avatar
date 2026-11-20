@@ -16,6 +16,8 @@ _ACTOR = re.compile(r'^(?:(?:现在|马上|这就|等会儿|稍后)[，,\s]*)?'
     r'(?:请(?:你)?|麻烦(?:你)?|帮我|替我|代我|给我|把|将|能否|可否|能不能|可不可以|可以|能|'
     r'你(?:能不能|可不可以|能否|可否|可以|能|会|愿意|刚才|已经|是否|有没有|真|帮|替|把)|'
     r'我(?:想|希望)(?:让|请)你|我(?:可以|能否|能不能|可不可以|能).{0,8}(?:授权|允许)你)')
+_DIRECT_PHONE = re.compile(r'^(?:(?:现在|马上|立即)[，,\s]*)?(?:打(?:个|一个)?电话|拨(?:打)?电话)'
+    r'(?:通知|联系|给)(?:我|他|她|老师|同学|朋友|室友)(?!的)')
 _STATUS = re.compile(r'(?:了[吗么]?|没有|了吗|成功[了没吗]?|完成[了没吗]?|联系到[了没吗]?|发出去[了没吗]?)\s*[？?。!！]*$')
 _CHANNELS = (
     ('email', re.compile(r'邮件|电邮|email', re.I)),
@@ -67,7 +69,8 @@ def explicit_unavailable_request(text, *, fictional=False):
         if execution:
             clean = '请'+execution.group()
     if (not clean or _WRITING.search(clean) or _NEGATED.search(channel_context)
-            or _HOW_TO.search(clean) or not _ACTOR.match(clean) or not _SEND.search(clean)):
+            or _HOW_TO.search(clean) or not (_ACTOR.match(clean) or _DIRECT_PHONE.match(clean))
+            or not _SEND.search(clean)):
         return None
     channel = next((name for name, pattern in _CHANNELS if pattern.search(channel_context)), None)
     if channel is None:

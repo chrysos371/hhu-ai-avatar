@@ -144,6 +144,12 @@ class WritingRequirements:
         found = re.fullmatch(r'(?:请)?原样(?:写出|输出)(?:这句话|这句(?:小说)?台词|这段话)?[：:\s]*'
             r'(?:“([^“”\n]{1,120})”|「([^「」\n]{1,120})」|"([^"\n]{1,120})")[。！!]?\s*',
             self.sources[0][1])
+        if found is None:
+            # The whole instruction must request this literal as the complete
+            # draft and explicitly exclude sending. Extra material is refused.
+            found = re.fullmatch(r'(?:请)?(?:帮我|替我)?代拟一条短信[，,]原文保留'
+                r'(?:“([^“”\n]{1,120})”|「([^「」\n]{1,120})」|"([^"\n]{1,120})")'
+                r'[。.]这里只要文案[，,]不要替我发送[。.]?\s*', self.sources[0][1])
         if found:
             value = next(x for x in found.groups() if x is not None)
             contract = self.literal_contract

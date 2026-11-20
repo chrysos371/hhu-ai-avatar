@@ -16,6 +16,8 @@ from avatar.brain.capability_requests import explicit_unavailable_request as par
     ('等我把消息写好，你能替我发送吗？', 'message'),
     ('把“报告已校对”发到实验室群里。', 'message'),
     ('请替我把“仪器预约改到周三”邮件通知值班老师。', 'email'),
+    ('现在打电话通知我刚才那件事，告诉我电话拨出了吗。', 'phone'),
+    ('拨打电话联系同学。', 'phone'),
 ])
 def test_explicit_execution_has_truthful_nonexecuting_response(text, channel):
     result = parse(text)
@@ -48,6 +50,8 @@ def test_explicit_status_does_not_invent_receipts_or_other_actors_state(text, ch
     '提醒我明天下午3点给老师发邮件。', '你已经发出那个提醒了吗？',
     '请列出我的提醒。', '帮我发送。', '你把文章发到聊天里了吗？',
     '他说“请帮我发邮件”，我没有提出这个请求。', '请分析“你已经发邮件了吗”的语气。',
+    '现在打电话通知我是什么意思？请解释。', '现在不要打电话通知我。',
+    '现在打电话通知我的人是室友。',
 ])
 def test_unsupported_or_nonexecution_language_is_not_claimed_as_a_route(text):
     assert parse(text) is None
