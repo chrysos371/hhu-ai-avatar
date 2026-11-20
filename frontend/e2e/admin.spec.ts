@@ -92,12 +92,12 @@ test("knowledge upload previews, cancel preserves sources, confirm imports; narr
     page.getByText("浏览器实验室开放时间为上午九点。", { exact: true }),
   ).toBeVisible();
   await page.screenshot({
-    path: "../data/mission-control/desktop.png",
+    path: test.info().outputPath("mission-control-desktop.png"),
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
-    path: "../data/mission-control/mobile.png",
+    path: test.info().outputPath("mission-control-mobile.png"),
     fullPage: true,
   });
   expect(
@@ -137,7 +137,7 @@ test("all nine routes survive reload and ordinary chat exposes collapsed trace",
     page.getByRole("heading", { name: "最近管理操作" }),
   ).toBeVisible();
   await page.screenshot({
-    path: "../data/mission-control/dashboard.png",
+    path: test.info().outputPath("mission-control-dashboard.png"),
     fullPage: true,
   });
 });

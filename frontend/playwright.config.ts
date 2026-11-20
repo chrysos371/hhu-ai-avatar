@@ -5,7 +5,9 @@ const assets = process.env.HHU_AVATAR_DATA_ROOT
   ?? execFileSync("python3", ["-B", resolve(__dirname, "../scripts/project_paths.py")], { encoding: "utf8" }).trim();
 export default defineConfig({
   testDir: "./e2e",
-  outputDir: resolve(assets, "frontend/test-results"),
+  outputDir: process.env.AVATAR_E2E_OUTPUT_DIR
+    ? resolve(process.env.AVATAR_E2E_OUTPUT_DIR)
+    : resolve(assets, "artifacts/browser-tests", `${Date.now()}-${process.pid}`),
   fullyParallel: false,
   workers: 1,
   timeout: 30000,

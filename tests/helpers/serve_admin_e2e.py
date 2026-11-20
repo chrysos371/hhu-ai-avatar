@@ -49,6 +49,9 @@ if not all(path.is_relative_to(project_root / 'src') for path in module_paths.va
 state_protocol_path = project_root / 'evals/interaction/cycle-36/maintained-state-privacy-protocol.json'
 state_protocol = json.loads(state_protocol_path.read_text())
 query_protocol_path = project_root / 'evals/interaction/cycle-39/explicit-reminder-query-protocol.json'
+frontend_dir = Path(os.getenv('AVATAR_E2E_FRONTEND_DIR', str(project_root/'frontend/dist'))).resolve()
+if not frontend_dir.is_relative_to(project_data_root().resolve()):
+    raise ValueError('Browser fixture UI must stay in project-owned data')
 runtime_binding = {'reminder_query_protocol_sha256': sha256(query_protocol_path.read_bytes()).hexdigest(), 'state_privacy_protocol_sha256': sha256(state_protocol_path.read_bytes()).hexdigest(), 'project_root': str(project_root), 'python_prefix': sys.prefix,
     'capability_contract_enabled': os.getenv('AVATAR_E2E_CAPABILITY_CONTRACT') == '1',
     'role_state_enabled': os.getenv('AVATAR_E2E_ROLE_STATE') == '1',
@@ -56,9 +59,9 @@ runtime_binding = {'reminder_query_protocol_sha256': sha256(query_protocol_path.
     'query_mode_protocol_sha256': sha256((project_root / 'evals/interaction/cycle-45/product-query-protocol.json').read_bytes()).hexdigest(),
     'module_paths': {name: str(path) for name, path in module_paths.items()},
     'module_sha256': {name: sha256(path.read_bytes()).hexdigest() for name, path in module_paths.items()},
-    'frontend_dir': str(project_root / 'frontend/dist'),
-    'frontend_sha256': {str(path.relative_to(project_root)): sha256(path.read_bytes()).hexdigest()
-        for path in sorted((project_root / 'frontend/dist').rglob('*')) if path.is_file()}}
+    'frontend_dir': str(frontend_dir),
+    'frontend_sha256': {'frontend/dist/'+str(path.relative_to(frontend_dir)): sha256(path.read_bytes()).hexdigest()
+        for path in sorted(frontend_dir.rglob('*')) if path.is_file()}}
 if os.getenv('AVATAR_E2E_RUNTIME_EVIDENCE'):
     with Path(os.environ['AVATAR_E2E_RUNTIME_EVIDENCE']).open('x') as stream:
         json.dump(runtime_binding, stream, ensure_ascii=False, indent=2)
@@ -135,6 +138,7 @@ if reminder_delivery_case:
 memory.close()
 server = create_server(
     str(Path(folder.name) / "browser.db"), port=18765, legacy_writes=False,
+    frontend_dir=frontend_dir,
     identity_grounding=os.getenv("AVATAR_E2E_IDENTITY_GROUNDING") == "1",
     profile_grounding=os.getenv("AVATAR_E2E_PROFILE_GROUNDING") == "1",
     task_delivery_check=os.getenv("AVATAR_E2E_TASK_DELIVERY") == "1",
