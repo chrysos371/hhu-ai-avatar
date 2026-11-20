@@ -48,7 +48,7 @@ def _external_clause(clean, *, root_text=''):
     if not (_CHANNEL.search(clean) or offer and _CHANNEL.search(root_text)):
         return None
     # "我知道你发送..." is attribution to the user, not the assistant's action.
-    own = [m for m in matches if not re.search(r'你|他说|她说|对方', m.group('lead'))]
+    own = [m for m in matches if not re.search(r'(?<![帮替为给])你|他说|她说|对方', m.group('lead'))]
     if offer:
         return 'unsupported_external_offer'
     if own or implicit or passive:
