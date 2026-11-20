@@ -9,7 +9,7 @@ import re
 
 from .facts import _mask_quoted
 
-_WRITING = re.compile(r'写|拟|润色|改写|改得|改成|改为|翻译|台词|小说|故事|剧本|扮演|引用|原样|复述')
+_WRITING = re.compile(r'写|拟|润色|修改|编辑|改写|改得|改成|改为|翻译|台词|小说|故事|剧本|扮演|引用|原样|复述')
 _NEGATED = re.compile(r'不要|不用|不必|无需|别(?:替|帮|给|发|打|联系)|不需要|不想让你')
 _HOW_TO = re.compile(r'怎么|如何|方法|教程|步骤|流程|说明|解释|有什么区别|什么意思')
 _ACTOR = re.compile(r'^(?:(?:现在|马上|这就|等会儿|稍后)[，,\s]*)?'
@@ -26,6 +26,8 @@ _CHANNELS = (
 )
 _SEND = re.compile(r'发(?:送|出|过去)?|代发|重发|转发|联系|通知|拨|打(?:个|一个)?电话|打给')
 _LOCAL_STATUS = re.compile(r'提醒|闹钟|本机|本地|显示|聊天|对话框')
+_THEN_EXECUTE = re.compile(r'(?:然后|并且|并|随后|接着)(?:请你|帮我|替我|代我|你)?'
+    r'(?:发送|发出|发给|发到|发进|发邮件|发短信|代发|转发)[^，,。；;！？!?\n]{0,40}')
 
 
 @dataclass(frozen=True)
@@ -56,6 +58,14 @@ def explicit_unavailable_request(text, *, fictional=False):
         request = re.search(r'你(?:能不能|可不可以|可以|能|会|愿意)[^，,。；;]{0,50}', clean)
         if request:
             clean = request.group()
+    # Text editing is not execution. A separate sequenced send in the command
+    # header still asks for real execution; a colon's draft body is not scanned
+    # as an independent assistant instruction.
+    header = re.split(r'[:：]', clean, maxsplit=1)[0]
+    if _WRITING.search(header) and _ACTOR.match(header):
+        execution = _THEN_EXECUTE.search(header)
+        if execution:
+            clean = '请'+execution.group()
     if (not clean or _WRITING.search(clean) or _NEGATED.search(channel_context)
             or _HOW_TO.search(clean) or not _ACTOR.match(clean) or not _SEND.search(clean)):
         return None

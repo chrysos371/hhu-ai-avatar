@@ -23,6 +23,7 @@ _SYSTEM = re.compile(r'(?:本系统|本程序|本服务|这套系统|这个系�
 _TEXT_WORK = re.compile(r'(?:修改|改写|润色|编辑|生成|起草|拟写)[^'+_STOP+r']{0,18}'
     r'(?:内容|草稿|文案|措辞|模板)')
 _THEN_SEND = re.compile(r'(?:并|然后|再|接着|随后)[^'+_STOP+r']{0,8}'+_SEND)
+_RECEIPT = re.compile(r'(?:我|我们|本系统)(?:已经|已|刚刚|刚才)?收到[^'+_STOP+r']{0,24}(?:短信|邮件|微信|私信)')
 _CHANNEL = re.compile(r'短信|邮件|电邮|微信|QQ|私信|电话|拨号|邮箱|手机号|收件人|群|'
     r'发给(?:他|她|同学|朋友|室友|老师)|(?:联系|通知)(?:了|过|到)?(?:你的?|您的?)?(?:他|她|同学|朋友|室友|老师)')
 _NEGATIVE = re.compile(r'不能|无法|没有|不会|并未|不曾|不支持|尚未|未能|不能保证|无法确认')
@@ -47,6 +48,8 @@ def _external_clause(clean, *, root_text=''):
         return None
     if _TEXT_WORK.search(clean) and not _THEN_SEND.search(clean):
         return None
+    if _RECEIPT.search(clean):
+        return 'unsupported_external_receipt'
     offer = _OFFER.search(clean)
     matches = list(_SELF.finditer(clean))
     implicit = _IMPLICIT.search(clean)
@@ -96,6 +99,8 @@ def review_output(reply, *, frame='ordinary', root_text='', fictional=False):
                 text = '当前写作主体无法核验；我没有外部代发或电话接口，请明确是在代拟正文还是询问实际操作'
             elif local_promise and not why:
                 text = '提醒依赖程序运行并轮询，这段答复不会新建提醒；请用明确日期、时间和事项提出提醒请求'
+            elif why == 'unsupported_external_receipt':
+                text = '这里能看到的是聊天中提供的文字；当前没有外部短信、邮件收件接口，也未核验外部收发状态'
             else:
                 text = '我没有外部短信、邮件代发或电话接口，不能替你执行这些操作'
             separator = raw[-1:] if raw[-1:] in _STOP else '。'
