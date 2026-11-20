@@ -48,7 +48,11 @@ def inspect(reply, requirements, *, fictional=False):
             issues.append('sentence_count')
     if requirements.body_only and _PREFACE.search(body):
         issues.append('body_preface')
-    if re.search(r'需要我帮你(?:构思|写(?:一下)?(?:老师|对方)?(?:的)?回复)[^。！？!?\n]*[？?]', visible_source(body)):
+    root = requirements.sources[0][1]
+    verbatim = bool(re.search(r'原样(?:写出|输出|包含|保留)', visible_source(root)) and any(
+        body == literal for match in re.finditer(r'“([^“”\n]+)”|「([^「」\n]+)」|"([^"\n]+)"', root)
+        for literal in match.groups() if literal is not None))
+    if not verbatim and re.search(r'需要我帮你(?:构思|写(?:一下)?(?:老师|对方)?(?:的)?回复)[^。！？!?\n]*[？?]', visible_source(body)):
         issues.append('artifact_not_delivered')
     # Only the measured real leave-draft family, never all creative text or
     # every mention of tomorrow. Exact source presence is necessary, not proof
