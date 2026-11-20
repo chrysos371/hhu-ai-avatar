@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import time
@@ -16,6 +17,56 @@ def write(path, value):
     with path.open('x') as stream:
         json.dump(value, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
+
+
+def collect_notices(front, target):
+    """Preserve available installed texts; inventory includes build dependencies.
+
+    Do not synthesize a license or assert that a package lacking a standalone
+    notice file is covered by an unrelated package's text.
+    """
+    front, target = Path(front).resolve(), Path(target).resolve()
+    target.mkdir(parents=True, exist_ok=False)
+    lock = json.loads((front/'package-lock.json').read_text())
+    packages = []
+    for name, entry in sorted(lock['packages'].items()):
+        if not name.startswith('node_modules/') or not (front/name/'package.json').is_file():
+            continue  # Platform-specific packages absent from this installation.
+        folder = (front/name).resolve()
+        if not folder.is_relative_to(front/'node_modules'):
+            raise ValueError('Notice source escapes installed dependency root')
+        metadata = json.loads((folder/'package.json').read_text())
+        texts = []
+        for item in sorted(folder.iterdir()):
+            if not re.match(r'(?i)^(?:licen[cs]es?|copying|notices?)(?:$|[._-])', item.name):
+                continue
+            for source in sorted(item.rglob('*')) if item.is_dir() else [item]:
+                if not source.is_file():
+                    continue
+                if source.is_symlink() or not source.resolve().is_relative_to(folder):
+                    raise ValueError('License text must be a contained regular file')
+                relative = Path('licenses')/hashlib.sha256(name.encode()).hexdigest()[:16]/source.relative_to(folder)
+                destination = target/relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                with destination.open('xb') as stream:
+                    stream.write(source.read_bytes())
+                texts.append(dict(path=str(relative), sha256=digest(source)))
+        packages.append(dict(installed_path=name, name=metadata['name'], version=metadata['version'],
+            declared_license=metadata.get('license'), development_dependency=bool(entry.get('dev')),
+            optional_dependency=bool(entry.get('optional') or entry.get('devOptional')), texts=texts))
+    write(target/'index.json', dict(version=1,
+        scope='Over-inclusive installed frontend build/runtime dependency inventory; not a bundle-usage assertion. '
+            'Available original notice/license texts are copied unchanged; absent standalone texts are recorded.',
+        package_lock_sha256=digest(front/'package-lock.json'), packages=packages))
+    (target/'README.txt').write_text('Third-party frontend notices\n\n'
+        'index.json identifies the exact installed frontend dependencies and their declared licenses. '
+        'The inventory includes build and development dependencies as well as runtime dependencies. '
+        'It does not claim that every listed dependency is present in the JavaScript bundle.\n\n'
+        'Original notice/license files supplied by installed packages are preserved byte for byte under licenses/. '
+        'An empty texts list means no matching standalone text was found in that package; '
+        'no license or copyright attribution has been invented. Python dependencies and external models '
+        'are installed separately and retain their own distribution notices.\n', encoding='utf-8')
+    return {str(p.relative_to(target)): digest(p) for p in sorted(target.rglob('*')) if p.is_file()}
 
 
 def build_frontend(front, output, data, environment):
