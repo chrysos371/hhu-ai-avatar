@@ -531,7 +531,8 @@ def run_chat(server, user_text, use_web=False, *, job=None, mode='chat'):
                         profile_grounding_enabled=server.profile_grounding,
                         task_contract_enabled=server.task_delivery_check,
                         delivery_check_enabled=server.task_delivery_check,
-                        literal_composition_enabled=server.literal_composition)
+                        literal_composition_enabled=server.literal_composition,
+                        role_state_enabled=server.role_state_enabled)
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         avatar.speaker_scope = server.speaker_scope
@@ -637,11 +638,22 @@ def create_server(
     task_delivery_check=False,
     literal_composition=False,
     recover_context=True,
+    role_state_enabled=False,
 ) -> ThreadingHTTPServer:
     if type(recover_context) is not bool:
         raise ValueError('recover_context must be a boolean')
+    if type(role_state_enabled) is not bool:
+        raise ValueError('role_state_enabled must be a boolean')
     if literal_composition and not task_delivery_check:
         raise ValueError('Literal composition requires task delivery checks')
+    initial_emotion = EmotionEngine()
+    if role_state_enabled:
+        from .brain.role_state import RoleStateStore
+        memory = MemoryStore(db_path)
+        try:
+            RoleStateStore(memory).restore(initial_emotion)
+        finally:
+            memory.close()
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,
                                max_connections=max_connections, header_timeout=header_timeout)
     server.daemon_threads = True
@@ -656,6 +668,7 @@ def create_server(
     server.task_delivery_check = task_delivery_check
     server.literal_composition = literal_composition
     server.recover_context = recover_context
+    server.role_state_enabled = role_state_enabled
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []
@@ -666,7 +679,7 @@ def create_server(
     server.session_id = secrets.token_hex(16)
     server.short_term = []
     server.context_revision = None
-    server.emotion = EmotionEngine()
+    server.emotion = initial_emotion
     server.boundaries = BoundaryPolicy()
     from .brain.speaker_scope import SpeakerScope
     server.speaker_scope = SpeakerScope()

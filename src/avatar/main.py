@@ -78,9 +78,12 @@ class Avatar:
         literal_composition_enabled: bool = False,
         literal_plan_version: str = 'v2',
         capability_contract_enabled: bool = False,
+        role_state_enabled: bool = False,
     ):
         if type(capability_contract_enabled) is not bool:
             raise ValueError('capability_contract_enabled must be a boolean')
+        if type(role_state_enabled) is not bool:
+            raise ValueError('role_state_enabled must be a boolean')
         if literal_plan_version not in {'v1', 'v2'}:
             raise ValueError('Unknown literal composition protocol')
         if literal_composition_enabled and not (task_contract_enabled and delivery_check_enabled):
@@ -105,6 +108,11 @@ class Avatar:
         # update mutable task/speaker versions but cannot authorize its old prompt.
         self._turn_context_revision = None
         self.emotion = EmotionEngine()
+        self.role_state_store = None
+        if role_state_enabled:
+            from .brain.role_state import RoleStateStore
+            self.role_state_store = RoleStateStore(memory)
+            self.role_state_store.restore(self.emotion)
         self.asr = asr or TextInputEngine()
         self.llm = llm or LLMEngine()
         self.tts = tts or EdgeTTSEngine()
@@ -1290,6 +1298,9 @@ class Avatar:
                 raise Cancelled('context changed before action receipt snapshot') from error
             raise
         checkpoint_context()
+        if self.role_state_store is not None:
+            self.role_state_store.save(self.emotion, source=result['conversation'],
+                scope=self.speaker_scope.scope, checkpoint=checkpoint_context)
         return result
 
     def respond_audio(
