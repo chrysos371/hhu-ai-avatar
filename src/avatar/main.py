@@ -788,10 +788,19 @@ class Avatar:
             and reported_sender_reply is None and not use_web
             and self.speaker_scope.scope != 'unverified' and reminder is None
             and cancelled_reminder_id is None and not reminder_error)
+        writing_source_unverified = bool(self._response_frame is not None
+            and self._response_frame.frame == 'writing'
+            and self._writing_requirements is not None
+            and not self._writing_requirements.source_verified
+            and boundary.reply is None and control is None and reminder_query is None
+            and capability_request is None and reported_sender_reply is None and not use_web
+            and self.speaker_scope.scope != 'unverified' and reminder is None
+            and cancelled_reminder_id is None and not reminder_error)
         self._due_reminders = (self.reminders.claim_due(checkpoint=checkpoint_context, receipt_context=receipt_context)
                                if boundary.reply is None and control is None and reminder_query is None
                                and capability_request is None and reported_sender_reply is None
-                               and self.speaker_scope.allows_actions and not writing_delivery_active else [])
+                               and self.speaker_scope.allows_actions and not writing_delivery_active
+                               and not writing_source_unverified else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
@@ -916,6 +925,9 @@ class Avatar:
                 web_result = run(user_text, engine)
             checkpoint_context()
             reply = web_result['reply']
+        elif writing_source_unverified:
+            reply = '无法完整核验当前稿件要求，请重新发送完整正文和修改要求。'
+            generation_mode = 'rules_writing_source'
         elif profile_reply is not None:
             reply, grounding_action = profile_reply, lookup_action
             generation_mode = 'profile_lookup' if lookup_action in {'name_lookup', 'preference_lookup'} else 'profile_grounded'

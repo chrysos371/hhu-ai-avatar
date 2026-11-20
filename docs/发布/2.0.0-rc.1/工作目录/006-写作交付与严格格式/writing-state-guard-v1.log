@@ -1,0 +1,100 @@
+FFFF.                                                                    [100%]
+=================================== FAILURES ===================================
+____ test_corrupt_requirement_metadata_never_restores_values[cursor-broken] ____
+
+column = 'cursor', value = 'broken'
+
+    @pytest.mark.parametrize('column,value', [('cursor', 'broken'), ('source_ids', '{}'),
+        ('source_ids', '[true]'), ('format_version', 77)])
+    def test_corrupt_requirement_metadata_never_restores_values(column, value):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('正文。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('帮我写一封邮件，署名用【甲】。')
+            before = len(engine.native)
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_writing_requirements SET ' + column + '=?', (value,))
+            result = bot.respond('再短一点。')
+            assert not result['writing_requirements']['source_verified']
+>           assert len(engine.native) == before, 'incomplete writing sources must not be guessed by generation'
+E           AssertionError: incomplete writing sources must not be guessed by generation
+E           assert 3 == 2
+E            +  where 3 = len([[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]])
+E            +    where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]] = <test_capability_prompt_lab.Recorder object at 0x7f8a51456c80>.native
+
+tests/test_writing_requirement_boundaries.py:91: AssertionError
+____ test_corrupt_requirement_metadata_never_restores_values[source_ids-{}] ____
+
+column = 'source_ids', value = '{}'
+
+    @pytest.mark.parametrize('column,value', [('cursor', 'broken'), ('source_ids', '{}'),
+        ('source_ids', '[true]'), ('format_version', 77)])
+    def test_corrupt_requirement_metadata_never_restores_values(column, value):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('正文。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('帮我写一封邮件，署名用【甲】。')
+            before = len(engine.native)
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_writing_requirements SET ' + column + '=?', (value,))
+            result = bot.respond('再短一点。')
+            assert not result['writing_requirements']['source_verified']
+>           assert len(engine.native) == before, 'incomplete writing sources must not be guessed by generation'
+E           AssertionError: incomplete writing sources must not be guessed by generation
+E           assert 3 == 2
+E            +  where 3 = len([[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]])
+E            +    where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]] = <test_capability_prompt_lab.Recorder object at 0x7f89ad235420>.native
+
+tests/test_writing_requirement_boundaries.py:91: AssertionError
+__ test_corrupt_requirement_metadata_never_restores_values[source_ids-[true]] __
+
+column = 'source_ids', value = '[true]'
+
+    @pytest.mark.parametrize('column,value', [('cursor', 'broken'), ('source_ids', '{}'),
+        ('source_ids', '[true]'), ('format_version', 77)])
+    def test_corrupt_requirement_metadata_never_restores_values(column, value):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('正文。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('帮我写一封邮件，署名用【甲】。')
+            before = len(engine.native)
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_writing_requirements SET ' + column + '=?', (value,))
+            result = bot.respond('再短一点。')
+            assert not result['writing_requirements']['source_verified']
+>           assert len(engine.native) == before, 'incomplete writing sources must not be guessed by generation'
+E           AssertionError: incomplete writing sources must not be guessed by generation
+E           assert 3 == 2
+E            +  where 3 = len([[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]])
+E            +    where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]] = <test_capability_prompt_lab.Recorder object at 0x7f8a51456c20>.native
+
+tests/test_writing_requirement_boundaries.py:91: AssertionError
+__ test_corrupt_requirement_metadata_never_restores_values[format_version-77] __
+
+column = 'format_version', value = 77
+
+    @pytest.mark.parametrize('column,value', [('cursor', 'broken'), ('source_ids', '{}'),
+        ('source_ids', '[true]'), ('format_version', 77)])
+    def test_corrupt_requirement_metadata_never_restores_values(column, value):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('正文。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('帮我写一封邮件，署名用【甲】。')
+            before = len(engine.native)
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_writing_requirements SET ' + column + '=?', (value,))
+            result = bot.respond('再短一点。')
+            assert not result['writing_requirements']['source_verified']
+>           assert len(engine.native) == before, 'incomplete writing sources must not be guessed by generation'
+E           AssertionError: incomplete writing sources must not be guessed by generation
+E           assert 3 == 2
+E            +  where 3 = len([[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]])
+E            +    where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...ent': '帮我写一封邮件，署名用【甲】。'}, {'role': 'assistant', 'content': '稿件暂未通过约束检查，请稍后重试。'}, {'role': 'user', 'content': '再短一点。'}]] = <test_capability_prompt_lab.Recorder object at 0x7f89ad1a3ca0>.native
+
+tests/test_writing_requirement_boundaries.py:91: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_requirement_boundaries.py::test_corrupt_requirement_metadata_never_restores_values[cursor-broken]
+FAILED tests/test_writing_requirement_boundaries.py::test_corrupt_requirement_metadata_never_restores_values[source_ids-{}]
+FAILED tests/test_writing_requirement_boundaries.py::test_corrupt_requirement_metadata_never_restores_values[source_ids-[true]]
+FAILED tests/test_writing_requirement_boundaries.py::test_corrupt_requirement_metadata_never_restores_values[format_version-77]
+4 failed, 1 passed in 0.89s
