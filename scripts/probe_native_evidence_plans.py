@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import signal
 import subprocess
+import sys
 import time
 from native_evidence_plan import payload, render, decode
 from probe_structured_provider import environment, request, validate_trace, schema_valid, gpu_processes, write
@@ -13,6 +14,8 @@ from evaluate_native_output_audit import validate_provider_identity
 from serve_local_model_eval import load_registry
 
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'scripts/lab'))
+from owned_provider import PROTECTION_SOURCES,start_provider,finish_provider
 PROTOCOL='evals/interaction/cycle-27/source-atom-content-protocol.json'
 REGISTRY='evals/interaction/cycle-26/model-scale-registry.json'
 MODELS=('qwen3-4b-q4_k_m','qwen3-32b-q4_k_m')
@@ -24,6 +27,7 @@ def digest(path):return sha256(path.read_bytes()).hexdigest()
 def required_paths(root=ROOT):
     base={PROTOCOL,REGISTRY,'scripts/native_evidence_plan.py','scripts/probe_native_evidence_plans.py',
           'scripts/probe_structured_provider.py','scripts/evaluate_native_output_audit.py','scripts/serve_local_model_eval.py','src/avatar/gpu_resources.py'}
+    base.update(PROTECTION_SOURCES)
     base.update(str(p.relative_to(root)) for folder in ('src','tests') for p in (root/folder).rglob('*.py'))
     base.update('evals/interaction/cycle-26/model-metadata-'+label+'.json' for label in ('4b','14b','32b'))
     return base
@@ -120,7 +124,8 @@ def run(args):
     try:
         verify()
         with (args.output/'provider.log').open('x') as log:
-            process=subprocess.Popen(command,cwd=ROOT,env=environment(args.provider_python),stdout=log,stderr=subprocess.STDOUT)
+            process,protection=start_provider(command,args.output/'provider-process',cwd=ROOT,env=environment(args.provider_python),stdout=log)
+            report['provider_protection']=protection
             report['provider_pid']=process.pid;save()
             while True:
                 if process.poll() is not None:raise RuntimeError('Provider exited before ready')
@@ -153,6 +158,7 @@ def run(args):
             if process.poll() is None:process.terminate()
             try:report['provider_exit']=process.wait(timeout=15)
             except subprocess.TimeoutExpired:process.kill();report['provider_exit']=process.wait();report['forced_cleanup']=True
+            report['provider_protection_terminal']=finish_provider(process,args.output/'provider-process')
             for _ in range(100):
                 raw=gpu_processes()
                 if not any(line.split(',')[0].strip()==str(process.pid) for line in raw.splitlines()):break

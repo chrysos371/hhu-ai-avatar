@@ -17,6 +17,8 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
+sys.path.insert(0,str(ROOT/'scripts/lab'))
+from owned_provider import PROTECTION_SOURCES
 from avatar.paths import project_data_root
 
 import avatar.main  # Verify the application module that create_server will use.
@@ -105,6 +107,7 @@ def fingerprint(protocol_path=PROTOCOL):
     registry, _, registry_path, _ = protocol_registry(json.loads(protocol_path.read_text()))
     paths.append(str(registry_path.relative_to(ROOT)))
     paths += [m['metadata'] for m in registry['models'] if m.get('metadata')]
+    paths += list(PROTECTION_SOURCES)
     paths += [str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')]
     return {p: sha256((ROOT/p).read_bytes()).hexdigest() for p in paths}
 

@@ -46,7 +46,8 @@ SOURCE_VERSIONS = {'lab_source_capability_v2': 2, 'lab_source_capability_v3': 3,
 def required_sources(candidate=CANDIDATE):
     if candidate not in CANDIDATES:
         raise ValueError('Unknown capability candidate')
-    sources = {str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')} | {
+    from owned_provider import PROTECTION_SOURCES
+    sources = set(PROTECTION_SOURCES) | {str(path.relative_to(ROOT)) for path in ROOT.glob('src/avatar/**/*.py')} | {
         'scripts/evaluate_capability_pair.py', 'scripts/evaluate_body_review_pair.py',
         'scripts/evaluate_native_output_audit.py', 'scripts/serve_local_model_eval.py',
         'scripts/run_native_output_models.py', 'evals/interaction/cycle-02/model-scale-protocol.json',

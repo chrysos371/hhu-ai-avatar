@@ -11,6 +11,8 @@ from urllib.request import Request, ProxyHandler, build_opener
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
+sys.path.insert(0,str(ROOT/'scripts/lab'))
+from owned_provider import PROTECTION_SOURCES,start_provider,finish_provider
 from avatar.paths import project_data_root
 PROTOCOL = 'evals/interaction/cycle-25/structured-provider-protocol.json'
 MODELS = {'qwen3-4b-q4_k_m': 'evals/interaction/cycle-25/model-metadata-4b.json',
@@ -36,7 +38,7 @@ def verify_freeze(path, expected, model, *, root=ROOT):
             or data.get('protocol') != PROTOCOL or model not in data.get('models', []) or model not in MODELS):
         raise ValueError('Frozen execution contract mismatch')
     required = {PROTOCOL, 'scripts/probe_structured_provider.py', 'scripts/serve_local_model_eval.py',
-                'src/avatar/gpu_resources.py', 'evals/interaction/cycle-02/model-scale-protocol.json', *MODELS.values()}
+                'src/avatar/gpu_resources.py', 'evals/interaction/cycle-02/model-scale-protocol.json', *MODELS.values(), *PROTECTION_SOURCES}
     if not required <= data.get('sha256', {}).keys():
         raise ValueError('Frozen inputs incomplete')
     for name, value in data['sha256'].items():
@@ -184,7 +186,8 @@ def run(args):
     try:
         verify()
         with (args.output/'provider.log').open('x') as log:
-            process=subprocess.Popen(command,cwd=ROOT,env=environment(args.provider_python),stdout=log,stderr=subprocess.STDOUT)
+            process,protection=start_provider(command,args.output/'provider-process',cwd=ROOT,env=environment(args.provider_python),stdout=log)
+            report['provider_protection']=protection
             report['provider_pid']=process.pid;save()
             while True:
                 if process.poll() is not None: raise RuntimeError('Provider exited before ready: '+str(process.returncode))
@@ -221,6 +224,7 @@ def run(args):
             try:report['provider_exit']=process.wait(timeout=15)
             except subprocess.TimeoutExpired:
                 process.kill();report['provider_exit']=process.wait();report['forced_cleanup']=True
+            report['provider_protection_terminal']=finish_provider(process,args.output/'provider-process')
             for _ in range(100):
                 raw=gpu_processes()
                 if not any(line.split(',')[0].strip()==str(process.pid) for line in raw.splitlines()):break
