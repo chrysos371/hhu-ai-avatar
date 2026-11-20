@@ -19,7 +19,7 @@ def write(path, value):
         stream.write('\n')
 
 
-def collect_notices(front, target):
+def collect_notices(front, target, *, runtime_tree):
     """Preserve available installed texts; inventory includes build dependencies.
 
     Do not synthesize a license or assert that a package lacking a standalone
@@ -54,10 +54,23 @@ def collect_notices(front, target):
         packages.append(dict(installed_path=name, name=metadata['name'], version=metadata['version'],
             declared_license=metadata.get('license'), development_dependency=bool(entry.get('dev')),
             optional_dependency=bool(entry.get('optional') or entry.get('devOptional')), texts=texts))
+    runtime = set()
+    def visit(dependencies):
+        for name, node in dependencies.items():
+            if not isinstance(node.get('version'), str):
+                raise ValueError('Runtime dependency has no installed version')
+            runtime.add((name, node['version']))
+            visit(node.get('dependencies', {}))
+    visit(json.loads(Path(runtime_tree).read_text())['dependencies'])
+    covered = {(p['name'], p['version']) for p in packages if p['texts']}
+    if runtime - covered:
+        raise ValueError('Installed runtime dependencies missing original notice text: '+repr(sorted(runtime-covered)))
     write(target/'index.json', dict(version=1,
         scope='Over-inclusive installed frontend build/runtime dependency inventory; not a bundle-usage assertion. '
             'Available original notice/license texts are copied unchanged; absent standalone texts are recorded.',
-        package_lock_sha256=digest(front/'package-lock.json'), packages=packages))
+        package_lock_sha256=digest(front/'package-lock.json'),
+        runtime_dependencies=[dict(name=name, version=version) for name, version in sorted(runtime)],
+        runtime_original_notice_coverage=True, packages=packages))
     (target/'README.txt').write_text('Third-party frontend notices\n\n'
         'index.json identifies the exact installed frontend dependencies and their declared licenses. '
         'The inventory includes build and development dependencies as well as runtime dependencies. '
@@ -122,7 +135,7 @@ def build_frontend(front, output, data, environment):
     try:
         run('frontend-ci', ['ci', '--no-audit', '--no-fund', '--registry=https://registry.npmjs.org'])
         run('frontend-tree-all', ['ls', '--all', '--json'])
-        run('frontend-tree-runtime', ['ls', '--omit=dev', '--json'])
+        run('frontend-tree-runtime', ['ls', '--all', '--omit=dev', '--json'])
         modules = front/'node_modules'
         installed = {str(p.relative_to(modules)): digest(p) for p in sorted(modules.rglob('*')) if p.is_file()}
         links = {str(p.relative_to(modules)): os.readlink(p) for p in sorted(modules.rglob('*')) if p.is_symlink()}

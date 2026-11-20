@@ -110,7 +110,8 @@ def build(output):
         if any(p.is_symlink() for p in (output/'frontend').rglob('*')):
             raise ValueError('Do not bundle external asset symlinks')
         shutil.copytree(output/'frontend', staging/'src/avatar/static')
-        notices = collect_notices(staging/'frontend', staging/'src/avatar/third_party')
+        notices = collect_notices(staging/'frontend', staging/'src/avatar/third_party',
+            runtime_tree=output/'frontend-tree-runtime.log')
         write(staging/'src/avatar/release-build.json', dict(source_ref=ref,
             source_sha256=before, ui_sha256=ui, frontend_build=state['frontend_build'],
             third_party_sha256=notices,
