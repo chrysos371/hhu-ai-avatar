@@ -17,7 +17,7 @@ import sys
 import tarfile
 import zipfile
 
-from release_frontend import build_frontend
+from release_frontend import build_frontend, collect_notices
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
@@ -110,8 +110,10 @@ def build(output):
         if any(p.is_symlink() for p in (output/'frontend').rglob('*')):
             raise ValueError('Do not bundle external asset symlinks')
         shutil.copytree(output/'frontend', staging/'src/avatar/static')
+        notices = collect_notices(staging/'frontend', staging/'src/avatar/third_party')
         write(staging/'src/avatar/release-build.json', dict(source_ref=ref,
             source_sha256=before, ui_sha256=ui, frontend_build=state['frontend_build'],
+            third_party_sha256=notices,
             artifact_status=state['artifact_status']))
         with (output/'python-build.log').open('x') as log:
             subprocess.run([sys.executable, '-B', '-m', 'build', '--no-isolation',
@@ -127,14 +129,21 @@ def build(output):
                     raise ValueError('Wheel UI bytes differ')
             if 'avatar/release-build.json' not in wheel.namelist():
                 raise ValueError('Wheel provenance missing')
+            for name, expected in notices.items():
+                if hashlib.sha256(wheel.read('avatar/third_party/'+name)).hexdigest() != expected:
+                    raise ValueError('Wheel third-party notice bytes differ')
         with tarfile.open(sdists[0]) as archive:
             for name, expected in ui.items():
                 member = next(m for m in archive if m.name.endswith('/src/avatar/static/'+name))
                 if hashlib.sha256(archive.extractfile(member).read()).hexdigest() != expected:
                     raise ValueError('Sdist UI bytes differ')
+            for name, expected in notices.items():
+                member = next(m for m in archive if m.name.endswith('/src/avatar/third_party/'+name))
+                if hashlib.sha256(archive.extractfile(member).read()).hexdigest() != expected:
+                    raise ValueError('Sdist third-party notice bytes differ')
         if sources() != before:
             raise ValueError('Build inputs changed during execution')
-        state.update(passed=True, ui_sha256=ui, source_unchanged=True,
+        state.update(passed=True, ui_sha256=ui, third_party_sha256=notices, source_unchanged=True,
             artifacts={str(p.relative_to(output)): sha(p) for p in wheels+sdists})
     except BaseException as error:
         state['error'] = repr(error)
