@@ -1,0 +1,22 @@
+......F........                                                          [100%]
+=================================== FAILURES ===================================
+_ test_explicitly_quoted_meta_question_is_still_a_valid_artifact[\u9700\u8981\u6211\u5e2e\u4f60\u6784\u601d\u4e00\u4e0b\u5417\uff1f] _
+
+body = '需要我帮你构思一下吗？'
+
+    @pytest.mark.parametrize('body', ['“需要我帮你构思一下吗？”', '需要我帮你构思一下吗？'])
+    def test_explicitly_quoted_meta_question_is_still_a_valid_artifact(body):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = ArtifactReplies([body])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond('原样写出这句小说台词：“需要我帮你构思一下吗？”')
+>           assert result['reply'] == body and len(engine.native) == 1
+E           AssertionError: assert ('稿件暂未通过约束检查，请稍后重试。' == '需要我帮你构思一下吗？'
+E             
+E             - 需要我帮你构思一下吗？
+E             + 稿件暂未通过约束检查，请稍后重试。)
+
+tests/test_writing_artifact_repair.py:67: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_artifact_repair.py::test_explicitly_quoted_meta_question_is_still_a_valid_artifact[\u9700\u8981\u6211\u5e2e\u4f60\u6784\u601d\u4e00\u4e0b\u5417\uff1f]
+1 failed, 14 passed in 1.45s

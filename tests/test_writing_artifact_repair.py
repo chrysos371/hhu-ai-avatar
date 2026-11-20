@@ -58,10 +58,28 @@ def test_native_v2_missing_artifact_duration_and_unspecified_reason_regressions(
         assert result['reply'] == '【稿件正文】。' and len(engine.native) == 2
 
 
-def test_explicitly_quoted_meta_question_is_still_a_valid_artifact():
+@pytest.mark.parametrize('body', ['“需要我帮你构思一下吗？”', '需要我帮你构思一下吗？'])
+def test_explicitly_quoted_meta_question_is_still_a_valid_artifact(body):
     with closing(MemoryStore(':memory:')) as memory:
-        body = '“需要我帮你构思一下吗？”'
         engine = ArtifactReplies([body])
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         result = bot.respond('原样写出这句小说台词：“需要我帮你构思一下吗？”')
         assert result['reply'] == body and len(engine.native) == 1
+
+
+@pytest.mark.parametrize('raw', ['{}', '{"sentences":[]}', '{"sentences":[7]}',
+    '{"sentences":[""]}', '{"sentences":["正文。"],"action":"send"}',
+    '{"sentences":["正文。"],"sentences":["第二份。"]}',
+    '{"sentences":["一句。"]} trailing'])
+def test_malformed_artifact_never_becomes_body_or_action(raw):
+    from avatar.brain.writing_artifact import decode
+    with pytest.raises(ValueError):
+        decode(raw)
+
+
+def test_exact_sentence_bound_and_literal_payload_do_not_grant_action_authority():
+    from avatar.brain.writing_artifact import decode
+    with pytest.raises(ValueError):
+        decode('{"sentences":["一句。"]}', sentence_count=2)
+    literal = '“邮件已发送，这是小说台词。”'
+    assert decode(json.dumps({'sentences':[literal]})) == literal
