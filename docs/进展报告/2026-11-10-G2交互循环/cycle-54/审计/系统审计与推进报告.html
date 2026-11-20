@@ -1,0 +1,46 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C54 中断实验系统审计报告</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}@media(max-width:600px){table{table-layout:fixed}}</style></head><body><main><h1>C54 中断实验系统审计报告</h1><p class="meta">2026-11-20T16:45:46+08:00 · 源 0756b9a44178</p><p class="verdict">实验未完成并退役；无适配收益或质量批准</p>
+<section><h2>结论：未完成实验退役</h2>
+<p>C54完成目标表达替换的CPU材料准备、真实分词与新题路由演练，随后启动过一次BF16基座实测。会话外部中断后原worker消失，没有Python终态回执；完整基线和三臂对照均未完成，原阶段退役，不重试或推进依赖阶段。</p>
+<p>实际留下28份完成生成结果（2预热+26正式）、第29个未完成分析入口、13完整Avatar试次和27份SQL。100原始文件及507冻结输入保持；退出码未知，不能补写为0或推断某个信号。部分数据不能支持适配增益、模型退化或代际跃迁结论。</p>
+<p><a href="工作目录/009-中断与退役审计/retirement-v1.json">原始退役核验</a></p>
+<p><a href="工作目录/009-中断与退役审计/resume-byte-recheck-v1.json">恢复后字节复核</a></p>
+<p><a href="工作目录/006-真实执行输入/freeze-v1.json">统一冻结</a></p>
+</section>
+<section><h2>准备阶段实测</h2>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>项目</th><th>实测</th><th>边界</th></tr></thead><tbody>
+<tr><td>材料</td><td>176训练/44开发；220 prompt字节和token前缀相同</td><td>复用旧SDK上下文，仅替换最终脚本目标</td></tr>
+<tr><td>目标覆盖</td><td>训练81/开发41种，共享1种精确草稿</td><td>122 split-variant/121不同目标；同代理来源审阅</td></tr>
+<tr><td>监督token含EOS</td><td>3856/1012，旧3936/984</td><td>表达方案同时改变token分布，不是单标量多样性因果</td></tr>
+<tr><td>来源与隔离</td><td>220对/4身份故障/44保护字段拒绝</td><td>当前实际加载接受，不是人类语义批准</td></tr>
+<tr><td>新题CPU演练</td><td>66 SDK试次/132SQL/138脚本接口</td><td>201原料/44 fixture消息对；不是实际adapter层证明</td></tr>
+<tr><td>训练前向采证器</td><td>CPU embedding模块2正向/1反传/7故障</td><td>0优化步；真实CUDA训练未执行</td></tr>
+<tr><td>执行门禁</td><td>4精确正常CLI拒绝+help；合成220行/44步/7损坏</td><td>JSON算法检查不是硬件采证</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/001-目标表达对照/data-export-v1.json">材料导出</a></p>
+<p><a href="工作目录/002-独立原料与隔离/independent-data-v1.json">独立材料/隔离</a></p>
+<p><a href="工作目录/003-真实分词/target-tokenization-v1.json">真实CPU分词</a></p>
+<p><a href="工作目录/004-新题路由演练/independent-rehearsal-v1.json">新题独立演练</a></p>
+</section>
+<section><h2>实际执行与中断边界</h2>
+<p>retirement-v1中的goal_active为脚本常量，不能用作暂停/恢复时间状态证据；用户事件和Goal API才是权威。暂停后误启动过一次只读核验，已经退出且未新增模型/训练；原记录不删除。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>项目</th><th>实际记录</th><th>未获证明</th></tr></thead><tbody>
+<tr><td>GPU身份</td><td>启动时空闲GPU2，物理UUID与实际分配一致</td><td>不代表恢复时GPU2仍空闲</td></tr>
+<tr><td>完成生成</td><td>28份结果，独立重构输入/输出</td><td>不是404次计划全部完成</td></tr>
+<tr><td>未完成入口</td><td>第29条 analysis：c54-historical_cancelled-2</td><td>不知道原generate是否完成；不得计为成功</td></tr>
+<tr><td>试次与SQL</td><td>13完整试次/26重建SQL，另1部分查询SQL</td><td>未完成第1组22例，不能代替66例基线</td></tr>
+<tr><td>进程终态</td><td>原PID身份不存在、原占用退役</td><td>无实际退出码；不伪造终态</td></tr>
+<tr><td>后续阶段</td><td>old_adapter/train/reload/new_adapter均未启动</td><td>0新训练步、无新adapter和训练日志实测</td></tr>
+<tr><td>历史证据</td><td>52旧seal/12470项、9集中入口不变</td><td>当前复用C53 2548/1及494源字节，未新跑全套</td></tr>
+</tbody></table></div>
+<p><a href="问题单/001-会话中断后真实阶段缺少独立终态托管.md">中断问题001</a></p>
+<p><a href="收尾核验/system-evidence.json">系统复核</a></p>
+</section>
+<section><h2>推进方向</h2>
+<p>P0保留本轮全部部分结果和失败，不重跑C54，不从不足试次选取有利结论。旧C52失败adapter和默认产品保持原状态；C53-002实际训练样本采证缺口仍开放。</p>
+<p>P1在新周期修复独立任务监督和终态回执，先用真实短命成功/失败子进程及父启动器退出控制验证；无自动重试、无整轮墙钟截止。完成后另登记完整对照，旧13例明确为已执行开发诊断，所有历史调用单列。</p>
+<p>P2完成新版本真实实验、来源/span审阅、系统审计与报告后再循环；一般语义、独立人评、真人/物理设备、中文口型与多日全链路验收仍未批准。</p>
+<p><a href="../进展.md">过程进展</a></p>
+<p><a href="../准备检查点与真实执行接续.md">退役接续说明</a></p>
+<p><a href="../../远期目标与验收路线.md">远期路线</a></p>
+</section>
+</main></body></html>
