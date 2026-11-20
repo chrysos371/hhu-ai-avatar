@@ -1,0 +1,109 @@
+FFFFF.                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_release_uses_actual_profile_and_buffers_copied_self_preference[profile0-\u6211\u53eb\u4ec0\u4e48\u540d\u5b57\uff1f-\u6211\u77e5\u9053\u4f60\u53eb\u67f3\u6797\u3002-\u76ee\u524d\u6ca1\u6709\u8db3\u591f\u8bb0\u5f55\u786e\u8ba4\u4f60\u7684\u540d\u5b57-name_lookup] _
+
+profile = {}, text = '我叫什么名字？', raw = '我知道你叫柳林。', expected = '目前没有足够记录确认你的名字'
+action = 'name_lookup'
+
+    @pytest.mark.parametrize('profile,text,raw,expected,action', [
+        ({},'我叫什么名字？','我知道你叫柳林。','目前没有足够记录确认你的名字','name_lookup'),
+        ({'名字':'陆遥'},'我叫什么名字？','你叫柳林。','目前记录你使用的名字是陆遥','name_lookup'),
+        ({'偏好':'喜欢网球'},'我喜欢什么运动？','我喜欢网球。','目前关于你的偏好记录是：喜欢网球','preference_lookup'),
+        ({'偏好':'喜欢网球'},'今天聊聊。','我喜欢网球。我们一起去打吧。','目前关于你的偏好记录是：喜欢网球','copied_preference'),
+    ])
+    def test_release_uses_actual_profile_and_buffers_copied_self_preference(profile,text,raw,expected,action):
+        with closing(MemoryStore(':memory:')) as memory:
+            for key,value in profile.items(): memory.remember_user(key,value)
+            model=Recorder(raw);bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            pieces=[]
+            result=bot.respond(text,cancel=CancellationToken(),on_delta=pieces.append)
+>           assert expected in result['reply'] and '柳林' not in result['reply']
+E           AssertionError: assert ('目前没有足够记录确认你的名字' in '我知道你叫柳林。')
+
+tests/test_release_profile_sources.py:24: AssertionError
+_ test_release_uses_actual_profile_and_buffers_copied_self_preference[profile1-\u6211\u53eb\u4ec0\u4e48\u540d\u5b57\uff1f-\u4f60\u53eb\u67f3\u6797\u3002-\u76ee\u524d\u8bb0\u5f55\u4f60\u4f7f\u7528\u7684\u540d\u5b57\u662f\u9646\u9065-name_lookup] _
+
+profile = {'名字': '陆遥'}, text = '我叫什么名字？', raw = '你叫柳林。'
+expected = '目前记录你使用的名字是陆遥', action = 'name_lookup'
+
+    @pytest.mark.parametrize('profile,text,raw,expected,action', [
+        ({},'我叫什么名字？','我知道你叫柳林。','目前没有足够记录确认你的名字','name_lookup'),
+        ({'名字':'陆遥'},'我叫什么名字？','你叫柳林。','目前记录你使用的名字是陆遥','name_lookup'),
+        ({'偏好':'喜欢网球'},'我喜欢什么运动？','我喜欢网球。','目前关于你的偏好记录是：喜欢网球','preference_lookup'),
+        ({'偏好':'喜欢网球'},'今天聊聊。','我喜欢网球。我们一起去打吧。','目前关于你的偏好记录是：喜欢网球','copied_preference'),
+    ])
+    def test_release_uses_actual_profile_and_buffers_copied_self_preference(profile,text,raw,expected,action):
+        with closing(MemoryStore(':memory:')) as memory:
+            for key,value in profile.items(): memory.remember_user(key,value)
+            model=Recorder(raw);bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            pieces=[]
+            result=bot.respond(text,cancel=CancellationToken(),on_delta=pieces.append)
+>           assert expected in result['reply'] and '柳林' not in result['reply']
+E           AssertionError: assert ('目前记录你使用的名字是陆遥' in '你叫柳林。')
+
+tests/test_release_profile_sources.py:24: AssertionError
+_ test_release_uses_actual_profile_and_buffers_copied_self_preference[profile2-\u6211\u559c\u6b22\u4ec0\u4e48\u8fd0\u52a8\uff1f-\u6211\u559c\u6b22\u7f51\u7403\u3002-\u76ee\u524d\u5173\u4e8e\u4f60\u7684\u504f\u597d\u8bb0\u5f55\u662f\uff1a\u559c\u6b22\u7f51\u7403-preference_lookup] _
+
+profile = {'偏好': '喜欢网球'}, text = '我喜欢什么运动？', raw = '我喜欢网球。'
+expected = '目前关于你的偏好记录是：喜欢网球', action = 'preference_lookup'
+
+    @pytest.mark.parametrize('profile,text,raw,expected,action', [
+        ({},'我叫什么名字？','我知道你叫柳林。','目前没有足够记录确认你的名字','name_lookup'),
+        ({'名字':'陆遥'},'我叫什么名字？','你叫柳林。','目前记录你使用的名字是陆遥','name_lookup'),
+        ({'偏好':'喜欢网球'},'我喜欢什么运动？','我喜欢网球。','目前关于你的偏好记录是：喜欢网球','preference_lookup'),
+        ({'偏好':'喜欢网球'},'今天聊聊。','我喜欢网球。我们一起去打吧。','目前关于你的偏好记录是：喜欢网球','copied_preference'),
+    ])
+    def test_release_uses_actual_profile_and_buffers_copied_self_preference(profile,text,raw,expected,action):
+        with closing(MemoryStore(':memory:')) as memory:
+            for key,value in profile.items(): memory.remember_user(key,value)
+            model=Recorder(raw);bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            pieces=[]
+            result=bot.respond(text,cancel=CancellationToken(),on_delta=pieces.append)
+>           assert expected in result['reply'] and '柳林' not in result['reply']
+E           AssertionError: assert ('目前关于你的偏好记录是：喜欢网球' in '我喜欢网球。')
+
+tests/test_release_profile_sources.py:24: AssertionError
+_ test_release_uses_actual_profile_and_buffers_copied_self_preference[profile3-\u4eca\u5929\u804a\u804a\u3002-\u6211\u559c\u6b22\u7f51\u7403\u3002\u6211\u4eec\u4e00\u8d77\u53bb\u6253\u5427\u3002-\u76ee\u524d\u5173\u4e8e\u4f60\u7684\u504f\u597d\u8bb0\u5f55\u662f\uff1a\u559c\u6b22\u7f51\u7403-copied_preference] _
+
+profile = {'偏好': '喜欢网球'}, text = '今天聊聊。', raw = '我喜欢网球。我们一起去打吧。'
+expected = '目前关于你的偏好记录是：喜欢网球', action = 'copied_preference'
+
+    @pytest.mark.parametrize('profile,text,raw,expected,action', [
+        ({},'我叫什么名字？','我知道你叫柳林。','目前没有足够记录确认你的名字','name_lookup'),
+        ({'名字':'陆遥'},'我叫什么名字？','你叫柳林。','目前记录你使用的名字是陆遥','name_lookup'),
+        ({'偏好':'喜欢网球'},'我喜欢什么运动？','我喜欢网球。','目前关于你的偏好记录是：喜欢网球','preference_lookup'),
+        ({'偏好':'喜欢网球'},'今天聊聊。','我喜欢网球。我们一起去打吧。','目前关于你的偏好记录是：喜欢网球','copied_preference'),
+    ])
+    def test_release_uses_actual_profile_and_buffers_copied_self_preference(profile,text,raw,expected,action):
+        with closing(MemoryStore(':memory:')) as memory:
+            for key,value in profile.items(): memory.remember_user(key,value)
+            model=Recorder(raw);bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            pieces=[]
+            result=bot.respond(text,cancel=CancellationToken(),on_delta=pieces.append)
+>           assert expected in result['reply'] and '柳林' not in result['reply']
+E           AssertionError: assert ('目前关于你的偏好记录是：喜欢网球' in '我喜欢网球。我们一起去打吧。')
+
+tests/test_release_profile_sources.py:24: AssertionError
+_______ test_friend_name_or_reminder_title_is_not_promoted_to_self_name ________
+
+    def test_friend_name_or_reminder_title_is_not_promoted_to_self_name():
+        with closing(MemoryStore(':memory:')) as memory:
+            model=Recorder('你好，柳林。我知道你叫柳林。')
+            bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            bot.respond('我的朋友叫柳林。')
+            result=bot.respond('我叫什么名字？')
+>           assert '柳林' not in result['reply'] and '没有足够记录' in result['reply']
+E           AssertionError: assert ('柳林' not in '你好，柳林。我知道你叫柳林。'
+E             
+E             '柳林' is contained here:
+E               你好，柳林。我知道你叫柳林。
+E             ?    ++)
+
+tests/test_release_profile_sources.py:39: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_release_profile_sources.py::test_release_uses_actual_profile_and_buffers_copied_self_preference[profile0-\u6211\u53eb\u4ec0\u4e48\u540d\u5b57\uff1f-\u6211\u77e5\u9053\u4f60\u53eb\u67f3\u6797\u3002-\u76ee\u524d\u6ca1\u6709\u8db3\u591f\u8bb0\u5f55\u786e\u8ba4\u4f60\u7684\u540d\u5b57-name_lookup]
+FAILED tests/test_release_profile_sources.py::test_release_uses_actual_profile_and_buffers_copied_self_preference[profile1-\u6211\u53eb\u4ec0\u4e48\u540d\u5b57\uff1f-\u4f60\u53eb\u67f3\u6797\u3002-\u76ee\u524d\u8bb0\u5f55\u4f60\u4f7f\u7528\u7684\u540d\u5b57\u662f\u9646\u9065-name_lookup]
+FAILED tests/test_release_profile_sources.py::test_release_uses_actual_profile_and_buffers_copied_self_preference[profile2-\u6211\u559c\u6b22\u4ec0\u4e48\u8fd0\u52a8\uff1f-\u6211\u559c\u6b22\u7f51\u7403\u3002-\u76ee\u524d\u5173\u4e8e\u4f60\u7684\u504f\u597d\u8bb0\u5f55\u662f\uff1a\u559c\u6b22\u7f51\u7403-preference_lookup]
+FAILED tests/test_release_profile_sources.py::test_release_uses_actual_profile_and_buffers_copied_self_preference[profile3-\u4eca\u5929\u804a\u804a\u3002-\u6211\u559c\u6b22\u7f51\u7403\u3002\u6211\u4eec\u4e00\u8d77\u53bb\u6253\u5427\u3002-\u76ee\u524d\u5173\u4e8e\u4f60\u7684\u504f\u597d\u8bb0\u5f55\u662f\uff1a\u559c\u6b22\u7f51\u7403-copied_preference]
+FAILED tests/test_release_profile_sources.py::test_friend_name_or_reminder_title_is_not_promoted_to_self_name
+5 failed, 1 passed in 0.88s

@@ -6,7 +6,7 @@ answer remains historical data, including a well-formatted numeric answer.
 import json
 
 MODES = frozenset({'rules_capability_request', 'rules_reported_sender',
-                   'llm_format_guarded', 'llm_capability_guarded', 'rules_source_calculation'})
+                   'llm_format_guarded', 'llm_capability_guarded', 'rules_source_calculation', 'rules_profile_source'})
 PREFIX = '历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：\n'
 
 
@@ -36,6 +36,9 @@ def verified_content(memory, result, *, user_id, assistant_id, text, scope, revi
                 or type(frame.get('revision')) is not int or frame['revision'] != revision
                 or memory.context_revision != revision):
             return None
+        if mode == 'rules_profile_source':
+            from .profile_source import verified_content as verify_profile
+            return verify_profile(memory,result,user_id=user_id,assistant_id=assistant_id,text=text,scope=scope,revision=revision)
         if mode == 'rules_source_calculation':
             from .source_calculation import build
             if scope != 'current_user' or result['speaker_attribution'].get('turn_tools_allowed') is not True:

@@ -107,7 +107,7 @@ class ConversationContextStore:
                     'llm', 'rules', 'rules_speaker_control', 'rules_speaker_scope', 'rules_reminder_query',
                     'llm_writing_repaired', 'llm_capability_guarded', 'rules_writing_artifact', 'rules_writing_validation',
                     'rules_capability_request', 'rules_reported_sender', 'llm_format_guarded', 'rules_reminder_history',
-                    'rules_source_calculation'}
+                    'rules_source_calculation', 'rules_profile_source'}
                 or type(source.get('revision')) is not int or source['revision'] != revision
                 or type(source.get('user_message_id')) is not int
                 or source['user_message_id'] != user['id']
