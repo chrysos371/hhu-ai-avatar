@@ -22,7 +22,9 @@ def test_sender_is_read_from_verified_user_report_without_new_model_or_execution
         original = bot.respond(source)['conversation']['user_message_id']
         counts = len(engine.native), len(engine.analysis)
         engine.reply = '是我发送的，我已经替你处理了。'
-        result = bot.respond(question)
+        pieces = []
+        result = bot.respond(question, on_delta=pieces.append)
+        assert ''.join(pieces) == result['reply']
         assert result['generation_mode'] == 'rules_reported_sender'
         assert (len(engine.native), len(engine.analysis)) == counts
         evidence = result['reported_communication']
