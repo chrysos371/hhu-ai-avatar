@@ -1190,6 +1190,10 @@ class Avatar:
                 if generation_mode in MODES:
                     context_reply = writing_history_content(reply, self._writing_requirements,
                         mode=generation_mode, scope=self.speaker_scope.scope)
+            else:
+                from .brain.release_history import MODES, content as release_history_content
+                if generation_mode in MODES:
+                    context_reply = release_history_content(reply, mode=generation_mode, source_id=self._current_message_id)
             self.memory.add_short_term("assistant", context_reply)
             assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)

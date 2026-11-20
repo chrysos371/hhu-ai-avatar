@@ -66,43 +66,51 @@ def reported_sender(memory, *, text, session_id, source_message_id, revision, sc
     try:
         snapshot(memory, session_id=session_id, source_message_id=source_message_id,
             user_text=text, revision=revision, scope=scope, known_source_ids={source_message_id, *ids})
-        for context, ident in reversed(list(zip(contexts, ids))):
+        checked = []
+        for context, ident in zip(contexts, ids):
             row = conn.execute('SELECT role,content FROM memory_messages WHERE id=?', (ident,)).fetchone()
             if (not row or row['role'] != 'user' or row['content'] == '[redacted]'
                     or not context or row['content'].count(context) != 1):
                 raise Cancelled('Reported sender source no longer matches its verified context')
-            clean = _mask_quoted(context)
-            if not _ACTION.search(clean):
-                continue
-            actors = set()
-            for piece in re.finditer(r'[^，,。！？!?；;\n]+[，,。！？!?；;\n]?', clean):
-                clause = piece.group().strip()
-                # The outer reporter is not automatically the embedded sender.
-                clause = re.sub(r'^(?:我)?听说(?=(?:'+_NAMED_ROLE+r'))', '', clause)
-                clause = re.sub(r'^(?:我|'+_ROLE+r')说(?=(?:'+_NAMED_ROLE+r'))', '', clause)
-                if re.match(r'^(?:'+_ROLE+r')说我', clause):
-                    continue  # Quoted first person is ambiguous without a speaker binding.
-                if re.match(r'^我的(?:室友|朋友|同学|老师|家人)', clause):
-                    clause = clause[2:]
-                elif re.match(r'^我(?:室友|朋友|同学|老师|家人)', clause):
-                    clause = clause[1:]
-                match = _ACTOR.match(clause)
-                if (not match or _NOT_ASSERTED.search(match.group('lead'))
-                        or re.search(r'[？?]|(?:吗|么|呢)[，,。！？!?；;\n]?$', clause)):
-                    continue
-                actor = match.group('actor')
-                # A report about what someone asked/requested is not a report
-                # that that person was the actual sender.
-                if actor == '我' and re.search(r'请|让|叫|希望|想|要你', match.group('lead')):
-                    continue
-                joint = re.search(r'(?:和|跟|同)('+_ROLE+r')', match.group('lead')) if actor == '我' else None
-                actors.add('你和'+joint[1] if joint else 'user' if actor == '我' else actor)
-            if len(actors) == 1:
-                return ReportedSender(next(iter(actors)), (ident,))
-            # A later ambiguous/negative/action-request source must not be
-            # overwritten with an older, superficially convenient self-report.
-            return ReportedSender(None, (ident,))
-        return ReportedSender(None, ())
+            checked.append((ident, context))
+        return from_contexts(checked)
     finally:
         if owned:
             conn.rollback()
+
+
+def from_contexts(contexts):
+    """Pure actor extraction; callers independently verify all source rows."""
+    for ident, context in reversed(contexts):
+        clean = _mask_quoted(context)
+        if not _ACTION.search(clean):
+            continue
+        actors = set()
+        for piece in re.finditer(r'[^，,。！？!?；;\n]+[，,。！？!?；;\n]?', clean):
+            clause = piece.group().strip()
+            # The outer reporter is not automatically the embedded sender.
+            clause = re.sub(r'^(?:我)?听说(?=(?:'+_NAMED_ROLE+r'))', '', clause)
+            clause = re.sub(r'^(?:我|'+_ROLE+r')说(?=(?:'+_NAMED_ROLE+r'))', '', clause)
+            if re.match(r'^(?:'+_ROLE+r')说我', clause):
+                continue  # Quoted first person is ambiguous without a speaker binding.
+            if re.match(r'^我的(?:室友|朋友|同学|老师|家人)', clause):
+                clause = clause[2:]
+            elif re.match(r'^我(?:室友|朋友|同学|老师|家人)', clause):
+                clause = clause[1:]
+            match = _ACTOR.match(clause)
+            if (not match or _NOT_ASSERTED.search(match.group('lead'))
+                    or re.search(r'[？?]|(?:吗|么|呢)[，,。！？!?；;\n]?$', clause)):
+                continue
+            actor = match.group('actor')
+            # A report about what someone asked/requested is not a report
+            # that that person was the actual sender.
+            if actor == '我' and re.search(r'请|让|叫|希望|想|要你', match.group('lead')):
+                continue
+            joint = re.search(r'(?:和|跟|同)('+_ROLE+r')', match.group('lead')) if actor == '我' else None
+            actors.add('你和'+joint[1] if joint else 'user' if actor == '我' else actor)
+        if len(actors) == 1:
+            return ReportedSender(next(iter(actors)), (ident,))
+        # A later ambiguous/negative/action-request source must not be
+        # overwritten with an older, superficially convenient self-report.
+        return ReportedSender(None, (ident,))
+    return ReportedSender(None, ())
