@@ -18,6 +18,11 @@ _IMPLICIT = re.compile(r'^(?:已经|已|刚才|刚刚|马上|这就|可以|会)(
     r'[^'+_STOP+r']{0,12}?'+_SEND+r'[^'+_STOP+r']{0,40}')
 _PASSIVE = re.compile(r'(?:短信|邮件|微信|消息|电话)[^'+_STOP+r']{0,10}'
     r'(?:已(?:经)?(?:发出|发送|拨出|拨通)|发送成功|拨打成功|成功发送)')
+_SYSTEM = re.compile(r'(?:本系统|本程序|本服务|这套系统|这个系统)[^'+_STOP+r']{0,24}'
+    r'(?:能|可以|会|支持|提供)[^'+_STOP+r']{0,24}'+_SEND)
+_TEXT_WORK = re.compile(r'(?:修改|改写|润色|编辑|生成|起草|拟写)[^'+_STOP+r']{0,18}'
+    r'(?:内容|草稿|文案|措辞|模板)')
+_THEN_SEND = re.compile(r'(?:并|然后|再|接着|随后)[^'+_STOP+r']{0,8}'+_SEND)
 _CHANNEL = re.compile(r'短信|邮件|电邮|微信|QQ|私信|电话|拨号|邮箱|手机号|收件人|群|'
     r'发给(?:他|她|同学|朋友|室友|老师)|(?:联系|通知)(?:了|过|到)?(?:你的?|您的?)?(?:他|她|同学|朋友|室友|老师)')
 _NEGATIVE = re.compile(r'不能|无法|没有|不会|并未|不曾|不支持|尚未|未能|不能保证|无法确认')
@@ -40,11 +45,14 @@ def _external_clause(clean, *, root_text=''):
     # Negation is local to this clause; a later "但我已经发出" is reviewed anew.
     if _NEGATIVE.search(clean):
         return None
+    if _TEXT_WORK.search(clean) and not _THEN_SEND.search(clean):
+        return None
     offer = _OFFER.search(clean)
     matches = list(_SELF.finditer(clean))
     implicit = _IMPLICIT.search(clean)
     passive = _PASSIVE.search(clean)
-    if not (offer or matches or implicit or passive):
+    system = _SYSTEM.search(clean)
+    if not (offer or matches or implicit or passive or system):
         return None
     if not (_CHANNEL.search(clean) or offer and _CHANNEL.search(root_text)):
         return None
@@ -52,7 +60,7 @@ def _external_clause(clean, *, root_text=''):
     own = [m for m in matches if not re.search(r'(?<![帮替为给])你|他说|她说|对方', m.group('lead'))]
     if offer:
         return 'unsupported_external_offer'
-    if own or implicit or passive:
+    if own or implicit or passive or system:
         return 'unsupported_external_claim'
     return None
 
