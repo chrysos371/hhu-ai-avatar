@@ -130,6 +130,15 @@ def launch(command, job, *, context=None, environment=None):
 
 
 def supervise(job, expected):
+    # Reject both legacy attempted jobs and concurrent new supervisor entrants
+    # before replacing any existing terminal/heartbeat receipt.
+    previous = job/'status.json'
+    if previous.exists() and json.loads(previous.read_text()).get('state') != 'queued':
+        raise FileExistsError('Job already attempted; preserve its original status')
+    with (job/'supervisor-start.json').open('x') as claim:
+        json.dump({'worker': process(os.getpid()), 'config_sha256': expected,
+                   'claimed_utc': utc()}, claim, ensure_ascii=False, indent=2)
+        claim.write('\n'); claim.flush(); os.fsync(claim.fileno())
     state = {'state': 'running', 'started_utc': utc(), 'worker': process(os.getpid()), 'child': None,
         'return_code': None, 'stop_signal': None, 'context': {}}
     requested = []
