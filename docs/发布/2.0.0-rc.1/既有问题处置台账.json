@@ -1857,12 +1857,19 @@
           "sha256": "03d651db8e73bf6772351079ca5b9d2a2acef177c9f901f1fbeb49709c05e180"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "scripts/run_native_output_models.py",
+        "tests/test_native_sampler_registry.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-preflight-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，实验启动器缺陷；已修，真实4B加载4096MiB、11个应用回复及提供方退出0/GPU PID消失已验证；后续工程缺口另记002，不是模型质量失败。"
-      ]
+      ],
+      "release_review": "原生解释器expanduser().absolute保留venv软链入口，实际preflight prefix/54库和本次GPU加载已验证；不把旧启动失败当质量失败。",
+      "residual_product_roots": []
     },
     {
       "id": "C15-002",
@@ -1875,12 +1882,19 @@
           "sha256": "07e263145ea12174b1d05855f9d3ec1a15f22a3accf45d0bff9851c4f34eaabd"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_delivery_stream.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-result-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，已修：相关28项及整体替换对照通过，完整1078通过/1跳过；真实4B/14B开发各15回复流与最终、原始提供方文本精确一致，原11个4B最终文字不变。真实4B开发采样中第8场景dev_fiction：可见草稿末尾停在“山泉里。”，最终回复仍有闭合英文引号。完整repr和SSE见实验/stream-before/qwen3-4b-q4_k_m/sample/native-output.json，不是空白差异。"
-      ]
+      ],
+      "release_review": "已检查最终前缀的引号/emoji/无标点尾部补发，取消/来源失效不补。当前原生v1全部生成路径与最终SQL精确一致；固定规则本来最终交付，不强造delta。",
+      "residual_product_roots": []
     },
     {
       "id": "C15-003",
@@ -1893,11 +1907,19 @@
           "sha256": "6c32f81129919571108fdfabf5ceb6838f12604636194f3c888c28defabf7096"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "blocks_G04_under_linked_root",
+      "resolution_evidence": [
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-source-span-review-v1.json",
+        "src/avatar/brain/capability_output.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，开放。来自阶段A真实14B dev_quote_sms 原生输出，不是模型自评或受控夹具："
+      ],
+      "release_review": "无能力短信代发提议继承C19-001。新opt-in对已登记明确请求有规则拒绝，但原生v1收件误述/改稿误拒仍失败、默认未启用，不关闭根因。",
+      "residual_product_roots": [
+        "C19-001"
       ]
     },
     {
@@ -1911,11 +1933,20 @@
           "sha256": "0e54e8c6f3bb527b072ba411925060023bc52561503629bc38babd58a0583b5b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "historical_candidate_isolated; linked_G04_quality_pending",
+      "resolution_evidence": [
+        "tests/test_response_frames.py",
+        "tests/test_capability_output_integration.py",
+        "src/avatar/lab/body_review_avatar.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，lab候选v1验证失败，生产默认关闭。冻结v1后真实4B前瞻 val_quote_reply：用户“替我回复朋友，原样写出‘周六我陪你去游泳’，不要加解释。”，baseline原生“周六我陪你去游泳。”，candidate提供方原生逐字相同，却被改成“我没有真实身体，不能在线下陪同；可以在这里帮你做准备、规划活动或聊聊你的感受。”"
+      ],
+      "release_review": "旧body-v1明确代拟被误改，已拒绝且保持历史隔离；新response_frames仅opt-in有已知保护回归，未因此批准身体或一般写作识别。",
+      "residual_product_roots": [
+        "C02-016"
       ]
     },
     {
@@ -1929,12 +1960,21 @@
           "sha256": "a85fcc3116a0907678f64a941a88d8891624acfab21bcb57ba5b0ead652d58e8"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "historical_candidate_isolated; linked_G04_quality_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/response_frames.py",
+        "tests/test_response_frames.py",
+        "tests/test_capability_output_integration.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，lab候选v1开放；不启用生产。固定上下文审计long_writing实际SDK受控回复：最初明确“帮我给同学写一条短信”，随后12次“再短一点”。当前20消息短期窗口挤掉根写作来源，TaskTracker从剩余续改无法重建current，于是将草稿中的身体台词误当AI现实承诺，改成无身体声明。",
         "根因与004区分：004是当轮明确代拟语法漏识别；此处根指令最初已被识别，但后续有限窗口丢失来源。仅补“回复朋友”词面不能解决此项。目标是保留可核验、有界的写作来源/控制状态及明确续改关系，隐私失效、结束任务或转现实后必须撤销；不得无限复制用户历史或把旧草稿当真人事实/新动作执行。"
+      ],
+      "release_review": "旧候选根来源退出窗口失效保持拒绝；新metadata根/游标/revision/源红删有长续稿实际SQLite回归但尚未生产启用，不改写旧候选失败。",
+      "residual_product_roots": [
+        "C02-016"
       ]
     },
     {
@@ -1948,12 +1988,18 @@
           "sha256": "a5115495843de663ab1d104279c01122dc05d4635fb05c4bdbb01138afa57f1e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_review_source_dependencies.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P1候选发布阻断，尚未启用生产。设计v2读取20消息窗口以外写作根时发现：现有final_reply_reviewer虽能返回元数据，但核心不会把新来源ID合并入助手响应的memory_response_context。新审核若据此保留或改写回复，会引入隐私依赖漏项。"
-      ]
+      ],
+      "release_review": "可信进程reviewer最多4个真实非未来未redact user来源合入响应依赖，坏元数据拒写；当前cap根也跟踪原source。默认无reviewer。",
+      "residual_product_roots": []
     },
     {
       "id": "C16-002",
@@ -1966,11 +2012,20 @@
           "sha256": "d9c5c857eacfd9e2b25f1d21ee1a586f068bd880fdec7015bf87ab13aaa50c71"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "blocks_G04_under_linked_root",
+      "resolution_evidence": [
+        "tests/test_source_bound_body_review.py",
+        "src/avatar/lab/source_bound_body_review.py",
+        "src/avatar/brain/capability_output.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2开放，v2仍不得默认启用。v2为避免捏造写作来源，在revision不符、根redact、坏cursor或积压超界时标记unverified/review_deferred，不把它冒充creative_exempt或通用语义通过。但暂缓审核会保留模型原生回复，因此并不是身体安全兜底。"
+      ],
+      "release_review": "旧unverified deferred保留原生身体邀约，尚未以生产语境澄清解决；新通信guard不能充当身体边界，G04/C02-016继续开放。",
+      "residual_product_roots": [
+        "C02-016"
       ]
     },
     {
@@ -1984,11 +2039,20 @@
           "sha256": "b761a211b65ccfcc4e85906cabd91a732c8fb76f96322f8ba0edd37d72baf702"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "historical_candidate_isolated; linked_G04_quality_pending",
+      "resolution_evidence": [
+        "tests/test_response_frames.py",
+        "tests/test_known_communication_contracts.py",
+        "src/avatar/brain/response_frames.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2开放，v2不启用。新4B/14B前瞻p16_negative是明确润色请求，但composition_context.frame仍ordinary。该实际原生回复是否充分交付另行复核；没有发生候选改写，不能将其直接报成候选误改。"
+      ],
+      "release_review": "旧v2请把引用内容改得更客气漏识别，不改冻结候选；新写作解析已知反例有受控保护，生产正式身体guard仍待，不能以无改写当交付质量批准。",
+      "residual_product_roots": [
+        "C02-016"
       ]
     },
     {
@@ -2002,13 +2066,20 @@
           "sha256": "6a524bdb54d4f77091a8181a9f211050c5318bec3b01448ec64df18c52c6d25a"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_role_authority_matrix.py",
+        "tests/test_speaker_snapshot.py",
+        "src/avatar/brain/speaker_scope.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P1开放，生产默认路径，下一循环优先修复。新真实4B/14B p16_role首句“接下来我扮演剧中的旅行者。”，结果speaker_attribution仍scope=current_user，persistent_facts_allowed/turn_tools_allowed=True；原生回复看似配合演出不能证明内部控制成功。",
         "改用已支持的“提醒我明天下午3点去码头”并使用全新文件重跑：规范角色无姓名/0提醒；具体角色变体出现名字许照且实际创建1条提醒；普通真人对照正常姓名/1提醒。故004同时实证角色资料误写与真实提醒权限漏拦，下一循环首修P1。仅临时隔离库，未发送任何外部消息或领取到期提醒；原无效九点探针仍单独保留。见实验/remaining-context-probes-supported.json。"
-      ]
+      ],
+      "release_review": "具体剧中旅行者和未知当前扮演的权限漏识别在C17有限声明语法修复；姓名/提醒实际SQL矩阵及历史OS组合有证据，不称通用角色识别。",
+      "residual_product_roots": []
     },
     {
       "id": "C17-001",
@@ -2021,12 +2092,18 @@
           "sha256": "3fb40198cf45fe499f86730467836a4b7989250a17a7928d22c61e33c8fccfc9"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_role_authority_matrix.py",
+        "src/avatar/brain/speaker_scope.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "继承C16-004，P1。基线56e9d63，20项默认Web run_chat矩阵实测（LLM禁用，真实隔离SQLite资料/提醒）；完整逐条scope/结果/源SHA与实际副作用见实验/role-before/role-authority.json。"
-      ]
+      ],
+      "release_review": "具体来源明确角色降fictional，未可靠识别的当前扮演意图降unverified；负例和现实恢复保持，旧污染不自动清。",
+      "residual_product_roots": []
     },
     {
       "id": "C17-002",
@@ -2039,12 +2116,19 @@
           "sha256": "cada87e815ec63edee8c987b869e9deb7aec950d3dfa495db10a53856d69555f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_role_authority_matrix.py",
+        "tests/test_speaker_snapshot.py",
+        "src/avatar/brain/speaker_scope.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P1，本轮追加审计。首修20项及7项OS组合通过后，再冻6项组合助动词矩阵；“我将会扮演剧中的旅行者”“我想要扮演一个医生”“现在我准备要扮演故事里的医生”三项仍作为真人姓名和提醒，3失败/3对照通过。完整scope/资料/提醒/恢复来源见实验/compound-before/role-authority.json。"
-      ]
+      ],
+      "release_review": "有限组合助动词将会/想要/准备要与原角色/反控矩阵覆盖，未知意图不授真人权限；没有通用解析保证。",
+      "residual_product_roots": []
     },
     {
       "id": "C18-001",
@@ -2057,13 +2141,19 @@
           "sha256": "6256fc88e677bef8fc4a95545f4a06a359ba196b9222b218714e6e65b5c1ab67"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_conversation_check_order.py",
+        "src/avatar/conversation_changes.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，共享版本监测既有实现的受控并发缺口。扩充context通知前按已冻结协议先测顺序：较早check读取成功但暂停返回，另一个check已报告SQLite故障；较早成功随后publish会无条件清_error。两项顺序对照1失败/1通过，见实验/check-order-before.log与test_conversation_check_order.py。",
         "已实证错误缓存可用状态被清除；尚未测自然发生频率或浏览器旧trace可见帧，不能把状态单测冒称已泄露内容。API和共享监测可能并行check，不能仅按启动序号判读结果新旧，因为较早启动的读取也可能较晚才失败。"
-      ]
+      ],
+      "release_review": "故障世代使故障前在途成功不能清新错误，故障后新读才恢复；这是受控线程日程，不宣称浏览器自然泄露率。",
+      "residual_product_roots": []
     },
     {
       "id": "C18-002",
@@ -2076,13 +2166,20 @@
           "sha256": "96a20e656e0866a9f0bcf7df832bd5b2be9aca684a0b82142e9222c015531cbb"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/features/chat/ChatQueuedPrivacy.test.tsx",
+        "frontend/src/features/chat/ChatPage.tsx",
+        "docs/发布/2.0.0-rc.1/工作目录/004-版本与启动基础设施/frontend-clean-v3-result.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "P2，接显式语境按钮前发现的客户端异步归属缺口。实际ChatPage与TanStack MutationCache的受控异步onMutate延迟、fetch/SSE夹具下两项均失败：隐私epoch已失效但排队mutationFn尚未开始，释放后仍POST旧文本；另在新回合已经运行时，旧排队任务结束会reset当前MutationObserver，丢失新回合等待/停止界面。",
         "目标：发送前核验epoch/挂载/同步；在调用mutate之前同步记录当前提交ID，隐私取消未开始排队时释放该归属；结束时只有归属同一请求才能reset当前观察器或状态，旧结束不能冲掉新任务。按钮切换仍独立控制消息，快速连点也不能生成两个任务。保持取消/草稿/隐私已有回归，不放宽原断言。"
-      ]
+      ],
+      "release_review": "发送前核验epoch/当前提交ID，旧排队任务不能POST失效输入或reset新任务；busy与停止涵盖尚未联网队列，历史当前195前端含这些测试。",
+      "residual_product_roots": []
     },
     {
       "id": "C18-003",
@@ -2095,13 +2192,20 @@
           "sha256": "903f572a3c23f5e0050c95d59010ac04eff79268bd6bbfd75662fe71eb27bd9d"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_context_admission.py",
+        "frontend/src/features/chat/ChatContextAdmission.test.tsx",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v3-binding.json"
+      ],
       "original_status_candidates": [
         "优先级P1；第十八轮新控件完成验收前阻断项。8ba5076控件尚未构建服务dist，旧客户端三字段接口按处理时全局语境执行；本项不把受控并发结果外推为自然发生频率。",
         "状态：本项冻结受控门槛已通过，待整轮系统回归/报告汇总。旧无字段客户端仍按处理时语境；普通模型语义、任意语境与真实设备质量不在本项有限门槛内。"
-      ]
+      ],
+      "release_review": "普通提交expected_context与user源同写事务核验，typed冲突不落源/事实/动作且不自动重放；旧无字段兼容按处理时语境，边界明示。",
+      "residual_product_roots": []
     },
     {
       "id": "C19-001",
