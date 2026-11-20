@@ -32,6 +32,7 @@ def test_explicit_fictional_counterparty_is_delivered_without_a_model_offer(root
         result=bot.respond(root)
         assert result['generation_mode']=='rules_writing_artifact' and not engine.native
         assert result['reply'].startswith('“你好') and not result['tool_calls']
+        assert ('短信' if '短信' in root else '邮件') + '已收到' in result['reply']
         assert not result['writing_delivery']['repair_attempted']
         assert not result['action_receipts']['items']
 
