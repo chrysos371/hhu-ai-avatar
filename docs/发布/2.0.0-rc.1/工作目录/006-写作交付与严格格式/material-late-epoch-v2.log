@@ -1,0 +1,140 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_old_material_control_reaches_actual_prompt_outside_window_and_after_reopen[False] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-123/test_old_material_control_reac0')
+reopen = False
+
+    @pytest.mark.parametrize('reopen',[False,True])
+    def test_old_material_control_reaches_actual_prompt_outside_window_and_after_reopen(tmp_path,reopen):
+        path=str(tmp_path/'materials.db')
+        with closing(MemoryStore(path)) as memory:
+            engine=Recorder('草稿。')
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True,summary_enabled=False)
+            root=bot.respond('帮我写一条短信，正文说周三见。')['conversation']['user_message_id']
+            control=bot.respond('改成周五见。')['conversation']['user_message_id']
+            for _ in range(40):bot.respond('再短一点。')
+            if not reopen:
+                bot.respond('再自然一点。')
+                system=engine.native[-1][0]['content']
+        if reopen:
+            with closing(MemoryStore(path)) as memory:
+                engine=Recorder('草稿。')
+                bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True,summary_enabled=False)
+                bot.respond('再自然一点。')
+                system=engine.native[-1][0]['content']
+>       assert '已核验写作来源原文' in system
+E       AssertionError: assert '已核验写作来源原文' in '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arousal=0.00；回应策略：answer；直接、清晰地回应当前问题...否帮助代替执行。若只要一个最小步骤，就给一个与任务直接相关、可立即执行的动作和完成标志；不要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'
+
+tests/test_writing_material_context.py:29: AssertionError
+_ test_old_material_control_reaches_actual_prompt_outside_window_and_after_reopen[True] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-123/test_old_material_control_reac1')
+reopen = True
+
+    @pytest.mark.parametrize('reopen',[False,True])
+    def test_old_material_control_reaches_actual_prompt_outside_window_and_after_reopen(tmp_path,reopen):
+        path=str(tmp_path/'materials.db')
+        with closing(MemoryStore(path)) as memory:
+            engine=Recorder('草稿。')
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True,summary_enabled=False)
+            root=bot.respond('帮我写一条短信，正文说周三见。')['conversation']['user_message_id']
+            control=bot.respond('改成周五见。')['conversation']['user_message_id']
+            for _ in range(40):bot.respond('再短一点。')
+            if not reopen:
+                bot.respond('再自然一点。')
+                system=engine.native[-1][0]['content']
+        if reopen:
+            with closing(MemoryStore(path)) as memory:
+                engine=Recorder('草稿。')
+                bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True,summary_enabled=False)
+                bot.respond('再自然一点。')
+                system=engine.native[-1][0]['content']
+>       assert '已核验写作来源原文' in system
+E       AssertionError: assert '已核验写作来源原文' in '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arousal=0.00；回应策略：answer；直接、清晰地回应当前问题...否帮助代替执行。若只要一个最小步骤，就给一个与任务直接相关、可立即执行的动作和完成标志；不要擅自改成休息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'
+
+tests/test_writing_material_context.py:29: AssertionError
+_ test_foreign_forget_observed_at_late_gate_clears_automatic_state[prompt_after_cognition] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-123/test_foreign_forget_observed_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7b08761270>
+stage = 'prompt_after_cognition'
+
+    @pytest.mark.parametrize('stage',['prompt_after_cognition','direct_source_after_cognition'])
+    def test_foreign_forget_observed_at_late_gate_clears_automatic_state(tmp_path,monkeypatch,stage):
+        with closing(MemoryStore(str(tmp_path/'late.db'))) as memory:
+            engine=Emotional('我在。')
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+            first=bot.respond('我很难过。')
+            assert abs(bot.emotion.state.valence)+abs(bot.emotion.state.arousal)>0
+            fragment=memory.remember('受控情绪来源',source_message_id=first['conversation']['user_message_id'])
+            def forget():
+                with closing(MemoryStore(memory.db_path)) as writer:writer.forget(fragment)
+            if stage=='prompt_after_cognition':
+                original=bot._system_prompt
+                def system(*args):
+                    text=original(*args);forget();return text
+                monkeypatch.setattr(bot,'_system_prompt',system)
+                text='聊聊别的。'
+            else:
+                from avatar.brain import writing_templates
+                original=writing_templates.build_fallback
+                def build(*args,**kwargs):
+                    artifact=original(*args,**kwargs);assert artifact is not None
+                    forget();return artifact
+                monkeypatch.setattr(writing_templates,'build_fallback',build)
+                text='原样输出这句话：“甲”'
+            with pytest.raises(Cancelled):bot.respond(text)
+            assert memory.context_revision==1
+>           assert bot.emotion.context_revision==memory.context_revision
+E           assert 0 == 1
+E            +  where 0 = <avatar.brain.emotion.EmotionEngine object at 0x7f7b08763520>.context_revision
+E            +    where <avatar.brain.emotion.EmotionEngine object at 0x7f7b08763520> = <avatar.main.Avatar object at 0x7f7b087636a0>.emotion
+E            +  and   1 = <avatar.brain.memory.MemoryStore object at 0x7f7b087636d0>.context_revision
+
+tests/test_late_source_revision.py:45: AssertionError
+_ test_foreign_forget_observed_at_late_gate_clears_automatic_state[direct_source_after_cognition] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-123/test_foreign_forget_observed_a1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f7b0866bdf0>
+stage = 'direct_source_after_cognition'
+
+    @pytest.mark.parametrize('stage',['prompt_after_cognition','direct_source_after_cognition'])
+    def test_foreign_forget_observed_at_late_gate_clears_automatic_state(tmp_path,monkeypatch,stage):
+        with closing(MemoryStore(str(tmp_path/'late.db'))) as memory:
+            engine=Emotional('我在。')
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+            first=bot.respond('我很难过。')
+            assert abs(bot.emotion.state.valence)+abs(bot.emotion.state.arousal)>0
+            fragment=memory.remember('受控情绪来源',source_message_id=first['conversation']['user_message_id'])
+            def forget():
+                with closing(MemoryStore(memory.db_path)) as writer:writer.forget(fragment)
+            if stage=='prompt_after_cognition':
+                original=bot._system_prompt
+                def system(*args):
+                    text=original(*args);forget();return text
+                monkeypatch.setattr(bot,'_system_prompt',system)
+                text='聊聊别的。'
+            else:
+                from avatar.brain import writing_templates
+                original=writing_templates.build_fallback
+                def build(*args,**kwargs):
+                    artifact=original(*args,**kwargs);assert artifact is not None
+                    forget();return artifact
+                monkeypatch.setattr(writing_templates,'build_fallback',build)
+                text='原样输出这句话：“甲”'
+            with pytest.raises(Cancelled):bot.respond(text)
+            assert memory.context_revision==1
+>           assert bot.emotion.context_revision==memory.context_revision
+E           assert 0 == 1
+E            +  where 0 = <avatar.brain.emotion.EmotionEngine object at 0x7f7b0866a4a0>.context_revision
+E            +    where <avatar.brain.emotion.EmotionEngine object at 0x7f7b0866a4a0> = <avatar.main.Avatar object at 0x7f7b0866bdc0>.emotion
+E            +  and   1 = <avatar.brain.memory.MemoryStore object at 0x7f7b0866beb0>.context_revision
+
+tests/test_late_source_revision.py:45: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_material_context.py::test_old_material_control_reaches_actual_prompt_outside_window_and_after_reopen[False]
+FAILED tests/test_writing_material_context.py::test_old_material_control_reaches_actual_prompt_outside_window_and_after_reopen[True]
+FAILED tests/test_late_source_revision.py::test_foreign_forget_observed_at_late_gate_clears_automatic_state[prompt_after_cognition]
+FAILED tests/test_late_source_revision.py::test_foreign_forget_observed_at_late_gate_clears_automatic_state[direct_source_after_cognition]
+4 failed in 1.29s

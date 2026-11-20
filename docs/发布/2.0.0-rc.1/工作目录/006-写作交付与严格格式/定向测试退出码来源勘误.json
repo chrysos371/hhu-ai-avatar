@@ -1,0 +1,7 @@
+{
+  "scope": "manually assembled targeted writing records added since e8ae0b94 only",
+  "correction": "pytest summaries/assertions and byte hashes remain real; actual_returncode in listed records was manually assigned from conventional pytest result/session summary, often after a shell whose last command was tail, not an independently bound subprocess exit witness. Preserve originals and treat that field as inferred.",
+  "records": [],
+  "unaffected": "python-writing-v1 through v6 full gates and native jobs directly captured subprocess/wait return codes; their input/log bindings and pass/fail conclusions remain unchanged",
+  "replacement": "run_targeted_python.py now records actual pytest returncode, expected-red separately and full historical/current input identity; material-late-epoch-v2 directly reproduced exit1 with855 stable inputs"
+}
