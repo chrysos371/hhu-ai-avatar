@@ -1,0 +1,103 @@
+FF....F.FFF                                                              [100%]
+=================================== FAILURES ===================================
+_ test_external_sms_receipt_cannot_be_invented_from_chat_reports[\u6211\u6536\u5230\u4f60\u7684\u77ed\u4fe1\u4e86\u3002\u9700\u8981\u6211\u5e2e\u4f60\u5904\u7406\u5417\uff1f] _
+
+reply = '我收到你的短信了。需要我帮你处理吗？'
+
+    @pytest.mark.parametrize('reply', [
+        '我收到你的短信了。需要我帮你处理吗？',
+        '我收到你朋友发来的短信，内容是“我已经发送了短信”。需要我帮你处理或回复吗？',
+    ])
+    def test_external_sms_receipt_cannot_be_invented_from_chat_reports(reply):
+        guarded = review_output(reply)
+>       assert 'unsupported_external_receipt' in guarded.rules
+E       AssertionError: assert 'unsupported_external_receipt' in ()
+E        +  where () = GuardedOutput(reply='我收到你的短信了。需要我帮你处理吗？', rules=()).rules
+
+tests/test_release_native_regressions.py:19: AssertionError
+_ test_external_sms_receipt_cannot_be_invented_from_chat_reports[\u6211\u6536\u5230\u4f60\u670b\u53cb\u53d1\u6765\u7684\u77ed\u4fe1\uff0c\u5185\u5bb9\u662f\u201c\u6211\u5df2\u7ecf\u53d1\u9001\u4e86\u77ed\u4fe1\u201d\u3002\u9700\u8981\u6211\u5e2e\u4f60\u5904\u7406\u6216\u56de\u590d\u5417\uff1f] _
+
+reply = '我收到你朋友发来的短信，内容是“我已经发送了短信”。需要我帮你处理或回复吗？'
+
+    @pytest.mark.parametrize('reply', [
+        '我收到你的短信了。需要我帮你处理吗？',
+        '我收到你朋友发来的短信，内容是“我已经发送了短信”。需要我帮你处理或回复吗？',
+    ])
+    def test_external_sms_receipt_cannot_be_invented_from_chat_reports(reply):
+        guarded = review_output(reply)
+>       assert 'unsupported_external_receipt' in guarded.rules
+E       AssertionError: assert 'unsupported_external_receipt' in ()
+E        +  where () = GuardedOutput(reply='我收到你朋友发来的短信，内容是“我已经发送了短信”。需要我帮你处理或回复吗？', rules=()).rules
+
+tests/test_release_native_regressions.py:19: AssertionError
+_ test_explicit_email_text_edit_is_delivered_instead_of_false_execution_refusal _
+
+    def test_explicit_email_text_edit_is_delivered_instead_of_false_execution_refusal():
+        text = '帮我修改准备发送的邮件内容：老师您好，想请您看看摘要。'
+>       assert explicit_unavailable_request(text) is None
+E       AssertionError: assert UnavailableRequest(channel='email', kind='request') is None
+E        +  where UnavailableRequest(channel='email', kind='request') = explicit_unavailable_request('帮我修改准备发送的邮件内容：老师您好，想请您看看摘要。')
+
+tests/test_release_native_regressions.py:36: AssertionError
+_ test_text_work_does_not_exempt_separate_actual_send_request[\u5e2e\u6211\u5199\u4e00\u6761\u77ed\u4fe1\u5e76\u53d1\u7ed9\u5ba4\u53cb\u3002] _
+
+text = '帮我写一条短信并发给室友。'
+
+    @pytest.mark.parametrize('text', [
+        '帮我修改邮件内容，然后发送给老师。',
+        '帮我写一条短信并发给室友。',
+    ])
+    def test_text_work_does_not_exempt_separate_actual_send_request(text):
+        request = explicit_unavailable_request(text)
+>       assert request is not None and request.kind == 'request'
+E       assert (None is not None)
+
+tests/test_release_native_regressions.py:52: AssertionError
+_ test_explicit_reminder_list_reads_actual_sql_and_never_claims_absence[False] _
+
+enabled = False
+
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_explicit_reminder_list_reads_actual_sql_and_never_claims_absence(enabled):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('目前没有设置任何提醒。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=enabled)
+            bot.respond('提醒我2030年12月8日下午3点检查短信草稿')
+            counts = len(engine.analysis), len(engine.native)
+            before = [tuple(r) for r in memory._conn.execute('SELECT * FROM memory_reminders')]
+            result = bot.respond('列出提醒')
+>           assert (len(engine.analysis), len(engine.native)) == counts
+E           assert (2, 1) == (1, 0)
+E             
+E             At index 0 diff: 2 != 1
+E             Use -v to get more diff
+
+tests/test_release_native_regressions.py:64: AssertionError
+_ test_explicit_reminder_list_reads_actual_sql_and_never_claims_absence[True] __
+
+enabled = True
+
+    @pytest.mark.parametrize('enabled', [False, True])
+    def test_explicit_reminder_list_reads_actual_sql_and_never_claims_absence(enabled):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('目前没有设置任何提醒。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=enabled)
+            bot.respond('提醒我2030年12月8日下午3点检查短信草稿')
+            counts = len(engine.analysis), len(engine.native)
+            before = [tuple(r) for r in memory._conn.execute('SELECT * FROM memory_reminders')]
+            result = bot.respond('列出提醒')
+>           assert (len(engine.analysis), len(engine.native)) == counts
+E           assert (2, 1) == (1, 0)
+E             
+E             At index 0 diff: 2 != 1
+E             Use -v to get more diff
+
+tests/test_release_native_regressions.py:64: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_release_native_regressions.py::test_external_sms_receipt_cannot_be_invented_from_chat_reports[\u6211\u6536\u5230\u4f60\u7684\u77ed\u4fe1\u4e86\u3002\u9700\u8981\u6211\u5e2e\u4f60\u5904\u7406\u5417\uff1f]
+FAILED tests/test_release_native_regressions.py::test_external_sms_receipt_cannot_be_invented_from_chat_reports[\u6211\u6536\u5230\u4f60\u670b\u53cb\u53d1\u6765\u7684\u77ed\u4fe1\uff0c\u5185\u5bb9\u662f\u201c\u6211\u5df2\u7ecf\u53d1\u9001\u4e86\u77ed\u4fe1\u201d\u3002\u9700\u8981\u6211\u5e2e\u4f60\u5904\u7406\u6216\u56de\u590d\u5417\uff1f]
+FAILED tests/test_release_native_regressions.py::test_explicit_email_text_edit_is_delivered_instead_of_false_execution_refusal
+FAILED tests/test_release_native_regressions.py::test_text_work_does_not_exempt_separate_actual_send_request[\u5e2e\u6211\u5199\u4e00\u6761\u77ed\u4fe1\u5e76\u53d1\u7ed9\u5ba4\u53cb\u3002]
+FAILED tests/test_release_native_regressions.py::test_explicit_reminder_list_reads_actual_sql_and_never_claims_absence[False]
+FAILED tests/test_release_native_regressions.py::test_explicit_reminder_list_reads_actual_sql_and_never_claims_absence[True]
+6 failed, 5 passed in 0.82s
