@@ -1,0 +1,86 @@
+{
+  "executed": true,
+  "probe_sha256": "e26c3354ddc58e5df4dcb22d5d6468c5a0ce165042fde0288536c09403567738",
+  "supervisor_sha256": "e56b3b1b72bafcc31499e8ccd935e4835f8c836e70ae10d80ac37f41a273da82",
+  "guard_sha256": "42e05d85d71842d50a7b51d660c73acb12ca2f31185da7f4b4178b37b5a7f031",
+  "actual_manager_ready": {
+    "pid": 3160877,
+    "parent": 3160875,
+    "pdeath_signal": 9,
+    "child_pid": 3160878
+  },
+  "actual_payload_ready": {
+    "pid": 3160878,
+    "parent": 3160877,
+    "pdeath_signal": 0
+  },
+  "identities_before_injection": [
+    {
+      "pid": 3160878,
+      "start_ticks": 110776933,
+      "state": "S",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "-B",
+        "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c56/provider-shaped-chain-cpu-v1/cpu_payload.py",
+        "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c56/provider-shaped-chain-cpu-v1/cpu-child-ready.json"
+      ],
+      "process_group": 3160878
+    },
+    {
+      "pid": 3160877,
+      "start_ticks": 110776926,
+      "state": "R",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "-B",
+        "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c56/provider-shaped-chain-cpu-v1/cpu_manager.py",
+        "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c56/provider-shaped-chain-cpu-v1"
+      ],
+      "process_group": 3160877
+    },
+    {
+      "pid": 3160875,
+      "start_ticks": 110776921,
+      "state": "R",
+      "argv": [
+        "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+        "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/run_frozen_capability_job.py",
+        "--worker",
+        "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c56/provider-shaped-chain-cpu-v1/job",
+        "--config-sha256",
+        "5c564a0bddafeea10aad4ffc35200718d1db76e3ca73fe89bbb0b3fad45a29f9"
+      ],
+      "process_group": 3160875
+    }
+  ],
+  "observation_after_supervisor_SIGKILL": {
+    "supervisor_alive": false,
+    "manager_alive": false,
+    "grandchild_alive": true,
+    "manager_pdeath_signal": 9,
+    "grandchild_pdeath_signal": 0,
+    "unrelated_owned_control_alive": true,
+    "original_supervised_child_wait_code": null
+  },
+  "all_owned_identities_cleaned": true,
+  "external_root": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c56/provider-shaped-chain-cpu-v1",
+  "external_sha256": {
+    "cpu_payload.py": "3669bb7cfad6ab16c54820df84dbaebab082a038d8ef67bffb067864628097ed",
+    "cpu_manager.py": "b12cd2aad36343c5865cd6557e74052629fa1e44771cc26cfc27f5777f52f435",
+    "cpu-child-ready.json": "5aaf51409bfef1ff81ba14e8fcc9841bac112ae3e556c0ae6c2c2f109a0d25fb",
+    "cpu-manager-ready.json": "1a97428914eb45b25cfc3c3b74b4f9b4a0a2205155cab958918cc07a65df6edc",
+    "cpu-child.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "job/config.json": "5c564a0bddafeea10aad4ffc35200718d1db76e3ca73fe89bbb0b3fad45a29f9",
+    "job/supervisor.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "job/experiment.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "job/parent-death-guard.json": "fef7da5f811ff487f7cd43c09860b2e59ceaee10d767b0da010deb466e0c63f5",
+    "job/supervisor-start.json": "662db6471661d196a3bd0fc6a9f57949f8073f4319387988ae67d470a2e70261",
+    "job/launch.json": "be64f61e23a370b0a63e677a4a4d2b3ec12a46397d6412ff622eda62d7bfa0d0",
+    "job/status.json": "60e8598cf1a8cd37e1403c4e062bf25165d1e2950757f2031f97c64a3be29c7f"
+  },
+  "model_calls": 0,
+  "training_steps": 0,
+  "GPU_allocations": 0,
+  "scope": "actual CPU process-chain shape;not actual native provider/GPU leak/host crash verification"
+}

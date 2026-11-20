@@ -1,5 +1,7 @@
 # C56-002 worker直接重入覆盖已有终态
 
-P1，OPEN，真实CPU新增复现。普通launch目录独占能拒绝重复，但手工再次调用--worker和同配置SHA会先重写status；随后experiment.log以xb打开失败，旧completed/return_code0变成failed/return_codenull，CLI还退出0。原payload实际只执行一次，不能误称重复执行；问题是不可变终态回执被破坏。原成功状态已在红测日志完整保留。
+P1，限定CLOSED，真实CPU新增复现。普通launch目录独占能拒绝重复，但手工再次调用--worker和同配置SHA会先重写status；随后experiment.log以xb打开失败，旧completed/return_code0变成failed/return_codenull，CLI还退出0。原payload实际只执行一次，不能误称重复执行；问题是不可变终态回执被破坏。原成功状态已在红测日志完整保留。
 
 目标：监督器入口独占claim，第二次在任何status/log/config写入前非零拒绝；完整原文件字节保持，成功/失败/中断终态均不被重入改写。独占锁与实际退出结果分开，保留缺失/损坏描述符拒绝及正常生命周期控制。
+
+限定验收：原2项红测后，相关定向40通过、当前完整Python2562通过/1跳过、812源不变。独立9任务回执与实际exec后停止-2通过；硬杀原父的wait退出码仍明确未知。001只覆盖可信直接子任务；002覆盖旧格式终态和并发claim，不能扩展为任意进程树/存储故障持久化批准。
