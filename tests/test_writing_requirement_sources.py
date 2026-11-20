@@ -77,6 +77,13 @@ def test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls():
         assert data['signature'] is None and data['sentence_count'] is None
 
 
+@pytest.mark.parametrize('text', ['解释这段说明是什么意思。', '我昨天写了说明。', '“帮我写一段说明”是什么意思？'])
+def test_explanation_reports_and_quoted_requests_do_not_start_writing(text):
+    with closing(MemoryStore(':memory:')) as memory:
+        data = requirements(bot(memory).respond(text))
+        assert not data['source_verified'] and not data['source_message_ids']
+
+
 @pytest.mark.parametrize('which', ['root', 'sentence'])
 def test_actual_forget_of_any_required_source_invalidates_recovered_constraints(tmp_path, which):
     with closing(MemoryStore(str(tmp_path/'forget.db'))) as memory:
