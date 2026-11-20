@@ -1,0 +1,448 @@
+{
+  "source_ref": "fb365393607c9a9f046a9db472327c64643301d8",
+  "followup_hardening_ref": "4671dbfba1ffffc2b187ab69f8b1a2ef9bf0a532",
+  "scope": "12个已见C50开发场景，真实SQLite及独立变更、受控模型桩；代理逐来源审阅，不是实模质量或人评",
+  "raw": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/reminder-history-fixed-v2",
+  "raw_files_sha256": {
+    "natural-ACK-human/result.json": "e0c6dfddd24bd288921e5d85dd3d7bfb8fea5ac107906d31eae2b3db1024b453",
+    "natural-ACK-human/state.db": "689183eea9194df494c4c1694c4539f2eed15644485bf8796066fd4b766eb26f",
+    "natural-SMS-request/result.json": "1a33491b43f64050a3295e0afb5957b3ed4ef4a217f79e8d013a06315d2a5a74",
+    "natural-SMS-request/state.db": "fef39198f1b30d2e48d3175a4ea2ea5022b42d32a8ade6837537b67291356700",
+    "natural-active/result.json": "950403caa423d9a0059d736b0b967ac121ac0643892209d4195d7ee8f2ef0bef",
+    "natural-active/state.db": "4d840b8dc8de11b3ce0b364e97136ac069c492639a7d3799b33b810adf26f607",
+    "natural-cancelled/result.json": "f0879e8e2b07872a7b54592f9c5f4e22c827e6a180d7680505b0b2eec37e43be",
+    "natural-cancelled/state.db": "22878e8882915a9d421622e6d8b6199f98532a1f749a3574349629f05a87c907",
+    "natural-draft-quote/result.json": "2cbf97cb8b338364283ec3475f2f2ab2560df92427de731515a4137612469e85",
+    "natural-draft-quote/state.db": "86fbc4619035390892b104e29a20cbcc2bdeafddbce4f009fca2e5692f9f2b45",
+    "natural-email-request/result.json": "a1d5a4db2f8e2e22516dab2e47b8ecd3532530c0d44f865ca43bc3d6bf815dc2",
+    "natural-email-request/state.db": "2f9e2cda421c3aec0c697fb444af072e18afe76ebab97d83f8db8107b5d1e216",
+    "natural-fiction/result.json": "339876b5ff01225e71b365323b54736140c1f346da031ecf36add75c2f0a629b",
+    "natural-fiction/state.db": "44d51eeffe5df6cb4d58d7ca1599730a14fccace5efb7112eccee1b90c88c77d",
+    "natural-missing/result.json": "07a4f1ed2ea8d38762d50dc9a817ad3b65cc190f28987b7aa1ada6b4dbcb8b6b",
+    "natural-missing/state.db": "767abc84d7daded7948c626ab4da2160d0cf5eeff2c29d7425330d1fafc63104",
+    "natural-phone-request/result.json": "7c69d4ce90ecaa2abab5f668bd83412c425424a6cc0155566e214b5bd859cb68",
+    "natural-phone-request/state.db": "3cd35c3cdd3d1ba16e703246cf48b2034a4cab7fdba4944f89371f26c3d07088",
+    "natural-policy/result.json": "59a6591391df60d36315965cf1d7b8816163c0f3d174d28d63296a84a6f1f354",
+    "natural-policy/state.db": "72d6da494523d56f3cea3f2c69bc4b7c5461eb4a511df04c8ced8a4ec51440e3",
+    "natural-requery-active/result.json": "cbaee86cd82de2e12fd3661e9267f675b273639386d7041acf28e3eb53b4889c",
+    "natural-requery-active/state.db": "b331d4db7797024ec7fb1ab88f34ce88a9207144486c08807d94368d62a684d5",
+    "natural-requery-completed/result.json": "dbcbdc134c757455682cb7f74d816944b1dc35e7e264a7c13b95974e9d9882ca",
+    "natural-requery-completed/state.db": "5ced71326b99d065c27d9fac9a16bb43326760914b979e7c6d48239f4297c957"
+  },
+  "registered_cases": 12,
+  "history_explanations": 7,
+  "unavailable_action_requests": 3,
+  "preservation_controls": 2,
+  "pytest_fixed": "119 passed in 2.55s",
+  "additional_integrity": "134 passed in 2.52s",
+  "full_current_regression": "running python-writing-v11",
+  "native_current_source_verified": false,
+  "formal_release_approved": false,
+  "rows": [
+    {
+      "case_id": "natural-ACK-human",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号1「记录完成不等于人完成」：记录状态为已完成，提醒时间为2099-01-01 10:00（北京时间）。已记录客户端确认，但不代表已阅读。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：编号1「记录完成不等于人完成」：记录状态为已完成，提醒时间为2099-01-01 10:00（北京时间）。已记录客户端确认，但不代表已阅读。提醒需程序运行并处理到期事项，网页接收需在线轮询。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1
+        ],
+        "source_query_assistant_ids": [
+          2
+        ],
+        "observations": [
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.4549236,
+            "state": "completed",
+            "client_ack_recorded": true,
+            "reminder_id": 1,
+            "planned_due_at": 4070916000.0,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "公开查询有完成与ACK，解释保留两项记录但否认真人阅读/实际完成证明。"
+    },
+    {
+      "case_id": "natural-SMS-request",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号23「C49前瞻合成记录-forward-sms-request」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "当前没有接入短信代发接口，我不能替你实际执行。需要办理时，请你自行操作。",
+      "generation_mode": "rules_capability_request",
+      "analysis_calls": 0,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": null,
+      "source_review": "固定说明短信接口未接入，无生成/无实际发送。"
+    },
+    {
+      "case_id": "natural-active",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号1「普通历史状态控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：编号1「普通历史状态控制」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1
+        ],
+        "source_query_assistant_ids": [
+          2
+        ],
+        "observations": [
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.3750162,
+            "state": "active",
+            "client_ack_recorded": false,
+            "reminder_id": 1,
+            "planned_due_at": 4070916000.0,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "来源查询为有效；独立连接随后取消，解释只陈述查询时有效并否认当前核验。"
+    },
+    {
+      "case_id": "natural-cancelled",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号1「已取消历史控制」：记录状态为已取消，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：编号1「已取消历史控制」：记录状态为已取消，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1
+        ],
+        "source_query_assistant_ids": [
+          2
+        ],
+        "observations": [
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.4209762,
+            "state": "cancelled",
+            "client_ack_recorded": false,
+            "reminder_id": 1,
+            "planned_due_at": 4070916000.0,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "查询时已取消，后续独立连接改完成；解释不冒称眼下状态。"
+    },
+    {
+      "case_id": "natural-draft-quote",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号1「明日校园事务」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "我已经发出通知，请查收",
+      "generation_mode": "rules_writing_artifact",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": null,
+      "source_review": "实际公开回复精确等于用户要求保留的短信原文，独立标识程序来源而非外发回执。"
+    },
+    {
+      "case_id": "natural-email-request",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号1「不能把请求当已执行」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "当前没有接入邮件代发接口，我不能替你实际执行。需要办理时，请你自行操作。",
+      "generation_mode": "rules_capability_request",
+      "analysis_calls": 0,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": null,
+      "source_review": "固定说明邮件接口未接入，无生成/无实际发送。"
+    },
+    {
+      "case_id": "natural-fiction",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号1「明日校园事务」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "小林说：“我已经打电话通知他了”。",
+      "generation_mode": "llm",
+      "analysis_calls": 1,
+      "generation_calls": 1,
+      "business_unchanged": true,
+      "projection": null,
+      "source_review": "实际模型桩输出小林的小说引语，保留虚构第三方说话者，不当作系统真实拨号。"
+    },
+    {
+      "case_id": "natural-missing",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "未找到编号99的提醒记录。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：未找到编号99的提醒记录。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1
+        ],
+        "source_query_assistant_ids": [
+          2
+        ],
+        "observations": [
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.518133,
+            "state": "missing",
+            "client_ack_recorded": null,
+            "reminder_id": 99,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "仅陈述查询时未找到；缺失观察的ACK记null，不推断此刻不存在。"
+    },
+    {
+      "case_id": "natural-phone-request",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "编号29「C49前瞻合成记录-forward-phone-request」：记录状态为已完成，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "当前没有接入拨打电话或代为联系接口，我不能替你实际执行。需要办理时，请你自行操作。",
+      "generation_mode": "rules_capability_request",
+      "analysis_calls": 0,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": null,
+      "source_review": "固定说明电话接口未接入，原裸命令缺口已修，无生成/无拨号。"
+    },
+    {
+      "case_id": "natural-policy",
+      "source_query_user_ids": [
+        1
+      ],
+      "source_query_replies": [
+        "本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。服务退出期间无法自动投递，记录保存不等于已经送达。当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1
+        ],
+        "source_query_assistant_ids": [
+          2
+        ],
+        "observations": [
+          {
+            "route": "read_policy",
+            "observed_at": 1795196244.4867003,
+            "state": null,
+            "client_ack_recorded": null,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "仅复用公开运行条件，不补出记录状态、ACK或关机外发能力。"
+    },
+    {
+      "case_id": "natural-requery-active",
+      "source_query_user_ids": [
+        1,
+        3
+      ],
+      "source_query_replies": [
+        "未找到编号7的提醒记录。",
+        "编号7「C49前瞻合成记录-forward-missing-then-active」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：未找到编号7的提醒记录。\n第2次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：编号7「C49前瞻合成记录-forward-missing-then-active」：记录状态为有效，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1,
+          3
+        ],
+        "source_query_assistant_ids": [
+          2,
+          4
+        ],
+        "observations": [
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.548765,
+            "state": "missing",
+            "client_ack_recorded": null,
+            "reminder_id": 7,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          },
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.5535018,
+            "state": "active",
+            "client_ack_recorded": false,
+            "reminder_id": 7,
+            "planned_due_at": 4070916000.0,
+            "source_query_user_id": 3,
+            "source_query_assistant_id": 4
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "两份实际查询依时序保留：未找到→有效，不选第一次冒充最近结果。"
+    },
+    {
+      "case_id": "natural-requery-completed",
+      "source_query_user_ids": [
+        1,
+        3
+      ],
+      "source_query_replies": [
+        "编号13「C49前瞻合成记录-forward-cancelled-then-completed」：记录状态为已取消，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。",
+        "编号13「C49前瞻合成记录-forward-cancelled-then-completed」：记录状态为已完成，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。"
+      ],
+      "actual_reply": "第1次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：编号13「C49前瞻合成记录-forward-cancelled-then-completed」：记录状态为已取消，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。\n第2次保留的查询（观测时间2026-11-21 01:37:24，北京时间）：编号13「C49前瞻合成记录-forward-cancelled-then-completed」：记录状态为已完成，提醒时间为2099-01-01 10:00（北京时间）。尚无客户端确认记录。提醒需程序运行并处理到期事项，网页接收需在线轮询。\n以上是查询时的快照；本轮未重新查询提醒业务记录，不能据此确认此刻状态。“提醒时间”是计划时间，不是创建时间。记录完成或客户端确认均不证明真人已读或实际做完。",
+      "generation_mode": "rules_reminder_history",
+      "analysis_calls": 1,
+      "generation_calls": 0,
+      "business_unchanged": true,
+      "projection": {
+        "version": 1,
+        "source_query_user_ids": [
+          1,
+          3
+        ],
+        "source_query_assistant_ids": [
+          2,
+          4
+        ],
+        "observations": [
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.587979,
+            "state": "cancelled",
+            "client_ack_recorded": false,
+            "reminder_id": 13,
+            "planned_due_at": 4070916000.0,
+            "source_query_user_id": 1,
+            "source_query_assistant_id": 2
+          },
+          {
+            "route": "read_state",
+            "observed_at": 1795196244.592777,
+            "state": "completed",
+            "client_ack_recorded": false,
+            "reminder_id": 13,
+            "planned_due_at": 4070916000.0,
+            "source_query_user_id": 3,
+            "source_query_assistant_id": 4
+          }
+        ],
+        "current_state_verified": false,
+        "human_reading_verified": false,
+        "human_task_completion_verified": false,
+        "business_data_read": false,
+        "business_mutations": false,
+        "external_delivery_performed": false,
+        "semantic_verifier": false
+      },
+      "source_review": "两份实际查询依时序保留：已取消→已完成，记录完成不推断人完成。"
+    }
+  ]
+}
