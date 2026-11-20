@@ -1,0 +1,38 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values[redacted] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-151/test_invalid_or_incomplete_lat0')
+fault = 'redacted'
+
+    @pytest.mark.parametrize('fault',['wrong_pair','no_result','missing_dependency','redacted','incomplete_later_user'])
+    def test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values(tmp_path,fault):
+        with closing(MemoryStore(str(tmp_path/'sources.db'))) as memory:
+            bot,model,first,update = sources(memory)
+            aid=update['conversation']['assistant_message_id']
+            with memory.transaction():
+                if fault=='wrong_pair':
+                    update['conversation']['user_message_id']=first['conversation']['user_message_id']
+                    memory._conn.execute('UPDATE memory_chat_results SET result_json=? WHERE message_id=?',(json.dumps(update),aid))
+                elif fault=='no_result': memory._conn.execute('DELETE FROM memory_chat_results WHERE message_id=?',(aid,))
+                elif fault=='missing_dependency': memory._conn.execute('DELETE FROM memory_response_context WHERE message_id=?',(aid,))
+                elif fault=='redacted': memory._conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?",(update['conversation']['user_message_id'],))
+                else:
+                    ident=memory.add_message('user','数量更新：卡纸改为99张，纸板不变。请只确认。',bot.session_id)
+                    bot.speaker_context_store.observe('数量更新：卡纸改为99张，纸板不变。请只确认。',memory.context_revision,ident)
+            result=bot.respond(MATERIAL)
+            if fault=='redacted':
+                assert result['generation_mode']=='rules_speaker_scope'
+                assert 'source_calculation' not in result
+                bot.respond('回到现实')
+                result=bot.respond(MATERIAL)
+>           assert result['reply']=='无法确认' and not result['source_calculation']['calculation_verified']
+E           AssertionError: assert ('65' == '无法确认'
+E             
+E             - 无法确认
+E             + 65)
+
+tests/test_source_calculation_integrity.py:46: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_source_calculation_integrity.py::test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values[redacted]
+1 failed in 0.98s

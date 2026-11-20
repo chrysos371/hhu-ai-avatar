@@ -43,6 +43,11 @@ def compute(text, sources):
         return None
     values, ids, valid, reason = {}, [], False, 'no_authenticated_source_values'
     for ident, source, authenticated in sources:
+        if source == '[redacted]':
+            # Its former topic is intentionally unavailable. Treat it as a
+            # barrier rather than silently restoring a pre-erasure value.
+            values, ids, valid, reason = {}, [ident], False, 'erased_source_barrier'
+            continue
         body = re.sub(r'[。.]请只确认[。.]?\s*$', '', source.strip())
         root = (_MATERIAL if kind == 'material' else _BUDGET).fullmatch(body)
         relevant = root is not None or ('材料清单' in source if kind == 'material' else '预算上限' in source)
