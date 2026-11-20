@@ -3250,13 +3250,17 @@
           "sha256": "c4c681d14745d240c191c75469075211616f312fb4c9958fefa20a1628bde5e4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_measurement_process_scope_product_quality_separate",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-31/审计/系统审计与推进报告.md"
+      ],
       "original_status_candidates": [
         "P2/评测口径，状态：实测发现并标记，原严格指标不改。准备资料定义“甲箱容量18升，乙箱容量27升”；问题问“哪一个箱子的容量更大？只回答箱子代号”，预登记expected写“乙箱”。4B前两轮两臂均原答“乙”，可合理视为箱子的代号，不能直接当作内容或指令失败。",
         "收尾：两模型三轮两臂共12次该probe均答乙；原strict false保留，288来源span与原始证据核验已绑定，报告单列合理简称而非模型内容失败。状态：本轮口径纠正说明范围关闭；未来独立新题的标签定义仍需预登记，不回改冻结原题。"
-      ]
+      ],
+      "release_review": "12次均答乙，属合理简称/严格标签歧义；原strict false和288条来源span保留。关闭评测口径说明范围，不能重评分或解释为产品质量失败/增益。",
+      "residual_product_roots": []
     },
     {
       "id": "C31-002",
@@ -3269,12 +3273,18 @@
           "sha256": "76de39edd454c406ecf4efdd3ad288c03888ee6facf86d8b339b626e99192cf8"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "evals/interaction/cycle-31/readonly-affect-whitebox-supplement.json",
+        "src/avatar/main.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/问题单/C33-006-只读候选改变部分隐含情绪观测.md"
+      ],
       "original_status_candidates": [
         "P2/候选推广门槛，状态开放、补充白盒合成覆盖观察。原48 shadow控制和实模已测明确焦虑保护通过，并不证明所有含蓄表达都被保护。固定候选在补充12条含蓄情绪/不确定线索（如“面试又没过，整个人像泄了气”“心里却堵得慌”）上，规则infer为0且仍标eligible；4个中性源数据对照也eligible。原分类数据与source SHA完整保存。"
-      ]
+      ],
+      "release_review": "规则0分不能证明含蓄情绪中性；12条白盒eligible缺口及C33实际32B影响均否定一般推广。候选仅审计脚本安装，默认main仍完整_analyze，拒绝/隔离该省略认知路线；不声称已修好所有情绪语义。",
+      "residual_product_roots": []
     },
     {
       "id": "C31-003",
@@ -3287,13 +3297,19 @@
           "sha256": "04c442edf2e3cefff9c39b76c0714b7f4e159a88718801aaa9df408f2fb363c1"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "unapproved_lab_observation_linked_quality_roots",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-32/审计/问题单/C32-002-跨轮复现边界与机制未定位.md"
+      ],
       "original_status_candidates": [
         "P2/研究可复现与归因，状态开放。32B材料题三轮中，两臂第三生成的原始SDK JSON逐字相同、request SHA一致、native prompt SHA一致，固定temperature0/seed42等配置相同，但原路径回复93，省略认知调用路径回复37 + 46 = 83。原生call ID/完整wire与评测SHA另存并独立绑定。",
         "不同的是请求前序路径（是否先有认知调用）；不能由此直接断言根因为KV缓存、数值精度或某个库错误，也不能把同prompt当作足够的输出一致保证。原方案严格逐字门槛正确失败，数值不同未自动解释成候选退步；测得的局部耗时仍是给定状态下真实观察，不泛化为固定模型的纯速度或语义机制效应。",
         "优化目标：后续另登记相同请求、受控前序/状态重置/重放的原生提供方实验，记录真实输入/配置、原生实现身份和状态策略，再确定可复现比较契约。当前325与原8任务不修改，不靠重跑挑93或83的期望输出。"
+      ],
+      "release_review": "C32已按原wire完成三状态策略复验；不同前序同请求输出可异，reset未改善正确性，机制仍未定位。保留非确定性与局部耗时边界、不宣称KV/浮点根因、不推广跳过认知或reset。有限发布继续解决数值/格式根因，不新开后端机制广度研究。",
+      "residual_product_roots": [
+        "C31-004"
       ]
     },
     {
@@ -3307,11 +3323,20 @@
           "sha256": "c3733a83065e3d3a19478e1e8c61e0c674303fcf42ea6efad6e429a37e6d0b4e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/number_formats.py",
+        "tests/test_number_reply_contract.py",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/number-format-v3.json"
+      ],
       "original_status_candidates": [
         "P2/原生任务质量，状态开放。材料源为纸板37张、卡纸28张，下一消息更新卡纸为46张；所问合计应为83。32B当前分析路径三次均答93，数值错误；候选三次答37 + 46 = 83，数值正确却违反只回答数字。两者strict均false，不能只用strict掩盖内容差别，也不能把公式答对写成格式完全满足。"
+      ],
+      "release_review": "37与更新46合计83，32B的93是数值错；候选83公式格式错，二者分开保留。有限数字格式现CPU通过只整理已有一致答案，不能修语义错值；来源数值/更新覆盖仍纳入G04原生复验，不能关闭。",
+      "residual_product_roots": [
+        "C31-004",
+        "C30-002"
       ]
     },
     {
@@ -3325,13 +3350,21 @@
           "sha256": "1de33576018c5c53e09e3a7cae655f58bf8da495f32c52c23609262cfc8e183f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-32/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/number-format-v3.json"
+      ],
       "original_status_candidates": [
         "# C32-001 数值与格式复测未解决",
         "优先级P2；开放。沿用C31-004数值错误与C30-002输出格式问题的复测记录，不重复计算成新的优化项，更不记为已修复。",
         "直接证据：[完整描述汇总](../工作目录/001-原生状态隔离/已知题状态策略描述汇总.json)、[4B原始证据](../工作目录/001-原生状态隔离/native-4b/replay.json)、[32B原始证据](../工作目录/001-原生状态隔离/native-32b/replay.json)、[4B独立复核](../工作目录/001-原生状态隔离/native-4b/independent-identity-verification.json)、[32B独立复核](../工作目录/001-原生状态隔离/native-32b/independent-verification.json)。"
+      ],
+      "release_review": "继承C31-004数值与C30-002格式，不另算根因。4B三策略各6/6数值而0/6严格；32B reuse3/6数值、reset两类0/6。无Avatar/SQL新回合，不把reset一致或已见重复当修复；现数字呈现CPU与语义实模门槛分列。",
+      "residual_product_roots": [
+        "C31-004",
+        "C30-002"
       ]
     },
     {
@@ -3345,14 +3378,20 @@
           "sha256": "0a7aae9fb413c09921ff85a9bf6e408071a641de2de782246c3225ff5eb1cb9f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "unapproved_lab_observation_linked_quality_roots",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-32/审计/系统审计与推进报告.md"
+      ],
       "original_status_candidates": [
         "优先级P2；C31-003继续开放，本文件为后续调查记录，不增加一个重复优化项。",
         "证据：[协议](../../../../../../evals/interaction/cycle-32/state-isolation-protocol.json)、[执行冻结](../工作目录/001-原生状态隔离/执行冻结.json)、[完整描述与历史观察](../工作目录/001-原生状态隔离/已知题状态策略描述汇总.json)、[32B逐请求/状态/清理](../工作目录/001-原生状态隔离/native-32b/replay.json)。",
         "- 每模型18末次请求的原始SDK与native prompt SHA相同；模型GGUF/revision、采样参数、schema/grammar与三重复顺序已核验。只是逻辑计数、实际显式调用和记录源码得到绑定，未捕获完整GPU状态、每步logit或所有内核中间量。",
         "- reuse不是绝不reset，库内部仍可能重置；安装0.3.19的显式reset只归零逻辑token计数。底层clear在自建context调用，不承诺所有物理状态相同；不能套用latest文档的新reset语义。"
+      ],
+      "release_review": "继承C31-003，54库及v0.3.19源码仅绑定本轮；不能追认C31安装/硬件相同。210实际请求复现已知题定性模式；显式reset/clear只改变差异而不改善32B正确性，不进入默认。机制未定位如实保留，质量问题链接原根因。",
+      "residual_product_roots": [
+        "C31-004"
       ]
     },
     {
