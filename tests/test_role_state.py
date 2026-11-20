@@ -90,12 +90,13 @@ def test_incomplete_later_turn_prevents_restore(saved):
 
 def test_restore_never_commits_callers_unrelated_write(saved):
     memory, bot, store, result = saved
-    memory._conn.execute("INSERT INTO memory_messages(role,content,session_id) VALUES ('system','rollback-marker','other')")
+    memory._conn.execute('CREATE TABLE rollback_witness(value TEXT)')
+    memory._conn.execute("INSERT INTO rollback_witness VALUES ('rollback-marker')")
     assert memory._conn.in_transaction
-    assert not store.restore(EmotionEngine())
+    assert RoleStateStore(memory, wallclock=lambda: 1000).restore(EmotionEngine())
     assert memory._conn.in_transaction
     memory._conn.rollback()
-    assert not memory._conn.execute("SELECT 1 FROM memory_messages WHERE content='rollback-marker'").fetchone()
+    assert not memory._conn.execute('SELECT 1 FROM rollback_witness').fetchone()
     assert store.restore(EmotionEngine())
 
 

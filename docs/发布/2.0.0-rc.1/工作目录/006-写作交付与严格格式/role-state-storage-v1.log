@@ -1,0 +1,15 @@
+................F.............................                           [100%]
+=================================== FAILURES ===================================
+______________ test_restore_never_commits_callers_unrelated_write ______________
+
+saved = (<avatar.brain.memory.MemoryStore object at 0x7f441a3be080>, <avatar.main.Avatar object at 0x7f441a3be3b0>, <avatar.br...id': 1, 'assistant_message_id': 2}, 'knowledge_sources': [], 'knowledge_retrieval_degraded': False, 'task': None, ...})
+
+    def test_restore_never_commits_callers_unrelated_write(saved):
+        memory, bot, store, result = saved
+>       memory._conn.execute("INSERT INTO memory_messages(role,content,session_id) VALUES ('system','rollback-marker','other')")
+E       sqlite3.IntegrityError: NOT NULL constraint failed: memory_messages.created_at
+
+tests/test_role_state.py:93: IntegrityError
+=========================== short test summary info ============================
+FAILED tests/test_role_state.py::test_restore_never_commits_callers_unrelated_write
+1 failed, 45 passed in 1.49s
