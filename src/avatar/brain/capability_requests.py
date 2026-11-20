@@ -48,10 +48,17 @@ def explicit_unavailable_request(text, *, fictional=False):
     clean = _mask_quoted(text).strip()
     if re.match(r'^(?:请)?提醒我', clean):
         return None  # A reminder title may mention an external action by the user.
-    if (not clean or _WRITING.search(clean) or _NEGATED.search(clean)
+    channel_context = clean
+    # "等我把消息写好，你能替我发送吗" asks about future execution,
+    # rather than delegating the writing mentioned in its conditional prefix.
+    if re.match(r'^(?:等|当)', clean):
+        request = re.search(r'你(?:能不能|可不可以|可以|能|会|愿意)[^，,。；;]{0,50}', clean)
+        if request:
+            clean = request.group()
+    if (not clean or _WRITING.search(clean) or _NEGATED.search(channel_context)
             or _HOW_TO.search(clean) or not _ACTOR.match(clean) or not _SEND.search(clean)):
         return None
-    channel = next((name for name, pattern in _CHANNELS if pattern.search(clean)), None)
+    channel = next((name for name, pattern in _CHANNELS if pattern.search(channel_context)), None)
     if channel is None:
         # State the global capability boundary without inventing what "it" was.
         if (clean.startswith('你') and _STATUS.search(clean) and not _LOCAL_STATUS.search(clean)
