@@ -24,7 +24,9 @@ def test_sender_is_read_from_verified_user_report_without_new_model_or_execution
         engine.reply = '是我发送的，我已经替你处理了。'
         pieces = []
         result = bot.respond(question, on_delta=pieces.append)
-        assert ''.join(pieces) == result['reply']
+        # Fixed rules use final-result delivery, like explicit capability and
+        # reminder replies; they do not claim model streaming deltas.
+        assert pieces == []
         assert result['generation_mode'] == 'rules_reported_sender'
         assert (len(engine.native), len(engine.analysis)) == counts
         evidence = result['reported_communication']

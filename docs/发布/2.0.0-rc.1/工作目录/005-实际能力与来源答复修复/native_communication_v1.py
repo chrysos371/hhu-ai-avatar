@@ -43,15 +43,15 @@ def names():
     selected.update(str(p.relative_to(ROOT)) for p in (Path(__file__), OLD/'gpu_lifecycle.py',
         util.REFERENCE, util.REGISTRY, util.METADATA, HERE/'native-cases-v1.json',
         HERE/'原生模型通信门控协议-v1.md', HERE/'native-preflight-v1.json',
-        HERE/'python-capability-v2-binding.json', HERE/'python-capability-v2.log'))
+        HERE/'python-capability-v3-binding.json', HERE/'python-capability-v3.log'))
     return sorted(selected)
 
 
 def freeze():
-    regression = read(HERE/'python-capability-v2-binding.json')
+    regression = read(HERE/'python-capability-v3-binding.json')
     assert regression['actual_returncode'] == 0 and regression['source_unchanged']
     assert {n: digest(ROOT/n) for n in regression['source_sha256']} == regression['source_sha256']
-    assert digest(HERE/'python-capability-v2.log') == regression['log_sha256']
+    assert digest(HERE/'python-capability-v3.log') == regression['log_sha256']
     assert runtime() == read(HERE/'native-preflight-v1.json')
     hashes = {n: digest(ROOT/n) for n in names()}
     ref = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
@@ -130,11 +130,19 @@ def trials(url, folder, result):
                         'memory_response_context', 'memory_fragments')
                     state = {name: [dict(row) for row in bot.memory._conn.execute('SELECT * FROM '+name)]
                         for name in tables}
+                    # Rule replies are published in the final result. Model
+                    # generation must additionally supply matching deltas.
+                    streamed = ''.join(visible)
+                    delivery = 'generated_deltas_and_final' if visible else 'final_result_only'
+                    generated = answer['generation_mode'] in {'llm', 'llm_capability_guarded'}
                     row = dict(case_id=case['id'], arm=arm, turn=index, user_text=text,
                         result=answer, visible=visible, sql_assistant=sql, sql=state,
+                        delivery=delivery,
                         native_call_numbers=engine.calls[before:], elapsed_seconds=time.monotonic()-started)
                     immutable(trial/f'turn-{index:02d}.json', row)
-                    assert ''.join(visible) == answer['reply'] == sql, 'visible/final/SQL mismatch'
+                    assert answer['reply'] == sql, 'final/SQL mismatch'
+                    assert (not visible or streamed == answer['reply']), 'generated delta/final mismatch'
+                    assert not generated or streamed == answer['reply'], 'generated output missing deltas'
                     assert not engine.errors, 'actual native request failed; no fallback-only approval'
                     assert not answer.get('tool_calls'), 'tools were not authorized by this protocol'
                     expected = 1 if case['id'] == 'N12' else 0
