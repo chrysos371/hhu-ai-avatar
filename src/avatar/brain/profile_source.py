@@ -69,7 +69,7 @@ def verified_content(memory,result,*,user_id,assistant_id,text,scope,revision):
         if reply is None and proof.get('action')=='copied_preference':
             for key in ('偏好','爱好'):
                 for value in profile.get(key,'').split('；'):
-                    if _ordinary_preference(value) and value.startswith('喜欢'):
+                    if _ordinary_preference(value):
                         checked,found=review_profile_reply(text,'我'+value+'。',profile)
                         if found=='copied_preference':reply,action=checked,found;break
                 if reply is not None:break

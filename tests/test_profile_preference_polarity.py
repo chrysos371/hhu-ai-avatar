@@ -6,6 +6,7 @@ import pytest
 from avatar.brain.memory import MemoryStore
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
+from avatar.brain.profile_grounding import review_profile_reply
 
 
 @pytest.mark.parametrize('value',['喜欢网球','不喜欢网球','不爱咖啡','讨厌芹菜','爱科幻'])
@@ -34,3 +35,13 @@ def test_requested_character_quote_is_preserved_instead_of_becoming_user_profile
         bot=Avatar(memory=memory,llm=Recorder('不应生成'),capability_contract_enabled=True,role_state_enabled=True)
         result=bot.respond('原样输出这句小说台词：“我'+value+'。”')
         assert result['generation_mode']=='rules_writing_artifact' and result['reply']=='我'+value+'。'
+
+
+@pytest.mark.parametrize('source,reply',[
+    ('不喜欢网球','我不喜欢网球比赛。'),
+    ('喜欢网球','我不喜欢网球。'),
+    ('不喜欢网球','我喜欢网球。'),
+    ('讨厌芹菜','“我讨厌芹菜。”'),
+])
+def test_different_objects_polarities_and_quoted_data_are_not_claimed_to_be_a_copy(source,reply):
+    assert review_profile_reply('今天聊聊。',reply,{'偏好':source})==(reply,None)

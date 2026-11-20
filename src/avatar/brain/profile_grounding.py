@@ -51,13 +51,14 @@ def review_profile_reply(user_text: str, reply: str, profile: dict) -> tuple[str
     for preference in _preferences(profile):
         if not _ordinary_preference(preference):
             continue
-        positive = re.fullmatch(r'(?:喜欢|爱)(.+)', preference)
-        if not positive:
+        stated = re.fullmatch(r'(不喜欢|不爱|讨厌|喜欢|爱)(.+)', preference)
+        if not stated:
             continue
-        item = re.escape(positive[1])
+        item = re.escape(stated[2])
+        verbs = r'(?:喜欢|偏好|爱)' if stated[1] in ('喜欢','爱') else r'(?:不喜欢|不爱|讨厌)'
         # Match a copied complete object, not e.g. 网球 within 网球比赛.
         pattern = (r'(?:^|[。！!？?，,；;\n])\s*我(?:也|更|很|最|同样)?'
-                   r'(?:喜欢|偏好|爱)' + item + r'(?=$|[呢啊哦呀了。！!？?，,；;\n])')
+                   + verbs + item + r'(?=$|[呢啊哦呀了。！!？?，,；;\n])')
         if re.search(pattern, unquoted):
             return _preference_reply(profile, ordinary_only=True), 'copied_preference'
     return reply, None
