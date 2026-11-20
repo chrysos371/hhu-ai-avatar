@@ -25,11 +25,15 @@ def test_explicit_execution_has_truthful_nonexecuting_response(text, channel):
     ('你已经发送短信了吗？', 'sms'),
     ('你刚才联系到他了吗？', 'phone'),
     ('你替我发邮件成功了吗？', 'email'),
+    ('你刚才真的发出去了吗？', 'external'),
 ])
 def test_explicit_status_does_not_invent_receipts_or_other_actors_state(text, channel):
     result = parse(text)
     assert result and result.kind == 'status' and result.channel == channel
-    assert '我没有替你执行' in result.reply() and '其他平台' in result.reply()
+    if channel == 'external':
+        assert '没有替你发送' in result.reply() and '如果你指的是本机提醒' in result.reply()
+    else:
+        assert '我没有替你执行' in result.reply() and '其他平台' in result.reply()
 
 
 @pytest.mark.parametrize('text', [
@@ -39,7 +43,7 @@ def test_explicit_status_does_not_invent_receipts_or_other_actors_state(text, ch
     '不要帮我发短信，只告诉我如何自行发送。', '你能解释如何发邮件吗？',
     '你知道发短信和微信有什么区别吗？', '请提醒我明天下午3点给老师发邮件。',
     '提醒我明天下午3点给老师发邮件。', '你已经发出那个提醒了吗？',
-    '请列出我的提醒。', '你刚才真的发出去了吗？', '帮我发送。',
+    '请列出我的提醒。', '帮我发送。', '你把文章发到聊天里了吗？',
     '他说“请帮我发邮件”，我没有提出这个请求。', '请分析“你已经发邮件了吗”的语气。',
 ])
 def test_unsupported_or_nonexecution_language_is_not_claimed_as_a_route(text):

@@ -24,6 +24,7 @@ _CHANNELS = (
     ('phone', re.compile(r'电话|拨号|拨通|联系(?:到)?(?:他|她|同学|朋友|室友|老师)')),
 )
 _SEND = re.compile(r'发(?:送|出|过去)?|代发|重发|转发|联系|拨|打(?:个|一个)?电话|打给')
+_LOCAL_STATUS = re.compile(r'提醒|闹钟|本机|本地|显示|聊天|对话框')
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,9 @@ class UnavailableRequest:
     kind: str
 
     def reply(self):
+        if self.channel == 'external':
+            return ('我没有替你发送短信或邮件，也没有拨打电话，当前没有接入这些接口。'
+                    '如果你指的是本机提醒显示，需要查询对应提醒的显示记录才能确认。')
         label = {'email': '邮件代发', 'sms': '短信代发', 'message': '消息代发', 'phone': '拨打电话或代为联系'}[self.channel]
         if self.kind == 'status':
             return f'我没有替你执行{label}，当前没有接入这项接口；你或他人在其他平台的操作，我无法据此核验。'
@@ -49,6 +53,10 @@ def explicit_unavailable_request(text, *, fictional=False):
         return None
     channel = next((name for name, pattern in _CHANNELS if pattern.search(clean)), None)
     if channel is None:
-        return None  # No invented antecedent for "发了吗" or local reminder delivery.
+        # State the global capability boundary without inventing what "it" was.
+        if (clean.startswith('你') and _STATUS.search(clean) and not _LOCAL_STATUS.search(clean)
+                and re.search(r'发出去|发送|发出', clean)):
+            return UnavailableRequest('external', 'status')
+        return None
     kind = 'status' if clean.startswith('你') and _STATUS.search(clean) else 'request'
     return UnavailableRequest(channel, kind)
