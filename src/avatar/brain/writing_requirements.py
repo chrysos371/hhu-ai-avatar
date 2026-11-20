@@ -16,6 +16,22 @@ _RELEASE = re.compile(r'(?:不要|不用|无需|去掉|删除)署名')
 _SENTENCES = re.compile(r'(?:压缩到|控制在|改成|改为|写成|写)([一二两三四五六七八九十1-9]|10)句(?:话)?')
 _BODY = re.compile(r'只(?:给|要|输出|回复|交付)(?:正文|稿件正文)')
 _NUMBERS = dict(zip('一二三四五六七八九十', range(1, 11)), 两=2)
+_ROLES = r'老师|导师|室友|同学|朋友|同事|班长|房东|姐姐|妹妹|哥哥|弟弟'
+
+
+def author_role(sources):
+    role = None
+    for _, text in sources:
+        clean = re.sub(r'【[^【】\n]*】', lambda m: ' ' * len(m.group()), visible_source(text))
+        direct = re.search(r'(?:写|拟|起草)(' + _ROLES + r')(?:的)?(?:回复|回信)', clean)
+        addressed = re.search(r'(?:发|发送|寄)(?:了)?给(' + _ROLES + r')', clean)
+        if direct:
+            role = direct.group(1)
+        elif addressed and re.search(r'(?:写|拟|起草)(?:对方|他|她)(?:的)?回复', clean):
+            role = addressed.group(1)
+        if re.search(r'改(?:成|为|用)我(?:自己)?的?(?:口吻|第一人称)', clean):
+            role = '用户'
+    return role
 
 
 def _compile_sources(sources):
@@ -67,11 +83,16 @@ class WritingRequirements:
     signature_omitted: bool = False
     forbidden_signatures: tuple[str, ...] = ()
 
+    @property
+    def author_role(self):
+        return author_role(self.sources) if self.source_verified else None
+
     def data(self):
         return dict(version=1, source_verified=self.source_verified, signature=self.signature,
                     sentence_count=self.sentence_count, body_only=self.body_only,
                     source_message_ids=list(self.source_message_ids), reason=self.reason,
                     signature_omitted=self.signature_omitted, forbidden_signatures=list(self.forbidden_signatures),
+                    author_role=self.author_role,
                     semantic_verifier=False)
 
 

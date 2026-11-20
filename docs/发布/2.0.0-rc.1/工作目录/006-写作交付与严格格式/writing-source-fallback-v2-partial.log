@@ -1,0 +1,94 @@
+FFF....F........................                                         [100%]
+=================================== FAILURES ===================================
+_ test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[1] _
+
+count = 1
+
+    @pytest.mark.parametrize('count', [1,2,3])
+    def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(count):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '因个人原因请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(f'麻烦给导师写一封请假邮件，署名用【申请人】，改成{count}句话，只给正文。')
+            assert result['generation_mode'] == 'rules_writing_artifact'
+            assert len(engine.native) == 2 and not result['writing_delivery']['repair_succeeded']
+            fallback = result['writing_delivery']['source_fallback']
+            assert fallback['used'] and fallback['semantic_verifier'] is False
+            assert '【请假原因】' in result['reply'] and '【申请人】' == result['reply'].splitlines()[-1]
+            assert len(re.findall(r'[。！？!?]+', result['reply'])) == count
+            assert not result['writing_delivery']['final_issues']
+            assert result['writing_delivery']['model_repair_issues']
+            assert memory.get_short_term()[-1]['content'] == result['reply']
+>           assert not result['tool_calls'] and not result['action_receipts']
+E           AssertionError: assert (not [] and not {'instance_id': 'b3e3353b130a4110b6eafe8d6f28f670', 'revision': 0, 'items': [], 'has_more': False, ...})
+
+tests/test_writing_source_fallback.py:28: AssertionError
+_ test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[2] _
+
+count = 2
+
+    @pytest.mark.parametrize('count', [1,2,3])
+    def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(count):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '因个人原因请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(f'麻烦给导师写一封请假邮件，署名用【申请人】，改成{count}句话，只给正文。')
+            assert result['generation_mode'] == 'rules_writing_artifact'
+            assert len(engine.native) == 2 and not result['writing_delivery']['repair_succeeded']
+            fallback = result['writing_delivery']['source_fallback']
+            assert fallback['used'] and fallback['semantic_verifier'] is False
+            assert '【请假原因】' in result['reply'] and '【申请人】' == result['reply'].splitlines()[-1]
+            assert len(re.findall(r'[。！？!?]+', result['reply'])) == count
+            assert not result['writing_delivery']['final_issues']
+            assert result['writing_delivery']['model_repair_issues']
+            assert memory.get_short_term()[-1]['content'] == result['reply']
+>           assert not result['tool_calls'] and not result['action_receipts']
+E           AssertionError: assert (not [] and not {'instance_id': '583080797a2a441e9ed125c2db3dd042', 'revision': 0, 'items': [], 'has_more': False, ...})
+
+tests/test_writing_source_fallback.py:28: AssertionError
+_ test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[3] _
+
+count = 3
+
+    @pytest.mark.parametrize('count', [1,2,3])
+    def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(count):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['今天身体不适。', '因个人原因请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(f'麻烦给导师写一封请假邮件，署名用【申请人】，改成{count}句话，只给正文。')
+            assert result['generation_mode'] == 'rules_writing_artifact'
+            assert len(engine.native) == 2 and not result['writing_delivery']['repair_succeeded']
+            fallback = result['writing_delivery']['source_fallback']
+            assert fallback['used'] and fallback['semantic_verifier'] is False
+            assert '【请假原因】' in result['reply'] and '【申请人】' == result['reply'].splitlines()[-1]
+            assert len(re.findall(r'[。！？!?]+', result['reply'])) == count
+            assert not result['writing_delivery']['final_issues']
+            assert result['writing_delivery']['model_repair_issues']
+            assert memory.get_short_term()[-1]['content'] == result['reply']
+>           assert not result['tool_calls'] and not result['action_receipts']
+E           AssertionError: assert (not [] and not {'instance_id': '2a15a6c946824a3b8d57327c474eee54', 'revision': 0, 'items': [], 'has_more': False, ...})
+
+tests/test_writing_source_fallback.py:28: AssertionError
+_ test_fictional_counterparty_author_and_receipt_do_not_become_real_execution __
+
+    def test_fictional_counterparty_author_and_receipt_do_not_become_real_execution():
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '老师您好，我已将邮件发送给您，希望您能尽快回复。'
+            engine = Replies(['开始吧。', bad, bad])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('我来扮演小说角色。')
+            result = bot.respond('我已把邮件发给老师，接着写对方回复。')
+            assert result['writing_requirements']['author_role'] == '老师'
+            assert 'wrong_artifact_author' in result['writing_delivery']['initial_issues']
+            assert result['generation_mode'] == 'rules_writing_artifact'
+            assert '老师您好' not in result['reply'] and '你好' in result['reply']
+>           assert not result['tool_calls'] and not result['action_receipts']
+E           AssertionError: assert (not [] and not {'instance_id': '5d815cf0ca134cb4a0d2924da2108e2f', 'revision': 0, 'items': [], 'has_more': False, ...})
+
+tests/test_writing_source_fallback.py:67: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_source_fallback.py::test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[1]
+FAILED tests/test_writing_source_fallback.py::test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[2]
+FAILED tests/test_writing_source_fallback.py::test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls[3]
+FAILED tests/test_writing_source_fallback.py::test_fictional_counterparty_author_and_receipt_do_not_become_real_execution
+4 failed, 28 passed in 1.77s

@@ -25,7 +25,8 @@ def test_simple_unknown_leave_fields_render_from_sources_after_two_failed_calls(
         assert not result['writing_delivery']['final_issues']
         assert result['writing_delivery']['model_repair_issues']
         assert memory.get_short_term()[-1]['content'] == result['reply']
-        assert not result['tool_calls'] and not result['action_receipts']
+        assert not result['tool_calls'] and not result['action_receipts']['items']
+        assert memory._conn.execute('SELECT COUNT(*) FROM memory_action_receipts').fetchone()[0] == 0
 
 
 def test_given_event_stays_verbatim_and_unprovided_duration_is_not_added():
@@ -40,7 +41,7 @@ def test_given_event_stays_verbatim_and_unprovided_duration_is_not_added():
 
 @pytest.mark.parametrize('request_text', [
     '帮我写一条请假短信，必须保留“不可丢失素材”。',
-    '替姐姐给老师写一封请假邮件。',
+    '帮我替姐姐给老师写一封请假邮件。',
     '帮我写一条请假短信，明确说明尚未获批准。',
 ])
 def test_unhandled_material_perspective_or_status_never_silently_dropped(request_text):
@@ -48,19 +49,23 @@ def test_unhandled_material_perspective_or_status_never_silently_dropped(request
         engine = Replies(['今天身体不适。', '今天身体不适。'])
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         result = bot.respond(request_text)
+        assert result['writing_requirements']['source_verified']
         assert result['generation_mode'] == 'rules_writing_validation'
         assert not result['writing_delivery']['source_fallback']['used']
 
 
-def test_fictional_counterparty_author_and_receipt_do_not_become_real_execution():
+@pytest.mark.parametrize('root,role', [('我已把邮件发给老师，接着写对方回复。','老师'),
+    ('我刚把消息发给导师，随后写对方回复。','导师')])
+def test_fictional_counterparty_author_and_receipt_do_not_become_real_execution(root, role):
     with closing(MemoryStore(':memory:')) as memory:
-        bad = '老师您好，我已将邮件发送给您，希望您能尽快回复。'
+        bad = role + '您好，我已将邮件发送给您，希望您能尽快回复。'
         engine = Replies(['开始吧。', bad, bad])
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         bot.respond('我来扮演小说角色。')
-        result = bot.respond('我已把邮件发给老师，接着写对方回复。')
-        assert result['writing_requirements']['author_role'] == '老师'
+        result = bot.respond(root)
+        assert result['writing_requirements']['author_role'] == role
         assert 'wrong_artifact_author' in result['writing_delivery']['initial_issues']
         assert result['generation_mode'] == 'rules_writing_artifact'
-        assert '老师您好' not in result['reply'] and '你好' in result['reply']
-        assert not result['tool_calls'] and not result['action_receipts']
+        assert role + '您好' not in result['reply'] and '你好' in result['reply']
+        assert not result['tool_calls'] and not result['action_receipts']['items']
+        assert memory._conn.execute('SELECT COUNT(*) FROM memory_action_receipts').fetchone()[0] == 0

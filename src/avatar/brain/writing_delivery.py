@@ -54,6 +54,11 @@ def inspect(reply, requirements, *, fictional=False):
         for literal in match.groups() if literal is not None))
     if not verbatim and re.search(r'需要我帮你(?:构思|写(?:一下)?(?:老师|对方)?(?:的)?回复)[^。！？!?\n]*[？?]', visible_source(body)):
         issues.append('artifact_not_delivered')
+    author = requirements.author_role
+    if (not verbatim and author in ('老师', '导师')
+            and re.match(re.escape(author) + r'[，,：:\s]*(?:您|你)?好', body.lstrip('“「\"'))
+            and re.search(r'我(?:已|已经)(?:将|把)?(?:邮件|材料).{0,8}(?:发|发送|寄)', body)):
+        issues.append('wrong_artifact_author')
     # Only the measured real leave-draft family, never all creative text or
     # every mention of tomorrow. Exact source presence is necessary, not proof
     # of general factual support; nonhuman source/span review remains required.

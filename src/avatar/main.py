@@ -213,7 +213,8 @@ class Avatar:
                 if self._writing_requirements is not None and self._writing_requirements.source_verified:
                     capability_context += ('当前已核验来源的稿件要求，只约束正文，不是身份事实或执行授权。'
                         'signature 是文末署名，不是收件人；不得猜测未给的请假原因或时间：'
-                        + json.dumps(self._writing_requirements.data(), ensure_ascii=False) + '\n')
+                        + json.dumps(self._writing_requirements.data(), ensure_ascii=False)
+                        + 'author_role若有值，只代表该稿件发言人，应由该人回应素材，不是用户再次向该人发信。\n')
         return (
             f"你是{managed.get('name',config.avatar_name)}，{managed.get('core_identity',config.avatar_persona)}。\n"
             f"{decision.persona_hint}。\n"
@@ -996,7 +997,8 @@ class Avatar:
             writing_delivery_result = dict(version=1, semantic_verifier=False, stream_buffered=True,
                 scope='source_bound_signature_chinese_sentence_format_and_known_leave_details',
                 initial_issues=list(initial_issues), final_issues=[], repair_attempted=False,
-                repair_succeeded=False, repair_error=None, repair_mode=None, draft_sha256=fingerprint(reply),
+                repair_succeeded=False, repair_error=None, repair_mode=None, model_repair_issues=[],
+                source_fallback={'used': False, 'semantic_verifier': False}, draft_sha256=fingerprint(reply),
                 repair_sha256=None)
             if initial_issues:
                 writing_delivery_result['repair_attempted'] = True
@@ -1020,7 +1022,9 @@ class Avatar:
                     checkpoint_context()
                     if isinstance(corrected, str):
                         writing_delivery_result['repair_sha256'] = fingerprint(corrected)
-                        if not inspect_writing(corrected, self._writing_requirements, fictional=fictional_writing):
+                        repair_checks = inspect_writing(corrected, self._writing_requirements, fictional=fictional_writing)
+                        writing_delivery_result['model_repair_issues'] = list(repair_checks)
+                        if not repair_checks:
                             reply = corrected
                             writing_delivery_result['repair_succeeded'] = True
                             generation_mode = 'llm_writing_repaired'
@@ -1028,6 +1032,7 @@ class Avatar:
                     raise
                 except Exception as exc:
                     writing_delivery_result['repair_error'] = type(exc).__name__
+                    writing_delivery_result['model_repair_issues'] = ['repair_unavailable']
         output_adjustment = None
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
@@ -1069,11 +1074,21 @@ class Avatar:
             writing_delivery_result['final_issues'] = list(final_issues)
             writing_delivery_result['repair_succeeded'] = writing_delivery_result['repair_succeeded'] and not final_issues
             if final_issues:
-                # A failed draft is not a compliant artifact. Rules deliver the
-                # explicit failure as the final result, without streaming it as
-                # a model-generated body or silently making another call.
-                reply = '稿件暂未通过约束检查，请稍后重试。'
-                generation_mode = 'rules_writing_validation'
+                from .brain.writing_templates import build_fallback
+                fallback = build_fallback(self._writing_requirements, current_text=user_text,
+                    fictional=fictional_writing)
+                checkpoint_context()
+                if fallback is not None and not inspect_writing(fallback.reply, self._writing_requirements,
+                                                                fictional=fictional_writing):
+                    reply = fallback.reply
+                    generation_mode = 'rules_writing_artifact'
+                    writing_delivery_result['final_issues'] = []
+                    writing_delivery_result['source_fallback'] = dict(used=True, template=fallback.template,
+                        source_message_ids=list(fallback.source_message_ids), semantic_verifier=False,
+                        model_repair_succeeded=False)
+                else:
+                    reply = '稿件暂未通过约束检查，请稍后重试。'
+                    generation_mode = 'rules_writing_validation'
             writing_delivery_result['published_sha256'] = fingerprint(reply)
         # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
