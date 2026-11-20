@@ -4849,7 +4849,9 @@
       "resolution_evidence": [
         "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-verification.json",
         "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/14b-verification.json",
-        "src/avatar/brain/query_history.py"
+        "src/avatar/brain/query_history.py",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/逐来源受控复核-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/受控复核结论.md"
       ],
       "original_status_candidates": [
         "# C47-002 实模无新读取仍断言当前提醒状态",
@@ -4859,7 +4861,7 @@
         "- 14B同登记三重复独立核验补充：current字段原文0/24、生产快照18/24正确；快照ACK与external-send各3次仍返回active，而无当前状态新观测。原4B18/24与10/24错误保留，问题继续开放；模型尺度提高不等于解决时效推理，不能将本轮开发成绩称独立泛化。见[14B独立证据](../工作目录/004-原生准入/14b-verification.json)。",
         "范围补充：无新读取支持指该编号没有新的专用状态观测送入模型；普通回合仍含既有到期检查，采证程序也读取SQL投影与dump，不能解释为全回合零业务SELECT。"
       ],
-      "release_review": "历史active被当当前，无该编号新观测；4B快照14/24、14B18/24正确仍未全过。普通到期/审计SELECT不等于当前编号观测送模型；现包装只是历史reply，不凭标签关闭G04时效边界。",
+      "release_review": "历史active被当当前，无该编号新观测；4B快照14/24、14B18/24正确仍未全过。普通到期/审计SELECT不等于当前编号观测送模型；现包装只是历史reply，不凭标签关闭G04时效边界。；当前有限历史解释/公开字段认证/三值ACK及运行条件受控119、完整性134通过；保留正常认知，不读业务表、不外发；这是已见开发工程证据，当前源实模及全部发布门控待验，未据此关闭通用根因。",
       "residual_product_roots": [
         "C47-002"
       ]
@@ -5029,14 +5031,16 @@
       "release_impact": "quality_roots_pending",
       "resolution_evidence": [
         "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/004-原生准入/14b-verification.json",
-        "src/avatar/brain/query_history.py"
+        "src/avatar/brain/query_history.py",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/逐来源受控复核-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/受控复核结论.md"
       ],
       "original_status_candidates": [
         "优先级P2｜14B实测开放",
         "cancelled-neutral题实际编号查询时记录已取消但存在，公开回复明确“尚无客户端确认记录”，SQL中无投递ACK，元数据client_ack_recorded=false；新契约问该次观测中的ACK而非真人阅读，预登记期望false。14B两臂3/3均返回client_ack_in_observation=null，混淆已知未记录与根本没有状态观测；候选已显式提供false仍未解决。",
         "优化目标：明确已观测false、已观测true和未观测null三种来源语义；保留取消/完成记录与ACK独立性，不按状态标签推测有无观测。另预登记后续候选与正反对照，当前金标/原文/分数不改。"
       ],
-      "release_review": "14B已观测ACK=false仍答null，是已知未记录/未观测三值语义错误，null类型合法；4B该题正确。取消/完成状态不能代替ACK证据，保留3重复非独立样本，G04观测精确性待验。",
+      "release_review": "14B已观测ACK=false仍答null，是已知未记录/未观测三值语义错误，null类型合法；4B该题正确。取消/完成状态不能代替ACK证据，保留3重复非独立样本，G04观测精确性待验。；当前有限历史解释/公开字段认证/三值ACK及运行条件受控119、完整性134通过；保留正常认知，不读业务表、不外发；这是已见开发工程证据，当前源实模及全部发布门控待验，未据此关闭通用根因。",
       "residual_product_roots": [
         "C48-004"
       ]
@@ -5239,13 +5243,15 @@
       "release_impact": "C47-002",
       "resolution_evidence": [
         "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/4b-repetition-1-agent-review.json",
-        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json"
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/逐来源受控复核-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/受控复核结论.md"
       ],
       "original_status_candidates": [
         "状态：开放，4B第1轮观察，待完整来源复核；后验发现，不回写旧评分。",
         "该时间标签问题属于来源字段解释，八字段C49没有测这个维度；不能用旧JSON状态通过覆盖它。待两个模型全组审阅后汇总，不在本批修提示或改材料。"
       ],
-      "release_review": "4B7条把2099 due_at当记录时间，生产设定时间1条仅含混；14B未复现。来源日期标签仍需当前门控，不拿历史八字段分数覆盖。"
+      "release_review": "4B7条把2099 due_at当记录时间，生产设定时间1条仅含混；14B未复现。来源日期标签仍需当前门控，不拿历史八字段分数覆盖。；当前有限历史解释/公开字段认证/三值ACK及运行条件受控119、完整性134通过；保留正常认知，不读业务表、不外发；这是已见开发工程证据，当前源实模及全部发布门控待验，未据此关闭通用根因。"
     },
     {
       "id": "C50-004",
@@ -5261,7 +5267,9 @@
       "release_disposition": "active_product_quality_root_linked",
       "release_impact": "C47-002",
       "resolution_evidence": [
-        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json"
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/收尾核验/system-evidence.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/逐来源受控复核-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/受控复核结论.md"
       ],
       "original_status_candidates": [
         "# 004 普通追问把历史记录说成目前状态",
@@ -5269,7 +5277,7 @@
         "4B C48对照邮件回合3/3拒绝发送但说“目前active”，当时独立actor已取消、普通追问没有新读取。14B最小首轮active说“目前仍处于激活状态”，生产missing说“系统中没有相关记录”，后者的旧缺失后实际已创建。",
         "原件与逐条字符span见[原文审阅目录](../工作目录/005-原文审阅)。条件句/未指明历史归属单列含混，不一概硬判当前断言。真实业务没有误写；问题是生成叙述不能代替当前状态读取。完整重复后再汇总，不中途调参。"
       ],
-      "release_review": "4B对照邮件目前active3条；14B生产missing3+active1、对照active1、最小active1，均缺新状态读取。当前与历史分列，条件/含混不强判。"
+      "release_review": "4B对照邮件目前active3条；14B生产missing3+active1、对照active1、最小active1，均缺新状态读取。当前与历史分列，条件/含混不强判。；当前有限历史解释/公开字段认证/三值ACK及运行条件受控119、完整性134通过；保留正常认知，不读业务表、不外发；这是已见开发工程证据，当前源实模及全部发布门控待验，未据此关闭通用根因。"
     },
     {
       "id": "C50-005",
@@ -5286,12 +5294,14 @@
       "release_impact": "C19-001",
       "resolution_evidence": [
         "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/14b-repetition-2-agent-review.json",
-        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/14b-repetition-3-agent-review.json"
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-50/审计/工作目录/005-原文审阅/14b-repetition-3-agent-review.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/逐来源受控复核-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/009-提醒时效与证据边界/受控复核结论.md"
       ],
       "original_status_candidates": [
         "状态：开放，后验新增维度；不回写预登记计数或门槛。"
       ],
-      "release_review": "14B两个实际span声称系统可尝试短信，后验能力轴与既定实际发送/未来承诺分账；不是实际外发，不回写主分。当前无发送器能力路由需验证。"
+      "release_review": "14B两个实际span声称系统可尝试短信，后验能力轴与既定实际发送/未来承诺分账；不是实际外发，不回写主分。当前无发送器能力路由需验证。；当前有限历史解释/公开字段认证/三值ACK及运行条件受控119、完整性134通过；保留正常认知，不读业务表、不外发；这是已见开发工程证据，当前源实模及全部发布门控待验，未据此关闭通用根因。"
     },
     {
       "id": "C50-006",
