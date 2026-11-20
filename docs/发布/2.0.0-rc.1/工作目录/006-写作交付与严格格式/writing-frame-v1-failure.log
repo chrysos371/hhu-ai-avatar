@@ -1,0 +1,88 @@
+...............FF....F.......                                            [100%]
+=================================== FAILURES ===================================
+_ test_explicit_grammar_does_not_treat_quote_as_instruction[\u6211\u5df2\u628a\u90ae\u4ef6\u53d1\u7ed9\u8001\u5e08\uff0c\u63a5\u7740\u5199\u5bf9\u65b9\u56de\u590d\u3002-False-True] _
+
+text = '我已把邮件发给老师，接着写对方回复。', writing = False, expected = True
+
+    @pytest.mark.parametrize('text,writing,expected', [
+        ('请把“我明天陪你去骑车”改得更客气。', False, True),
+        ('替我回复朋友，原样写出“周六我陪你去游泳”。', False, True),
+        ('请原样写出“我已经把材料发给老师了”。', False, True),
+        ('分析“替我回复朋友”这句话。', False, False),
+        ('帮我发短信给朋友。', False, False),
+        ('等我把消息写好，你能替我发送吗？', False, False),
+        ('我已经写好一条短信了。', False, False),
+        ('我已经写好一条短信了。', True, False),
+        ('请解释怎么写一条短信。', False, False),
+        ('请提醒我明天下午3点写一条短信。', False, False),
+        ('再短一点。', True, True), ('再短一点。', False, False),
+        ('你刚才真的发出去了吗？', True, False),
+        ('不写了。', True, False),
+        ('帮我写一条短信。不写了，现在聊现实。', False, None),
+        ('我已把邮件发给老师，接着写对方回复。', False, True),
+        ('我已处理完材料，随后写一条通知。', False, True),
+        ('我看到朋友接着写了一封邮件。', False, False),
+        ('朋友说：“接着写对方回复。”', False, False),
+        ('请解释朋友接着写回复这句话。', False, False),
+        ('我已把邮件发给老师，接着写对方回复合适吗？', False, False),
+    ])
+    def test_explicit_grammar_does_not_treat_quote_as_instruction(text, writing, expected):
+>       assert _advance_frame(text, writing)[0] is expected
+E       assert False is True
+
+tests/test_response_frames.py:34: AssertionError
+_ test_explicit_grammar_does_not_treat_quote_as_instruction[\u6211\u5df2\u5904\u7406\u5b8c\u6750\u6599\uff0c\u968f\u540e\u5199\u4e00\u6761\u901a\u77e5\u3002-False-True] _
+
+text = '我已处理完材料，随后写一条通知。', writing = False, expected = True
+
+    @pytest.mark.parametrize('text,writing,expected', [
+        ('请把“我明天陪你去骑车”改得更客气。', False, True),
+        ('替我回复朋友，原样写出“周六我陪你去游泳”。', False, True),
+        ('请原样写出“我已经把材料发给老师了”。', False, True),
+        ('分析“替我回复朋友”这句话。', False, False),
+        ('帮我发短信给朋友。', False, False),
+        ('等我把消息写好，你能替我发送吗？', False, False),
+        ('我已经写好一条短信了。', False, False),
+        ('我已经写好一条短信了。', True, False),
+        ('请解释怎么写一条短信。', False, False),
+        ('请提醒我明天下午3点写一条短信。', False, False),
+        ('再短一点。', True, True), ('再短一点。', False, False),
+        ('你刚才真的发出去了吗？', True, False),
+        ('不写了。', True, False),
+        ('帮我写一条短信。不写了，现在聊现实。', False, None),
+        ('我已把邮件发给老师，接着写对方回复。', False, True),
+        ('我已处理完材料，随后写一条通知。', False, True),
+        ('我看到朋友接着写了一封邮件。', False, False),
+        ('朋友说：“接着写对方回复。”', False, False),
+        ('请解释朋友接着写回复这句话。', False, False),
+        ('我已把邮件发给老师，接着写对方回复合适吗？', False, False),
+    ])
+    def test_explicit_grammar_does_not_treat_quote_as_instruction(text, writing, expected):
+>       assert _advance_frame(text, writing)[0] is expected
+E       assert False is True
+
+tests/test_response_frames.py:34: AssertionError
+_____ test_novel_reply_subtask_reaches_actual_source_bound_writing_prompt ______
+
+    def test_novel_reply_subtask_reaches_actual_source_bound_writing_prompt():
+        from avatar.main import Avatar
+        from test_capability_prompt_lab import Recorder
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('老师回复：“材料已查收，谢谢。”')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('我来扮演小说角色。')
+            source = '我已把邮件发给老师，接着写对方回复。'
+            result = bot.respond(source)
+            frame = result['capability_contract']['frame']
+>           assert frame['frame'] == 'writing'
+E           AssertionError: assert 'ordinary' == 'writing'
+E             
+E             - writing
+E             + ordinary
+
+tests/test_response_frames.py:47: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_response_frames.py::test_explicit_grammar_does_not_treat_quote_as_instruction[\u6211\u5df2\u628a\u90ae\u4ef6\u53d1\u7ed9\u8001\u5e08\uff0c\u63a5\u7740\u5199\u5bf9\u65b9\u56de\u590d\u3002-False-True]
+FAILED tests/test_response_frames.py::test_explicit_grammar_does_not_treat_quote_as_instruction[\u6211\u5df2\u5904\u7406\u5b8c\u6750\u6599\uff0c\u968f\u540e\u5199\u4e00\u6761\u901a\u77e5\u3002-False-True]
+FAILED tests/test_response_frames.py::test_novel_reply_subtask_reaches_actual_source_bound_writing_prompt
+3 failed, 26 passed in 0.89s
