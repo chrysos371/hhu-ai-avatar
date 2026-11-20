@@ -3429,12 +3429,17 @@
           "sha256": "91074c82026f6c5cb358ff8292af9ed07d7644d02324d7a6a9f73b64f8f2ffdf"
         }
       ],
-      "release_disposition": "active_product_defect",
-      "release_impact": "release_goal_pending",
+      "release_disposition": "fixed_optin_software_scope_pending_release_activation",
+      "release_impact": "final_release_configuration_and_activation_pending",
       "resolution_evidence": [
         "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/003-角色状态连续性补审/4b-posthoc-continuity.json",
         "docs/进展报告/2026-11-10-G2交互循环/cycle-33/审计/工作目录/003-角色状态连续性补审/32b-posthoc-continuity.json",
-        "src/avatar/brain/emotion.py"
+        "src/avatar/brain/emotion.py",
+        "docs/发布/2.0.0-rc.1/工作目录/007-跨进程角色状态与交付历史/restart-baseline-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/007-跨进程角色状态与交付历史/restart-fixed-v2.json",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/python-writing-v9-binding.json",
+        "tests/test_role_state.py",
+        "tests/test_role_state_integration.py"
       ],
       "original_status_candidates": [
         "P2工程推进目标；开放。PAD未持久化是C29已披露限制，此处以C33实际数据补审，不重复包装成已修复问题，不声称真人体验缺陷已验证。",
@@ -3443,7 +3448,7 @@
         "默认恢复目前保留来源可验证的对话窗口，角色PAD仍是新服务的进程内状态；在本批27组发生了非零旧数值到新初始0的重置。未证明该重置造成真人感知退化，也未证明持久化一定提高一般语义或陪伴质量。C31候选仍隔离，本轮不因此改冻结产品源或运行中的实验。",
         "下一循环可先登记角色状态连续性的受控before/after，再决定实现：仅恢复同隐私版本、同作用域、有效完成来源的有限角色数值，按真实时间衰减；删除、红删、取消、断裂或损坏不得回放旧情绪。明确用户当次观测与角色表达状态分离，不把过去用户情绪强加给当前请求。旧库/数值非有限/时间异常/显式关闭等边界需受控故障验证，随后全产品回归与实际模型输入/输出审阅。"
       ],
-      "release_review": "真实共享历史4B27/48、32B36/48旧非零角色PAD，新OS均初始0；文本恢复不等于角色数值连续。仍须实现同隐私版本/作用域/有效完成来源的有限角色快照、实际时间衰减及损坏/取消/遗忘保护；不能恢复过去用户观测为当前，也不声称真人体验改进。",
+      "release_review": "真实共享历史4B27/48、32B36/48旧非零角色PAD，新OS均初始0；文本恢复不等于角色数值连续。仍须实现同隐私版本/作用域/有效完成来源的有限角色快照、实际时间衰减及损坏/取消/遗忘保护；不能恢复过去用户观测为当前，也不声称真人体验改进。；本次有限角色快照已实现：73定向和完整2900/1，真实两个OS进程角色0.15→0.149732、过去用户观测仍0，当前scope/epoch/完成来源核验及实时间衰减。不复制私人原文，取消/失败不写完成态。默认未激活，最终发布配置/模型门控仍待。",
       "residual_product_roots": [
         "C33-002"
       ]
