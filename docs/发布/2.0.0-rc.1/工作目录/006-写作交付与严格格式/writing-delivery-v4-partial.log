@@ -1,0 +1,23 @@
+........................................................................ [ 33%]
+.................................F...................................... [ 66%]
+........................................................................ [ 99%]
+.                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_draft_tail_service_offer_is_removed_before_sse_and_storage ________
+
+    def test_draft_tail_service_offer_is_removed_before_sse_and_storage():
+        engine = Recorder('同学你好，我今天需要请假。\n需要我帮你发送短信吗？')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('帮我给同学写一条请假短信。', cancel=CancellationToken(), on_delta=pieces.append)
+>           assert result['reply'].strip() == '同学你好，我今天需要请假。'
+E           AssertionError: assert '稿件暂未通过约束检查，请稍后重试。' == '同学你好，我今天需要请假。'
+E             
+E             - 同学你好，我今天需要请假。
+E             + 稿件暂未通过约束检查，请稍后重试。
+
+tests/test_capability_output_integration.py:54: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_capability_output_integration.py::test_draft_tail_service_offer_is_removed_before_sse_and_storage
+1 failed, 216 passed in 16.38s
