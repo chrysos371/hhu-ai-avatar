@@ -773,10 +773,16 @@ class Avatar:
         if (self.summary_enabled and control is None and reminder_query is None
                 and capability_request is None and reported_sender_reply is None):
             self.summaries.refresh(self.session_id)
+        writing_delivery_active = bool(self._writing_requirements is not None
+            and self._writing_requirements.source_verified and boundary.reply is None
+            and control is None and reminder_query is None and capability_request is None
+            and reported_sender_reply is None and not use_web
+            and self.speaker_scope.scope != 'unverified' and reminder is None
+            and cancelled_reminder_id is None and not reminder_error)
         self._due_reminders = (self.reminders.claim_due(checkpoint=checkpoint_context, receipt_context=receipt_context)
                                if boundary.reply is None and control is None and reminder_query is None
                                and capability_request is None and reported_sender_reply is None
-                               and self.speaker_scope.allows_actions else [])
+                               and self.speaker_scope.allows_actions and not writing_delivery_active else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
@@ -817,7 +823,8 @@ class Avatar:
         generation_mode = 'rules'
         delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
             and boundary.reply is None and reminder is None and cancelled_reminder_id is None
-            and not reminder_error and not use_web and control is None and reminder_query is None)
+            and not reminder_error and not use_web and control is None and reminder_query is None
+            and not writing_delivery_active)
         number_requested = False
         number_format_result = None
         if (self.capability_contract_enabled and boundary.reply is None and control is None
@@ -827,7 +834,8 @@ class Avatar:
             from .brain.number_formats import requested
             number_requested = requested(user_text)
         buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
-                        or self.final_reply_reviewer is not None or number_requested)
+                        or self.final_reply_reviewer is not None or number_requested or writing_delivery_active)
+        writing_delivery_result = None
         streamed_prefix = []
         capability_output_rules = ()
         grounding_action = None
@@ -981,15 +989,46 @@ class Avatar:
                 except Exception as exc:
                     repair_error = type(exc).__name__
                     logger.warning('任务修正失败，保留原回复与检查记录')
+        if writing_delivery_active and generation_mode == 'llm':
+            from .brain.writing_delivery import inspect as inspect_writing, fingerprint, repair_instruction
+            fictional_writing = self.boundaries.fiction or self.speaker_scope.scope == 'fictional_character'
+            initial_issues = inspect_writing(reply, self._writing_requirements, fictional=fictional_writing)
+            writing_delivery_result = dict(version=1, semantic_verifier=False, stream_buffered=True,
+                scope='source_bound_signature_chinese_sentence_format_and_known_leave_details',
+                initial_issues=list(initial_issues), final_issues=[], repair_attempted=False,
+                repair_succeeded=False, repair_error=None, draft_sha256=fingerprint(reply),
+                repair_sha256=None)
+            if initial_issues:
+                writing_delivery_result['repair_attempted'] = True
+                try:
+                    checkpoint_context()
+                    repair_messages = self._messages(decision, user_text) + [
+                        {'role': 'system', 'content': repair_instruction(self._writing_requirements, initial_issues)}]
+                    if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
+                            cancel=cancel, on_delta=None)
+                    else:
+                        corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
+                    checkpoint_context()
+                    if isinstance(corrected, str):
+                        writing_delivery_result['repair_sha256'] = fingerprint(corrected)
+                        if not inspect_writing(corrected, self._writing_requirements, fictional=fictional_writing):
+                            reply = corrected
+                            writing_delivery_result['repair_succeeded'] = True
+                            generation_mode = 'llm_writing_repaired'
+                except Cancelled:
+                    raise
+                except Exception as exc:
+                    writing_delivery_result['repair_error'] = type(exc).__name__
         output_adjustment = None
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
             reply, output_adjustment = output_checker(reply)
-        if self.capability_contract_enabled and (generation_mode == 'llm' or use_web):
+        if self.capability_contract_enabled and (generation_mode in {'llm', 'llm_writing_repaired'} or use_web):
             guarded = self._guard_capability_output(reply)
             reply, capability_output_rules = guarded.reply, guarded.rules
             if capability_output_rules:
-                generation_mode = 'llm_capability_guarded' if generation_mode == 'llm' else 'tools_capability_guarded'
+                generation_mode = 'llm_capability_guarded' if not use_web else 'tools_capability_guarded'
         writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
         if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
@@ -999,7 +1038,7 @@ class Avatar:
             reply = number_format_result.reply
             if number_format_result.rules:
                 generation_mode = 'llm_format_guarded'
-        if self.final_reply_reviewer is not None and generation_mode in {'llm', 'llm_capability_guarded', 'llm_format_guarded'}:
+        if self.final_reply_reviewer is not None and generation_mode in {'llm', 'llm_capability_guarded', 'llm_format_guarded', 'llm_writing_repaired'}:
             reviewed, metadata = self.final_reply_reviewer(user_text, reply)
             if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
                 raise ValueError('final reply reviewer returned invalid data')
@@ -1017,13 +1056,24 @@ class Avatar:
             if reviewed != reply:
                 generation_mode = 'reviewed_response'
             reply = reviewed
+        if writing_delivery_result is not None:
+            final_issues = inspect_writing(reply, self._writing_requirements, fictional=fictional_writing)
+            writing_delivery_result['final_issues'] = list(final_issues)
+            writing_delivery_result['repair_succeeded'] = writing_delivery_result['repair_succeeded'] and not final_issues
+            if final_issues:
+                # A failed draft is not a compliant artifact. Rules deliver the
+                # explicit failure as the final result, without streaming it as
+                # a model-generated body or silently making another call.
+                reply = '稿件暂未通过约束检查，请稍后重试。'
+                generation_mode = 'rules_writing_validation'
+            writing_delivery_result['published_sha256'] = fingerprint(reply)
         # Profile or task guards buffer text until complete review/repair finishes.
         # Lookup/rule responses retain their normal final-result delivery path.
         if self._due_reminders:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
         repair_succeeded = repair_succeeded and not final_delivery_issues
-        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition', 'llm_capability_guarded', 'llm_format_guarded'}
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition', 'llm_capability_guarded', 'llm_format_guarded', 'llm_writing_repaired'}
                               or self._response_review is not None) and on_delta):
             emit_checked(reply)
         elif generation_mode in {'llm', 'llm_capability_guarded'} and on_delta:
@@ -1138,6 +1188,8 @@ class Avatar:
         }
         if self._response_review is not None:
             result['response_review'] = self._response_review
+        if writing_delivery_result is not None:
+            result['writing_delivery'] = writing_delivery_result
         if self.capability_contract_enabled:
             result['writing_requirements'] = self._writing_requirements.data()
             result['capability_contract'] = {'version': 1, 'semantic_verifier': False,

@@ -18,8 +18,8 @@ _BODY = re.compile(r'只(?:给|要|输出|回复|交付)(?:正文|稿件正文)'
 _NUMBERS = dict(zip('一二三四五六七八九十', range(1, 11)), 两=2)
 
 
-def compile_sources(sources):
-    signature, count, body = None, None, False
+def _compile_sources(sources):
+    signature, count, body, omitted, seen = None, None, False, False, []
     for _, text in sources:
         clean = visible_source(text)
         # Placeholders and quoted/code values are data, even when they contain
@@ -31,18 +31,25 @@ def compile_sources(sources):
                 continue
             if _RELEASE.search(instruction):
                 signature = None
+                omitted = True
             for match in _SIGNATURE.finditer(instruction):
                 offset = clause.start() + match.end()
                 value = re.match(r'\s*(【[^【】\n]{1,40}】|“[^“”\n]{1,40}”|「[^「」\n]{1,40}」|[^，,。；;\n？！!?\s]{1,40})', text[offset:])
                 if value:
                     signature = value.group(1)
+                    omitted = False
+                    seen.append(signature)
             found = _SENTENCES.search(instruction)
             if found:
                 digits = found.group(1)
                 count = int(digits) if digits.isascii() else _NUMBERS[digits]
             if _BODY.search(instruction):
                 body = True
-    return signature, count, body
+    return signature, count, body, omitted, tuple(dict.fromkeys(seen)) if omitted else ()
+
+
+def compile_sources(sources):
+    return _compile_sources(sources)[:3]
 
 
 @dataclass(frozen=True)
@@ -57,11 +64,14 @@ class WritingRequirements:
     # or public result. They fence prompt assembly and final publication.
     state: tuple = ()
     sources: tuple = ()
+    signature_omitted: bool = False
+    forbidden_signatures: tuple[str, ...] = ()
 
     def data(self):
         return dict(version=1, source_verified=self.source_verified, signature=self.signature,
                     sentence_count=self.sentence_count, body_only=self.body_only,
                     source_message_ids=list(self.source_message_ids), reason=self.reason,
+                    signature_omitted=self.signature_omitted, forbidden_signatures=list(self.forbidden_signatures),
                     semantic_verifier=False)
 
 
@@ -149,8 +159,9 @@ class WritingRequirementStore:
                 if not source or source['role'] != 'user' or not source['content'] or source['content'] == '[redacted]':
                     return WritingRequirements(reason='source_unavailable')
                 sources.append((ident, source['content']))
-            signature, count, body = compile_sources(sources)
-            return WritingRequirements(True, signature, count, body, tuple(ids), None, row, tuple(sources))
+            signature, count, body, omitted, forbidden = _compile_sources(sources)
+            return WritingRequirements(True, signature, count, body, tuple(ids), None, row, tuple(sources),
+                signature_omitted=omitted, forbidden_signatures=forbidden)
         finally:
             if owned:
                 self.conn.rollback()
