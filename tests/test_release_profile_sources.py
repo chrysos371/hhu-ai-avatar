@@ -34,7 +34,9 @@ def test_friend_name_or_reminder_title_is_not_promoted_to_self_name():
     with closing(MemoryStore(':memory:')) as memory:
         model=Recorder('你好，柳林。我知道你叫柳林。')
         bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
-        bot.respond('我的朋友叫柳林。')
+        first=bot.respond('我的朋友叫柳林。')
+        assert first['generation_mode']=='rules_profile_source'
+        assert first['reply']=='谢谢你介绍身边的人。'
         result=bot.respond('我叫什么名字？')
         assert '柳林' not in result['reply'] and '没有足够记录' in result['reply']
         assert not memory.get_user_profile().get('名字')

@@ -7,7 +7,7 @@ from hashlib import sha256
 import json
 
 from ..cancellation import Cancelled
-from .profile_grounding import lookup_profile, review_profile_reply, _ordinary_preference
+from .profile_grounding import lookup_profile, review_profile_reply, acknowledge_disclosure, _ordinary_preference
 
 
 def fingerprint(value):
@@ -64,6 +64,8 @@ def verified_content(memory,result,*,user_id,assistant_id,text,scope,revision):
             rows.append(dict(row))
         profile=projection(rows)
         reply,action=lookup_profile(text,profile)
+        if reply is None:
+            reply,action=acknowledge_disclosure(text,profile)
         if reply is None and proof.get('action')=='copied_preference':
             for key in ('偏好','爱好'):
                 for value in profile.get(key,'').split('；'):

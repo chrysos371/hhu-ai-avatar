@@ -938,7 +938,7 @@ class Avatar:
             self.memory.get_user_profile() if self.profile_grounding_enabled else {})
         real_profile_active = (self.profile_grounding_enabled or contract_profile) and self.speaker_scope.allows_facts
         profile_reply, lookup_action = lookup_profile(user_text, profile) if real_profile_active else (None, None)
-        if self.profile_grounding_enabled and real_profile_active and profile_reply is None:
+        if real_profile_active and profile_reply is None:
             profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
         if boundary.reply is not None:
             reply = boundary.reply
