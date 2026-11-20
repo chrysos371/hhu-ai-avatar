@@ -1,0 +1,94 @@
+.......FF............F........F.......                                   [100%]
+=================================== FAILURES ===================================
+_ test_reported_subject_and_modality_do_not_become_assistant_or_wrong_self[\u6211\u542c\u8bf4\u5ba4\u53cb\u5df2\u7ecf\u53d1\u4e86\u77ed\u4fe1\u3002-\u5ba4\u53cb] _
+
+source = '我听说室友已经发了短信。', actor = '室友'
+
+    @pytest.mark.parametrize('source,actor', [
+        ('我的室友已经发了邮件。', '室友'),
+        ('我和同学已经一起发了短信。', '你和同学'),
+        ('我刚才发了短信，你觉得他什么时候回复？', 'user'),
+        ('我明天会发短信。', None),
+        ('我听说室友已经发了短信。', '室友'),
+        ('室友说班长已经发了短信。', '班长'),
+    ])
+    def test_reported_subject_and_modality_do_not_become_assistant_or_wrong_self(source, actor):
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True)
+            bot.respond(source)
+            result = bot.respond('是谁发的短信？')
+>           assert result['reported_communication']['reported_actor'] == actor
+E           AssertionError: assert 'user' == '室友'
+E             
+E             - 室友
+E             + user
+
+tests/test_reported_sender_contract.py:60: AssertionError
+_ test_reported_subject_and_modality_do_not_become_assistant_or_wrong_self[\u5ba4\u53cb\u8bf4\u73ed\u957f\u5df2\u7ecf\u53d1\u4e86\u77ed\u4fe1\u3002-\u73ed\u957f] _
+
+source = '室友说班长已经发了短信。', actor = '班长'
+
+    @pytest.mark.parametrize('source,actor', [
+        ('我的室友已经发了邮件。', '室友'),
+        ('我和同学已经一起发了短信。', '你和同学'),
+        ('我刚才发了短信，你觉得他什么时候回复？', 'user'),
+        ('我明天会发短信。', None),
+        ('我听说室友已经发了短信。', '室友'),
+        ('室友说班长已经发了短信。', '班长'),
+    ])
+    def test_reported_subject_and_modality_do_not_become_assistant_or_wrong_self(source, actor):
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True)
+            bot.respond(source)
+            result = bot.respond('是谁发的短信？')
+>           assert result['reported_communication']['reported_actor'] == actor
+E           AssertionError: assert '室友' == '班长'
+E             
+E             - 班长
+E             + 室友
+
+tests/test_reported_sender_contract.py:60: AssertionError
+_ test_ordinary_reply_cannot_assert_or_offer_unavailable_execution[\u8fd9\u5957\u7cfb\u7edf\u5728\u8fd0\u884c\u65f6\u53ef\u4ee5\u5904\u7406\u63d0\u9192\u5e76\u5c1d\u8bd5\u53d1\u9001\u77ed\u4fe1\u3002] _
+
+reply = '这套系统在运行时可以处理提醒并尝试发送短信。'
+
+    @pytest.mark.parametrize('reply', [
+        '我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
+        '我可以替你拨打电话联系室友。', '已经帮你发送短信。',
+        '我没有短信接口，但我已经发出短信了。', '需要我帮你发送邮件吗？',
+        '我会到时提醒你。',
+        '我已经把安排发到群里了。', '我可以帮你发邮件。', '我已经发了短信。',
+        '这套系统在运行时可以处理提醒并尝试发送短信。',
+    ])
+    def test_ordinary_reply_cannot_assert_or_offer_unavailable_execution(reply):
+        checked = review_output(reply)
+>       assert checked.rules and checked.reply != reply
+E       AssertionError: assert (())
+E        +  where () = GuardedOutput(reply='这套系统在运行时可以处理提醒并尝试发送短信。', rules=()).rules
+
+tests/test_capability_output.py:17: AssertionError
+_ test_negation_quotation_reporting_and_in_chat_text_are_preserved[\u6211\u53ef\u4ee5\u5e2e\u4f60\u4fee\u6539\u8981\u53d1\u9001\u7684\u77ed\u4fe1\u5185\u5bb9\u3002] _
+
+reply = '我可以帮你修改要发送的短信内容。'
+
+    @pytest.mark.parametrize('reply', [
+        '我没有发送短信。', '我无法替你发送邮件。',
+        '根据你说的，你已经发送了短信。', '他说邮件已发送。',
+        '“邮件已发送”只是你给的原文。', '如果发送短信，需要在自己的手机中操作。',
+        '我可以发给你三个建议。', '我可以在这里发送代码示例。',
+        '我可以帮你修改要发送的短信内容。', '邮件服务系统可以发送邮件。',
+    ])
+    def test_negation_quotation_reporting_and_in_chat_text_are_preserved(reply):
+>       assert review_output(reply).reply == reply
+E       AssertionError: assert '我没有外部短信、邮件代发...口，不能替你执行这些操作。' == '我可以帮你修改要发送的短信内容。'
+E         
+E         - 我可以帮你修改要发送的短信内容。
+E         + 我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。
+
+tests/test_capability_output.py:29: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reported_sender_contract.py::test_reported_subject_and_modality_do_not_become_assistant_or_wrong_self[\u6211\u542c\u8bf4\u5ba4\u53cb\u5df2\u7ecf\u53d1\u4e86\u77ed\u4fe1\u3002-\u5ba4\u53cb]
+FAILED tests/test_reported_sender_contract.py::test_reported_subject_and_modality_do_not_become_assistant_or_wrong_self[\u5ba4\u53cb\u8bf4\u73ed\u957f\u5df2\u7ecf\u53d1\u4e86\u77ed\u4fe1\u3002-\u73ed\u957f]
+FAILED tests/test_capability_output.py::test_ordinary_reply_cannot_assert_or_offer_unavailable_execution[\u8fd9\u5957\u7cfb\u7edf\u5728\u8fd0\u884c\u65f6\u53ef\u4ee5\u5904\u7406\u63d0\u9192\u5e76\u5c1d\u8bd5\u53d1\u9001\u77ed\u4fe1\u3002]
+FAILED tests/test_capability_output.py::test_negation_quotation_reporting_and_in_chat_text_are_preserved[\u6211\u53ef\u4ee5\u5e2e\u4f60\u4fee\u6539\u8981\u53d1\u9001\u7684\u77ed\u4fe1\u5185\u5bb9\u3002]
+4 failed, 34 passed in 0.91s
