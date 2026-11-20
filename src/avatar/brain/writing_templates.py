@@ -43,12 +43,12 @@ def build_fallback(requirements, *, current_text, fictional=False):
     # Explicit fictional counterparty reply only: no real receipt or approval.
     root = requirements.sources[0][1]
     if (fictional and requirements.author_role in ('老师', '导师')
-            and re.fullmatch(r'我(?:已|已经|刚|刚刚|刚才)(?:把|将)?(?:邮件|消息|短信)'
+            and (fiction_request := re.fullmatch(r'我(?:已|已经|刚|刚刚|刚才)(?:把|将)?(?P<channel>邮件|消息|短信)'
                 r'(?:发送|发|寄)(?:了)?给(?:老师|导师)[，,；;]\s*(?:接着|随后|然后)'
-                r'(?:请|帮我)?(?:写|拟|起草)(?:一下)?(?:对方|老师|导师)(?:的)?(?:回复|回信)[。！!]?\s*', root)):
+                r'(?:请|帮我)?(?:写|拟|起草)(?:一下)?(?:对方|老师|导师)(?:的)?(?:回复|回信)[。！!]?\s*', root))):
         if len(requirements.sources) != 1 or count not in (None, 1):
             return None
-        return SourceArtifact('“你好，邮件已收到，我会查看后再回复。”',
+        return SourceArtifact('“你好，' + fiction_request['channel'] + '已收到，我会查看后再回复。”',
             'explicit_fiction_counterparty_reply_v1', requirements.source_message_ids)
     if fictional or requirements.author_role is not None:
         return None

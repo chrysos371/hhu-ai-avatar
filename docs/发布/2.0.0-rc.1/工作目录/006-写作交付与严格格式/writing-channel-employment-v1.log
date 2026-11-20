@@ -1,0 +1,83 @@
+...F....FFF...                                                           [100%]
+=================================== FAILURES ===================================
+_ test_explicit_fictional_counterparty_is_delivered_without_a_model_offer[\u6211\u521a\u521a\u5c06\u77ed\u4fe1\u53d1\u9001\u7ed9\u5bfc\u5e08\uff0c\u968f\u540e\u62df\u5bf9\u65b9\u56de\u590d\u3002] _
+
+root = '我刚刚将短信发送给导师，随后拟对方回复。'
+
+    @pytest.mark.parametrize('root', ['我已把邮件发给老师，接着写对方回复。',
+        '我刚刚将短信发送给导师，随后拟对方回复。'])
+    def test_explicit_fictional_counterparty_is_delivered_without_a_model_offer(root):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine=Replies(['只提议代写而没有正文。'])
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+            bot.respond('我来扮演一个虚构角色。')
+            result=bot.respond(root)
+            assert result['generation_mode']=='rules_writing_artifact' and not engine.native
+            assert result['reply'].startswith('“你好') and not result['tool_calls']
+>           assert ('短信' if '短信' in root else '邮件') + '已收到' in result['reply']
+E           AssertionError: assert ('短信' + '已收到') in '“你好，邮件已收到，我会查看后再回复。”'
+
+tests/test_writing_direct_sources.py:35: AssertionError
+_ test_model_cannot_add_employment_to_family_leave[\u65e0\u6cd5\u6b63\u5e38\u4e0a\u73ed] _
+
+detail = '无法正常上班'
+
+    @pytest.mark.parametrize('detail', ['无法正常上班', '不能出勤', '无法返岗'])
+    def test_model_cannot_add_employment_to_family_leave(detail):
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '我明天要参加家里的活动，' + detail + '。'
+            engine = Replies([bad, bad])
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '帮我写一封请假邮件，我明天要参加家里的活动，只给正文。')
+>           assert detail not in result['reply']
+E           AssertionError: assert '无法正常上班' not in '我明天要参加家里的活动，无法正常上班。'
+E             
+E             '无法正常上班' is contained here:
+E               我明天要参加家里的活动，无法正常上班。
+E             ?             ++++++
+
+tests/test_writing_employment_sources.py:18: AssertionError
+__ test_model_cannot_add_employment_to_family_leave[\u4e0d\u80fd\u51fa\u52e4] __
+
+detail = '不能出勤'
+
+    @pytest.mark.parametrize('detail', ['无法正常上班', '不能出勤', '无法返岗'])
+    def test_model_cannot_add_employment_to_family_leave(detail):
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '我明天要参加家里的活动，' + detail + '。'
+            engine = Replies([bad, bad])
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '帮我写一封请假邮件，我明天要参加家里的活动，只给正文。')
+>           assert detail not in result['reply']
+E           AssertionError: assert '不能出勤' not in '我明天要参加家里的活动，不能出勤。'
+E             
+E             '不能出勤' is contained here:
+E               我明天要参加家里的活动，不能出勤。
+E             ?             ++++
+
+tests/test_writing_employment_sources.py:18: AssertionError
+__ test_model_cannot_add_employment_to_family_leave[\u65e0\u6cd5\u8fd4\u5c97] __
+
+detail = '无法返岗'
+
+    @pytest.mark.parametrize('detail', ['无法正常上班', '不能出勤', '无法返岗'])
+    def test_model_cannot_add_employment_to_family_leave(detail):
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '我明天要参加家里的活动，' + detail + '。'
+            engine = Replies([bad, bad])
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '帮我写一封请假邮件，我明天要参加家里的活动，只给正文。')
+>           assert detail not in result['reply']
+E           AssertionError: assert '无法返岗' not in '我明天要参加家里的活动，无法返岗。'
+E             
+E             '无法返岗' is contained here:
+E               我明天要参加家里的活动，无法返岗。
+E             ?             ++++
+
+tests/test_writing_employment_sources.py:18: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_direct_sources.py::test_explicit_fictional_counterparty_is_delivered_without_a_model_offer[\u6211\u521a\u521a\u5c06\u77ed\u4fe1\u53d1\u9001\u7ed9\u5bfc\u5e08\uff0c\u968f\u540e\u62df\u5bf9\u65b9\u56de\u590d\u3002]
+FAILED tests/test_writing_employment_sources.py::test_model_cannot_add_employment_to_family_leave[\u65e0\u6cd5\u6b63\u5e38\u4e0a\u73ed]
+FAILED tests/test_writing_employment_sources.py::test_model_cannot_add_employment_to_family_leave[\u4e0d\u80fd\u51fa\u52e4]
+FAILED tests/test_writing_employment_sources.py::test_model_cannot_add_employment_to_family_leave[\u65e0\u6cd5\u8fd4\u5c97]
+4 failed, 10 passed in 0.98s
