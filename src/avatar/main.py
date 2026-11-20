@@ -817,7 +817,8 @@ class Avatar:
         self._knowledge_context=[];self._knowledge_degraded=False
         knowledge_store=self._admin_store()
         if (knowledge_store and boundary.reply is None and control is None and reminder_query is None
-                and capability_request is None and reported_sender_reply is None and history_reply is None):
+                and capability_request is None and reported_sender_reply is None and history_reply is None
+                and calculation_reply is None):
             try:
                 from .brain.knowledge import KnowledgeService
                 self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
@@ -825,7 +826,8 @@ class Avatar:
                 self._knowledge_degraded=True
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
         if (self.summary_enabled and control is None and reminder_query is None
-                and capability_request is None and reported_sender_reply is None and history_reply is None):
+                and capability_request is None and reported_sender_reply is None and history_reply is None
+                and calculation_reply is None):
             self.summaries.refresh(self.session_id)
         writing_delivery_active = bool(self._writing_requirements is not None
             and self._writing_requirements.source_verified and boundary.reply is None

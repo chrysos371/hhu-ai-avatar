@@ -50,7 +50,7 @@ def compute(text, sources):
         if not relevant:
             continue
         ids.append(ident)
-        if not authenticated:
+        if authenticated is not True:
             valid, reason = False, 'unverified_material_source'; continue
         if root:
             fields = root.groups()
@@ -95,12 +95,13 @@ def build(memory, *, text, user_id, revision):
         'LEFT JOIN memory_chat_results r ON r.message_id=m.id '
         'WHERE m.id<? ORDER BY m.id DESC LIMIT 128', (user_id,)).fetchall()
     sources = []
-    for index in range(len(rows)-1,0,-1):
-        user, assistant = rows[index],rows[index-1]
+    for index in range(len(rows)-1,-1,-1):
+        user = rows[index]
+        assistant = rows[index-1] if index else None
         if user['role'] != 'user' or requested(user['content']) is not None:
             continue
         authenticated = False
-        if assistant['role'] == 'assistant':
+        if assistant is not None and assistant['role'] == 'assistant':
             try: authenticated = reader._result(assistant,user,'current_user',revision) is not None
             except (TypeError,ValueError,OverflowError,RecursionError): pass
         sources.append((user['id'],user['content'],authenticated))
