@@ -33,10 +33,18 @@ def test_fixture_binds_own_worktree_before_imports(tmp_path,inherited):
 
 def test_fixture_records_explicit_packaged_ui_and_its_actual_bytes(tmp_path):
     ui=tmp_path/'packaged-ui';ui.mkdir();(ui/'index.html').write_text('<html>isolated package UI</html>')
-    env=dict(os.environ,AVATAR_E2E_FRONTEND_DIR=str(ui));env.pop('AVATAR_E2E_RUNTIME_EVIDENCE',None)
+    env=dict(os.environ,AVATAR_E2E_FRONTEND_DIR=str(ui),HHU_AVATAR_DATA_ROOT=str(tmp_path));env.pop('AVATAR_E2E_RUNTIME_EVIDENCE',None)
     result=subprocess.run([sys.executable,str(ROOT/'tests/helpers/serve_admin_e2e.py'),'--check-project-runtime'],
         cwd=ROOT/'frontend',env=env,capture_output=True,text=True,check=True,timeout=15)
     data=json.loads(result.stdout)
     assert data['frontend_dir']==str(ui.resolve())
     assert data['frontend_sha256']=={'frontend/dist/index.html':sha256((ui/'index.html').read_bytes()).hexdigest()}
     assert all(Path(p).is_relative_to(ROOT/'src') for p in data['module_paths'].values())
+
+
+def test_fixture_rejects_ui_outside_owned_data_or_checkout_frontend(tmp_path):
+    env=dict(os.environ,AVATAR_E2E_FRONTEND_DIR=str(tmp_path/'unowned-ui'),HHU_AVATAR_DATA_ROOT=str(tmp_path/'owned'))
+    env.pop('AVATAR_E2E_RUNTIME_EVIDENCE',None)
+    result=subprocess.run([sys.executable,str(ROOT/'tests/helpers/serve_admin_e2e.py'),'--check-project-runtime'],
+        cwd=ROOT/'frontend',env=env,capture_output=True,text=True,timeout=15)
+    assert result.returncode!=0 and 'Browser fixture UI must stay in project-owned data' in result.stderr

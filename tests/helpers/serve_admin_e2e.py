@@ -50,7 +50,8 @@ state_protocol_path = project_root / 'evals/interaction/cycle-36/maintained-stat
 state_protocol = json.loads(state_protocol_path.read_text())
 query_protocol_path = project_root / 'evals/interaction/cycle-39/explicit-reminder-query-protocol.json'
 frontend_dir = Path(os.getenv('AVATAR_E2E_FRONTEND_DIR', str(project_root/'frontend/dist'))).resolve()
-if not frontend_dir.is_relative_to(project_data_root().resolve()):
+if not (frontend_dir.is_relative_to(project_data_root().resolve())
+        or frontend_dir.is_relative_to((project_root/'frontend').resolve())):
     raise ValueError('Browser fixture UI must stay in project-owned data')
 runtime_binding = {'reminder_query_protocol_sha256': sha256(query_protocol_path.read_bytes()).hexdigest(), 'state_privacy_protocol_sha256': sha256(state_protocol_path.read_bytes()).hexdigest(), 'project_root': str(project_root), 'python_prefix': sys.prefix,
     'capability_contract_enabled': os.getenv('AVATAR_E2E_CAPABILITY_CONTRACT') == '1',
