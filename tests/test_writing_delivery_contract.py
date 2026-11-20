@@ -102,3 +102,58 @@ def test_copyable_writing_does_not_claim_due_reminder_without_presenting_notific
         assert result['reply'] == '申请请假。' and result['due_reminders'] == []
         later = bot.respond('换个话题，聊聊吧。')
         assert len(later['due_reminders']) == 1 and '到期提醒' in later['reply']
+
+
+@pytest.mark.parametrize('change', ['forget', 'cancel'])
+def test_change_during_actual_repair_never_publishes_or_commits_new_assistant(tmp_path, monkeypatch, change):
+    with closing(MemoryStore(str(tmp_path/'repair.db'))) as memory:
+        engine = Replies(['申请请假。', '今天身体不适，申请请假。', '申请请假。'])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        root = bot.respond('帮我写一条请假短信，只给正文。')['conversation']['user_message_id']
+        fragment = memory.remember('有来源的写作控制', source_message_id=root)
+        token, pieces = CancellationToken(), []
+        original = engine.stream_chat
+        def generate(*args, **kwargs):
+            text = original(*args, **kwargs)
+            if len(engine.native) == 3:
+                if change == 'cancel':
+                    token.cancel()
+                else:
+                    with closing(MemoryStore(memory.db_path)) as writer:
+                        writer.forget(fragment)
+            return text
+        monkeypatch.setattr(engine, 'stream_chat', generate)
+        before = memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]
+        with pytest.raises(Cancelled):
+            bot.respond('再自然一点。', cancel=token, on_delta=pieces.append)
+        assert len(engine.native) == 3 and not pieces
+        assert memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0] == before
+
+
+def test_legacy_delivery_option_does_not_add_second_repair_loop():
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Replies(['今天身体不适，申请请假。', '申请请假。'])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True, delivery_check_enabled=True)
+        result = bot.respond('帮我写一条请假短信，只给正文。')
+        assert result['reply'] == '申请请假。' and len(engine.native) == 2
+        assert result['writing_delivery']['repair_attempted']
+
+
+def test_explicitly_disabled_contract_retains_original_generation_path():
+    with closing(MemoryStore(':memory:')) as memory:
+        body = '今天身体不适，申请请假。'
+        engine = Replies([body])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=False)
+        result = bot.respond('帮我写一条请假短信，只给正文。')
+        assert result['reply'] == body and len(engine.native) == 1
+        assert 'writing_delivery' not in result and 'writing_requirements' not in result
+
+
+@pytest.mark.parametrize('failed_repair', ['', '今天身体不适，申请请假。'])
+def test_invalid_or_empty_second_attempt_stops_without_third_call(failed_repair):
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Replies(['今天身体不适，申请请假。', failed_repair])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        result = bot.respond('帮我写一条请假短信，只给正文。')
+        assert result['generation_mode'] == 'rules_writing_validation' and len(engine.native) == 2
+        assert result['writing_delivery']['final_issues']

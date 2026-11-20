@@ -50,7 +50,7 @@ def test_draft_tail_service_offer_is_removed_before_sse_and_storage():
     with closing(MemoryStore(':memory:')) as memory:
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         pieces = []
-        result = bot.respond('帮我给同学写一条请假短信。', cancel=CancellationToken(), on_delta=pieces.append)
+        result = bot.respond('帮我给同学写一条今天的请假短信。', cancel=CancellationToken(), on_delta=pieces.append)
         assert result['reply'].strip() == '同学你好，我今天需要请假。'
         assert ''.join(pieces) == memory.get_short_term()[-1]['content'] == result['reply']
         assert all(pieces) and result['capability_contract']['output_rules'] == ['unsupported_external_offer']
