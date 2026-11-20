@@ -858,12 +858,17 @@
           "sha256": "110d3902faa3e18f16220f002217dd788ffe77087fe771cc6ccca5dd1054297d"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "scripts/evaluate_response_review.py",
+        "tests/test_review_experiment.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "级别P2，状态已复现，实验器已修复并验证。4B预热实际返回reason空字符串，严格验证合理拒绝；但预热不在逐例异常保护内，脚本退出且没有主报告。原生trace和失败日志保存，不能把这当作40例模型质量失败或跳过不记录。"
-      ]
+      ],
+      "release_review": "预热异常先入报告再继续固定用例，不将无效预热计质量失败。"
     },
     {
       "id": "C03-002",
@@ -876,12 +881,18 @@
           "sha256": "417f35b3ac868c5eadd4be633687692b73e189848d18dfc8e46563c0ac54b7dc"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "G04_general_or_delivery_quality_still_requires_validation",
+      "resolution_evidence": [
+        "src/avatar/brain/response_review.py",
+        "tests/test_response_review.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "级别P1，状态校准门槛失败、未接入回复路径。14B原固定40例有40个合法JSON，精确分类仅25/40；原16个明确违例中9个被判pass，18个明确合规均为pass，6个预标歧义未全部保持uncertain。开发10/16，预留验证15/24。合法结构和逐字引用要求均不能保证判断正确。"
-      ]
+      ],
+      "release_review": "结构化评审高错误放行，未接入默认路径；仅拒绝该候选，归属/身体一般质量仍由G04跟踪。"
     },
     {
       "id": "C03-003",
@@ -894,14 +905,19 @@
           "sha256": "b77af65bfb9d49a2b1e92fa95be14299dddce4dbcaa32d370fbb9ba355aebdd4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_delivery_stream.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，交付检查流式缓冲已修复并复测。task_contract_enabled和delivery_check_enabled显式开启，profile_grounding_enabled关闭时，原checked_delta仍逐句发出缺少【姓名】的草稿，最终落库却是修正后的正文，事件与最终结果不一致。",
         "定向回归观察pieces为“老师您好，我要请假。”，result.reply为含【姓名】的新稿。目标：仅在有活动任务且开启交付检查时缓冲，待一次检查/有界修复与边界检查完成再发送。默认普通流式路径仍须早于完成输出，修正失败应如实暴露检查状态，不得冒称合格。失败日志另存。",
         "同一草稿/修正脚本现在只发result.reply一次；交付检查活动范围单独记录stream_buffered，资料路径与默认普通流式保持各自状态。关联测试全部通过，原生SDK默认早于完成出字的回归也保留。具体数值见after.log。"
-      ]
+      ],
+      "release_review": "活动交付检查缓冲最终修后文本；普通流式仍早出，不以修后落库掩盖已发草稿。"
     },
     {
       "id": "C03-004",
@@ -914,12 +930,17 @@
           "sha256": "c66e7d3cae65371c92c3e0181908766ea8723e95701fea84a3cbf07a36452662"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_delivery_stream.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，已修复，同一取消令牌用于SDK修正调用。初稿走可取消stream_chat，而修正仍走同步chat，不能共享回合取消；修正阶段except Exception还捕获自定义Cancelled，可能继续交付已知不合格草稿。"
-      ]
+      ],
+      "release_review": "修正复用可取消流式传输、单独传播Cancelled；实际受控HTTP等待头取消无增量/助手行。"
     },
     {
       "id": "C03-005",
@@ -932,12 +953,18 @@
           "sha256": "0d647017396cc7760e656c39080df28ed6672999d5ef57d5ae6bccae8a41bfde"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_profile_grounding.py",
+        "tests/test_delivery_stream.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，发送前来源版本与取消检查已统一修复。最终持久化前会检查context_revision，但已检查文本向on_delta发送在此前。review_profile_reply期间直接调用forget_memory后，respond最终虽Cancelled，pieces却含已删除的“喜欢网球”资料。"
-      ]
+      ],
+      "release_review": "每次可见发送前检查来源和取消，另SQLite连接删改后不发后续旧文本；不宣称网络/DB全局原子。"
     },
     {
       "id": "C03-006",
@@ -950,12 +977,18 @@
           "sha256": "0843abb208a42e30fff67fc272050c6447de73dcc79fa15bcf6253493c1afaa4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_literal_contract.py",
+        "tests/test_task_contracts.py",
+        "src/avatar/brain/tasks.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，已复现。旧TaskTracker只抓【占位符】，不识别台词写作或“包含/原样保留”的引号原文；原4B追加用例要求包含“我喜欢喝花茶”，回复“我最喜欢喝花茶了”没有逐字包含，旧交付检查无法发现。另一方面，朋友引语中的写作命令或角色/收件人可能被当成当前任务。"
-      ]
+      ],
+      "release_review": "引用外写作指令与包含/禁止/释放操作有既定作用域，写提醒正文不授权真实提醒；仅已登记有限语法。"
     },
     {
       "id": "C03-007",
@@ -968,12 +1001,17 @@
           "sha256": "d91ff7c02de376cfe652435a9d1b5d226cab07b4c20783d5d0813000a127ac03"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "G04_general_or_delivery_quality_still_requires_validation",
+      "resolution_evidence": [
+        "tests/test_literal_template.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，真实对照已复现，候选仍未放行。旧12逐轮场景baseline11/12→candidate12/12；新增16场景两组均14/16，候选修正仍未保留“我喜欢喝花茶”，且新增comma_literal：要求原样“时间，地点”却输出“今晚七点，地点在市中心咖啡馆。”一次自由文本重试没有可靠保证原文不被改写。失败与全部原生请求/回复留档，不能用原12全过上线。"
-      ]
+      ],
+      "release_review": "自由文本修正仍丢原文/编造，候选未默认启用；后续模板不自动获批准，G04字面交付与正文充分性继续门控。"
     },
     {
       "id": "C03-008",
@@ -986,13 +1024,18 @@
           "sha256": "f55714810a94805e4ffb24ca202f6bc2586bbbd47a11d7a32c97214cbef8f6ce"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_task_context.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，4项失败均已修复并通过关联复测。005只检查可见发送；若模型初稿生成期间删除旧资料，流程虽然最终因context_revision取消，仍先把含旧资料的初稿发给修正模型。TaskTracker.current又未随forget/correct清理，复用同一个Avatar时，“再短一点”可能继续使用旧任务。",
         "目标：在回复继续/修正请求之前验证来源版本，不只在发送和落库时验证；来源失效清理派生任务。显式删除/纠正立即清理，本机另一SQLite连接修改则在下一次回合恢复前清理。保持合法未变更的连续改稿、已确认用户输入和既有默认流式行为。此项关注新增派生任务状态与二次模型请求，区别于005可见增量的单阶段检查。"
-      ]
+      ],
+      "release_review": "二次模型请求前后版本屏障，公开/另连接来源失效清理派生任务，不能复用已删原稿。"
     },
     {
       "id": "C03-009",
@@ -1005,12 +1048,19 @@
           "sha256": "9d05af0bcd754c05f891ffe19d7107b28add709cdc9fec3a2f268fb90727a41e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_literal_contract.py",
+        "tests/test_profile_grounding.py",
+        "src/avatar/brain/profile_grounding.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，已按有效写作范围修复并复测。profile_grounding=True且有活动写作合同，已确认用户喜欢网球。请求“起草一段文字，保留‘我喜欢网球’”后，模型正确交付“我喜欢网球。”，却被关键词型资料归属纠正替换为“目前关于你的偏好记录是：喜欢网球。”。起草不包含“写”等旧创作词，真正的写作任务范围已知却没有用于输出解释。"
-      ]
+      ],
+      "release_review": "该已知任务分支使用实际活动合同解释第一人称代写，避免改为偏好确认；不代表一般主体归属已过。"
     },
     {
       "id": "C03-010",
@@ -1023,12 +1073,17 @@
           "sha256": "0e1f3def9b1c3b7aa0b3c2662d61a490830d1c82ba85845caaca5b064244f280"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "G04_general_or_delivery_quality_still_requires_validation",
+      "resolution_evidence": [
+        "tests/test_literal_template.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，已通过原生结果逐条复核确认；阻断默认启用。槽位候选36/36字面/范围/副作用检查通过，基线33/36；但8次框架组合包含“我总是在雨天我喜欢听雨喜欢那淅淅沥沥的声音”“时间时间地点地点”“请带水杯带水杯”。comma_literal仍为“今晚七点，时间，地点市中心咖啡馆。”，插入原文没有去掉原先编造的具体信息。"
-      ]
+      ],
+      "release_review": "旧槽位组合字面全过仍重复/编造，保持拒绝默认；v2已见样本改善不批准一般自然度/充分性，G04继续门控。"
     },
     {
       "id": "C03-011",
@@ -1041,13 +1096,19 @@
           "sha256": "16e279cb065e321f732e2dc81c5c6a6e4d3998146acbab6986e51356e52c9808"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_task_followup_scope.py",
+        "tests/test_web_task_delivery.py",
+        "src/avatar/brain/tasks.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，24项预冻结检查12过12败。写作后用户说“再问个问题，什么是重力”“不用谢”“还是说说二进制”“只要你陪我聊天”，旧continuation把“再/不用/还是/只要”直接当改稿。交付检查随后会试图把普通回答修正成带旧原文的写作产物。",
         "改为明确编辑谓词跟进；提问、解释、寒暄、取消/换话题释放旧状态，非文字对象的“修改”不再继承写作合同。原24项、取消后同回合新任务、网页实例间新问题与既有回归共101项通过（详情见web-after.log）。源窗口原文仍可用于普通对话，不再对新问题强塞旧字面。"
-      ]
+      ],
+      "release_review": "明确编辑谓词承接，新问题/寒暄/取消/换题释放旧约束；不承诺任意多意图理解。"
     },
     {
       "id": "C04-001",
@@ -1060,13 +1121,18 @@
           "sha256": "600af8da13c220a4c778c2b404d393917fd274d8c0f99d0692935a8e3a1db280"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_speaker_attribution.py",
+        "src/avatar/brain/speaker_scope.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，已复现。单句引语/假设过滤不等于跨轮说话者识别；BoundaryPolicy.fiction只调提示和风险分支，没有控制事实写入。模型路径和规则兜底共用_store_fact，均可能污染。",
         "目标：显式本人扮演入口后阻断所有长期事实写入、真人资料确定性回复及省略指代串用；明确退出后恢复。讨论小说/请助手写角色不应误阻断真实自述。网页每轮新Avatar仍保持范围，来源删除后清理派生状态。风险路由保持原样。边界语法有限、历史已污染数据库不自动猜测清理，需用户按来源检查修正。"
-      ]
+      ],
+      "release_review": "显式跨轮扮演阻断规则/模型事实写入，跨窗口/网页新实例保持范围；不自动猜清旧污染，更晚具体声明另核。"
     },
     {
       "id": "C04-002",
@@ -1079,12 +1145,17 @@
           "sha256": "017eca776e41af8e1e6c93657c4045c700d05bdcf79d711d3ee2da8dff646c98"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_speaker_actions.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1。001阻断事实写入不等于阻断动作；明确扮演后“提醒我明天9点带伞”仍创建SQLite提醒，“取消提醒1”仍修改真人提醒。use_web也直接进入WebAgent，没有区分角色台词的授权主体。4个工程检查先复现；实际到期提醒属于真人先前授权的通知，不因当前角色模式取消或吞掉。"
-      ]
+      ],
+      "release_review": "角色回合阻断真人提醒创建/取消与web工具代理，真实到期通知和管理操作按各自授权。"
     },
     {
       "id": "C04-003",
@@ -1097,12 +1168,17 @@
           "sha256": "aabf23a8c85ed7835affd2a056a0e7c7434bddfac09d4440be0ef189e8f75880"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_speaker_actions.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1。002仅使用说话者最终状态判断工具权限；“提醒我明天9点带伞。回到现实。”最终为真人，前半角色提醒却被执行；use_web相同。2个新增检查先复现，不能把整条输入按最后一句重新归属。"
-      ]
+      ],
+      "release_review": "整条独立真人来源才可授权动作；末句退出不追授权前半角色操作，另轮退出后正常恢复。"
     },
     {
       "id": "C04-004",
@@ -1115,12 +1191,17 @@
           "sha256": "2db6e51e6fcd7f79c0abf4051ed52273090894ef6fab76ebeb2635dc7d52b079"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_speaker_attribution.py",
+        "src/avatar/main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，本轮新增状态引入的竞争回归。模型分析过程中另一SQLite连接删除偏好，新增三条真人上下文仍保留旧对象；“现在不喜欢了”可先写回“不喜欢骑车”，随后最终检查才取消。显式姓名也可能在已经失效的回合中先写入。两个真实独立SQLite连接检查先复现，两项均失败。"
-      ]
+      ],
+      "release_review": "事实上下文读/写事务内版本屏障，另一SQLite连接删除后分析不得复活事实，Cancelled不被兜底吞没。"
     },
     {
       "id": "C05-001",
@@ -1133,12 +1214,17 @@
           "sha256": "991cb225fec1920dc4af619004755ad514c76fd907624a9e06326fe551b43dfe"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_analytic_lipsync_fixture.py",
+        "scripts/evaluate_analytic_lipsync.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2，实验夹具缺陷。协议为k*f0<5000Hz，初版range(1,int(5000/f0))在f0=180时漏掉4860Hz的第27谐波。独立将生成信号逆滤波重建激励，3种采样率的27/1幅值比应为1/27，先复现失败。原开发v1仍保留，不用于候选与验证门槛；修复后改用协议v2和全新路径。另补F1/F2独立误差及缺失率，避免合并中位数掩盖漏峰。未运行种子29的验证。"
-      ]
+      ],
+      "release_review": "非整倍数截止按k*f0严格小于截止包含第27项；独立逆滤波覆盖三采样率，原错v1保留。"
     },
     {
       "id": "C05-002",
@@ -1151,12 +1237,17 @@
           "sha256": "77f768fbdf1516f669f6e21c64ddd900c8db002b8be67459c0a4b5384159469c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_lipsync_boundaries.py",
+        "src/avatar/face/lipsync.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2，解析稳定声源实测。正式v2开发每条路径120信号，当前默认造成component160/web172个突降，符合中段条件帧3.32%/3.49%。这些不是从声源检测出来的停顿。冻结持续a锚信号检查先失败，显式旧装饰模式仍需兼容。"
-      ]
+      ],
+      "release_review": "默认close_every=None，取消无声源装饰闭口；保留明确装饰选项和真实静音闭口。"
     },
     {
       "id": "C05-003",
@@ -1169,12 +1260,17 @@
           "sha256": "cab5f6d2385cf92931a77a2afc3df9be1376f3510b9dc8921923b005ea5881c2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_software_quality_with_human_calibration_deferred",
+      "release_impact": "blocks_G03_software_scope; human_physical_part_deferred_by_user",
+      "resolution_evidence": [
+        "src/avatar/face/lipsync.py",
+        "docs/发布/2.0.0-rc.1/下次启动待办.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1（口型质量），未通过真人或一般元音验收。v2解析开发component帧标签82.98%、网页16k91.90%；720个采样点F2缺失48/12。虽然统一16k总体提高，但120对里10对变差，e/i锚区均有退步，不凭总分改组件默认采样率。不调标签迎合结果。"
-      ]
+      ],
+      "release_review": "LPC锚区与采样率敏感未根治；ü/声调软件与受控门控仍需完成。真人/物理校准已授权延期，不能冒称准确率通过。"
     },
     {
       "id": "C05-004",
@@ -1187,12 +1283,17 @@
           "sha256": "dc0e65c38d0b24d2711ee29ef703cefcee7fff9638baf967e1e25d4e2b794baf"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "tests/test_lipsync_boundaries.py",
+        "src/avatar/face/lipsync.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2。当前只验证silence_rms，零hop、非法smooth等延迟报底层异常或被静默接收；非有限信号可变成貌似正常闭口，空输入吞预取消。独立边界组先复现。"
-      ]
+      ],
+      "release_review": "构造参数、非有限PCM、采样率、预取消、整数极小值与窗口可表示性均有明确拒绝，非法输入不能伪装闭口。"
     },
     {
       "id": "C06-001",
@@ -1205,12 +1306,18 @@
           "sha256": "2f050e2c6068841f0b9c1a4c7a658ed1bcaa6e4e5d9bd64724ab75bd3f49754e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_formant_candidate_not_promoted",
+      "release_impact": "default_exposure_closed; underlying_quality_in_C05-003",
+      "resolution_evidence": [
+        "tests/test_conservative_formants.py",
+        "src/avatar/lab/conservative_lipsync.py",
+        "src/avatar/face/lipsync.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，候选问题，未接默认。固定开发4臂：roots400组件增加12个退步场景、网页16个；dense10分别4/2个；fallback50无既有场景退步且网页补齐，但组件将2个原未知帧改判错误。它们是同一o锚48k白噪声、两档幅度的0.19秒，旧F1=610.57Hz、新F1=597.12Hz/F2=1025.59Hz，跨过原分类器F1决策区。"
-      ]
+      ],
+      "release_review": "补峰候选跨F1区将未知变错，未接默认，实验扩展仅lab；不是中文元音质量改善通过。"
     },
     {
       "id": "C06-002",
@@ -1223,12 +1330,18 @@
           "sha256": "2713f0e6fabe139881d4ad350cda09bd83e29a9f735c3989b121eb4081120cc7"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_formant_candidate_not_promoted",
+      "release_impact": "default_exposure_closed; underlying_quality_in_C05-003",
+      "resolution_evidence": [
+        "tests/test_conservative_formants.py",
+        "tests/test_formant_cache.py",
+        "src/avatar/lab/conservative_lipsync.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，候选未通过。开发修订满足已知全部门槛并先提交，原冻结新参数80信号/路径首次完整实跑后，组件有1个“未知转错”；无场景总分退步和网页没有该问题不能抵销它。新增测试集仍是合成家族，不是真人音素金标。"
-      ]
+      ],
+      "release_review": "封存80波形新增错后候选移lab；生产仅保留严格等输出缓存，归档逐帧/并发/别名回归存在；不重用失败波形追分。"
     },
     {
       "id": "C07-001",
