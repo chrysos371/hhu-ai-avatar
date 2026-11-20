@@ -69,3 +69,47 @@ def test_fictional_counterparty_author_and_receipt_do_not_become_real_execution(
         assert role + '您好' not in result['reply'] and '你好' in result['reply']
         assert not result['tool_calls'] and not result['action_receipts']['items']
         assert memory._conn.execute('SELECT COUNT(*) FROM memory_action_receipts').fetchone()[0] == 0
+
+
+@pytest.mark.parametrize('change', ['forget','cancel'])
+def test_actual_source_change_after_fallback_construction_stops_publication(tmp_path, monkeypatch, change):
+    from avatar.brain import writing_templates
+    with closing(MemoryStore(str(tmp_path/'fallback.db'))) as memory:
+        engine = Replies(['您好。因【请假原因】申请请假。', '今天身体不适。', '今天身体不适。'])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        root = bot.respond('帮我写一条请假短信，只给正文。')['conversation']['user_message_id']
+        fragment = memory.remember('有来源的写作控制',source_message_id=root)
+        token, pieces = CancellationToken(), []
+        original = writing_templates.build_fallback
+        def changed(*args, **kwargs):
+            result = original(*args, **kwargs)
+            assert result is not None
+            if change == 'cancel':
+                token.cancel()
+            else:
+                with closing(MemoryStore(memory.db_path)) as writer:
+                    writer.forget(fragment)
+            return result
+        monkeypatch.setattr(writing_templates,'build_fallback',changed)
+        before = memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0]
+        with pytest.raises(Cancelled):
+            bot.respond('再短一点。',cancel=token,on_delta=pieces.append)
+        assert not pieces and len(engine.native) == 3
+        assert memory._conn.execute("SELECT COUNT(*) FROM memory_messages WHERE role='assistant'").fetchone()[0] == before
+
+
+def test_release_signature_and_current_three_sentence_limit_survive_real_reopen(tmp_path):
+    path = str(tmp_path/'restart.db')
+    with closing(MemoryStore(path)) as memory:
+        engine = Replies(['今天身体不适。']*6)
+        bot = Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+        bot.respond('帮我写一条请假短信，署名用【作者】，只给正文。')
+        bot.respond('保留原意，改成三句话。')
+        bot.respond('再短一点，不要署名。')
+    with closing(MemoryStore(path)) as memory:
+        engine = Replies(['今天身体不适。']*2)
+        bot = Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+        result = bot.respond('再自然一点。')
+        assert result['generation_mode'] == 'rules_writing_artifact'
+        assert '【作者】' not in result['reply']
+        assert len(re.findall(r'[。！？!?]+',result['reply'])) == 3

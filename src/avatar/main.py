@@ -1028,6 +1028,8 @@ class Avatar:
                             reply = corrected
                             writing_delivery_result['repair_succeeded'] = True
                             generation_mode = 'llm_writing_repaired'
+                    else:
+                        writing_delivery_result['model_repair_issues'] = ['invalid_repair_body']
                 except Cancelled:
                     raise
                 except Exception as exc:

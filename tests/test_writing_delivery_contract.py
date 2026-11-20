@@ -61,7 +61,9 @@ def test_exhausted_repair_does_not_publish_known_invalid_draft():
         engine = Replies([bad, bad])
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         pieces = []
-        result = bot.respond('帮我写一条请假短信，只给正文。', cancel=CancellationToken(), on_delta=pieces.append)
+        # Additional material is outside the finite template grammar: failure
+        # must remain explicit rather than silently dropping this user source.
+        result = bot.respond('帮我写一条请假短信，只给正文，保留“原句”。', cancel=CancellationToken(), on_delta=pieces.append)
         assert len(engine.native) == 2
         assert bad not in result['reply'] and bad not in ''.join(pieces)
         assert result['generation_mode'] == 'rules_writing_validation'
@@ -154,7 +156,7 @@ def test_invalid_or_empty_second_attempt_stops_without_third_call(failed_repair)
     with closing(MemoryStore(':memory:')) as memory:
         engine = Replies(['今天身体不适，申请请假。', failed_repair])
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
-        result = bot.respond('帮我写一条请假短信，只给正文。')
+        result = bot.respond('帮我写一条请假短信，只给正文，保留“原句”。')
         assert result['generation_mode'] == 'rules_writing_validation' and len(engine.native) == 2
         assert result['writing_delivery']['final_issues']
 
