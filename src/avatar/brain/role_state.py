@@ -25,7 +25,9 @@ def decode(text):
                 raise ValueError('duplicate role snapshot key')
             data[key] = value
         return data
-    return json.loads(text, object_pairs_hook=unique, parse_constant=lambda _: (_ for _ in ()).throw(ValueError('nonfinite snapshot')))
+    def nonfinite(_):
+        raise ValueError('nonfinite snapshot')
+    return json.loads(text, object_pairs_hook=unique, parse_constant=nonfinite)
 
 
 class RoleStateStore:
@@ -129,7 +131,7 @@ class RoleStateStore:
             engine.restore_role_snapshot(data['role'], elapsed=now-saved, revision=data['source']['revision'])
             self.last_restored_scope = scope
             return True
-        except (ValueError, TypeError, KeyError, OverflowError):
+        except (ValueError, TypeError, KeyError, OverflowError, RecursionError):
             return False
         finally:
             if owned:

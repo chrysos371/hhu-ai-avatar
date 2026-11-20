@@ -532,7 +532,7 @@ def run_chat(server, user_text, use_web=False, *, job=None, mode='chat'):
                         task_contract_enabled=server.task_delivery_check,
                         delivery_check_enabled=server.task_delivery_check,
                         literal_composition_enabled=server.literal_composition,
-                        role_state_enabled=server.role_state_enabled)
+                        role_state_enabled=getattr(server, 'role_state_enabled', False))
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
         avatar.speaker_scope = server.speaker_scope

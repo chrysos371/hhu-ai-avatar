@@ -55,7 +55,7 @@ def test_external_revision_change_removes_derived_snapshot(saved, change):
 
 
 @pytest.mark.parametrize('fault', ['version', 'revision', 'scope', 'source_hash', 'bool_source_id',
-    'nan', 'range', 'future', 'policy', 'hash', 'duplicate', 'missing_source'])
+    'nan', 'range', 'future', 'policy', 'hash', 'duplicate', 'deep_json', 'missing_source'])
 def test_corrupt_or_stale_snapshot_rejected_without_restoring_user(saved, fault):
     memory, bot, store, result = saved
     payload = memory._conn.execute('SELECT payload FROM memory_role_state').fetchone()[0]
@@ -74,6 +74,7 @@ def test_corrupt_or_stale_snapshot_rejected_without_restoring_user(saved, fault)
         memory._conn.commit()
     payload = json.dumps(data, ensure_ascii=False)
     if fault == 'duplicate': payload = payload[:-1]+',"version":1}'
+    if fault == 'deep_json': payload = '['*2000 + '0' + ']'*2000
     with memory.transaction():
         memory._conn.execute('UPDATE memory_role_state SET payload=?,payload_sha256=?',
             (payload, 'wrong' if fault == 'hash' else digest(payload)))
