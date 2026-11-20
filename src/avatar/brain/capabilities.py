@@ -40,7 +40,7 @@ class CapabilitySnapshot:
                 'items': [vars(row).copy() for row in self.receipts], 'has_more': self.has_more,
                 'complete_history': False, 'current_reminder_state_verified': False,
                 'external_delivery_verified': False, 'human_acknowledgement_verified': False},
-            'current_reply_executes_actions': False, 'semantic_verifier': False}
+            'text_generation_executes_actions': False, 'semantic_verifier': False}
 
 
 def checked_tool_inventory():
@@ -64,7 +64,7 @@ def snapshot(memory, *, session_id, source_message_id, user_text, revision, scop
             or scope.allows_actions and not scope.allows_facts):
         raise Cancelled('Capability attribution unavailable')
     if (not isinstance(known_source_ids, (set, frozenset)) or source_message_id not in known_source_ids
-            or len(known_source_ids) > 2048
+            or len(known_source_ids) > 512
             or any(type(n) is not int or not 0 < n <= source_message_id for n in known_source_ids)):
         raise Cancelled('Capability sources are not in the current reply lineage')
     conn = memory._conn
