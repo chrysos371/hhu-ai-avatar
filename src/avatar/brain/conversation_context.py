@@ -94,13 +94,18 @@ class ConversationContextStore:
             return None
         if not isinstance(result, dict):
             return None
+        # Only this reader may construct a model-only envelope. A same-named
+        # persisted field, including one on an ordinary reply, grants nothing.
+        result.pop('_delivery_history_context', None)
         source = result.get('conversation')
         attribution = result.get('speaker_attribution')
         if (not isinstance(source, dict) or not isinstance(attribution, dict)
                 or attribution.get('scope') != scope
                 or result.get('reply') != assistant['content']
-                or result.get('generation_mode') not in {
-                    'llm', 'rules', 'rules_speaker_control', 'rules_speaker_scope', 'rules_reminder_query'}
+                or type(result.get('generation_mode')) is not str
+                or result['generation_mode'] not in {
+                    'llm', 'rules', 'rules_speaker_control', 'rules_speaker_scope', 'rules_reminder_query',
+                    'llm_writing_repaired', 'llm_capability_guarded', 'rules_writing_artifact', 'rules_writing_validation'}
                 or type(source.get('revision')) is not int or source['revision'] != revision
                 or type(source.get('user_message_id')) is not int
                 or source['user_message_id'] != user['id']
@@ -110,6 +115,14 @@ class ConversationContextStore:
             return None
         if not self._dependencies_valid(assistant['id'], user['id']):
             return None
+        if (result.get('writing_delivery') is not None or result['generation_mode'] in {
+                'llm_writing_repaired', 'llm_capability_guarded', 'rules_writing_artifact', 'rules_writing_validation'}):
+            from .writing_history import verified_content
+            content = verified_content(self.memory, result, user_id=user['id'], assistant_id=assistant['id'],
+                scope=scope, revision=revision)
+            if content is None:
+                return None
+            result['_delivery_history_context'] = content
         if result['generation_mode'] == 'rules_reminder_query':
             from .query_history import query_history_content
             content = query_history_content(result['reply'], result.get('reminder_query'),
@@ -165,6 +178,9 @@ class ConversationContextStore:
             if result['generation_mode'] == 'rules_reminder_query':
                 assistant = dict(assistant)
                 assistant['content'] = result['_query_history_context']
+            elif '_delivery_history_context' in result:
+                assistant = dict(assistant)
+                assistant['content'] = result['_delivery_history_context']
             pairs.append((user, assistant))
             if result['generation_mode'] == 'rules_speaker_control':
                 break

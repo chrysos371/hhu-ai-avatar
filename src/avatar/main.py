@@ -1185,6 +1185,11 @@ class Avatar:
                     turn_tools_allowed=self.speaker_scope.allows_actions)
                 if context_reply is None:
                     raise Cancelled('query context does not match the verified source')
+            if writing_delivery_result is not None:
+                from .brain.writing_history import MODES, content as writing_history_content
+                if generation_mode in MODES:
+                    context_reply = writing_history_content(reply, self._writing_requirements,
+                        mode=generation_mode, scope=self.speaker_scope.scope)
             self.memory.add_short_term("assistant", context_reply)
             assistant_message_id = self.memory.add_message('assistant', reply, self.session_id,
                 context_ids=response_context_ids, source_message_ids=response_source_ids)

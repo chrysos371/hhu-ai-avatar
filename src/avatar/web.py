@@ -532,6 +532,7 @@ def run_chat(server, user_text, use_web=False, *, job=None, mode='chat'):
                         task_contract_enabled=server.task_delivery_check,
                         delivery_check_enabled=server.task_delivery_check,
                         literal_composition_enabled=server.literal_composition,
+                        capability_contract_enabled=getattr(server, 'capability_contract_enabled', False),
                         role_state_enabled=getattr(server, 'role_state_enabled', False))
         memory = avatar.memory
         avatar.emotion, avatar.boundaries = server.emotion, server.boundaries
@@ -639,11 +640,14 @@ def create_server(
     literal_composition=False,
     recover_context=True,
     role_state_enabled=False,
+    capability_contract_enabled=False,
 ) -> ThreadingHTTPServer:
     if type(recover_context) is not bool:
         raise ValueError('recover_context must be a boolean')
     if type(role_state_enabled) is not bool:
         raise ValueError('role_state_enabled must be a boolean')
+    if type(capability_contract_enabled) is not bool:
+        raise ValueError('capability_contract_enabled must be a boolean')
     if literal_composition and not task_delivery_check:
         raise ValueError('Literal composition requires task delivery checks')
     initial_emotion = EmotionEngine()
@@ -669,6 +673,7 @@ def create_server(
     server.literal_composition = literal_composition
     server.recover_context = recover_context
     server.role_state_enabled = role_state_enabled
+    server.capability_contract_enabled = capability_contract_enabled
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []
