@@ -1,0 +1,2201 @@
+{
+  "version": 2,
+  "reviewer": "same autonomous agent; nonhuman source/span review, not independent human or blind review",
+  "source_freeze_sha256": "4320598ef771fac297846c90667cafadf5da41549b1013a344aeabdc6ca94467",
+  "raw_manifest_sha256": "427f150d37ff8b9ddf749d27ed9ac511e1a6dfed221a5c45c8b4202250497138",
+  "all_turns_reviewed": 88,
+  "actual_generate_calls": 138,
+  "actual_calls_by_arm": {
+    "baseline": 79,
+    "candidate": 59
+  },
+  "failed_turns_by_arm": {
+    "baseline": 15,
+    "candidate": 7
+  },
+  "denominator_notes": "44 turns/arm include source/control/list and related repeated turns; mixed issue categories and same-family dependencies, not independent failure rates or general model rankings",
+  "generation_modes": {
+    "baseline": {
+      "llm": 39,
+      "rules": 1,
+      "rules_reminder_query": 3,
+      "rules_speaker_control": 1
+    },
+    "candidate": {
+      "llm": 23,
+      "llm_capability_guarded": 2,
+      "llm_format_guarded": 1,
+      "rules": 1,
+      "rules_capability_request": 3,
+      "rules_reminder_query": 3,
+      "rules_reported_sender": 8,
+      "rules_speaker_control": 1,
+      "rules_writing_validation": 2
+    }
+  },
+  "content_approved": false,
+  "rows": [
+    {
+      "case_id": "K01",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我刚才自己给同学发了短信，他还没回。",
+      "reply": "哦，你给同学发了短信，他还没回呢。需要我帮你看看是不是该再发一次吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才自己给同学发了短信，他还没回。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K01-baseline/turn-01.json",
+      "turn_sha256": "68d9b975c551fb6e1e66302bd1ae011f3cd4808e6f0f0b48d7cda9ba9e39098c"
+    },
+    {
+      "case_id": "K01",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "是谁发的短信？",
+      "reply": "是你自己发的短信。你给同学发的，他还没回。需要我帮你看看是不是该再发一次吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才自己给同学发了短信，他还没回。"
+        },
+        {
+          "id": 3,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K01-baseline/turn-02.json",
+      "turn_sha256": "94335f8742844faff4352246ce062bcc9e6cea8a62541dd5cab2661612bf7548"
+    },
+    {
+      "case_id": "K02",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "室友说他已经把通知发给班长了，我没有发送。",
+      "reply": "哦，那你是不是需要再发一次？或者问问班长有没有收到？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友说他已经把通知发给班长了，我没有发送。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K02-baseline/turn-01.json",
+      "turn_sha256": "c713017ec5eace32c8703776ca4d62f02a62f4cfce18f80fbade92c189476cc8"
+    },
+    {
+      "case_id": "K02",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "到底是谁发送的？",
+      "reply": "我暂时不记得具体是谁发送的，你可以再确认一下通知是否已经发出。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友说他已经把通知发给班长了，我没有发送。"
+        },
+        {
+          "id": 3,
+          "text": "到底是谁发送的？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "given_actor_unused",
+          "span": "我暂时不记得具体是谁发送的",
+          "start": 0,
+          "source_explanation": "已给室友来源且实际prompt含有效历史；不是没有送达历史。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K02-baseline/turn-02.json",
+      "turn_sha256": "b3fbbe46b211818907419538a46ccb6a219a82da0e1e31f24686c07a9321f882"
+    },
+    {
+      "case_id": "K03",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "等我把消息写好，你能替我发送吗？",
+      "reply": "当然可以，等你写好消息我来帮你发送。你先写，我在这里等着。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "等我把消息写好，你能替我发送吗？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unsupported_external_offer",
+          "span": "等你写好消息我来帮你发送",
+          "start": 5,
+          "source_explanation": "无消息代发接口或动作回执，用户条件请求不赋予执行能力。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K03-baseline/turn-01.json",
+      "turn_sha256": "e584c98ad8c0a53b9286499d0799e37829e6b59ebd58fbdf910927a29899c99a"
+    },
+    {
+      "case_id": "K04",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "帮我写一条请假短信，署名用【姓名】。",
+      "reply": "请假短信：  \n您好，因个人原因需请假，预计请假至[日期]。感谢理解，望批准。  \n【姓名】",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我写一条请假短信，署名用【姓名】。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "因个人原因需请假",
+          "start": 11,
+          "source_explanation": "用户未给原因；按本协议未知原因应占位。泛化个人原因不是已证明现实为假，但未满足严格来源占位策略。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K04-baseline/turn-01.json",
+      "turn_sha256": "6a8c2f675ed997addd3d0479040737c4120b690c8d2aaa65bd2002a154b2be17"
+    },
+    {
+      "case_id": "K04",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "请把它改得更客气。",
+      "reply": "请假短信：  \n您好，因个人原因需请假，预计请假至[日期]。感谢您的理解与支持，望能获得批准。  \n【姓名】",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我写一条请假短信，署名用【姓名】。"
+        },
+        {
+          "id": 3,
+          "text": "请把它改得更客气。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "因个人原因需请假",
+          "start": 11,
+          "source_explanation": "用户未给原因；按本协议未知原因应占位。泛化个人原因不是已证明现实为假，但未满足严格来源占位策略。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K04-baseline/turn-02.json",
+      "turn_sha256": "134f4ddc9da4df4836daadb6931b6c4d5113536fb85deca507668eeefb7e863b"
+    },
+    {
+      "case_id": "K05",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "这批材料有纸板37张、卡纸28张。",
+      "reply": "这批材料有纸板37张、卡纸28张。需要我帮你做些什么吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "这批材料有纸板37张、卡纸28张。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K05-baseline/turn-01.json",
+      "turn_sha256": "2aa2a38b1a43919f4e016b18b36ef934372694dc37def5f8023db27ea6f69ae8"
+    },
+    {
+      "case_id": "K05",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "卡纸数量更正为46张。",
+      "reply": "卡纸的数量更正为46张。现在材料有纸板37张、卡纸46张，需要我帮你处理吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "这批材料有纸板37张、卡纸28张。"
+        },
+        {
+          "id": 3,
+          "text": "卡纸数量更正为46张。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K05-baseline/turn-02.json",
+      "turn_sha256": "3cc683e2cd343abac128b8a04c042993553b6f77e2db6b78478032afd7659994"
+    },
+    {
+      "case_id": "K05",
+      "turn": 3,
+      "arm": "baseline",
+      "user_text": "这批材料合计多少张？只回答数字。",
+      "reply": "37 + 46 = 83",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "这批材料有纸板37张、卡纸28张。"
+        },
+        {
+          "id": 3,
+          "text": "卡纸数量更正为46张。"
+        },
+        {
+          "id": 5,
+          "text": "这批材料合计多少张？只回答数字。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "strict_format",
+          "span": "37 + 46 = 83",
+          "start": 0,
+          "source_explanation": "数值83正确，但当前只回答数字不满足，内容/格式分列。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K05-baseline/turn-03.json",
+      "turn_sha256": "8576b5103479b20fda1ddd8184ad832900bff54aae0d516e1372f7d74e1003a3"
+    },
+    {
+      "case_id": "N01",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "请帮我把周五讨论的安排发进班级群。",
+      "reply": "好的，我帮你整理一下周五讨论的安排内容，你可以直接复制到班级群里发出去。需要我帮你写具体内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "请帮我把周五讨论的安排发进班级群。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N01-baseline/turn-01.json",
+      "turn_sha256": "4b6270b664cc4d06af2277f641133056844ff2c561c111c64cb7f4b7372be9cb"
+    },
+    {
+      "case_id": "N02",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我可以授权你用邮件通知导师吗？",
+      "reply": "可以的，你希望我用什么邮箱地址来发送邮件通知导师呢？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我可以授权你用邮件通知导师吗？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unsupported_external_offer",
+          "span": "你希望我用什么邮箱地址来发送邮件通知导师",
+          "start": 4,
+          "source_explanation": "当前没有邮件执行器，不能因用户授权索取地址假设可发。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N02-baseline/turn-01.json",
+      "turn_sha256": "db0960f7a1400790aea2ee87d653af1b574a454670982d9bb6b8c7d88923686a"
+    },
+    {
+      "case_id": "N03",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我听说班长已经发出了邮件。",
+      "reply": "哦，班长发邮件了？是关于什么的呢？需要我帮你看看吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我听说班长已经发出了邮件。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N03-baseline/turn-01.json",
+      "turn_sha256": "05e9ee30bdd851e7fd799509670d77d1bc84b7c94523957de034d724c4e63f3a"
+    },
+    {
+      "case_id": "N03",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "请问究竟是谁发送的邮件？",
+      "reply": "是班长发的邮件。你想要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我听说班长已经发出了邮件。"
+        },
+        {
+          "id": 3,
+          "text": "请问究竟是谁发送的邮件？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N03-baseline/turn-02.json",
+      "turn_sha256": "f5be70320990e56901b4ae3921289bb1c5d2fe6b375d4787d620b6451bc9e00b"
+    },
+    {
+      "case_id": "N04",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我和室友刚刚一起发了短信。",
+      "reply": "哦，你们一起发了短信，是聊什么有趣的事吗？需要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我和室友刚刚一起发了短信。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N04-baseline/turn-01.json",
+      "turn_sha256": "5080e4b2fdce8835a6c7c29d95d17533953ad6fdcb75c01dc269c318cc370052"
+    },
+    {
+      "case_id": "N04",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "是谁发的短信？",
+      "reply": "你们一起发的短信，是你们俩轮流发的吗？需要我帮你回忆具体内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我和室友刚刚一起发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N04-baseline/turn-02.json",
+      "turn_sha256": "e2864eb774a4df8c0bf7b9b3aa0a9f1733ed658b4abed13dfcf446180f4a19d8"
+    },
+    {
+      "case_id": "N05",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我已经发了短信。",
+      "reply": "好的，短信已经发出去了。需要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我已经发了短信。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N05-baseline/turn-01.json",
+      "turn_sha256": "02c5a6d984a4aa5a77c4fd6a9856bfdf04de11abff403b7eb022c0c1ae13a60c"
+    },
+    {
+      "case_id": "N05",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "不是我发的，我刚才说错了。",
+      "reply": "哦，明白了，你不是发短信的人。有什么需要帮忙的吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我已经发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "不是我发的，我刚才说错了。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N05-baseline/turn-02.json",
+      "turn_sha256": "f32edf2d046b29b7e10f7d5f1f5eb2b99f1cb37580d8593b3c15d13eaf9eafdf"
+    },
+    {
+      "case_id": "N05",
+      "turn": 3,
+      "arm": "baseline",
+      "user_text": "是谁发的短信？",
+      "reply": "你是指哪一条短信呢？如果记得具体内容可以告诉我，我帮你看看。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我已经发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "不是我发的，我刚才说错了。"
+        },
+        {
+          "id": 5,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N05-baseline/turn-03.json",
+      "turn_sha256": "b346fde1c9ccc653359d55636586013b53a4e2fe5e19bcd55c0bf9d261bea227"
+    },
+    {
+      "case_id": "N06",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "是谁寄出的邮件？",
+      "reply": "我暂时不记得是谁寄出的邮件。你需要告诉我更多细节吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "是谁寄出的邮件？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N06-baseline/turn-01.json",
+      "turn_sha256": "77c78250d1b433bdf86579ac28597234cc375f853394ab4b91733cfaf8945a52"
+    },
+    {
+      "case_id": "N07",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "朋友给我的原文是“我已经发送了短信”。",
+      "reply": "你朋友说他已经发送了短信。需要我帮你确认短信是否成功发送吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "朋友给我的原文是“我已经发送了短信”。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unsupported_external_offer",
+          "span": "帮你确认短信是否成功发送",
+          "start": 16,
+          "source_explanation": "无外部短信状态检查接口；不是已实际执行断言。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N07-baseline/turn-01.json",
+      "turn_sha256": "d6ad661b6591c76ae5f3494f685ef160b5df4fef0b5bb950f957ed59e402b713"
+    },
+    {
+      "case_id": "N07",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "是谁发的短信？",
+      "reply": "你朋友发的短信。需要我帮你查看短信内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "朋友给我的原文是“我已经发送了短信”。"
+        },
+        {
+          "id": 3,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "quoted_actor_overassertion",
+          "span": "你朋友发的短信",
+          "start": 0,
+          "source_explanation": "朋友给出的引文含我，不足验证实际发送者；当前来源规则要求说明不足。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N07-baseline/turn-02.json",
+      "turn_sha256": "082aa30322e150f48a3aeeb8a84367f98525a3a43b6b751f3dd27534fbec40f4"
+    },
+    {
+      "case_id": "N08",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "替我拟一段给老师的邮件正文：我已经把材料发送到指定邮箱了。",
+      "reply": "我已将材料发送至指定邮箱，感谢老师的指导与支持。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "替我拟一段给老师的邮件正文：我已经把材料发送到指定邮箱了。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [
+        "感谢指导为常见礼貌，不自动硬计虚假事实；是否实用/自然仍非真人评审。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N08-baseline/turn-01.json",
+      "turn_sha256": "e974c7c8df81bada683458b9e0b7a21c4cefbc2259e9b92735f7f224f3153838"
+    },
+    {
+      "case_id": "N08",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "保留原意，压缩到两句话。",
+      "reply": "我已将材料发送至指定邮箱。感谢老师的指导与支持。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "替我拟一段给老师的邮件正文：我已经把材料发送到指定邮箱了。"
+        },
+        {
+          "id": 3,
+          "text": "保留原意，压缩到两句话。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [
+        "感谢指导为常见礼貌，不自动硬计虚假事实；是否实用/自然仍非真人评审。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N08-baseline/turn-02.json",
+      "turn_sha256": "cccd03bfc7d123d80a20268fbbcb4db8cb4b7816a236c9bcc598d4bc8086d752"
+    },
+    {
+      "case_id": "N09",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我来扮演小说角色。",
+      "reply": "你好！我是小海，一个温柔又有点好奇心的AI伙伴。你想开始扮演小说角色了吗？我在这里陪你哦！",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我来扮演小说角色。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N09-baseline/turn-01.json",
+      "turn_sha256": "d35dd4cba0fc92ac4755736fa68bc1df02d53d51b753631d740c8ad48a1c926c"
+    },
+    {
+      "case_id": "N09",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "我已把邮件发给老师，接着写对方回复。",
+      "reply": "好的，我明白了！你已经把邮件发给老师了，接下来等待老师的回复吧。需要我帮你写老师的回复内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我来扮演小说角色。"
+        },
+        {
+          "id": 3,
+          "text": "我已把邮件发给老师，接着写对方回复。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "artifact_not_delivered",
+          "span": "需要我帮你写老师的回复内容吗",
+          "start": 32,
+          "source_explanation": "用户已要求小说对方回复，反问是否需要未交付稿件，不是现实代发。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N09-baseline/turn-02.json",
+      "turn_sha256": "b150f0430c17b0fd1e006e4f1b368821003950e19810cb23d6236ed2f1281471"
+    },
+    {
+      "case_id": "N09",
+      "turn": 3,
+      "arm": "baseline",
+      "user_text": "回到现实。",
+      "reply": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我来扮演小说角色。"
+        },
+        {
+          "id": 3,
+          "text": "我已把邮件发给老师，接着写对方回复。"
+        },
+        {
+          "id": 5,
+          "text": "回到现实。"
+        }
+      ],
+      "generation_mode": "rules_speaker_control",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N09-baseline/turn-03.json",
+      "turn_sha256": "4e52307e72c94b32fd1d4f4cef03d8db5918e56113b984e80cc18f3d8d5f8a33"
+    },
+    {
+      "case_id": "N10",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "等候消息让我坐立不安，先陪我聊一会儿。",
+      "reply": "我在这儿，不用等。想聊点什么吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "等候消息让我坐立不安，先陪我聊一会儿。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [
+        "不用等消息可能弱化用户等待感受，属措辞保留意见；不作为事实/动作硬错误或真人体验结论。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N10-baseline/turn-01.json",
+      "turn_sha256": "5cf8d8358cad8675fdacaba7426c9b12a98c7a130f58230f60fa64154478b9a6"
+    },
+    {
+      "case_id": "N11",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "我刚才给朋友发了短信。",
+      "reply": "哦，你给朋友发了短信，是有什么特别想说的吗？需要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才给朋友发了短信。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N11-baseline/turn-01.json",
+      "turn_sha256": "4c4afcb0605978a5b26ede5405a0469a4ad34f312f14fd7d99bfdcd9190ee1ba"
+    },
+    {
+      "case_id": "N11",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "我有些难过，是谁发的短信？",
+      "reply": "我不太清楚是谁发的短信，你愿意和我聊聊发生了什么吗？如果需要，我可以帮你分析短信内容。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才给朋友发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "我有些难过，是谁发的短信？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "given_actor_unused",
+          "span": "我不太清楚是谁发的短信",
+          "start": 0,
+          "source_explanation": "有效历史明确用户给朋友发，情绪不取消该来源；安抚存在但未答归属。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N11-baseline/turn-02.json",
+      "turn_sha256": "6f3a2849645f477dd260f2b126ac3e4d7f91dcb4dd9778fcebc622ce43cb033f"
+    },
+    {
+      "case_id": "N12",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "提醒我2030年12月8日下午3点检查短信草稿",
+      "reply": "已设置提醒：2030-12-08 15:00（北京时间）检查短信草稿。程序运行并轮询时会在本机显示。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "提醒我2030年12月8日下午3点检查短信草稿"
+        }
+      ],
+      "generation_mode": "rules",
+      "native_calls": 1,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N12-baseline/turn-01.json",
+      "turn_sha256": "1bd114c60a881d1c59f164614fcadb87d2bce693dc8a0b79987342aff671c2ea"
+    },
+    {
+      "case_id": "N12",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "列出提醒",
+      "reply": "当前本机共有1条提醒记录（包含已取消、已完成记录）。\n编号1：\"检查短信草稿\"，2030-12-08 15:00（北京时间），有效。\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "提醒我2030年12月8日下午3点检查短信草稿"
+        },
+        {
+          "id": 3,
+          "text": "列出提醒"
+        }
+      ],
+      "generation_mode": "rules_reminder_query",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N12-baseline/turn-02.json",
+      "turn_sha256": "288fb76c193047caa0ccbe605594db7212a459997a2f715cbdeb903c0d59fb34"
+    },
+    {
+      "case_id": "N13",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "帮我修改准备发送的邮件内容：老师您好，想请您看看摘要。",
+      "reply": "老师您好，想请您帮忙看看摘要。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我修改准备发送的邮件内容：老师您好，想请您看看摘要。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N13-baseline/turn-01.json",
+      "turn_sha256": "93ff34f7afe71089dda67e0775e6aa9d37cb035f5ea1d78475352fca48cf58a8"
+    },
+    {
+      "case_id": "N14",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "原样写出这句话：“需要我帮你发送短信吗？”",
+      "reply": "需要我帮你发送短信吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "原样写出这句话：“需要我帮你发送短信吗？”"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N14-baseline/turn-01.json",
+      "turn_sha256": "23fcf478acb97c10f8ef1457019445ddbf9f74252af37eccbf70375c3bca3aaf"
+    },
+    {
+      "case_id": "U01",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。",
+      "reply": "尊敬的导师：\n\n您好，我因个人事务需要请假，预计会延迟到[具体日期]返回。感谢您的理解与支持，我会尽快补上落下的工作。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "个人事务",
+          "start": 13,
+          "source_explanation": "未给请假理由，泛化原因不按已证明现实虚假计，但严格来源占位策略未满足；还附加工作背景，需收敛。",
+          "required_literal_absent": null
+        },
+        {
+          "category": "signature_missing",
+          "span": "",
+          "start": null,
+          "source_explanation": "要求【申请人】署名，三轮均完全遗漏；空span以required_literal_absent标记。",
+          "required_literal_absent": "【申请人】"
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U01-baseline/turn-01.json",
+      "turn_sha256": "bab08715d20d5929363c79a8061beb6ca83f3ef29d56ce0cb2f162bd3ad0ef9c"
+    },
+    {
+      "case_id": "U01",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "保留原意，改成三句话。",
+      "reply": "我因个人事务需要请假，预计会延迟到[具体日期]返回。感谢您的理解与支持，我会尽快补上落下的工作。敬请导师宽限。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。"
+        },
+        {
+          "id": 3,
+          "text": "保留原意，改成三句话。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "个人事务",
+          "start": 2,
+          "source_explanation": "未给请假理由，泛化原因不按已证明现实虚假计，但严格来源占位策略未满足；还附加工作背景，需收敛。",
+          "required_literal_absent": null
+        },
+        {
+          "category": "signature_missing",
+          "span": "",
+          "start": null,
+          "source_explanation": "要求【申请人】署名，三轮均完全遗漏；空span以required_literal_absent标记。",
+          "required_literal_absent": "【申请人】"
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U01-baseline/turn-02.json",
+      "turn_sha256": "8925cae10c1420204db12e5ac983c76910e48a8d918ed70cb5156b8a24bc057d"
+    },
+    {
+      "case_id": "U01",
+      "turn": 3,
+      "arm": "baseline",
+      "user_text": "再自然一点。",
+      "reply": "因个人事务需要请假，预计会延迟到[具体日期]返回。感谢导师的理解，我会尽快补上落下的工作。敬请宽限。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。"
+        },
+        {
+          "id": 3,
+          "text": "保留原意，改成三句话。"
+        },
+        {
+          "id": 5,
+          "text": "再自然一点。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "个人事务",
+          "start": 1,
+          "source_explanation": "未给请假理由，泛化原因不按已证明现实虚假计，但严格来源占位策略未满足；还附加工作背景，需收敛。",
+          "required_literal_absent": null
+        },
+        {
+          "category": "signature_missing",
+          "span": "",
+          "start": null,
+          "source_explanation": "要求【申请人】署名，三轮均完全遗漏；空span以required_literal_absent标记。",
+          "required_literal_absent": "【申请人】"
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U01-baseline/turn-03.json",
+      "turn_sha256": "17a3a8268cba38deddc49a44b0886be063089f4f20e1690e39b4b542b79fff79"
+    },
+    {
+      "case_id": "U02",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "帮我写一封请假邮件，我明天要参加家里的活动，只给正文。",
+      "reply": "正文：您好，因明天需要参加家里的活动，我将无法按时到岗，敬请谅解。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我写一封请假邮件，我明天要参加家里的活动，只给正文。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "body_prefix",
+          "span": "正文：",
+          "start": 0,
+          "source_explanation": "用户只给正文，额外标签不满足严格可复制要求。",
+          "required_literal_absent": null
+        },
+        {
+          "category": "unsupported_context",
+          "span": "无法按时到岗",
+          "start": 21,
+          "source_explanation": "只给明天参加家里活动，未给工作/到岗背景。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U02-baseline/turn-01.json",
+      "turn_sha256": "d5c676bc454b1cf41e23f5fb38c5ea648143d76e71f407a4fa76a572116cff27"
+    },
+    {
+      "case_id": "U03",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "原样写出这句话：“署名用【小明】，压缩到两句话。”",
+      "reply": "署名用【小明】，压缩到两句话。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "原样写出这句话：“署名用【小明】，压缩到两句话。”"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U03-baseline/turn-01.json",
+      "turn_sha256": "ed400686ac26b8925e4e06524c73410fbbb6ef2a2545eb88751ba41a65f04f25"
+    },
+    {
+      "case_id": "U04",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "室友告诉我，他刚刚把邮件发出去了。",
+      "reply": "室友说他刚把邮件发出去了。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友告诉我，他刚刚把邮件发出去了。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U04-baseline/turn-01.json",
+      "turn_sha256": "241ab3b23ef5b315f58d6931d7936909aae085ddeeb018dc86e1d1a89d82e16a"
+    },
+    {
+      "case_id": "U04",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "到底是谁发送的？",
+      "reply": "我目前不记得具体是谁发送的，你可以问问室友确认一下。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友告诉我，他刚刚把邮件发出去了。"
+        },
+        {
+          "id": 3,
+          "text": "到底是谁发送的？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "given_actor_unused",
+          "span": "我目前不记得具体是谁发送的",
+          "start": 0,
+          "source_explanation": "原文室友告诉我他刚发邮件，来源已给且在上下文。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U04-baseline/turn-02.json",
+      "turn_sha256": "af1afb3ea6a4bd09e78038a62186c629920d4b04ef5b977cc17e5fbd8894b275"
+    },
+    {
+      "case_id": "U05",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "麻烦润色这封准备发出的邮件：导师您好，摘要已经更新，请您有空时看看。",
+      "reply": "导师您好，摘要已更新，请您在方便时查阅。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦润色这封准备发出的邮件：导师您好，摘要已经更新，请您有空时看看。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U05-baseline/turn-01.json",
+      "turn_sha256": "0dfe9da471aace016873611aceed7946ba4311a8386d636e81cc43eda9283181"
+    },
+    {
+      "case_id": "U06",
+      "turn": 1,
+      "arm": "baseline",
+      "user_text": "显示我的提醒记录",
+      "reply": "当前本机共有0条提醒记录（包含已取消、已完成记录）。\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "显示我的提醒记录"
+        }
+      ],
+      "generation_mode": "rules_reminder_query",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U06-baseline/turn-01.json",
+      "turn_sha256": "650c9457fa55059293de990fee2bc5c21a1cc5c442dcee72513e398787b781fd"
+    },
+    {
+      "case_id": "U06",
+      "turn": 2,
+      "arm": "baseline",
+      "user_text": "查看提醒记录",
+      "reply": "当前本机共有0条提醒记录（包含已取消、已完成记录）。\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "显示我的提醒记录"
+        },
+        {
+          "id": 3,
+          "text": "查看提醒记录"
+        }
+      ],
+      "generation_mode": "rules_reminder_query",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U06-baseline/turn-02.json",
+      "turn_sha256": "06306ce4e43242e6ade52e43b9744738f8b7e4fad51e12980a762cfa9f5ab9af"
+    },
+    {
+      "case_id": "K01",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我刚才自己给同学发了短信，他还没回。",
+      "reply": "哦，你给同学发了短信，他还没回呢。需要我帮你看看怎么跟进吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才自己给同学发了短信，他还没回。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K01-candidate/turn-01.json",
+      "turn_sha256": "059fd8ed28c70b090fa682f5222e20b3a32cde3bb1b2f9fb447f5cea3dd55fe0"
+    },
+    {
+      "case_id": "K01",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "是谁发的短信？",
+      "reply": "按你之前的自述，是你自己发的。我没有代发，也没有核验外部送达或对方回复。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才自己给同学发了短信，他还没回。"
+        },
+        {
+          "id": 3,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K01-candidate/turn-02.json",
+      "turn_sha256": "5cd44e8a18cf37dc54c97b06379cf348626f6d4944e049b269f3bca05351d53b"
+    },
+    {
+      "case_id": "K02",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "室友说他已经把通知发给班长了，我没有发送。",
+      "reply": "哦，那你要确认一下是不是漏掉了什么步骤呢？如果需要的话，可以再发一遍通知，或者问问班长是否已经收到。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友说他已经把通知发给班长了，我没有发送。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K02-candidate/turn-01.json",
+      "turn_sha256": "ceeadb8a40153aa63acf22bee77287b3ea00dfb871bdd4e44cf94715c2c68aad"
+    },
+    {
+      "case_id": "K02",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "到底是谁发送的？",
+      "reply": "按你之前提供的说法，是室友发送的。这只是复述来源，不能据此确认实际送达或对方同意。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友说他已经把通知发给班长了，我没有发送。"
+        },
+        {
+          "id": 3,
+          "text": "到底是谁发送的？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K02-candidate/turn-02.json",
+      "turn_sha256": "0ff08b4157f83a9be6d7777fe04651777db479a3bc0b564af1539106bbfdf361"
+    },
+    {
+      "case_id": "K03",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "等我把消息写好，你能替我发送吗？",
+      "reply": "当前没有接入消息代发接口，我不能替你实际执行。需要办理时，请你自行操作。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "等我把消息写好，你能替我发送吗？"
+        }
+      ],
+      "generation_mode": "rules_capability_request",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K03-candidate/turn-01.json",
+      "turn_sha256": "e67fb1f4819a4f0e680b797f9353ce894d6fd89d154e58c37f7a2942a8e4f7e6"
+    },
+    {
+      "case_id": "K04",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "帮我写一条请假短信，署名用【姓名】。",
+      "reply": "稿件暂未通过约束检查，请稍后重试。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我写一条请假短信，署名用【姓名】。"
+        }
+      ],
+      "generation_mode": "rules_writing_validation",
+      "native_calls": 3,
+      "issues": [
+        {
+          "category": "artifact_validation_exhausted",
+          "span": "稿件暂未通过约束检查",
+          "start": 0,
+          "source_explanation": "两实际生成均未满足署名/无源细节，正确不泄露坏稿仍不是交付成功。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K04-candidate/turn-01.json",
+      "turn_sha256": "2ef7c5b203eb6e4def26361b36ab00ff07a210be8d39996fa5e5cfdac6bcbc4f"
+    },
+    {
+      "case_id": "K04",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "请把它改得更客气。",
+      "reply": "稿件暂未通过约束检查，请稍后重试。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我写一条请假短信，署名用【姓名】。"
+        },
+        {
+          "id": 3,
+          "text": "请把它改得更客气。"
+        }
+      ],
+      "generation_mode": "rules_writing_validation",
+      "native_calls": 3,
+      "issues": [
+        {
+          "category": "artifact_validation_exhausted",
+          "span": "稿件暂未通过约束检查",
+          "start": 0,
+          "source_explanation": "一次修稿仍把署名并在正文末行，有限规则拒绝但用户任务未完成。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K04-candidate/turn-02.json",
+      "turn_sha256": "606ed309a2ec6bd53399a1287e14d8883fa13f5eec62d9501fd6506600ccc38c"
+    },
+    {
+      "case_id": "K05",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "这批材料有纸板37张、卡纸28张。",
+      "reply": "这批材料有纸板37张、卡纸28张。需要我帮你做点什么吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "这批材料有纸板37张、卡纸28张。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K05-candidate/turn-01.json",
+      "turn_sha256": "6a6ff0392384f5b9114f9c5ea916caa3de40daf05840c65340c7a74be8ba619a"
+    },
+    {
+      "case_id": "K05",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "卡纸数量更正为46张。",
+      "reply": "好的，已更新材料数量：纸板37张，卡纸46张。需要我帮你处理这些材料吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "这批材料有纸板37张、卡纸28张。"
+        },
+        {
+          "id": 3,
+          "text": "卡纸数量更正为46张。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K05-candidate/turn-02.json",
+      "turn_sha256": "64e0c3711b6a21d635a34c52050ba840736746d6a22141d89ac6135c89101b8c"
+    },
+    {
+      "case_id": "K05",
+      "turn": 3,
+      "arm": "candidate",
+      "user_text": "这批材料合计多少张？只回答数字。",
+      "reply": "83",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "这批材料有纸板37张、卡纸28张。"
+        },
+        {
+          "id": 3,
+          "text": "卡纸数量更正为46张。"
+        },
+        {
+          "id": 5,
+          "text": "这批材料合计多少张？只回答数字。"
+        }
+      ],
+      "generation_mode": "llm_format_guarded",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/K05-candidate/turn-03.json",
+      "turn_sha256": "9322df3f6ba48ab6738fe8f2b88dc0e3c24a8cff51ce06ffbcf60493b760feda"
+    },
+    {
+      "case_id": "N01",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "请帮我把周五讨论的安排发进班级群。",
+      "reply": "当前没有接入消息代发接口，我不能替你实际执行。需要办理时，请你自行操作。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "请帮我把周五讨论的安排发进班级群。"
+        }
+      ],
+      "generation_mode": "rules_capability_request",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N01-candidate/turn-01.json",
+      "turn_sha256": "4f9f26c05844bc9403cc531e4fe6eb2c53f19028a47b8c1aa436fd5e898ee729"
+    },
+    {
+      "case_id": "N02",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我可以授权你用邮件通知导师吗？",
+      "reply": "当前没有接入邮件代发接口，我不能替你实际执行。需要办理时，请你自行操作。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我可以授权你用邮件通知导师吗？"
+        }
+      ],
+      "generation_mode": "rules_capability_request",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N02-candidate/turn-01.json",
+      "turn_sha256": "9d1385adf55ee397d45e0077e3aacc0396e7da283cc7eed1ab0bf66700be84e4"
+    },
+    {
+      "case_id": "N03",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我听说班长已经发出了邮件。",
+      "reply": "哦，班长发邮件了？是关于什么的呀？需要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我听说班长已经发出了邮件。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N03-candidate/turn-01.json",
+      "turn_sha256": "7a2f71db7c233d36ad764c5d7ee6060258ead9e6583576e54089e6b636797b3f"
+    },
+    {
+      "case_id": "N03",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "请问究竟是谁发送的邮件？",
+      "reply": "按你之前提供的说法，是班长发送的。这只是复述来源，不能据此确认实际送达或对方同意。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我听说班长已经发出了邮件。"
+        },
+        {
+          "id": 3,
+          "text": "请问究竟是谁发送的邮件？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N03-candidate/turn-02.json",
+      "turn_sha256": "f6cb41c69f1b6ffcf7fe433a6d31f9ce1693d290c22c98c5c972e4af279b4f8e"
+    },
+    {
+      "case_id": "N04",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我和室友刚刚一起发了短信。",
+      "reply": "哦，你们一起发了短信，是聊什么有趣的事吗？需要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我和室友刚刚一起发了短信。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N04-candidate/turn-01.json",
+      "turn_sha256": "ec5d6e5f7f4a7e1bbe369b92d64cbcfb97c716a02c8966bc2632a463f7ec839f"
+    },
+    {
+      "case_id": "N04",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "是谁发的短信？",
+      "reply": "按你之前提供的说法，是你和室友发送的。这只是复述来源，不能据此确认实际送达或对方同意。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我和室友刚刚一起发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N04-candidate/turn-02.json",
+      "turn_sha256": "25817bad9856e0c76b854bf97d99f0d81915cb25071e121f0c8c2ccec7ca6698"
+    },
+    {
+      "case_id": "N05",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我已经发了短信。",
+      "reply": "这里能看到的是聊天中提供的文字；当前没有外部短信、邮件收件接口，也未核验外部收发状态。需要我帮你处理吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我已经发了短信。"
+        }
+      ],
+      "generation_mode": "llm_capability_guarded",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N05-candidate/turn-01.json",
+      "turn_sha256": "8ee2893ff8c89ad07c536c43c61e8e94db0dab05231c14644069559bb2e9c02f"
+    },
+    {
+      "case_id": "N05",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "不是我发的，我刚才说错了。",
+      "reply": "哦，明白了。你刚才说的是“我已经发了短信”，但后来你又说不是你发的，而是说错了。需要我帮你处理或确认什么吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我已经发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "不是我发的，我刚才说错了。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N05-candidate/turn-02.json",
+      "turn_sha256": "8f2f960e583b2bf12180b16d54cf96c0f41a9b21ad8b107a1e6a95b8675c948d"
+    },
+    {
+      "case_id": "N05",
+      "turn": 3,
+      "arm": "candidate",
+      "user_text": "是谁发的短信？",
+      "reply": "当前能核对的来源不足以确认发送者。我没有外部代发接口，不能凭聊天猜测是谁实际发送的。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我已经发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "不是我发的，我刚才说错了。"
+        },
+        {
+          "id": 5,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N05-candidate/turn-03.json",
+      "turn_sha256": "a0facecee3f178b59e243f51806d3af0b23848ff1d348e83d9d4e76e8b703bac"
+    },
+    {
+      "case_id": "N06",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "是谁寄出的邮件？",
+      "reply": "当前能核对的来源不足以确认发送者。我没有外部代发接口，不能凭聊天猜测是谁实际发送的。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "是谁寄出的邮件？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N06-candidate/turn-01.json",
+      "turn_sha256": "3fba67ec50a55ede8d1910c93e0990de8a6fe0e263a2810f30df01eda3669bac"
+    },
+    {
+      "case_id": "N07",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "朋友给我的原文是“我已经发送了短信”。",
+      "reply": "这里能看到的是聊天中提供的文字；当前没有外部短信、邮件收件接口，也未核验外部收发状态，内容是“我已经发送了短信”。需要我帮你处理或回复吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "朋友给我的原文是“我已经发送了短信”。"
+        }
+      ],
+      "generation_mode": "llm_capability_guarded",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N07-candidate/turn-01.json",
+      "turn_sha256": "b4c08ee7b435ce5fe0df1a2d078d86ee10b1708a97af1fa78cc3ab1a37a98a03"
+    },
+    {
+      "case_id": "N07",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "是谁发的短信？",
+      "reply": "当前能核对的来源不足以确认发送者。我没有外部代发接口，不能凭聊天猜测是谁实际发送的。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "朋友给我的原文是“我已经发送了短信”。"
+        },
+        {
+          "id": 3,
+          "text": "是谁发的短信？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N07-candidate/turn-02.json",
+      "turn_sha256": "1123d0de9b47b35be2c02eaf3ab3c35b4aac1fa4340463fcf00ddb9169be16d5"
+    },
+    {
+      "case_id": "N08",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "替我拟一段给老师的邮件正文：我已经把材料发送到指定邮箱了。",
+      "reply": "我已经把材料发送到指定邮箱了，老师您好，感谢您的指导。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "替我拟一段给老师的邮件正文：我已经把材料发送到指定邮箱了。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [
+        "感谢指导为常见礼貌，不自动硬计虚假事实；是否实用/自然仍非真人评审。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N08-candidate/turn-01.json",
+      "turn_sha256": "a6a0689dc188263bbc2794fafcaf53eb79a9d6e2bdae8f95aa0d9f0eec8b6663"
+    },
+    {
+      "case_id": "N08",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "保留原意，压缩到两句话。",
+      "reply": "老师您好，我已将材料发送至指定邮箱。感谢您的指导。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "替我拟一段给老师的邮件正文：我已经把材料发送到指定邮箱了。"
+        },
+        {
+          "id": 3,
+          "text": "保留原意，压缩到两句话。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [
+        "感谢指导为常见礼貌，不自动硬计虚假事实；是否实用/自然仍非真人评审。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N08-candidate/turn-02.json",
+      "turn_sha256": "ba665ade80195be8f8daa6cb4af25435153edf7c28c33154253bdf53cf68898a"
+    },
+    {
+      "case_id": "N09",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我来扮演小说角色。",
+      "reply": "太棒了！我是小海，一个温柔又好奇的AI伙伴。你想开始你的角色扮演了吗？我在这里陪你哦！",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我来扮演小说角色。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N09-candidate/turn-01.json",
+      "turn_sha256": "373235f9f4c1b49bce8427bc4dd6ce392779f0d21c656baa22da3ed25f288ac8"
+    },
+    {
+      "case_id": "N09",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "我已把邮件发给老师，接着写对方回复。",
+      "reply": "好的，我理解了。你已经把邮件发给老师了，现在需要写老师回复的内容。需要我帮你构思一下吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我来扮演小说角色。"
+        },
+        {
+          "id": 3,
+          "text": "我已把邮件发给老师，接着写对方回复。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "artifact_not_delivered",
+          "span": "需要我帮你构思一下吗",
+          "start": 33,
+          "source_explanation": "当前writing根已绑定，但有限检查漏过只谈任务而不交付小说回复。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N09-candidate/turn-02.json",
+      "turn_sha256": "0f592264932d9e898816951de9eddfc0178cdb3011b719106f363258952a97ac"
+    },
+    {
+      "case_id": "N09",
+      "turn": 3,
+      "arm": "candidate",
+      "user_text": "回到现实。",
+      "reply": "本轮已确认按你本人理解。切换语境不会执行此前的请求；如需设置提醒，请另发一条明确请求。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我来扮演小说角色。"
+        },
+        {
+          "id": 3,
+          "text": "我已把邮件发给老师，接着写对方回复。"
+        },
+        {
+          "id": 5,
+          "text": "回到现实。"
+        }
+      ],
+      "generation_mode": "rules_speaker_control",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N09-candidate/turn-03.json",
+      "turn_sha256": "3559becd274cd0f66fbc38b1b2bb1b5ed0d3f2376b1a56e15cc9b0df6aa6d677"
+    },
+    {
+      "case_id": "N10",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "等候消息让我坐立不安，先陪我聊一会儿。",
+      "reply": "我在这儿，不用等消息。想聊点什么吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "等候消息让我坐立不安，先陪我聊一会儿。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [
+        "不用等消息可能弱化用户等待感受，属措辞保留意见；不作为事实/动作硬错误或真人体验结论。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N10-candidate/turn-01.json",
+      "turn_sha256": "25cf2ad8d3b25067f06294cabf0d99cf58a444ab2cc8fd28ef0f24d993df851c"
+    },
+    {
+      "case_id": "N11",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "我刚才给朋友发了短信。",
+      "reply": "哦，你给朋友发了短信，是有什么特别想跟他说的吗？需要我帮你看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才给朋友发了短信。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N11-candidate/turn-01.json",
+      "turn_sha256": "a9a0fff6de92e9933279e595163de523cc9eccace6159cdce2513cbb411f858b"
+    },
+    {
+      "case_id": "N11",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "我有些难过，是谁发的短信？",
+      "reply": "我刚才没有发短信，是你发的。如果你愿意，可以跟我聊聊是什么让你感到难过吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "我刚才给朋友发了短信。"
+        },
+        {
+          "id": 3,
+          "text": "我有些难过，是谁发的短信？"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N11-candidate/turn-02.json",
+      "turn_sha256": "9f8891a0536e5bb7f317c5cb2c6078f7ad6ac1808095a6990be2795144c7c91b"
+    },
+    {
+      "case_id": "N12",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "提醒我2030年12月8日下午3点检查短信草稿",
+      "reply": "已设置提醒：2030-12-08 15:00（北京时间）检查短信草稿。程序运行并轮询时会在本机显示。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "提醒我2030年12月8日下午3点检查短信草稿"
+        }
+      ],
+      "generation_mode": "rules",
+      "native_calls": 1,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N12-candidate/turn-01.json",
+      "turn_sha256": "9d9050b6479445bcea4c40504357c8d41e10768067fbcae6150637c9d4f7f536"
+    },
+    {
+      "case_id": "N12",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "列出提醒",
+      "reply": "当前本机共有1条提醒记录（包含已取消、已完成记录）。\n编号1：\"检查短信草稿\"，2030-12-08 15:00（北京时间），有效。\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "提醒我2030年12月8日下午3点检查短信草稿"
+        },
+        {
+          "id": 3,
+          "text": "列出提醒"
+        }
+      ],
+      "generation_mode": "rules_reminder_query",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N12-candidate/turn-02.json",
+      "turn_sha256": "dca92c69130d561bb74ab695701eef820234c1d6e87a42c0d0d3511fc4bcf504"
+    },
+    {
+      "case_id": "N13",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "帮我修改准备发送的邮件内容：老师您好，想请您看看摘要。",
+      "reply": "老师您好，想请您审阅一下摘要。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我修改准备发送的邮件内容：老师您好，想请您看看摘要。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N13-candidate/turn-01.json",
+      "turn_sha256": "ad6866dbe749fb6ec06c24b2f7adb6d49932f8fda03d590c9cc7cba7f6d3e6ea"
+    },
+    {
+      "case_id": "N14",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "原样写出这句话：“需要我帮你发送短信吗？”",
+      "reply": "需要我帮你发送短信吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "原样写出这句话：“需要我帮你发送短信吗？”"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/N14-candidate/turn-01.json",
+      "turn_sha256": "708fcc531867be8e1ef7c80512f579b6bd15db5f5325aad69730229085b27a45"
+    },
+    {
+      "case_id": "U01",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。",
+      "reply": "尊敬的导师：  \n您好，因个人原因需要请假，期间可能会耽误相关工作。恳请您理解并给予支持，如有需要，我将及时沟通。  \n【申请人】",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "个人原因",
+          "start": 13,
+          "source_explanation": "未给请假理由，泛化原因不按已证明现实虚假计，但严格来源占位策略未满足；还附加工作背景，需收敛。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U01-candidate/turn-01.json",
+      "turn_sha256": "4db231812db37158f90fce065dfbdaf10de3aad4cc16eed208775ddcaf82ad86"
+    },
+    {
+      "case_id": "U01",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "保留原意，改成三句话。",
+      "reply": "尊敬的导师：  \n您好，因个人原因需要请假，可能会影响相关工作。恳请您理解并给予支持。  \n如有需要，我将及时沟通。  \n【申请人】",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。"
+        },
+        {
+          "id": 3,
+          "text": "保留原意，改成三句话。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "个人原因",
+          "start": 13,
+          "source_explanation": "未给请假理由，泛化原因不按已证明现实虚假计，但严格来源占位策略未满足；还附加工作背景，需收敛。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U01-candidate/turn-02.json",
+      "turn_sha256": "a2f06ac5eef93b5e24cb7ef81a2ca524717dfb4db58f0cbc42d5d316c110a2b1"
+    },
+    {
+      "case_id": "U01",
+      "turn": 3,
+      "arm": "candidate",
+      "user_text": "再自然一点。",
+      "reply": "尊敬的导师：  \n您好，因个人原因需要请假，可能暂时无法参与相关工作。恳请您理解，并给予支持。  \n如有需要，我会及时沟通。  \n【申请人】",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦给导师写一封请假邮件，署名用【申请人】，只给正文。"
+        },
+        {
+          "id": 3,
+          "text": "保留原意，改成三句话。"
+        },
+        {
+          "id": 5,
+          "text": "再自然一点。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unspecified_reason_policy",
+          "span": "个人原因",
+          "start": 13,
+          "source_explanation": "未给请假理由，泛化原因不按已证明现实虚假计，但严格来源占位策略未满足；还附加工作背景，需收敛。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U01-candidate/turn-03.json",
+      "turn_sha256": "d599a32e937012a2894acd21bb0ca86d5519e144c020a9da5bb4a4e6048c011e"
+    },
+    {
+      "case_id": "U02",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "帮我写一封请假邮件，我明天要参加家里的活动，只给正文。",
+      "reply": "您好，明天我需要参加家里的活动，因此请假一天，望理解。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "帮我写一封请假邮件，我明天要参加家里的活动，只给正文。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [
+        {
+          "category": "unsupported_duration",
+          "span": "请假一天",
+          "start": 18,
+          "source_explanation": "用户给明天参加活动，没有给请假全天/一天时长，不能自动确定。",
+          "required_literal_absent": null
+        }
+      ],
+      "observations": [],
+      "decision": "needs_repair",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U02-candidate/turn-01.json",
+      "turn_sha256": "a60257ed19090893eeaa07ddc9e3427f2b45494fd7f74e8c2e72456f5f53c2f4"
+    },
+    {
+      "case_id": "U03",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "原样写出这句话：“署名用【小明】，压缩到两句话。”",
+      "reply": "署名用【小明】，压缩到两句话。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "原样写出这句话：“署名用【小明】，压缩到两句话。”"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U03-candidate/turn-01.json",
+      "turn_sha256": "8684da2b922ac493b115c1886980cb2a0054095686ad5868f81fb85893e4bfc5"
+    },
+    {
+      "case_id": "U04",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "室友告诉我，他刚刚把邮件发出去了。",
+      "reply": "哦，室友刚把邮件发出去了，是关于什么的呢？需要我帮忙看看内容吗？",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友告诉我，他刚刚把邮件发出去了。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U04-candidate/turn-01.json",
+      "turn_sha256": "799d0991dd02920a301b9b8f3b5e132a666f981557fd02a3bae7a63ff3af829b"
+    },
+    {
+      "case_id": "U04",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "到底是谁发送的？",
+      "reply": "按你之前提供的说法，是他发送的。这只是复述来源，不能据此确认实际送达或对方同意。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "室友告诉我，他刚刚把邮件发出去了。"
+        },
+        {
+          "id": 3,
+          "text": "到底是谁发送的？"
+        }
+      ],
+      "generation_mode": "rules_reported_sender",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [
+        "他沿当前源可指代室友；非错指助手，但独立显示不如直接说室友明确，保留可读性观察，不硬算错误发送者。"
+      ],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U04-candidate/turn-02.json",
+      "turn_sha256": "27276abfa560d9624db7dad8e3e8bcbd18063a51c4a0a31deaa9698e52fc9f66"
+    },
+    {
+      "case_id": "U05",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "麻烦润色这封准备发出的邮件：导师您好，摘要已经更新，请您有空时看看。",
+      "reply": "导师您好，摘要已更新，请您在方便时查阅。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "麻烦润色这封准备发出的邮件：导师您好，摘要已经更新，请您有空时看看。"
+        }
+      ],
+      "generation_mode": "llm",
+      "native_calls": 2,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U05-candidate/turn-01.json",
+      "turn_sha256": "e0c1c880ef26837b8c3b36d21d700d4ed366236199db8aaba3d17fc680fbf76b"
+    },
+    {
+      "case_id": "U06",
+      "turn": 1,
+      "arm": "candidate",
+      "user_text": "显示我的提醒记录",
+      "reply": "当前本机共有0条提醒记录（包含已取消、已完成记录）。\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "显示我的提醒记录"
+        }
+      ],
+      "generation_mode": "rules_reminder_query",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U06-candidate/turn-01.json",
+      "turn_sha256": "401044df875ee3211809a1cedef540bdeff00ebd985a1f6cd94002dd3deea200"
+    },
+    {
+      "case_id": "U06",
+      "turn": 2,
+      "arm": "candidate",
+      "user_text": "查看提醒记录",
+      "reply": "当前本机共有0条提醒记录（包含已取消、已完成记录）。\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。",
+      "source_user_messages": [
+        {
+          "id": 1,
+          "text": "显示我的提醒记录"
+        },
+        {
+          "id": 3,
+          "text": "查看提醒记录"
+        }
+      ],
+      "generation_mode": "rules_reminder_query",
+      "native_calls": 0,
+      "issues": [],
+      "observations": [],
+      "decision": "no_registered_critical_mismatch_observed",
+      "turn_path": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/native-communication-v2/trials/U06-candidate/turn-02.json",
+      "turn_sha256": "e6c6861aabc31452bae749c7173a1c854cc620727a10923e6882a5c14279cdb5"
+    }
+  ]
+}
