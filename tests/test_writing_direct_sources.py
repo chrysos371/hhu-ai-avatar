@@ -66,3 +66,14 @@ def test_actual_change_during_direct_source_construction_prevents_any_output(tmp
         with pytest.raises(Cancelled):bot.respond('原样输出这句话：“甲”',cancel=token,on_delta=pieces.append)
         assert not pieces and not engine.native
         assert not memory._conn.execute("SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()
+
+
+def test_literal_profile_question_is_not_a_real_profile_lookup():
+    with closing(MemoryStore(':memory:')) as memory:
+        memory.remember_user('名字','真实姓名')
+        engine=Replies(['不要调用生成'])
+        result=Avatar(memory=memory,llm=engine,capability_contract_enabled=True,
+            profile_grounding_enabled=True,subject_prompt_enabled=True).respond(
+                '原样输出这句话：“你记得我的名字吗？”')
+        assert result['reply']=='你记得我的名字吗？' and not engine.native
+        assert result['generation_mode']=='rules_writing_artifact'

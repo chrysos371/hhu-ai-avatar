@@ -80,9 +80,13 @@ def test_in_memory_requirement_is_rejected_after_actual_newer_admission():
     ('source_ids', '[true]'), ('format_version', 77)])
 def test_corrupt_requirement_metadata_never_restores_values(column, value):
     with closing(MemoryStore(':memory:')) as memory:
-        bot = Avatar(memory=memory, llm=Recorder('正文。'), capability_contract_enabled=True)
+        engine = Recorder('正文。')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         bot.respond('帮我写一封邮件，署名用【甲】。')
+        before = len(engine.native)
         with memory.transaction():
             memory._conn.execute('UPDATE memory_writing_requirements SET ' + column + '=?', (value,))
         result = bot.respond('再短一点。')
         assert not result['writing_requirements']['source_verified']
+        assert len(engine.native) == before, 'incomplete writing sources must not be guessed by generation'
+        assert result['generation_mode'] == 'rules_writing_source'
