@@ -5,6 +5,7 @@ import pytest
 
 from avatar.brain.memory import MemoryStore
 from avatar.main import Avatar
+from avatar.cancellation import CancellationToken, Cancelled
 from test_writing_delivery_contract import Replies
 
 
@@ -43,3 +44,25 @@ def test_additional_source_material_is_not_silently_overridden_by_verbatim_route
             '原样写出这句话：“原句。”，再加一句感谢。')
         assert result['reply']==body and len(engine.native)==1
         assert result['writing_requirements']['verbatim_literal'] is None
+
+
+@pytest.mark.parametrize('change',['forget','cancel'])
+def test_actual_change_during_direct_source_construction_prevents_any_output(tmp_path, monkeypatch, change):
+    from avatar.brain import writing_templates
+    with closing(MemoryStore(str(tmp_path/'direct.db'))) as memory:
+        engine=Replies(['甲'])
+        bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+        token, pieces=CancellationToken(),[]
+        original=writing_templates.build_fallback
+        def changed(requirements,**kwargs):
+            result=original(requirements,**kwargs)
+            assert result is not None
+            if change=='cancel':token.cancel()
+            else:
+                fragment=memory.remember('有来源的原样文字',source_message_id=requirements.source_message_ids[0])
+                with closing(MemoryStore(memory.db_path)) as writer:writer.forget(fragment)
+            return result
+        monkeypatch.setattr(writing_templates,'build_fallback',changed)
+        with pytest.raises(Cancelled):bot.respond('原样输出这句话：“甲”',cancel=token,on_delta=pieces.append)
+        assert not pieces and not engine.native
+        assert not memory._conn.execute("SELECT 1 FROM memory_messages WHERE role='assistant'").fetchone()

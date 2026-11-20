@@ -63,7 +63,9 @@ def test_explicitly_quoted_meta_question_is_still_a_valid_artifact(body):
     with closing(MemoryStore(':memory:')) as memory:
         engine = ArtifactReplies([body])
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
-        result = bot.respond('原样写出这句小说台词：“需要我帮你构思一下吗？”')
+        # A generated artifact containing a literal still exercises the model
+        # output guard; strict direct copy now has a separate source route.
+        result = bot.respond('帮我写一句台词，原样包含“需要我帮你构思一下吗？”')
         assert result['reply'] == body and len(engine.native) == 1
 
 

@@ -64,11 +64,25 @@ def test_fictional_counterparty_author_and_receipt_do_not_become_real_execution(
         bot.respond('我来扮演小说角色。')
         result = bot.respond(root)
         assert result['writing_requirements']['author_role'] == role
-        assert 'wrong_artifact_author' in result['writing_delivery']['initial_issues']
+        assert not result['writing_delivery']['repair_attempted']
+        assert result['writing_delivery']['source_fallback']['phase'] == 'direct_source'
+        assert len(engine.native) == 1  # Only the earlier noncanonical role entry.
         assert result['generation_mode'] == 'rules_writing_artifact'
         assert role + '您好' not in result['reply'] and '你好' in result['reply']
         assert not result['tool_calls'] and not result['action_receipts']['items']
         assert memory._conn.execute('SELECT COUNT(*) FROM memory_action_receipts').fetchone()[0] == 0
+
+
+def test_unhandled_fiction_material_keeps_model_author_check_and_is_not_dropped():
+    with closing(MemoryStore(':memory:')) as memory:
+        bad='老师您好，我已将邮件发送给您，希望您能尽快回复。'
+        engine=Replies([bad,bad])
+        bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+        bot.respond('我来扮演一个虚构角色。')
+        result=bot.respond('我已把邮件发给老师，接着写对方回复；语气认真一些。')
+        assert 'wrong_artifact_author' in result['writing_delivery']['initial_issues']
+        assert result['generation_mode']=='rules_writing_validation' and len(engine.native)==2
+        assert not result['writing_delivery']['source_fallback']['used']
 
 
 @pytest.mark.parametrize('change', ['forget','cancel'])

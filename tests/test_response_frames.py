@@ -41,7 +41,9 @@ def test_novel_reply_subtask_reaches_actual_source_bound_writing_prompt():
         engine = Recorder('老师回复：“材料已查收，谢谢。”')
         bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
         bot.respond('我来扮演小说角色。')
-        source = '我已把邮件发给老师，接着写对方回复。'
+        # Extra material is outside direct template admission, so the real
+        # SDK generation prompt must still include the validated writing root.
+        source = '我已把邮件发给老师，接着写对方回复；语气认真一些。'
         result = bot.respond(source)
         frame = result['capability_contract']['frame']
         assert frame['frame'] == 'writing'
