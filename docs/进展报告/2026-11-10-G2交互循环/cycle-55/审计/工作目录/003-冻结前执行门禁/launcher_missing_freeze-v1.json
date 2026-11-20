@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python",
+    "-B",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-55/审计/launch_stage.py",
+    "--freeze",
+    "/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-55/审计/工作目录/002-真实执行输入/freeze-v1.json",
+    "--expected-freeze-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000",
+    "--stage",
+    "base"
+  ],
+  "actual_returncode": 1,
+  "expected_reason": "C55 frozen execution descriptor missing",
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-55/审计/launch_stage.py\", line 24, in <module>\n    run(p.parse_args())\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-55/审计/launch_stage.py\", line 11, in run\n    verify_freeze(args.freeze,args.expected_freeze_sha256)\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-55/审计/execution_common.py\", line 85, in verify_freeze\n    require(path.is_file(),'C55 frozen execution descriptor missing')\n  File \"/data/Users/zrh/repo/hhu-ai-avatar/docs/进展报告/2026-11-10-G2交互循环/cycle-54/审计/execution_common.py\", line 34, in require\n    if not condition:raise ValueError(message)\nValueError: C55 frozen execution descriptor missing\n"
+}
