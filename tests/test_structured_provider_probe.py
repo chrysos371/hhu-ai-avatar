@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
-from probe_structured_provider import schema_valid, verify_freeze, prior_gate, validate_trace, PROTOCOL, MODELS
+from probe_structured_provider import schema_valid, verify_freeze, prior_gate, validate_trace, PROTOCOL, MODELS, PROTECTION_SOURCES
 
 SCHEMA={'type':'object','properties':{'status':{'type':'string','const':'未执行'}},'required':['status'],'additionalProperties':False}
 
@@ -25,7 +25,7 @@ def test_unsupported_schema_cannot_be_silently_accepted():
 @pytest.fixture
 def frozen(tmp_path):
     names={PROTOCOL,'scripts/probe_structured_provider.py','scripts/serve_local_model_eval.py','src/avatar/gpu_resources.py',
-           'evals/interaction/cycle-02/model-scale-protocol.json',*MODELS.values()}
+           'evals/interaction/cycle-02/model-scale-protocol.json',*MODELS.values(),*PROTECTION_SOURCES}
     inputs={}
     for name in names:
         p=tmp_path/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('fixture-only')
@@ -41,6 +41,14 @@ def test_freeze_validates_raw_identity_before_parsing(frozen):
     assert verify_freeze(path,expected,next(iter(MODELS)),root=root)==document
     path.write_text('{malformed')
     with pytest.raises(ValueError,match='identity changed'):verify_freeze(path,expected,next(iter(MODELS)),root=root)
+
+
+@pytest.mark.parametrize('missing',PROTECTION_SOURCES)
+def test_freeze_cannot_omit_provider_protection_dependency(frozen,missing):
+    root,path,document=frozen
+    document['sha256'].pop(missing);path.write_text(json.dumps(document))
+    with pytest.raises(ValueError,match='inputs incomplete'):
+        verify_freeze(path,sha256(path.read_bytes()).hexdigest(),next(iter(MODELS)),root=root)
 
 
 @pytest.mark.parametrize('change',['backend','model','input'])
