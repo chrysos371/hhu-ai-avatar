@@ -5,10 +5,13 @@ by the provider trace; public metadata records hashes and explicit limitations.
 """
 from hashlib import sha256
 import re
+from .reminder_query_targets import visible_source
 
 _PREFACE = re.compile(r'^(?:(?:当然可以|好的|没问题)[，,。！!\s]*)?'
     r'(?:以下是|下面是|这是(?:为你|帮你)|我(?:帮|为)你(?:写|拟))')
-_LEAVE_DETAILS = re.compile(r'身体不适|发烧|感冒|生病|肚子疼|家中有事|突发急事|今天|明天|后天|'
+_LEAVE_DETAILS = re.compile(r'身体不适|发烧|感冒|生病|肚子疼|家中有事|突发急事|今天|今日|明天|后天|'
+    r'个人原因|个人事务|个人安排(?:变动)?|到岗|相关工作|落下的工作|'
+    r'[一二两三四五六七八九十0-9]+(?:天|小时)|'
     r'下周[一二三四五六日天]?|[0-9]{1,2}月[0-9]{1,2}[日号]')
 _NEGATED = re.compile(r'(?:不是|并非|没有|不要(?:写|用|提|说)?|别(?:写|用|提|说)?|不能写)\s*$')
 
@@ -45,6 +48,8 @@ def inspect(reply, requirements, *, fictional=False):
             issues.append('sentence_count')
     if requirements.body_only and _PREFACE.search(body):
         issues.append('body_preface')
+    if re.search(r'需要我帮你(?:构思|写(?:一下)?(?:老师|对方)?(?:的)?回复)[^。！？!?\n]*[？?]', visible_source(body)):
+        issues.append('artifact_not_delivered')
     # Only the measured real leave-draft family, never all creative text or
     # every mention of tomorrow. Exact source presence is necessary, not proof
     # of general factual support; nonhuman source/span review remains required.

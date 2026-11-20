@@ -109,6 +109,14 @@ class LLMEngine:
         return self.stream_chat(messages, temperature=temperature, cancel=cancel,
                                 response_format=ANALYSIS_RESPONSE_FORMAT)
 
+    def repair_writing(self, messages, *, sentence_count=None, cancel=None):
+        """Generate actual body text; framework owns source signature and checks."""
+        from .writing_artifact import ARTIFACT_INSTRUCTION, response_format, decode
+        raw = self.stream_chat(messages + [{'role': 'system', 'content': ARTIFACT_INSTRUCTION}],
+            temperature=0, max_tokens=512, cancel=cancel,
+            response_format=response_format(sentence_count))
+        return decode(raw, sentence_count)
+
     def review_response(self, messages, *, cancel=None, version='v1'):
         """Experimental structured triage, kept separate from cognitive analysis."""
         if version not in REVIEW_FORMATS:

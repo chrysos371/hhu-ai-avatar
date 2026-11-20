@@ -996,7 +996,7 @@ class Avatar:
             writing_delivery_result = dict(version=1, semantic_verifier=False, stream_buffered=True,
                 scope='source_bound_signature_chinese_sentence_format_and_known_leave_details',
                 initial_issues=list(initial_issues), final_issues=[], repair_attempted=False,
-                repair_succeeded=False, repair_error=None, draft_sha256=fingerprint(reply),
+                repair_succeeded=False, repair_error=None, repair_mode=None, draft_sha256=fingerprint(reply),
                 repair_sha256=None)
             if initial_issues:
                 writing_delivery_result['repair_attempted'] = True
@@ -1004,10 +1004,18 @@ class Avatar:
                     checkpoint_context()
                     repair_messages = self._messages(decision, user_text) + [
                         {'role': 'system', 'content': repair_instruction(self._writing_requirements, initial_issues)}]
-                    if cancel is not None and hasattr(self.llm, 'stream_chat'):
+                    if callable(getattr(self.llm, 'repair_writing', None)):
+                        writing_delivery_result['repair_mode'] = 'structured_artifact'
+                        corrected = self.llm.repair_writing(repair_messages,
+                            sentence_count=self._writing_requirements.sentence_count, cancel=cancel)
+                        if self._writing_requirements.signature and isinstance(corrected, str):
+                            corrected = corrected.rstrip() + '\n' + self._writing_requirements.signature
+                    elif cancel is not None and hasattr(self.llm, 'stream_chat'):
+                        writing_delivery_result['repair_mode'] = 'freeform_source_only'
                         corrected = self.llm.stream_chat(repair_messages, temperature=decision.temperature,
                             cancel=cancel, on_delta=None)
                     else:
+                        writing_delivery_result['repair_mode'] = 'freeform_source_only'
                         corrected = self.llm.chat(repair_messages, temperature=decision.temperature)
                     checkpoint_context()
                     if isinstance(corrected, str):
