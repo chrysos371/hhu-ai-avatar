@@ -17,6 +17,7 @@ _SENTENCES = re.compile(r'(?:压缩到|控制在|改成|改为|写成|写)([一�
 _BODY = re.compile(r'只(?:给|要|输出|回复|交付)(?:正文|稿件正文)')
 _NUMBERS = dict(zip('一二三四五六七八九十', range(1, 11)), 两=2)
 _ROLES = r'老师|导师|室友|同学|朋友|同事|班长|房东|姐姐|妹妹|哥哥|弟弟'
+_SOURCE_LIMIT = 32
 
 
 def author_role(sources):
@@ -83,6 +84,21 @@ class WritingRequirements:
     signature_omitted: bool = False
     forbidden_signatures: tuple[str, ...] = ()
 
+    @classmethod
+    def from_sources(cls, sources, *, state=()):
+        """Compile already checked user rows, without granting source authority."""
+        sources = tuple(sources)
+        if (not 1 <= len(sources) <= _SOURCE_LIMIT
+                or any(type(i) is not int or not 0 < i <= 2**63-1 or type(text) is not str
+                       or not text.strip() or text == '[redacted]' for i, text in sources)):
+            raise ValueError('invalid bounded writing sources')
+        ids = tuple(i for i, _ in sources)
+        if ids != tuple(sorted(set(ids))):
+            raise ValueError('writing sources must be unique and ordered')
+        signature, count, body, omitted, forbidden = _compile_sources(sources)
+        return cls(True, signature, count, body, ids, None, state, sources,
+                   signature_omitted=omitted, forbidden_signatures=forbidden)
+
     @property
     def author_role(self):
         explicit = author_role(self.sources) if self.source_verified else None
@@ -129,7 +145,7 @@ class WritingRequirements:
 
 
 class WritingRequirementStore:
-    LIMIT = 32
+    LIMIT = _SOURCE_LIMIT
 
     def __init__(self, memory):
         self.memory, self.conn = memory, memory._conn
@@ -212,9 +228,7 @@ class WritingRequirementStore:
                 if not source or source['role'] != 'user' or not source['content'] or source['content'] == '[redacted]':
                     return WritingRequirements(reason='source_unavailable')
                 sources.append((ident, source['content']))
-            signature, count, body, omitted, forbidden = _compile_sources(sources)
-            return WritingRequirements(True, signature, count, body, tuple(ids), None, row, tuple(sources),
-                signature_omitted=omitted, forbidden_signatures=forbidden)
+            return WritingRequirements.from_sources(sources, state=row)
         finally:
             if owned:
                 self.conn.rollback()
