@@ -4816,13 +4816,17 @@
           "sha256": "2eddc69e796188553c7813c259d20d2b5c2979a6a458e33619dbc21e422b6287"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/003-受控实模管线/v2/controlled-summary.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜CPU-only协议路径不符，待退役v1并重登记",
         "首组controlled_history.py/b38599a0、sample_history.py/55ef6085实测：active-neutral的followup以“查询提醒当时记录是什么状态”开头，生产parse_query把“查询提醒”前缀后的非严格命令解析成invalid，Avatar按原设计固定回复合法格式，0认知/0生成调用，未进入登记意图中的普通native路径。受控断言失败，实际2SDK回合/0native，业务零写/无新事实；不是生产模型质量失败。"
-      ]
+      ],
+      "release_review": "followup误触查询前缀invalid，CPU2SDK/0native失败非模型质量。退役v1再仅改普通问句开头，新21试验42回合/40脚本接口/42SQL通过；生产解析不改，原2SQL保留。",
+      "residual_product_roots": []
     },
     {
       "id": "C47-002",
@@ -4835,9 +4839,13 @@
           "sha256": "cd7b47cb3fda226e33622df5209db5918a48c38d7653c27e8c45725a194310c2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-verification.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/14b-verification.json",
+        "src/avatar/brain/query_history.py"
+      ],
       "original_status_candidates": [
         "# C47-002 实模无新读取仍断言当前提醒状态",
         "优先级P2｜实测开放，先保留4B结果，14B按原登记继续",
@@ -4845,6 +4853,10 @@
         "优化目标：继续原登记14B尺度观察，不在模型之间改源/材料/评分；结束后针对实际证据与当前状态未知的区分另立新实验。该诊断是明确六字段JSON契约，不代替一般自然对话盲评，不能因增加历史标签便宣布真实模型已理解。",
         "- 14B同登记三重复独立核验补充：current字段原文0/24、生产快照18/24正确；快照ACK与external-send各3次仍返回active，而无当前状态新观测。原4B18/24与10/24错误保留，问题继续开放；模型尺度提高不等于解决时效推理，不能将本轮开发成绩称独立泛化。见[14B独立证据](../工作目录/004-原生准入/14b-verification.json)。",
         "范围补充：无新读取支持指该编号没有新的专用状态观测送入模型；普通回合仍含既有到期检查，采证程序也读取SQL投影与dump，不能解释为全回合零业务SELECT。"
+      ],
+      "release_review": "历史active被当当前，无该编号新观测；4B快照14/24、14B18/24正确仍未全过。普通到期/审计SELECT不等于当前编号观测送模型；现包装只是历史reply，不凭标签关闭G04时效边界。",
+      "residual_product_roots": [
+        "C47-002"
       ]
     },
     {
@@ -4858,11 +4870,18 @@
           "sha256": "40d2bd59b7e56d162ec4b78e3f14b5f2b0bf2416712ba9d6fc4fab2902228833"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/4b-verification.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/工作目录/004-原生准入/14b-verification.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜实测开放，与C19-P1一般动作语义问题关联"
+      ],
+      "release_review": "4B两臂标题注入/邮件各3次external=true无真实执行，14B这6次明确外发错未复现，仅ACK歧义另列。字段声明不当回执，源/SQL零写不当语义通过；继承C19继续G04。",
+      "residual_product_roots": [
+        "C19-001"
       ]
     },
     {
@@ -4876,12 +4895,16 @@
           "sha256": "b93a067f8be7427c859c2ff06c6bfe4148816e66ec43d57930e5023ed9c44a80"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_measurement_process_scope_product_quality_separate",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "evals/interaction/cycle-48/typed-history-trial-protocol.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜测量解释风险开放，不回写本轮问句/金标/评分"
-      ]
+      ],
+      "release_review": "external未限定邮件/短信/电话而ACK有真实记录；两模型各3次true严格不符保留，不能全解释虚假邮件或猜内部原因。C48另登记明确操作域，不改C47分数/旧题金标，关闭解释口径。",
+      "residual_product_roots": []
     },
     {
       "id": "C47-005",
@@ -4894,13 +4917,17 @@
           "sha256": "3a118a87dd0f9488b55aaf39c03a54fb9d6bee4a4460bd0d4071dd164c67cc4b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-47/审计/系统审计与推进报告.md"
+      ],
       "original_status_candidates": [
         "优先级P3｜收尾审计工具范围限定关闭，原失败已保留",
         "修后实际收尾通过：274 MD本地链接/24 HTML链接、1440/390/四表、479源与45旧seal8565项，两个原生freeze的历史/当前字节均匹配；归档原计划未改。输出记录该文件reference_base=原cycle-47位置，其余文档仍当前路径；原首版报告/显示原件与失败核验器分别归档并核SHA。未增加native/未改评分，005限定关闭。"
-      ]
+      ],
+      "release_review": "归档plan-v1相对链接仅该已绑定文件指定原reference_base；不改原字节或全局跳过。修后274MD/24HTML/1440-390/479源/45seal核平，原失败保留，0新增native。",
+      "residual_product_roots": []
     },
     {
       "id": "C48-001",
@@ -4913,13 +4940,21 @@
           "sha256": "54eca0771ccec48f9428818377210bebeb647288289d9e98c0fc4c85973938b3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "src/avatar/lab/typed_history_observation.py",
+        "src/avatar/brain/query_history.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/004-原生准入/4b-verification.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜4B实测开放，14B继续原登记",
         "政策题实际只运行read_policy，0编号状态读取。4B三重复的生产快照臂observed_record_state均unknown正确；类型化候选均missing错误（3/3→0/3）。两臂均把政策查询源1当作状态观测源、把没有状态观测时的ACK误写false而非null。这是局部退步，不能被总体16/36→30/36盖过。",
         "[4B独立分字段/分组核验](../工作目录/004-原生准入/4b-verification.json) / [首候选真实原件](../../实验/4b-development-v1/repetition-1/policy-no-state-typed_observation_history/receipt.json)。真实SQL中记录存在，政策读取没有把其状态送给模型；候选record_observation=null表示没有状态观测，不是“已查而未找到”。这与误解相符，但模型内部原因未被本试验唯一证明。"
+      ],
+      "release_review": "4B typed把未观测当missing且政策源当状态源，局部3/3→0/3不被30/36盖过；14B该题正常。不默认安装失败typed投影，当前生产只包历史reply，观测/时效一般根因继续。",
+      "residual_product_roots": [
+        "C47-002"
       ]
     },
     {
@@ -4933,12 +4968,20 @@
           "sha256": "acbcc6b21e9f85f74bc79c357431b14f9fab080eccf21586691b4efb303f7ef2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/004-原生准入/14b-verification.json",
+        "src/avatar/lab/typed_history_observation.py"
+      ],
       "original_status_candidates": [
         "优先级P2｜有限JSON诊断开放，关联C19-P1与C47-003",
         "新共同契约已把mail_sms_phone_sent明确限定为本试验本系统实际邮件/短信/电话，排除本机查询、认领、ACK。4B明确external-send题候选3/3返回true且current_record_state=completed，无真实发送器/发送操作、无本次回答的编号状态观测，实际业务行仍actor后cancelled。基线同题2/3返回true与无依据当前状态；候选本题没有改善，反多一次不符，不能据小样本声称统计趋势。"
+      ],
+      "release_review": "明确外发域后4B typed还虚报发送/当前completed，14B基线false→候选true三次退步，均无实际外发/业务变更。失败表示隔离，机制未定位不猜否定提示反弹，原能力/时效根因仍验。",
+      "residual_product_roots": [
+        "C19-001",
+        "C47-002"
       ]
     },
     {
@@ -4952,11 +4995,18 @@
           "sha256": "64aac6a6df09761960fc2dcbdca5c0ab5e4040f556d6d9472a57a6f0387802a3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "unapproved_lab_observation_linked_quality_roots",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/004-原生准入/4b-verification.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/004-原生准入/14b-verification.json"
+      ],
       "original_status_candidates": [
         "优先级P2｜生产快照臂在新八字段契约中开放，候选仅局部改善"
+      ],
+      "release_review": "4B原快照臂在8字段诊断两个人类布尔null导致严格整条拒绝；三条field_checks全false不解释成虚假已读/发送。14B全格式合法，不能事后null→false得分；旧typed局部改善仍未准入。",
+      "residual_product_roots": [
+        "C47-002"
       ]
     },
     {
@@ -4970,13 +5020,20 @@
           "sha256": "1fab3864c3cb8fdd97e78cf0086737b0f5e2cd668974032cd5734d3a76304b67"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "quality_roots_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/004-原生准入/14b-verification.json",
+        "src/avatar/brain/query_history.py"
+      ],
       "original_status_candidates": [
         "优先级P2｜14B实测开放",
         "cancelled-neutral题实际编号查询时记录已取消但存在，公开回复明确“尚无客户端确认记录”，SQL中无投递ACK，元数据client_ack_recorded=false；新契约问该次观测中的ACK而非真人阅读，预登记期望false。14B两臂3/3均返回client_ack_in_observation=null，混淆已知未记录与根本没有状态观测；候选已显式提供false仍未解决。",
         "优化目标：明确已观测false、已观测true和未观测null三种来源语义；保留取消/完成记录与ACK独立性，不按状态标签推测有无观测。另预登记后续候选与正反对照，当前金标/原文/分数不改。"
+      ],
+      "release_review": "14B已观测ACK=false仍答null，是已知未记录/未观测三值语义错误，null类型合法；4B该题正确。取消/完成状态不能代替ACK证据，保留3重复非独立样本，G04观测精确性待验。",
+      "residual_product_roots": [
+        "C48-004"
       ]
     },
     {
@@ -4990,12 +5047,20 @@
           "sha256": "cf4e3054e8df7d4f985bd673b395f9737273d732e4f6e2d1c8de413f0f96a5f3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_default_exposure_experimental_endpoint_not_promoted",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/lab/typed_history_observation.py",
+        "src/avatar/lab/minimal_history_observation.py",
+        "tests/test_minimal_history_observation.py",
+        "src/avatar/brain/query_history.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-48/审计/工作目录/005-历史元数据一致性/metadata-probe.json"
+      ],
       "original_status_candidates": [
         "优先级P3｜候选生产接入前的来源契约硬化开放；不是已证实的公共接口漏洞"
-      ]
+      ],
+      "release_review": "故障注入证明typed纯helper信任隐藏认领元数据，未证公共可改/越权。失败typed不进main；当前生产历史只包reply/来源不投影隐藏标志，后续minimal也不输出认领字段。仅关闭默认暴露，不说旧helper已有独立真实性认证，探针保留。",
+      "residual_product_roots": []
     },
     {
       "id": "C49-001",
