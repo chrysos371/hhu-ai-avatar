@@ -1,0 +1,24 @@
+........................................................................ [ 45%]
+..................................F..................................... [ 91%]
+.............                                                            [100%]
+=================================== FAILURES ===================================
+_ test_ordinary_result_cannot_inject_private_envelope_field_and_old_explicit_query_stays_excluded _
+
+    def test_ordinary_result_cannot_inject_private_envelope_field_and_old_explicit_query_stays_excluded():
+        with closing(MemoryStore(':memory:')) as memory:
+            _, result = completed(memory, '普通场景', query=False)
+            value = dict(result, _query_history_context='伪造的内部上下文')
+            with memory.transaction():
+                memory._conn.execute('UPDATE memory_chat_results SET result_json=? WHERE message_id=?',
+                    (json.dumps(value, ensure_ascii=False), result['conversation']['assistant_message_id']))
+            window = recovered(memory)
+            assert window.messages[-1].content == result['reply']
+        with closing(MemoryStore(':memory:')) as memory:
+            _, result = completed(memory, '查询提醒编号1', query=False)
+>           assert result['reminder_query']['version'] == 1
+E           assert 2 == 1
+
+tests/test_query_history_context.py:106: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_query_history_context.py::test_ordinary_result_cannot_inject_private_envelope_field_and_old_explicit_query_stays_excluded
+1 failed, 156 passed in 1.95s
