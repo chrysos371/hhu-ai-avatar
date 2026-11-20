@@ -4,6 +4,8 @@ Run with the isolated interpreter provisioned from requirements-build.txt.
 All staging/build/output bytes go into a fresh directory in the project data root.
 """
 import argparse
+import ast
+from email.parser import Parser
 import hashlib
 import importlib.metadata
 import io
@@ -28,6 +30,52 @@ from avatar.paths import project_data_root
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def validate_source_versions(root, expected):
+    try:
+        import tomllib
+    except ImportError:
+        import tomli as tomllib
+    from packaging.version import Version
+    declared = tomllib.loads((root/'pyproject.toml').read_text())['project']['version']
+    front = json.loads((root/'frontend/package.json').read_text())['version']
+    normalized = re.sub(r'rc(\d+)$', r'-rc.\1', expected)
+    if (not isinstance(declared, str) or Version(declared) != Version(expected)
+            or front != normalized):
+        raise ValueError('Source versions disagree: pyproject, runtime and frontend must match')
+
+
+def validate_artifact_versions(wheel_path, sdist_path, expected):
+    from packaging.version import Version
+    from packaging.utils import parse_wheel_filename, parse_sdist_filename
+    def metadata(raw):
+        value = Parser().parsestr(raw.decode('utf-8'))
+        versions = value.get_all('Version', [])
+        names = value.get_all('Name', [])
+        if (len(versions) != 1 or len(names) != 1
+                or re.sub(r'[-_.]+', '-', names[0]).lower() != 'hhu-ai-avatar'
+                or Version(versions[0]) != Version(expected)):
+            raise ValueError('Artifact metadata version/name differs from expected runtime')
+    def runtime(raw):
+        tree = ast.parse(raw.decode('utf-8'))
+        values = [ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign)
+            and any(isinstance(t,ast.Name) and t.id=='__version__' for t in n.targets)]
+        if values != [expected]:
+            raise ValueError('Packaged runtime version differs from expected runtime')
+    if (parse_wheel_filename(wheel_path.name)[1] != Version(expected)
+            or parse_sdist_filename(sdist_path.name)[1] != Version(expected)):
+        raise ValueError('Artifact filename version differs from expected runtime')
+    with zipfile.ZipFile(wheel_path) as wheel:
+        entries = [n for n in wheel.namelist() if n.endswith('.dist-info/METADATA')]
+        if len(entries) != 1:raise ValueError('Require one wheel distribution metadata record')
+        metadata(wheel.read(entries[0]));runtime(wheel.read('avatar/__init__.py'))
+    with tarfile.open(sdist_path) as archive:
+        entries = [m for m in archive if m.name.endswith('/PKG-INFO')]
+        versions = [m for m in archive if m.name.endswith('/src/avatar/__init__.py')]
+        if not entries or len(versions) != 1:raise ValueError('Require sdist metadata and one runtime source')
+        for entry in entries:metadata(archive.extractfile(entry).read())
+        runtime(archive.extractfile(versions[0]).read())
 
 
 def write(path, value):
@@ -83,10 +131,7 @@ def build(output):
         versions[name] = importlib.metadata.version(name)
         if versions[name] != expected:
             raise ValueError('Build package differs from pinned version: '+name)
-    front = json.loads((ROOT/'frontend/package.json').read_text())
-    normalized = re.sub(r'rc(\d+)$', r'-rc.\1', __version__)
-    if front['version'] != normalized:
-        raise ValueError('Frontend/Python versions differ')
+    validate_source_versions(ROOT, __version__)
     output.mkdir(parents=True, exist_ok=False)
     state = dict(artifact_status='candidate_not_release_approved', source_ref=ref,
         version=__version__, source_sha256=before, build_packages=versions, passed=False)
@@ -124,6 +169,7 @@ def build(output):
         sdists = list((output/'dist').glob('*.tar.gz'))
         if len(wheels) != 1 or len(sdists) != 1:
             raise ValueError('Require exactly one wheel and one sdist')
+        validate_artifact_versions(wheels[0],sdists[0],__version__)
         with zipfile.ZipFile(wheels[0]) as wheel:
             for name, expected in ui.items():
                 if hashlib.sha256(wheel.read('avatar/static/'+name)).hexdigest() != expected:

@@ -1,5 +1,6 @@
 """Run with the fresh installed-wheel interpreter using -I, outside the checkout."""
 import hashlib
+import importlib.metadata
 import io
 import json
 import os
@@ -149,6 +150,7 @@ def main():
         checked = subprocess.run([str(Path(sys.executable).parent/'hhu-avatar'), 'doctor', '--require-ui'],
             cwd=OUT, env=env, text=True, capture_output=True, check=True)
         doctor = json.loads(checked.stdout)
+        assert importlib.metadata.version('hhu-ai-avatar')==avatar.__version__==doctor['version']
         assert doctor['core_ready'] and doctor['frontend']['available'] and not doctor['llm']['configured']
         assert doctor['standard_entry_features']==dict(capability_contract_enabled=True,role_state_enabled=True)
         write(OUT/'doctor.json', doctor)
