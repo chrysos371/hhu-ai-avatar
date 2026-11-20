@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "inherits": "evals/interaction/cycle-08/playback-protocol.json",
+  "scope": "Existing controlled PCM a-vowel oracle, actual Three render or SVG fallback; no human or physical approval",
+  "shared_clock": {"p95_ms": 50, "max_ms": 100, "samples": 48, "warmup_excluded": 2, "minimum_active": 30},
+  "three": {
+    "context_must_be_live": true,
+    "actual_render_count_positive": true,
+    "canvas_frame_time_matches_oracle_code": true,
+    "mouth_height": "open<=0.01 ? 0.018 : 0.025+0.19*open",
+    "height_tolerance": 0.00015,
+    "tolerance_basis": "3-decimal open gives at most .000095 height error; 4-decimal height gives at most .00005",
+    "rendered_source_clock_p95_ms": 50,
+    "rendered_source_clock_max_ms": 100
+  },
+  "svg": {"preserve_original_geometry_check": true},
+  "negative_control": "A synthetically corrupted observed Three mouth height must be rejected; not an actual renderer fault injection",
+  "old_failed_measurement": "browser-playback-v1 retained; its missing SVG radius cannot prove Three geometry"
+}

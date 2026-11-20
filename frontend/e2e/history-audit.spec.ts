@@ -3,10 +3,11 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { renderedGeometry, renderedLag, type RenderedClock } from './rendered-clock';
 
 const token = 'mission-control-disposable-e2e-token';
 const draft = 'draft-0123456789-abcdefgh';
-type ClockRow = { wall: number; media: number; lag: number | null; open: string; radius: number | null;
+type ClockRow = RenderedClock & { wall: number; media: number; lag: number | null; open: string; radius: number | null;
   paused: boolean; ended: boolean; seeking: boolean };
 type InputRow = { start: number; end: number; insertedValue: string; renderedValue: string; media: number };
 type Instrument = { decisions: number; inputRows: InputRow[] };
@@ -50,8 +51,15 @@ async function sample(page: Page): Promise<ClockRow[]> {
       const tick = () => {
         const open = stage.getAttribute('data-mouth-open') ?? '', at = mapping[open];
         const radius = stage.querySelector('ellipse[cy="156"]')?.getAttribute('ry');
+        const canvas = stage.querySelector('canvas'), gl = canvas?.getContext('webgl2');
+        const modelOpen = canvas ? Number(canvas.dataset.mouthOpen) : null;
         rows.push({ wall: performance.now(), media: audio.currentTime, lag: at === undefined ? null : (audio.currentTime - at) * 1000,
-          open, radius: radius === undefined ? null : Number(radius), paused: audio.paused, ended: audio.ended, seeking: audio.seeking });
+          open, radius: radius === undefined ? null : Number(radius), paused: audio.paused, ended: audio.ended, seeking: audio.seeking,
+          renderer: stage.getAttribute('data-renderer') ?? 'unknown', modelOpen,
+          modelTime: canvas ? Number(canvas.dataset.mediaTime) : null,
+          modelMappedTime: modelOpen === null ? null : mapping[modelOpen.toFixed(3)] ?? null,
+          modelHeight: canvas ? Number(canvas.dataset.mouthHeight) : null,
+          modelRenders: canvas ? Number(canvas.dataset.renderCount) : null, modelContextLost: gl?.isContextLost() ?? null });
         if (rows.length < 48) requestAnimationFrame(tick); else resolve();
       }; requestAnimationFrame(tick);
     }); return rows;
@@ -60,10 +68,12 @@ async function sample(page: Page): Promise<ClockRow[]> {
 function clockGate(rows: ClockRow[]) {
   const active = rows.slice(2).filter(row => !row.paused && !row.ended && !row.seeking);
   const lag = active.filter(row => row.lag !== null).map(row => Math.abs(row.lag!));
-  const geometry = active.every(row => Number(row.open) <= .04 ? row.radius === null
-    : row.radius !== null && Math.abs(row.radius - (2 + Number(row.open) * 15)) <= .01);
+  const geometry = active.every(row => renderedGeometry(row, row.open, row.radius));
+  const renderLag = active.map(row => renderedLag(row, row.media, row.lag)).filter((v): v is number => v !== null && Number.isFinite(v)).map(Math.abs);
   return { samples: active.length, unmapped: active.length - lag.length, p95Ms: p95(lag), maxMs: Math.max(...lag), geometry,
+    renderedSamples: renderLag.length, renderedP95Ms: p95(renderLag), renderedMaxMs: Math.max(...renderLag),
     passed: active.length >= 30 && lag.length === active.length && p95(lag) <= 50 && Math.max(...lag) <= 100 && geometry
+      && renderLag.length === active.length && p95(renderLag) <= 50 && Math.max(...renderLag) <= 100
       && active.at(-1)!.media > active[0].media };
 }
 

@@ -3,8 +3,9 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { renderedGeometry, renderedLag, type RenderedClock } from './rendered-clock';
 const token = 'mission-control-disposable-e2e-token';
-type Sample = { wall: number; mediaTime: number; frameTime: number | null; frameSegment: number | null;
+type Sample = RenderedClock & { wall: number; mediaTime: number; frameTime: number | null; frameSegment: number | null;
   lagMs: number | null; open: string; radiusY: number | null; paused: boolean; ended: boolean;
   seeking: boolean; readyState: number; rate: number; speaking: boolean; src: string };
 type RequestRow = { slot: number; id: string; text: string; wall: number; headerToken: boolean; fulfillmentError?: string };
@@ -15,7 +16,8 @@ function artifact(name: string, info: TestInfo) {
   if (existsSync(path)) throw Error('Use fresh playback evidence paths');
   const provenance = { sourceHead: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     createdUtc: new Date().toISOString(), protocolSha256: hash('../evals/interaction/cycle-08/playback-protocol.json'),
-    sourceSha256: Object.fromEntries(['src/features/chat/useSpeechPlayer.ts', 'src/features/chat/AvatarStage.tsx',
+    renderedClockContractSha256: hash('../evals/release/2.0.0/rendered-clock-contract.json'),
+    sourceSha256: Object.fromEntries(['e2e/rendered-clock.ts', 'src/features/chat/threeAvatar.ts', 'src/features/chat/avatarPose.ts', 'src/features/chat/useSpeechPlayer.ts', 'src/features/chat/AvatarStage.tsx',
       'src/features/chat/SpeechAvatarStage.tsx', 'src/features/chat/speechFrames.ts', 'src/features/chat/ChatPage.tsx',
       'src/features/chat/useChatHistory.ts', 'src/lib/conversation.ts', '../src/avatar/brain/conversations.py',
       'e2e/playback-audit.spec.ts', '../tests/helpers/serve_admin_e2e.py', '../src/avatar/lab/transport_fixture.py'].map(path => [path, hash(path)])),
@@ -108,11 +110,18 @@ async function samples(page: Page, mapping: [string, { time: number; segment: nu
       const tick = () => {
         const open = stage.getAttribute('data-mouth-open') ?? '', code = codes[open];
         const radius = stage.querySelector('ellipse[cy="156"]')?.getAttribute('ry');
+        const canvas = stage.querySelector('canvas'), gl = canvas?.getContext('webgl2');
+        const modelOpen = canvas ? Number(canvas.dataset.mouthOpen) : null;
         rows.push({ wall: performance.now(), mediaTime: audio.currentTime, frameTime: code?.time ?? null,
           frameSegment: code?.segment ?? null, lagMs: code ? (audio.currentTime - code.time) * 1000 : null,
           open, radiusY: radius === undefined ? null : Number(radius), paused: audio.paused,
           ended: audio.ended, seeking: audio.seeking, readyState: audio.readyState,
-          rate: audio.playbackRate, speaking: stage.classList.contains('speaking'), src: audio.getAttribute('src') ?? '' });
+          rate: audio.playbackRate, speaking: stage.classList.contains('speaking'), src: audio.getAttribute('src') ?? '',
+          renderer: stage.getAttribute('data-renderer') ?? 'unknown', modelOpen,
+          modelTime: canvas ? Number(canvas.dataset.mediaTime) : null,
+          modelMappedTime: modelOpen === null ? null : codes[modelOpen.toFixed(3)]?.time ?? null,
+          modelHeight: canvas ? Number(canvas.dataset.mouthHeight) : null,
+          modelRenders: canvas ? Number(canvas.dataset.renderCount) : null, modelContextLost: gl?.isContextLost() ?? null });
         if (rows.length < count) requestAnimationFrame(tick); else resolve();
       }; requestAnimationFrame(tick);
     }); return rows;
@@ -123,11 +132,16 @@ function clockGate(rows: Sample[]) {
   const lag = active.filter(row => row.lagMs !== null).map(row => Math.abs(row.lagMs!)).sort((a, b) => a - b);
   const p95 = lag[Math.max(0, Math.ceil(lag.length * .95) - 1)] ?? Infinity;
   const max = lag.at(-1) ?? Infinity;
-  const geometry = active.every(row => Number(row.open) <= .04 ? row.radiusY === null
-    : row.radiusY !== null && Math.abs(row.radiusY - (2 + Number(row.open) * 15)) <= .01);
+  const geometry = active.every(row => renderedGeometry(row, row.open, row.radiusY));
+  const renderLag = active.map(row => renderedLag(row, row.mediaTime, row.lagMs)).filter((v): v is number => v !== null && Number.isFinite(v)).map(Math.abs).sort((a,b) => a-b);
+  const renderP95 = renderLag[Math.max(0, Math.ceil(renderLag.length * .95) - 1)] ?? Infinity;
+  const renderMax = renderLag.at(-1) ?? Infinity;
   return { activeSamples: active.length, unmapped: active.length - lag.length, p95AbsoluteLagMs: p95,
-    maxAbsoluteLagMs: max, svgGeometryMatches: geometry,
+    maxAbsoluteLagMs: max, renderedGeometryMatches: geometry,
+    renderedSamples: renderLag.length, renderedP95LagMs: renderP95, renderedMaxLagMs: renderMax,
+    threeSamples: active.filter(row => row.renderer === 'ready').length,
     passed: active.length >= 30 && lag.length === active.length && p95 <= 50 && max <= 100 && geometry
+      && renderLag.length === active.length && renderP95 <= 50 && renderMax <= 100
       && active.at(-1)!.mediaTime > active[0].mediaTime };
 }
 async function mediaEvents(page: Page) {
@@ -137,9 +151,10 @@ test.beforeEach(() => { test.skip(process.env.AVATAR_E2E_PLAYBACK_AUDIT !== '1',
 
 test('measures actual media clock across rates seeks pause end and stop', async ({ page }, info) => {
   const file = artifact('clock', info), control = await oracle(page);
-  const report = { ...file.provenance, scope: 'Actual Chromium decoded PCM and rendered SVG, synthetic timeline oracle only',
+  const report = { ...file.provenance, scope: 'Actual Chromium PCM and Three or SVG presentation; synthetic a-vowel timeline oracle only',
     cases: [] as { name: string; rows: Sample[]; gate: ReturnType<typeof clockGate> }[], controls: [] as Record<string, unknown>[],
-    requests: control.requests, mediaEvents: [] as unknown[], completed: false, failure: null as string | null, physicalApproved: false };
+    requests: control.requests, mediaEvents: [] as unknown[], completed: false, failure: null as string | null, physicalApproved: false,
+    syntheticCorruptGeometryRejected: null as boolean | null };
   file.save(report);
   try {
     await open(page); await chat(page);
@@ -159,6 +174,11 @@ test('measures actual media clock across rates seeks pause end and stop', async 
     await page.getByRole('button', { name: '停止播放', exact: true }).click();
     const stopped = await samples(page, control.mapping, 6), stopPass = stopped.every(row => row.src === '' && row.open === '0.000' && !row.speaking);
     report.controls.push({ name: 'stop', rows: stopped, passed: stopPass }); file.save(report);
+    const ready = report.cases.flatMap(item => item.rows).find(row => row.renderer === 'ready');
+    if (ready) {
+      report.syntheticCorruptGeometryRejected = !renderedGeometry({ ...ready, modelHeight: 9 }, ready.open, ready.radiusY);
+      expect(report.syntheticCorruptGeometryRejected).toBe(true);
+    }
     expect(report.cases.every(item => item.gate.passed)).toBe(true); expect(pausePass && endedPass && stopPass).toBe(true);
     report.completed = true;
     await page.screenshot({ path: join(file.folder, 'clock.png') });
