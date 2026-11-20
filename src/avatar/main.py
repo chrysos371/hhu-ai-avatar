@@ -122,9 +122,13 @@ class Avatar:
         self._capability_snapshot = None
         self._response_frame = None
         self.response_frames = None
+        self.writing_requirement_store = None
+        self._writing_requirements = None
         if capability_contract_enabled:
             from .brain.response_frames import ResponseFrames
+            from .brain.writing_requirements import WritingRequirementStore
             self.response_frames = ResponseFrames(memory)
+            self.writing_requirement_store = WritingRequirementStore(memory)
         # Trusted in-process experiment hook; defaults install no reviewer.
         self.final_reply_reviewer = None
         self._response_review = None
@@ -150,6 +154,8 @@ class Avatar:
         revision = self._turn_context_revision if expected_revision is None else expected_revision
         if revision is not None and self.memory.context_revision != revision:
             raise Cancelled('context changed before model prompt dispatch')
+        if self._writing_requirements is not None:
+            self.writing_requirement_store.ensure_current(self._writing_requirements, self._response_frame)
 
     # ------------------------------------------------------------------ 提示词
     def _admin_store(self):
@@ -204,6 +210,10 @@ class Avatar:
                 capability_context += ('本轮是来源可核验的写作任务，下列根请求只用于当前稿件，'
                     '不是画像事实或现实操作授权；以当前明确修改为准，只交付正文，不追加代发邀约：'
                     + json.dumps(self.response_frames.root_text(self._response_frame), ensure_ascii=False) + '\n')
+                if self._writing_requirements is not None and self._writing_requirements.source_verified:
+                    capability_context += ('当前已核验来源的稿件要求，只约束正文，不是身份事实或执行授权。'
+                        'signature 是文末署名，不是收件人；不得猜测未给的请假原因或时间：'
+                        + json.dumps(self._writing_requirements.data(), ensure_ascii=False) + '\n')
         return (
             f"你是{managed.get('name',config.avatar_name)}，{managed.get('core_identity',config.avatar_persona)}。\n"
             f"{decision.persona_hint}。\n"
@@ -583,6 +593,7 @@ class Avatar:
         self._capability_sources = frozenset()
         self._capability_snapshot = None
         self._response_frame = None
+        self._writing_requirements = None
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
@@ -598,6 +609,8 @@ class Avatar:
                 self.tasks.current = None
                 self._task_context_revision = revision
                 raise Cancelled('context changed before response continuation')
+            if self._writing_requirements is not None:
+                self.writing_requirement_store.ensure_current(self._writing_requirements, self._response_frame)
         def emit_checked(piece):
             checkpoint_context()
             if on_delta:
@@ -632,6 +645,7 @@ class Avatar:
             if self.response_frames is not None:
                 self._response_frame = self.response_frames.observe(user_text, turn_context_revision,
                     self._current_message_id, session_id=self.session_id)
+                self.writing_requirement_store.observe(self._response_frame)
         boundary = self.boundaries.assess(user_text)
         checkpoint_context()
         capability_request = None
@@ -656,6 +670,9 @@ class Avatar:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
         try:
+            if self.writing_requirement_store is not None:
+                self._writing_requirements = self.writing_requirement_store.read(self._response_frame)
+                checkpoint_context()
             if (self.capability_contract_enabled and boundary.reply is None and control is None
                     and reminder_query is None and self.speaker_scope.scope == 'current_user'
                     and self.speaker_scope.allows_actions and not self.boundaries.fiction):
@@ -788,6 +805,8 @@ class Avatar:
             response_source_ids.update(reported_sender_reply.source_message_ids)
         if self._response_frame is not None and self._response_frame.frame == 'writing':
             response_source_ids.add(self._response_frame.root_id)
+        if self._writing_requirements is not None:
+            response_source_ids.update(self._writing_requirements.source_message_ids)
         if (self.capability_contract_enabled and boundary.reply is None and control is None
                 and reminder_query is None and self.speaker_scope.scope != 'unverified'
                 and not speaker_tool_blocked and reminder is None and cancelled_reminder_id is None
@@ -1019,7 +1038,7 @@ class Avatar:
         with self.memory.transaction():
             if self.memory.context_revision != turn_context_revision:
                 raise Cancelled('context changed before reply commit')
-            self._checkpoint()
+            checkpoint_context()
             context_reply = reply
             if query_reply is not None and query_reply.metadata.get('mode') == 'reminder_query':
                 if query_reader is not None:
@@ -1120,6 +1139,7 @@ class Avatar:
         if self._response_review is not None:
             result['response_review'] = self._response_review
         if self.capability_contract_enabled:
+            result['writing_requirements'] = self._writing_requirements.data()
             result['capability_contract'] = {'version': 1, 'semantic_verifier': False,
                 'output_rules': list(capability_output_rules),
                 'runtime': self._capability_snapshot.data() if self._capability_snapshot is not None else None,

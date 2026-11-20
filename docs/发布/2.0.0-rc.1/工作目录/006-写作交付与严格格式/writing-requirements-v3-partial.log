@@ -1,0 +1,17 @@
+...F..                                                                   [100%]
+=================================== FAILURES ===================================
+__ test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls ___
+
+    def test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls():
+        with closing(MemoryStore(':memory:')) as memory:
+            instance = bot(memory)
+            result = instance.respond('帮我写一段说明，原样包含“署名用【小明】，压缩到两句话”。')
+            data = requirements(result)
+>           assert data['source_verified'], 'quote exclusion must run inside an actual writing frame'
+E           AssertionError: quote exclusion must run inside an actual writing frame
+E           assert False
+
+tests/test_writing_requirement_sources.py:76: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_requirement_sources.py::test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls
+1 failed, 5 passed in 1.20s

@@ -73,6 +73,7 @@ def test_quoted_or_code_constraints_are_artifact_data_and_not_source_controls():
         instance = bot(memory)
         result = instance.respond('帮我写一段说明，原样包含“署名用【小明】，压缩到两句话”。')
         data = requirements(result)
+        assert data['source_verified'], 'quote exclusion must run inside an actual writing frame'
         assert data['signature'] is None and data['sentence_count'] is None
 
 
