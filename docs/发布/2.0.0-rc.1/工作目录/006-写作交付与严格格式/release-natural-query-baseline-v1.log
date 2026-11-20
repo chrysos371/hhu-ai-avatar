@@ -1,0 +1,112 @@
+FFFF....F                                                                [100%]
+=================================== FAILURES ===================================
+_ test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u63d0\u9192\u7f16\u53f71\u73b0\u5728\u662f\u4ec0\u4e48\u72b6\u6001\uff1f-read_state] _
+
+text = '提醒编号1现在是什么状态？', route = 'read_state'
+
+    @pytest.mark.parametrize('text,route',[
+        ('提醒编号1现在是什么状态？','read_state'),
+        ('提醒编号1取消了吗？','read_state'),
+        ('提醒编号1还有效吗？','read_state'),
+        ('程序退出后提醒还能发短信吗？','read_policy'),
+    ])
+    def test_actual_chat_alias_uses_real_read_without_model_or_due_claim(text,route):
+        with closing(MemoryStore(':memory:')) as memory:
+            seed(memory,due=True);before=projection(memory);model=Recorder('不应生成')
+            bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            result=bot.respond(text)
+>           assert result['generation_mode']=='rules_reminder_query'
+E           AssertionError: assert 'llm' == 'rules_reminder_query'
+E             
+E             - rules_reminder_query
+E             + llm
+
+tests/test_release_natural_queries.py:23: AssertionError
+_ test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u63d0\u9192\u7f16\u53f71\u53d6\u6d88\u4e86\u5417\uff1f-read_state] _
+
+text = '提醒编号1取消了吗？', route = 'read_state'
+
+    @pytest.mark.parametrize('text,route',[
+        ('提醒编号1现在是什么状态？','read_state'),
+        ('提醒编号1取消了吗？','read_state'),
+        ('提醒编号1还有效吗？','read_state'),
+        ('程序退出后提醒还能发短信吗？','read_policy'),
+    ])
+    def test_actual_chat_alias_uses_real_read_without_model_or_due_claim(text,route):
+        with closing(MemoryStore(':memory:')) as memory:
+            seed(memory,due=True);before=projection(memory);model=Recorder('不应生成')
+            bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            result=bot.respond(text)
+>           assert result['generation_mode']=='rules_reminder_query'
+E           AssertionError: assert 'llm' == 'rules_reminder_query'
+E             
+E             - rules_reminder_query
+E             + llm
+
+tests/test_release_natural_queries.py:23: AssertionError
+_ test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u63d0\u9192\u7f16\u53f71\u8fd8\u6709\u6548\u5417\uff1f-read_state] _
+
+text = '提醒编号1还有效吗？', route = 'read_state'
+
+    @pytest.mark.parametrize('text,route',[
+        ('提醒编号1现在是什么状态？','read_state'),
+        ('提醒编号1取消了吗？','read_state'),
+        ('提醒编号1还有效吗？','read_state'),
+        ('程序退出后提醒还能发短信吗？','read_policy'),
+    ])
+    def test_actual_chat_alias_uses_real_read_without_model_or_due_claim(text,route):
+        with closing(MemoryStore(':memory:')) as memory:
+            seed(memory,due=True);before=projection(memory);model=Recorder('不应生成')
+            bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            result=bot.respond(text)
+>           assert result['generation_mode']=='rules_reminder_query'
+E           AssertionError: assert 'llm' == 'rules_reminder_query'
+E             
+E             - rules_reminder_query
+E             + llm
+
+tests/test_release_natural_queries.py:23: AssertionError
+_ test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u7a0b\u5e8f\u9000\u51fa\u540e\u63d0\u9192\u8fd8\u80fd\u53d1\u77ed\u4fe1\u5417\uff1f-read_policy] _
+
+text = '程序退出后提醒还能发短信吗？', route = 'read_policy'
+
+    @pytest.mark.parametrize('text,route',[
+        ('提醒编号1现在是什么状态？','read_state'),
+        ('提醒编号1取消了吗？','read_state'),
+        ('提醒编号1还有效吗？','read_state'),
+        ('程序退出后提醒还能发短信吗？','read_policy'),
+    ])
+    def test_actual_chat_alias_uses_real_read_without_model_or_due_claim(text,route):
+        with closing(MemoryStore(':memory:')) as memory:
+            seed(memory,due=True);before=projection(memory);model=Recorder('不应生成')
+            bot=Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            result=bot.respond(text)
+>           assert result['generation_mode']=='rules_reminder_query'
+E           AssertionError: assert 'llm' == 'rules_reminder_query'
+E             
+E             - rules_reminder_query
+E             + llm
+
+tests/test_release_natural_queries.py:23: AssertionError
+___ test_fictional_scope_cannot_use_the_natural_alias_to_read_a_real_record ____
+
+    def test_fictional_scope_cannot_use_the_natural_alias_to_read_a_real_record():
+        with closing(MemoryStore(':memory:')) as memory:
+            seed(memory,due=False)
+            bot=Avatar(memory=memory,llm=Recorder('普通对白'),capability_contract_enabled=True,role_state_enabled=True)
+            bot.respond('我来扮演一个虚构角色。')
+            result=bot.respond('提醒编号1现在是什么状态？')
+>           assert result['generation_mode']=='rules_speaker_scope' and SECRET not in result['reply']
+E           AssertionError: assert ('llm' == 'rules_speaker_scope'
+E             
+E             - rules_speaker_scope
+E             + llm)
+
+tests/test_release_natural_queries.py:46: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_release_natural_queries.py::test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u63d0\u9192\u7f16\u53f71\u73b0\u5728\u662f\u4ec0\u4e48\u72b6\u6001\uff1f-read_state]
+FAILED tests/test_release_natural_queries.py::test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u63d0\u9192\u7f16\u53f71\u53d6\u6d88\u4e86\u5417\uff1f-read_state]
+FAILED tests/test_release_natural_queries.py::test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u63d0\u9192\u7f16\u53f71\u8fd8\u6709\u6548\u5417\uff1f-read_state]
+FAILED tests/test_release_natural_queries.py::test_actual_chat_alias_uses_real_read_without_model_or_due_claim[\u7a0b\u5e8f\u9000\u51fa\u540e\u63d0\u9192\u8fd8\u80fd\u53d1\u77ed\u4fe1\u5417\uff1f-read_policy]
+FAILED tests/test_release_natural_queries.py::test_fictional_scope_cannot_use_the_natural_alias_to_read_a_real_record
+5 failed, 4 passed in 0.91s

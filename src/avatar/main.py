@@ -701,7 +701,8 @@ class Avatar:
             if not source or source['role'] != 'user' or source['content'] != user_text:
                 raise Cancelled('canonical control source changed')
         from .brain.reminder_queries import ReminderQuery, parse_query, resolve_query, QuerySource
-        reminder_query = ((ReminderQuery('dedicated') if mode == 'reminder_query' else parse_query(user_text))
+        reminder_query = ((ReminderQuery('dedicated') if mode == 'reminder_query' else
+                           parse_query(user_text, allow_natural=self.capability_contract_enabled))
                           if boundary.reply is None and control is None else None)
         query_reply = None
         query_reader = None
@@ -735,7 +736,7 @@ class Avatar:
                     query_reply = query_reader.resolve()
                 else:
                     query_reply = resolve_query(self.reminders, reminder_query, user_text,
-                        query_source, checkpoint=checkpoint_context)
+                        query_source, checkpoint=checkpoint_context, allow_natural=self.capability_contract_enabled)
                 # The read snapshot has released. An external privacy writer may
                 # now be visible; never publish a result from the old source epoch.
                 checkpoint_context()

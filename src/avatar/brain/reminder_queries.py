@@ -17,6 +17,10 @@ from .reminders import CHINA
 _PREFIX = r'(?:请)?(?:查询|查看)提醒'
 _CONDITIONS = re.compile(_PREFIX + r'(?:运行|送达)条件[。！？!?]?')
 _STATUS = re.compile(_PREFIX + r'(?:编号|#)?[ \t]*([0-9]{1,19})(?:号)?(?:状态)?[。！？!?]?')
+_NATURAL_STATUS = re.compile(r'(?:请)?提醒(?:编号|#)[ \t]*([0-9]{1,19})'
+    r'(?:现在)?(?:是什么状态|状态是什么|还有效吗|取消了吗|完成了吗)[。！？!?]?')
+_NATURAL_POLICY = re.compile(r'(?:程序|服务)(?:退出|关闭|停止|关机)后提醒'
+    r'(?:还)?(?:能|会)(?:发短信|发邮件|打电话)吗[。！？!?]?')
 
 
 @dataclass(frozen=True)
@@ -40,10 +44,19 @@ class QueryReply:
     metadata: dict
 
 
-def parse_query(text):
+def parse_query(text, *, allow_natural=False):
+    if type(allow_natural) is not bool:
+        raise ValueError('allow_natural must be a boolean')
     if not isinstance(text, str):
         return None
     clean = text.strip()
+    if allow_natural and (_NATURAL_STATUS.fullmatch(clean) or _NATURAL_POLICY.fullmatch(clean)):
+        from .reminder_query_targets import derive_read_target
+        target = derive_read_target(text)
+        if target.route == 'read_state':
+            return ReminderQuery('status', target.arguments['reminder_id'])
+        if target.route == 'read_policy':
+            return ReminderQuery('conditions')
     from .reminder_query_targets import explicit_list_query
     if explicit_list_query(text):
         return ReminderQuery('list')
@@ -61,13 +74,13 @@ def parse_query(text):
     return ReminderQuery('invalid')
 
 
-def resolve_query(store, command, text, context, *, checkpoint=None):
+def resolve_query(store, command, text, context, *, checkpoint=None, allow_natural=False):
     """Read under caller's snapshot or a private read transaction; no commits.
 
     The caller must recheck its response epoch after this transaction releases,
     before publishing. This snapshot does not guarantee future immutable state.
     """
-    if (type(command) is not ReminderQuery or command != parse_query(text)
+    if (type(command) is not ReminderQuery or command != parse_query(text, allow_natural=allow_natural)
             or command.reminder_id is not None and type(command.reminder_id) is not int):
         raise Cancelled('reminder query does not match current source text')
     if (type(context.source_message_id) is not int or not 0 < context.source_message_id <= 2**63 - 1
