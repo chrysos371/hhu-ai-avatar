@@ -11,6 +11,7 @@ import wave
 import time
 
 from avatar.web import Handler, create_server
+import pytest
 
 
 def test_health_probe_is_local_and_does_not_open_user_database(tmp_path):
@@ -40,6 +41,18 @@ def test_cli_port_conflict_has_actionable_message_and_no_traceback(tmp_path):
     assert "--port" in result.stderr and "无法监听" in result.stderr
     assert "Traceback" not in result.stderr
     assert not (tmp_path / "unused.db").exists()
+
+
+def test_role_restore_failure_closes_the_actual_listener(tmp_path,monkeypatch):
+    with socket.socket() as probe:
+        probe.bind(('127.0.0.1',0));port=probe.getsockname()[1]
+    def fail(*args,**kwargs):raise RuntimeError('controlled restore failure')
+    monkeypatch.setattr('avatar.brain.role_state.RoleStateStore.restore',fail)
+    with pytest.raises(RuntimeError,match='controlled restore failure'):
+        create_server(str(tmp_path/'restore-failed.db'),port=port,role_state_enabled=True)
+    with socket.socket() as probe:
+        probe.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+        probe.bind(('127.0.0.1',port))
 
 
 def test_disconnected_speech_client_does_not_raise_or_break_server(tmp_path):

@@ -651,16 +651,22 @@ def create_server(
         raise ValueError('capability_contract_enabled must be a boolean')
     if literal_composition and not task_delivery_check:
         raise ValueError('Literal composition requires task delivery checks')
-    initial_emotion = EmotionEngine()
-    if role_state_enabled:
-        from .brain.role_state import RoleStateStore
-        memory = MemoryStore(db_path)
-        try:
-            RoleStateStore(memory).restore(initial_emotion, scope=None)
-        finally:
-            memory.close()
     server = AvatarHTTPServer(("127.0.0.1", port), Handler,
                                max_connections=max_connections, header_timeout=header_timeout)
+    # Binding failure must not create/migrate a user's database. Binding alone
+    # starts no request handler; state is ready before serve_forever is called.
+    initial_emotion = EmotionEngine()
+    try:
+        if role_state_enabled:
+            from .brain.role_state import RoleStateStore
+            memory = MemoryStore(db_path)
+            try:
+                RoleStateStore(memory).restore(initial_emotion, scope=None)
+            finally:
+                memory.close()
+    except BaseException:
+        server.server_close()
+        raise
     server.daemon_threads = True
     server.state_lock = threading.RLock()
     from .speech import SpeechService
