@@ -1,0 +1,60 @@
+{
+  "verified": true,
+  "probe_sha256": "2ddf35c777f5e1e2390fab6fba5e4f700114aad4768f7b8a6ac7b2159676069b",
+  "supervisor_sha256": "b33ba1f11ab6112081290c8753f751a623abc2e2b6934eb1bffab6945e2d5c81",
+  "controls": [
+    {
+      "case": "launcher_exits_child_survives_success",
+      "state": "completed",
+      "actual_child_wait_code": 0
+    },
+    {
+      "case": "duplicate_job_rejected",
+      "original_unchanged": true,
+      "executions": 1
+    },
+    {
+      "case": "nonzero_child",
+      "state": "failed",
+      "actual_child_wait_code": 7
+    },
+    {
+      "case": "requested_stop_only_owned_child",
+      "state": "interrupted",
+      "actual_child_wait_code": -2,
+      "unrelated_alive": true
+    },
+    {
+      "case": "changed_config_no_child",
+      "supervisor_command_exitcode": 0,
+      "child_wait_code": null,
+      "child_launched": false
+    }
+  ],
+  "external_root": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/c55/supervisor-cpu-v1",
+  "external_sha256": {
+    "alive-after-launcher-exit.json": "03ce6c87d3e38782e2ce28cc0034e55c99a1c56a8ead52f8f7964da65e264485",
+    "release-success": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "launcher-exit/config.json": "bccce649e3d2803b8b804c20e776a10abb8c078aae15155233e4291db0d9deb6",
+    "launcher-exit/supervisor.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "launcher-exit/experiment.log": "53239b7ef914bf231af9edccbe7a0c33304d329f85f585991e2262822a2865c9",
+    "launcher-exit/launch.json": "2ff9b7f1504ed338e0c8d1a7486230adcf295f8faf35ab0550a5408c6be6b977",
+    "launcher-exit/status.json": "e7451ac23919abb7bb07dcfb5bfc1a45a9756a57f27b9c8630b2c9c899b8ceef",
+    "requested-stop/config.json": "d4d3361da477809f732c370e352bc3f8a9b67075c3610ba7f5314b5def81792d",
+    "requested-stop/supervisor.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "requested-stop/experiment.log": "19548f57ce737ee7c2f1746d6f25c4f1cd070adbd8ebf86b1dcddf7984d3834b",
+    "requested-stop/launch.json": "029d06b43704c67162c2d9aaf11ac7414a38dc326a15a75c2ddb47c989ab86dd",
+    "requested-stop/status.json": "d4ad55e05a4fd8e8b19b1a62b6bae906565f3d5bb9ed70c5927bb7e771777362",
+    "failure-seven/config.json": "e9dd39bd9f28578062b47cde20e1a8bf550da5edb86a78267ca39df678272bb2",
+    "failure-seven/supervisor.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "failure-seven/experiment.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "failure-seven/launch.json": "c7cc996bacc56047d137e571e0876528b15b03d4c25c781111baeae37de1258e",
+    "failure-seven/status.json": "52492b03a0861c879dabf495875ff3e2267b881cdf942c11ad05daead0bc78cf",
+    "tampered/config.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "tampered/status.json": "fe67312cbab047f1ed18cb8dcaef5368e3f05c73e6f10a65e3b706f9f11a107e"
+  },
+  "model_generations": 0,
+  "training_steps": 0,
+  "GPU_allocations": 0,
+  "scope": "actual short CPU processes; not model run or independent human evaluation"
+}
