@@ -5321,12 +5321,16 @@
           "sha256": "b957a5895b9f28eef8972f02dfe442144b3b3f5ebaf8281b97527bbbb5b1ceda"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_main_training_input_isolation_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/001-训练条件与入口/isolation-red.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/001-训练条件与入口/isolation-fixed.json"
+      ],
       "original_status_candidates": [
         "状态：主实验训练入口的query_text/followup_text范围限定关闭；不是所有schema/语义家族隔离通过，也不代表过去已发生训练污染。"
-      ]
+      ],
+      "release_review": "主screen原漏query_text/followup_text，100字段出现次不是100独立问题；实际C50原句旧接受→新拒绝，全部100出现次拒绝、4保护hash补齐，无关文案保留。未证过去污染或任意schema已保护。"
     },
     {
       "id": "C51-002",
@@ -5339,13 +5343,17 @@
           "sha256": "bb07770461fd91a03a0cff631fa4e15a6990c6a51d932cc54cdc5bddfd59fe11"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_training_preparation_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/003-环境与基础权重/environment-admission.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/005-真实分词预检/training-tokenizer-crosscheck-v1.json"
+      ],
       "original_status_candidates": [
         "状态：准备门槛限定关闭。完整固定基座、独立当前CPU环境及分词交叉实际通过；初始缺失不归因于迁移，也不否定旧训练历史。",
         "最终准备：v4完整成功后，environment-admission独立重盘当前包/55份导入模块及映射目标库SHA/pip check/CPU导入/原环境不变通过；完整训练环境176/44的tokens.json与独立分词环境全字节同SHA（220掩码）。准备门槛限定关闭，CUDA模型运行、训练收益与默认模型升级均未获批准，待C52冻结后另验。"
-      ]
+      ],
+      "release_review": "独立BF16模型12文件/398张量头与CPU环境实际pip check、55库身份、220分词逐字节对照通过；环境准备不等CUDA/模型收益，后续C52/C55才有真实执行。"
     },
     {
       "id": "C51-003",
@@ -5358,12 +5366,15 @@
           "sha256": "50c5e6ce91655c2faf7542007e886d5da9e7539688ebb2f07679f536248292f5"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_environment_bootstrap_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/003-环境与基础权重/environment-admission.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭。首失败保留，实际v4及独立当前准入通过；无模型/训练。"
-      ]
+      ],
+      "release_review": "pip22不识别report，首次失败0Torch安装；固定pip25.3 SHA bootstrap后实际v4安装报告/独立准入通过，v2/v3不追认为成功。"
     },
     {
       "id": "C51-004",
@@ -5376,13 +5387,16 @@
           "sha256": "100741f57506c6518194270d433729ff41e9df5812655711da96f0ce0654f344"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_environment_inventory_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/003-环境与基础权重/environment-admission.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭。v2误计失败保留，v4成功与独立当前prefix盘点通过；无模型训练。",
         "v3记录每个分发来源位置，仅统计路径位于目标sys.prefix内的local_versions；唯一外部元数据必须是本项目src中的hhu-ai-avatar。并保持先前pipbootstrap SHA验证/独立日志，不把来源包可见性等同安装完成。当时要求实际安装和CPU导入通过后才能限定关闭；下文v4及独立准入已满足该准备条件，不证明CUDA/模型质量。"
-      ]
+      ],
+      "release_review": "metadata枚举把repo/src egg-info错计本env，按sys.prefix真实位置筛选；v4实际安装与独立55库/pipcheck核平，来源可见不冒安装成功。"
     },
     {
       "id": "C51-005",
@@ -5395,13 +5409,16 @@
           "sha256": "c8c74c51fad2288228331699902b9f71c03309fae2be31b770603e496096ec3e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_checkpoint_binding_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/005-真实分词预检/preparation-observation-v2.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭。v1失败完整保留，v2实际核验成功；不涉及模型或训练。",
         "v2保持原493项逐字节不变断言，新增2份评测文件另收集SHA，不能把旧完整2540/1回归冒充对新增输入重跑。44字段实际screen拒绝、49旧seal/12072项、9入口继续独立核。实际成功后再限定关闭。"
-      ]
+      ],
+      "release_review": "旧493回归输入不会自动纳入新增evals；原失败保留，新2份分别SHA绑定、44字段拒绝。不是对新增输入重跑历史完整回归。"
     },
     {
       "id": "C51-006",
@@ -5414,13 +5431,16 @@
           "sha256": "db50cb34f845d51d268a72e5a4016b37b7103a056b134f548cdd26e9dbacc075"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_dependency_registry_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-51/审计/工作目录/008-CUDA完整依赖缓存/wheel-registry-v2.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭。v2实际登记15份精确依赖成功；只读元数据，无环境或模型改动。",
         "v2用urljoin基于实际官方索引URL规范化，再要求HTTPS；新metadata-v2目录和wheel-registry-v2.json不覆盖首次文件。仍以索引whole SHA和Torch METADATA自身SHA为身份依据，metadata不等于完整wheel已验证；须实际成功后限定关闭。"
-      ]
+      ],
+      "release_review": "官方索引相对href先urljoin再HTTPS校验，15项2965592102字节仅身份登记；原metadata-v1/失败不覆盖，实际下载/安装另有准入证据。"
     },
     {
       "id": "C52-001",
@@ -5433,14 +5453,17 @@
           "sha256": "e9fe760321552d11a43c367c11a21f709640eaa7e2bfe630c4a9c4126b8a2ae0"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_execution_admission_probe_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/004-真实执行准入负控/cli-v2/admission-cpu-v2.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭。v1假阳性保留并撤回，v2实际门禁对照复测通过；0模型/训练。",
         "原probe_execution_admission.py用python -c/runpy执行目标脚本，却没有把脚本目录加入sys.path。4份实际stderr都为ModuleNotFoundError: execution_common。探针只要求非零返回和未导入Torch/PEFT，错误把模块导入失败当指定门禁拒绝；原“4组CLI门禁通过”结论撤回。旧原始日志、admission-cpu-v1.json及原源码保留，不能覆盖为新结果。7项直接调用的CPU协议/状态/GPU fixture控制不由此否定，6模型/数据绑定补充也另有其来源。",
         "修复目标：包装器模拟正常脚本路径，逐个断言精确错误类型/预期拒绝原因，显式拒收ModuleNotFoundError；另外实际运行正常CLI并比对其退出码/原因，排除包装器独有行为。新cli-v2目录保存全部结果，实际通过后限定关闭，真实模型hook仍须后续验收。"
-      ]
+      ],
+      "release_review": "原4组CLI导入失败假阳性明确撤回；修后8次正常/包装成对指定异常和原因一致，拒收ModuleNotFoundError，7直接控制另列。不是GPU语义红绿。"
     },
     {
       "id": "C52-002",
@@ -5453,12 +5476,16 @@
           "sha256": "74f42d33d2b5f500158f2e18fd00ec7cd24ffc24ca93ce8d74a10d4f7a5ddb1c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_source_import_launch_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/003-真实执行输入/before-actual-launch-v1.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/008-系统收尾/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭（只关闭源码导入/启动路径问题，不批准整阶段或语义质量）。"
-      ]
+      ],
+      "release_review": "训练解释器缺PYTHONPATH，首失败0模型/GPU；显式src后实际阶段CUDA/BF16，四阶段最终真实wait与270生成另证，不修改冻结源。"
     },
     {
       "id": "C52-003",
@@ -5471,14 +5498,18 @@
           "sha256": "2c638aceeb842376e744b692ed0f48b2588e8487fe7a9cc4a7cf99ac17413c2e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_trace_transition_verifier_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/006-调用结束态核验/transition-negative-controls-v1.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/003-真实执行输入/before-verified.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭（完成态核验错误；不批准语义质量）。",
         "实际调用0003入口completed=False，成功结束completed=True；其余共有字段完全相同，来源[实际差异证明](../工作目录/006-调用结束态核验/actual-transition-v1.json)。原始已关闭组采集器与冻结verify_execution.py都使用共有字段全部相等条件，因此必然误拒成功调用。[采集器首失败](../工作目录/006-调用结束态核验/collector-v1-failure.log)与原源完整保存。不是模型调用失败。",
         "冻结执行源不改，原verify_execution.py保留，阶段实际退出后先执行它并保留预期失败。新增只读v2验证器仅调整completed生命周期检查：入口必须False、结果必须True、结果无failure；其余入口字段逐字节等价。train/reload原核验器不受此分支影响。新协议/源码先提交再核验，不新增生成、不修改原始trace，不重试模型；缺字段、token/状态等改变仍拒绝。见[v2协议](../工作目录/006-调用结束态核验/verification-protocol-v2.json)。该修复不能批准语义质量。"
-      ]
+      ],
+      "release_review": "completed入口False→结果True是合法生命周期，旧逐字段相等误拒；新只读核验134trace+6故障拒绝，保留旧冻结核验失败，不新增模型重试。"
     },
     {
       "id": "C52-004",
@@ -5491,13 +5522,17 @@
           "sha256": "8c51b4b4e8c30df471b700fd2e90b5b2b0cea3cf4e75c3c370eb2f3178ee06e2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "C19-001",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/007-逐条来源审阅/before-review-v1.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/007-逐条来源审阅/after-review-v1.json"
+      ],
       "original_status_candidates": [
         "状态：开放；before/after均未通过无不实外部承诺条件。",
         "优化目标沿预登记：after零观察到不实实际完成/承诺，代拟/小说保留不下降，时间/状态/人类证据问题另列；不得以loss或单句改善宣告通用语义或整体跃迁。当前训练不因本后验发现修改冻结输入。"
-      ]
+      ],
+      "release_review": "before/after无源承诺均6/18，代拟/小说保持；适配没有修复外发诚实性，默认基座也需当前契约门控。"
     },
     {
       "id": "C52-005",
@@ -5510,12 +5545,16 @@
           "sha256": "84264a72b78b321c0bccc52541fec573faa083abcff5b11e17e517ea463a42fb"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_adapter_not_promoted",
+      "release_impact": "C19-001",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/007-逐条来源审阅/after-review-v1.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/008-系统收尾/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：开放；候选隔离。"
-      ]
+      ],
+      "release_review": "after短信3/18新增已发送，无工具/SQL依据且不是用户要稿；完整失败adapter隔离，loss/重载成功不批准质量。"
     },
     {
       "id": "C52-006",
@@ -5528,12 +5567,15 @@
           "sha256": "49c724d744fa124fcbc092b9cdc01763d2779251cdad88b30c85c237520edbf3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_adapter_not_promoted",
+      "release_impact": "C48-004",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/007-逐条来源审阅/after-review-v1.json"
+      ],
       "original_status_candidates": [
         "状态：开放；候选隔离。"
-      ]
+      ],
+      "release_review": "ACK与完成各三次先肯定真人行为后否定，后文保留词不能消首句；记录/客户端/真人证据分列，旧adapter隔离。"
     },
     {
       "id": "C52-007",
@@ -5546,13 +5588,17 @@
           "sha256": "b87162113cdad290956e4440d0b67cb8b6b4454a7e03b18ef222abe57a6bf683"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_adapter_not_promoted",
+      "release_impact": "C47-002",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/007-逐条来源审阅/before-review-v1.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/007-逐条来源审阅/after-review-v1.json"
+      ],
       "original_status_candidates": [
         "状态：开放；候选隔离。",
         "after historical_missing-1三次称“根据目前的记录，没有找到编号81100的提醒。”实际actor已在查询后创建记录且未重读；historical_active-2三次称“我的记忆和数据是基于当前的”，缺少来源。前后SMS替代稿都复制旧有效状态无历史标签。before旧未找到时间措辞含混、执行依赖用户确认的无源解释另列，after部分改好也不能掩盖新错。"
-      ]
+      ],
+      "release_review": "旧查无/active被说当前，actor后变且未重读；旧缺失/执行确认含混另列。失败适配不默认，当前历史时效根因继续。"
     },
     {
       "id": "C52-008",
@@ -5565,12 +5611,16 @@
           "sha256": "9d6f108f7feda364a8d236d640fe127ee11dc888433c7f88a0b25e28b5b833f4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_operator_cache_relocation_scope",
+      "release_impact": "no_remaining_original_scoped_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/008-系统收尾/local-bytecode-relocation-v1.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-52/审计/工作目录/008-系统收尾/system-evidence.json"
+      ],
       "original_status_candidates": [
         "状态：限定关闭（操作命令与本次两份缓存，非通用缓存布局验收）。"
-      ]
+      ],
+      "release_review": "两次未-B导入生成pyc导致系统Git身份拒绝；两个缓存迁集中data原SHA保持，原失败不删，后续project-python -B。只限两份/本操作。"
     },
     {
       "id": "C53-001",
