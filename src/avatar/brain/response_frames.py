@@ -18,6 +18,8 @@ _FRESH_WRITING = re.compile(
     r'^(?:给.{1,16})?(?:写|拟|润色|改写|起草|修改)')
 _META = re.compile(r'^(?:请|麻烦)?(?:帮我)?(?:解释|分析|讨论|教我|告诉我)')
 _WRITING_SUBTASK = re.compile(r'(?:[，,。；;]|并|然后|再)(?:请|帮我|替我|给我)?(?:写|拟|润色|改写|起草|修改)')
+_SEQUENCED_WRITING = re.compile(r'(?:^|[，,。；;])\s*(?:接着|随后)(?:请|帮我|替我|给我|代我)?'
+    r'(?:写|拟|润色|改写|起草|修改)(?!了|过)[^，,。；;！？!?\n]*(?:[。；;！？!?]|$)')
 _END = re.compile(r'^(?:我们)?(?:先|再)?(?:不写了|先不写|不要写了|不用写了|换个话题|取消写作|回到现实|结束角色扮演)(?=[，,。！!\s]|$)')
 
 
@@ -43,7 +45,9 @@ def _advance_frame(text, writing):
     tracker.current = previous
     tracker.update(text)
     fresh = tracker.current is not None and tracker.current is not previous
-    if fresh and not (_FRESH_WRITING.match(clean) or _WRITING_SUBTASK.search(clean)):
+    sequenced = any(not re.search(r'[？?]|(?:吗|么|呢)[。！!;；]?$', match.group())
+                    for match in _SEQUENCED_WRITING.finditer(clean))
+    if fresh and not (_FRESH_WRITING.match(clean) or _WRITING_SUBTASK.search(clean) or sequenced):
         return False, False
     return tracker.current is not None, fresh
 
