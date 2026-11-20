@@ -1354,12 +1354,18 @@
           "sha256": "3c8dc70172af752e151948ab1cffa8b937231027a5aa0204bf1f045643b8d5d3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_lipsync_sample_clock.py",
+        "src/avatar/face/lipsync.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-07/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1（软件音画时间轴），已实测。frame_signal使用int(sr*hop_ms/1000)样本，LipSyncEngine却按hop_ms输出时间。固定22例9过/13败；22050Hz默认10ms、120秒零PCM输出末帧120.24秒，而对应实际样本119.9673469秒，漂移272.653毫秒，甚至落到音频结束后。不是物理设备延迟测量。"
-      ]
+      ],
+      "release_review": "使用实际整数hop样本/sr标记帧起点，保持其他帧字段；这是软件绝对时钟修复，不是物理延迟。"
     },
     {
       "id": "C07-002",
@@ -1372,12 +1378,18 @@
           "sha256": "acf78507b1c1ce5e26193536e1be7e1343fc0f5507556c33e0f0677df0fce3eb"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_lipsync_cosmetic_clock.py",
+        "src/avatar/face/lipsync.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-07/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2，默认关闭的装饰控制。001修复帧时钟后继续实测：22050Hz每0.3秒的13次事件数相同但后段偏离最近正确帧；16000Hz每0.035秒应56次却产生65次，实际向下取整为30ms周期。"
-      ]
+      ],
+      "release_review": "每个绝对装饰事件独立量化至最近真实帧，微周期有界；默认仍关闭、不是自然停顿检测。"
     },
     {
       "id": "C08-001",
@@ -1390,14 +1402,21 @@
           "sha256": "013b7114be4f0411fffc41f322c560de84439fb830aa5a42e43295ace110b802"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/features/chat/useSpeechPlayer.ts",
+        "frontend/src/features/chat/PlaybackEvents.test.tsx",
+        "frontend/e2e/playback-audit.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-08/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "# G2C8-001：迟到媒体事件能覆盖当前播放器状态",
         "P1，受控异步事件队列复现范围。useSpeechPlayer回调未核对当前audio状态：已停止且src移除后旧play能把状态复活为playing；实际仍播放时旧pause能关闭显示；ended=false的旧结束事件可提前消费预取片段；error=null的旧错误事件可释放健康新src。冻结7项：4个迟到/状态不一致例与3个真实状态对照。",
         "这不等于已测得浏览器自然发生此竞争的频率。修复目标是事件处理服从当前媒体src、paused、ended、error状态，保持真实暂停/继续/结束/解码错误行为；通过实际Chromium时钟/切段对照和既有端到端回归验证。"
-      ]
+      ],
+      "release_review": "媒体事件须匹配当前拥有src及实际paused/ended/error；旧事件不能复活或释放新播放。当前代码/定向断言和原Chromium协议有效，最终浏览器仍须重跑。"
     },
     {
       "id": "C08-002",
@@ -1410,12 +1429,18 @@
           "sha256": "3361560a236a00834644c0b63185779f0e4a17e4d9ab0d81da27eddfb73fbaf1"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "historical_software_pass_requires_current_measurement",
+      "release_impact": "G02_current_browser_timing_gate_pending",
+      "resolution_evidence": [
+        "frontend/e2e/playback-audit.spec.ts",
+        "frontend/src/features/chat/SpeechAvatarStage.tsx",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-08/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2，首次固定48 RAF实测。rate1/0.5与双向seek均通过；2倍速p95绝对媒体滞后50.112ms、max60.013ms，超过预先冻结p95≤50ms门槛，不调整门槛追认。SVG几何与控制值匹配，暂停/结束/停止正常，三段完整顺序通过。"
-      ]
+      ],
+      "release_review": "原双速p95 50.112ms失败不改；局部订阅后历史固定三轮门槛通过但不证明唯一根因或所有设备。本次仍须当前浏览器重复测量G02，不能凭代码关闭时延结果。"
     },
     {
       "id": "C09-001",
@@ -1428,13 +1453,20 @@
           "sha256": "82d65777ff91b6dc0e34c90c81b33e87792b5d5c5919a07081f0ccbee0c22eb3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/features/chat/SpeechAvatarStage.tsx",
+        "frontend/src/features/chat/SpeechFrames.test.tsx",
+        "frontend/src/features/chat/FrameRendering.test.tsx",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-09/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "# G2C9-001：逐帧状态使聊天父组件重渲染",
         "状态：结构缺陷已修复，完整回归通过。作者：spinner-bot。2026-11-11。"
-      ]
+      ],
+      "release_review": "每播放器局部帧快照+useSyncExternalStore隔离父树，逐帧准确与生命周期断言保留；原180帧计数0只限结构范围。"
     },
     {
       "id": "C09-002",
@@ -1447,12 +1479,18 @@
           "sha256": "c29c3fcba49521e81b66e1fe5e137c2379d1fd8d06f2c22c55164850642db9a7"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "finite_history_evidence_present_multiday_deferred",
+      "release_impact": "G05_current_finite_soak_pending; multiday_deferred_by_user",
+      "resolution_evidence": [
+        "frontend/e2e/history-audit.spec.ts",
+        "docs/发布/2.0.0-rc.1/下次启动待办.md",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-09/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "状态：开放，研究/验收缺口，尚未测得资源耗尽缺陷。作者：spinner-bot。2026-11-11。"
-      ]
+      ],
+      "release_review": "C10已经测完整页面1/25/100回复和CDP，故原从未测量缺口已补；本次有限稳定门控G05仍待，多日部分按用户授权延期。不是资源耗尽缺陷已证实或多日通过。"
     },
     {
       "id": "C10-001",
@@ -1465,12 +1503,19 @@
           "sha256": "58b928fdfdabfaa015501b47aa07fac372b43fccf9a4b5360c7026787d219b95"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/features/chat/ChatTrace.tsx",
+        "frontend/src/features/chat/ChatTrace.test.tsx",
+        "frontend/e2e/history-audit.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-10/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "状态：已修复，三轮完整页面及前端回归通过。2026-11-11，作者spinner-bot。"
-      ]
+      ],
+      "release_review": "ChatTrace只在展开时序列化/挂载五组原始来源，闭合零pre、关闭释放；历史三轮有数据，不宣称可感知性能或泄漏根治。"
     },
     {
       "id": "C10-002",
@@ -1483,13 +1528,20 @@
           "sha256": "4d27a68658681e866fe215552f238362d74cf39cafee521e0632b7305d7b792c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_conversation_history.py",
+        "frontend/src/features/chat/useChatHistory.ts",
+        "frontend/e2e/history-restore.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-10/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "状态：已观察，交互连续性缺口，下一循环优先。2026-11-11，作者spinner-bot。",
         "下一循环先冻结导航/刷新/取消/删除的跨层场景，核对后台持久记录和当前隐私有效状态，再做可撤销实现与真实服务复测。本轮关闭G2C9-002中“完整页面从未测量”的部分，有限百轮与长期/跨设备验收仍分别开放。"
-      ]
+      ],
+      "release_review": "后续C11持久分页/稳定ID/trace与导航恢复已实现，源删除屏障与取消恢复有回归；读取不重放动作、不将旧记录伪造为新trace。"
     },
     {
       "id": "C10-003",
@@ -1502,12 +1554,18 @@
           "sha256": "f3b0a48f1c668b6943463470b8cb01be5dc37b924f036e444c0bf2b42c080163"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/helpers/serve_admin_e2e.py",
+        "scripts/lab/audit_browser_fixture_cleanup.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-10/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "状态：发现残留，已修复并通过独立SIGTERM；默认浏览器15项回归通过。范围仅测试夹具，2026-11-11，作者spinner-bot。"
-      ]
+      ],
+      "release_review": "测试夹具SIGTERM请求另线程shutdown后退出finally；原失败/独立实测保留，不清理旧历史目录、不泛称生产泄漏。"
     },
     {
       "id": "C11-001",
@@ -1520,12 +1578,18 @@
           "sha256": "3a11398091ffb363cba3a9ac1b6efeec6ba52c0421d9366aab106dca92909c64"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/features/chat/ChatCache.test.tsx",
+        "frontend/src/features/chat/ChatPage.tsx",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-11/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "状态：已修复并通过固定后测。2026-11-11，作者spinner-bot。"
-      ]
+      ],
+      "release_review": "聊天mutation完成无使用者不额外驻留，隐私失效/迟到结果有epoch门禁；不清其他管理缓存或宣称全堆回收。"
     },
     {
       "id": "C11-002",
@@ -1538,12 +1602,19 @@
           "sha256": "da56741507bde2b9176a5d908504a3a1e25ab7aab624a15ec5a33012f5bb7c8f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_conversation_history.py",
+        "frontend/src/features/chat/ChatHistory.test.tsx",
+        "frontend/e2e/history-restore.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-11/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "状态：历史恢复已实现并通过所列协议，整体受003同步缺口约束（部分完成）。2026-11-11，作者spinner-bot。"
-      ]
+      ],
+      "release_review": "鉴权分页、稳定ID、当前版本结果持久化/恢复存在；原003同步缺口由C12限定修复，不能外推跨设备、多日或所有生成上下文。"
     },
     {
       "id": "C11-003",
@@ -1556,12 +1627,19 @@
           "sha256": "f994ee83cdb6eabad4914c4b09ab1a8ae60090be69426c0dbb17584cb155dd95"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_conversation_changes.py",
+        "frontend/src/lib/conversationWatch.ts",
+        "frontend/src/features/chat/ChatWatch.test.tsx",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-11/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P1。状态：追加系统审计已复现，保持开放，下一循环首修。2026-11-11，作者spinner-bot。"
-      ]
+      ],
+      "release_review": "C12后端仅版本长轮询通知+活动页可用性屏障覆盖外部API/SQLite连接，断开清旧视图；原12RAF失败保留，不宣称零延迟。"
     },
     {
       "id": "C12-001",
@@ -1574,12 +1652,19 @@
           "sha256": "2ce47a30d2289bca9889b2d59911f3af69610c82a98e99f759d53e46e3ed0666"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/features/chat/useChatHistory.ts",
+        "frontend/src/features/chat/ChatWatch.test.tsx",
+        "frontend/src/lib/conversationWatch.test.tsx",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-12/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "优先级：P1。状态：已修复。12项传输与4项Hook集成通过；真实Chromium开发复核及固定3轮中断/刷新/同版本重连通过，见实验/fixed-1至fixed-3的notification.json。"
-      ]
+      ],
+      "release_review": "通知失败清空/取消并停读snapshot，只有当前有效监测可恢复，同版本也重读；焦点/迟到结果不能绕过屏障。"
     },
     {
       "id": "C12-002",
@@ -1592,13 +1677,20 @@
           "sha256": "26e254b818a9096b3665c3a333ca23e0f29350cbcbace5ac6b642f3a4a060829"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_conversation_changes.py",
+        "tests/test_context_changes.py",
+        "frontend/src/lib/conversationWatch.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-12/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "优先级：P1。承接G2C11-003；在本轮固定协议覆盖内已修复，不改写前轮失败报告。",
         "此次没有改变遗忘来源范围：在另一个无关联用户消息中重新重复同一seed内容，不因此自动视为关联来源并删除。没有跨服务重启重建模型短期/角色状态，没有重放动作。仍须继续既有长期、语义和真实设备开放项。"
-      ]
+      ],
+      "release_review": "共享有界只读版本监测与挂起容量保留普通连接；外连接变更和鉴权/乱序/断开有测试，不称无限标签页或实时分布式保证。"
     },
     {
       "id": "C13-001",
@@ -1611,13 +1703,20 @@
           "sha256": "ea874c09f0f63acf3dae9fc2c1c6bf24e198d77aa57237f69057a13020ba9133"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "src/avatar/brain/speaker_context.py",
+        "tests/test_web_speaker_context.py",
+        "tests/test_speaker_context.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-13/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，本轮有界修复通过v2固定三轮及全量回归。真实独立OS进程实验，离线规则路径，不是模型语义质量测试。",
         "修复需额外覆盖取消/失败期间控制声明、其他连接隐私修改、来源缺失/损坏/乱序、两个服务共享库的旧状态覆盖、版本迁移和没有新上下文记录的旧库。不能仅序列化一个无来源角色字符串。"
-      ]
+      ],
+      "release_review": "持久控制语境按来源/版本恢复，跨OS角色声明不因窗口丢失变真人；不重放工具。实际独立进程历史协议已测，最终启动门控继续。"
     },
     {
       "id": "C13-002",
@@ -1630,12 +1729,19 @@
           "sha256": "4eb4cc698d95ec120dd20cb587197296c59dad184b73af52581f73e31b6bd041"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_speaker_context.py",
+        "tests/test_web_speaker_context.py",
+        "src/avatar/brain/speaker_context.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-13/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2，本轮有界修复通过v2固定三轮及全量回归。偏好续写场景：第一进程“我喜欢骑车”，第二进程“现在不喜欢了”。数据库当前偏好仍是喜欢骑车，未按最近明确对象改为不喜欢骑车；两PID/实例不同。见实验/before/restart.json的preference_followup。"
-      ]
+      ],
+      "release_review": "恢复最多三条有来源/当前版本真人指代，唯一偏好承接；不据此宣称一般短期、写作或PAD跨OS状态完成。"
     },
     {
       "id": "C13-003",
@@ -1648,12 +1754,18 @@
           "sha256": "337d8bf3294703d6b281acae3032014fb6bdbd6ecc8ecfe6b358eab08c350638"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_speaker_actions.py",
+        "src/avatar/main.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-13/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，已修，角色/真人对照及最终1058通过/1跳过全量覆盖。此项并非重启丢失状态，而是已有角色路径的隐藏操作。"
-      ]
+      ],
+      "release_review": "对话claim_due要求allows_actions；角色/未知不得领取真实到期，明确现实后独立回合可领取一次。沿用既有过期策略。"
     },
     {
       "id": "C13-004",
@@ -1666,14 +1778,21 @@
           "sha256": "94fb922b735ed3f6e900c11c59e634bff607015a745990c2cfb5bf9211c84d11"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_speaker_privacy_authority.py",
+        "src/avatar/brain/speaker_scope.py",
+        "src/avatar/brain/speaker_context.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-13/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，追加审计有效复现4失败；修后关联61项及v2固定三轮各10项、全量1058通过/1跳过通过。原v1固定三轮各8通过不覆盖此不变量，保留但不据此宣称全权限完成。",
         "真人事实存在后进入小说角色，外部连接删除该无关事实，随后输入角色姓名或提醒。Avatar与Web各两项均发生不应有的真人资料写入/真实提醒创建，见实验/privacy-authority-before.log（4失败，0.84秒）。既有SpeakerScope按版本clear为current_user，本轮初版持久状态也沿用了这个旧语义，导致丢失来源反而授予权限。",
         "加强规则：清除所有旧控制/真人指代来源时，先前受限状态只能变为unverified，不能变成真人权限；用户需单独明确“回到现实”，随后独立真实请求才获得操作权。原本已核验current_user的普通隐私失效仍清上下文，不无故重新授权角色。内存对象的observe、分析中失效与显式纠错/遗忘，以及持久状态失效使用同一规则。"
-      ]
+      ],
+      "release_review": "受限旧范围丢失来源只能unverified，隐私删除不授予真人权限；单独现实确认后再授权。公开/外连接与持久状态回归都有。"
     },
     {
       "id": "C13-005",
@@ -1686,14 +1805,20 @@
           "sha256": "e66a6be05f65e5d7f09f295f6a83a4d1a3d9d237d179e9a584cb261b9f170be3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_conversation_changes.py",
+        "src/avatar/web_api.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-13/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P2，已修，相关24项及最终全量1058通过/1跳过通过。新通知路由提前分发，其OperationError落到外层旧错误处理，429保留但错误码变成request_rejected，没有像其他V1管理路由保留watch_capacity。单纯状态测试未发现，见实验/connection-cleanup-capacity.log的新定向断言。",
         "修复在该鉴权通知入口保留既有V1包络及OperationError.code/message，不改变旧路由、状态或容量限额。验证等待容量满返回429/watch_capacity；另保留503整体连接满与429通知容量满的区别。",
         "原全量1052通过/1失败/1跳过是容量夹具立即新连接收到503。首次未读错误正文，不能武断断言其唯一根因。控制普通响应完成后线程清理延迟，已能确定性重现外层容量503空正文；释放线程名额后再探测才到达watch 429。测试先初始化数据库，等待普通连接线程释放后再测watch容量，不把503简单加入允许状态来凑通过；机制与原始失败分别记录。"
-      ]
+      ],
+      "release_review": "通知OperationError沿用V1错误包络与watch_capacity，区分外层503和通知429；不把503加入允许集合掩盖容量。"
     },
     {
       "id": "C14-001",
@@ -1706,13 +1831,20 @@
           "sha256": "577c362f186f15500d4d3fe29dc56f3f36426b865af90e5808eecf3c812343b4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_speaker_snapshot.py",
+        "tests/test_speaker_privacy_authority.py",
+        "src/avatar/brain/memory.py",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-14/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v2-binding.json"
+      ],
       "original_status_candidates": [
         "P1，有界修复通过：冻结三轮各9项、关联70项及完整Python1067通过/1跳过；外部通知与54+1历史恢复相关浏览器回归均通过。修前冻结9项矩阵5通过/4失败，0.297秒。实际执行run_chat、另一个Avatar或MemoryStore写入，使用不同SQLite连接；未运行交互CLI子进程、HTTP浏览器或真实模型，不作那些范围的结论。",
         "具体链：原Web cursor=1、scope=current_user；其他Avatar提交user=3（或直接user=3）但没有更新Web控制状态；遗忘从revision0→1，把cursor推进到4（或3），仍保留current_user、清basis。下一Web回合原缺口检查查不到游标后的未跟踪用户，于是错误授予真人资料写入或创建提醒。无遗忘时相同CLI缺口已保守为unverified，不能把它称所有混合路径已修。"
-      ]
+      ],
+      "release_review": "隐私事务推进fence前检查未跟踪用户来源，缺口保守unverified；不读取重放原文，合法跟踪真人不无故阻断。"
     },
     {
       "id": "C15-001",
