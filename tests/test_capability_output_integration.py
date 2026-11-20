@@ -7,7 +7,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
-from writing_history_assertions import assert_writing_context
+from writing_history_assertions import assert_writing_context, assert_release_context
 
 
 @pytest.mark.parametrize('draft', ['我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
@@ -20,7 +20,7 @@ def test_forced_wrong_model_cannot_publish_unsupported_claims(draft):
         result = bot.respond('聊聊今天。', cancel=CancellationToken(), on_delta=pieces.append)
         assert len(engine.native) == 1 and result['generation_mode'] == 'llm_capability_guarded'
         assert result['reply'] != draft and result['reply'] == ''.join(pieces)
-        assert result['reply'] == memory.get_short_term()[-1]['content']
+        assert_release_context(memory, result)
         assert memory._conn.execute("SELECT content FROM memory_messages WHERE role='assistant'").fetchone()[0] == result['reply']
         assert result['capability_contract']['output_rules'] and not result['action_receipts']['items']
         assert not result['capability_contract']['semantic_verifier']

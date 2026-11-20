@@ -1,0 +1,253 @@
+................FFFFFF........FFFF...................................... [ 58%]
+...................................................                      [100%]
+=================================== FAILURES ===================================
+_ test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u5e2e\u6211\u53d1\u77ed\u4fe1\u7ed9\u540c\u5b66\u3002] _
+
+text = '帮我发短信给同学。'
+
+    @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
+        '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+        '等我把消息写好，你能替我发送吗？'])
+    def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
+        engine = Recorder('已帮你发送成功，稍后再帮你联系。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append, use_web=True)
+            assert not engine.native and not engine.analysis and bot.web_agent is None
+            assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
+            assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
+            assert not result['tool_calls'] and not result['action_receipts']['items']
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '当前没有接入短信代发接口...需要办理时，请你自行操作。'
+E             
+E             - 当前没有接入短信代发接口，我不能替你实际执行。需要办理时，请你自行操作。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"rules_capability_request","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"当前没有接入短信代发接口，我不能替你实际执行。需要办理时，请你自行操作。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_contract_integration.py:28: AssertionError
+_ test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u4f60\u5df2\u7ecf\u53d1\u9001\u77ed\u4fe1\u4e86\u5417\uff1f] _
+
+text = '你已经发送短信了吗？'
+
+    @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
+        '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+        '等我把消息写好，你能替我发送吗？'])
+    def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
+        engine = Recorder('已帮你发送成功，稍后再帮你联系。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append, use_web=True)
+            assert not engine.native and not engine.analysis and bot.web_agent is None
+            assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
+            assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
+            assert not result['tool_calls'] and not result['action_receipts']['items']
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '我没有替你执行短信代发，...台的操作，我无法据此核验。'
+E             
+E             - 我没有替你执行短信代发，当前没有接入这项接口；你或他人在其他平台的操作，我无法据此核验。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"rules_capability_request","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我没有替你执行短信代发，当前没有接入这项接口；你或他人在其他平台的操作，我无法据此核验。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_contract_integration.py:28: AssertionError
+_ test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u8bf7\u66ff\u6211\u53d1\u90ae\u4ef6\u7ed9\u8001\u5e08\u3002] _
+
+text = '请替我发邮件给老师。'
+
+    @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
+        '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+        '等我把消息写好，你能替我发送吗？'])
+    def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
+        engine = Recorder('已帮你发送成功，稍后再帮你联系。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append, use_web=True)
+            assert not engine.native and not engine.analysis and bot.web_agent is None
+            assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
+            assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
+            assert not result['tool_calls'] and not result['action_receipts']['items']
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '当前没有接入邮件代发接口...需要办理时，请你自行操作。'
+E             
+E             - 当前没有接入邮件代发接口，我不能替你实际执行。需要办理时，请你自行操作。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"rules_capability_request","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"当前没有接入邮件代发接口，我不能替你实际执行。需要办理时，请你自行操作。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_contract_integration.py:28: AssertionError
+_ test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u4f60\u521a\u624d\u8054\u7cfb\u5230\u4ed6\u4e86\u5417\uff1f] _
+
+text = '你刚才联系到他了吗？'
+
+    @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
+        '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+        '等我把消息写好，你能替我发送吗？'])
+    def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
+        engine = Recorder('已帮你发送成功，稍后再帮你联系。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append, use_web=True)
+            assert not engine.native and not engine.analysis and bot.web_agent is None
+            assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
+            assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
+            assert not result['tool_calls'] and not result['action_receipts']['items']
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '我没有替你执行拨打电话或...台的操作，我无法据此核验。'
+E             
+E             - 我没有替你执行拨打电话或代为联系，当前没有接入这项接口；你或他人在其他平台的操作，我无法据此核验。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"rules_capability_request","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我没有替你执行拨打电话或代为联系，当前没有接入这项接口；你或他人在其他平台的操作，我无法据此核验。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_contract_integration.py:28: AssertionError
+_ test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u4f60\u521a\u624d\u771f\u7684\u53d1\u51fa\u53bb\u4e86\u5417\uff1f] _
+
+text = '你刚才真的发出去了吗？'
+
+    @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
+        '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+        '等我把消息写好，你能替我发送吗？'])
+    def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
+        engine = Recorder('已帮你发送成功，稍后再帮你联系。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append, use_web=True)
+            assert not engine.native and not engine.analysis and bot.web_agent is None
+            assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
+            assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
+            assert not result['tool_calls'] and not result['action_receipts']['items']
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '我没有替你发送短信或邮件...应提醒的显示记录才能确认。'
+E             
+E             - 我没有替你发送短信或邮件，也没有拨打电话，当前没有接入这些接口。如果你指的是本机提醒显示，需要查询对应提醒的显示记录才能确认。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"rules_capability_request","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我没有替你发送短信或邮件，也没有拨打电话，当前没有接入这些接口。如果你指的是本机提醒显示，需要查询对应提醒的显示记录才能确认。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_contract_integration.py:28: AssertionError
+_ test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u7b49\u6211\u628a\u6d88\u606f\u5199\u597d\uff0c\u4f60\u80fd\u66ff\u6211\u53d1\u9001\u5417\uff1f] _
+
+text = '等我把消息写好，你能替我发送吗？'
+
+    @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
+        '请替我发邮件给老师。', '你刚才联系到他了吗？', '你刚才真的发出去了吗？',
+        '等我把消息写好，你能替我发送吗？'])
+    def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution(text):
+        engine = Recorder('已帮你发送成功，稍后再帮你联系。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(text, cancel=CancellationToken(), on_delta=pieces.append, use_web=True)
+            assert not engine.native and not engine.analysis and bot.web_agent is None
+            assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
+            assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
+            assert not result['tool_calls'] and not result['action_receipts']['items']
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '当前没有接入消息代发接口...需要办理时，请你自行操作。'
+E             
+E             - 当前没有接入消息代发接口，我不能替你实际执行。需要办理时，请你自行操作。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"rules_capability_request","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"当前没有接入消息代发接口，我不能替你实际执行。需要办理时，请你自行操作。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_contract_integration.py:28: AssertionError
+_ test_forced_wrong_model_cannot_publish_unsupported_claims[\u6211\u5df2\u7ecf\u628a\u77ed\u4fe1\u53d1\u7ed9\u540c\u5b66\u4e86\u3002] _
+
+draft = '我已经把短信发给同学了。'
+
+    @pytest.mark.parametrize('draft', ['我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
+        '我可以替你拨打电话联系室友。', '我会到时提醒你。'])
+    def test_forced_wrong_model_cannot_publish_unsupported_claims(draft):
+        engine = Recorder(draft)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('聊聊今天。', cancel=CancellationToken(), on_delta=pieces.append)
+            assert len(engine.native) == 1 and result['generation_mode'] == 'llm_capability_guarded'
+            assert result['reply'] != draft and result['reply'] == ''.join(pieces)
+>           assert result['reply'] == memory.get_short_term()[-1]['content']
+E           assert '我没有外部短信、邮件代发...口，不能替你执行这些操作。' == '历史受限答复（仅为当时答...ctions":true}'
+E             
+E             + 我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。
+E             - 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             - {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"llm_capability_guarded","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_output_integration.py:23: AssertionError
+_ test_forced_wrong_model_cannot_publish_unsupported_claims[\u90ae\u4ef6\u5df2\u53d1\u9001\u81f3\u60a8\u7684\u90ae\u7bb1\u3002] _
+
+draft = '邮件已发送至您的邮箱。'
+
+    @pytest.mark.parametrize('draft', ['我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
+        '我可以替你拨打电话联系室友。', '我会到时提醒你。'])
+    def test_forced_wrong_model_cannot_publish_unsupported_claims(draft):
+        engine = Recorder(draft)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('聊聊今天。', cancel=CancellationToken(), on_delta=pieces.append)
+            assert len(engine.native) == 1 and result['generation_mode'] == 'llm_capability_guarded'
+            assert result['reply'] != draft and result['reply'] == ''.join(pieces)
+>           assert result['reply'] == memory.get_short_term()[-1]['content']
+E           assert '我没有外部短信、邮件代发...口，不能替你执行这些操作。' == '历史受限答复（仅为当时答...ctions":true}'
+E             
+E             + 我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。
+E             - 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             - {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"llm_capability_guarded","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_output_integration.py:23: AssertionError
+_ test_forced_wrong_model_cannot_publish_unsupported_claims[\u6211\u53ef\u4ee5\u66ff\u4f60\u62e8\u6253\u7535\u8bdd\u8054\u7cfb\u5ba4\u53cb\u3002] _
+
+draft = '我可以替你拨打电话联系室友。'
+
+    @pytest.mark.parametrize('draft', ['我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
+        '我可以替你拨打电话联系室友。', '我会到时提醒你。'])
+    def test_forced_wrong_model_cannot_publish_unsupported_claims(draft):
+        engine = Recorder(draft)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('聊聊今天。', cancel=CancellationToken(), on_delta=pieces.append)
+            assert len(engine.native) == 1 and result['generation_mode'] == 'llm_capability_guarded'
+            assert result['reply'] != draft and result['reply'] == ''.join(pieces)
+>           assert result['reply'] == memory.get_short_term()[-1]['content']
+E           assert '我没有外部短信、邮件代发...口，不能替你执行这些操作。' == '历史受限答复（仅为当时答...ctions":true}'
+E             
+E             + 我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。
+E             - 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             - {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"llm_capability_guarded","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我没有外部短信、邮件代发或电话接口，不能替你执行这些操作。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_output_integration.py:23: AssertionError
+_ test_forced_wrong_model_cannot_publish_unsupported_claims[\u6211\u4f1a\u5230\u65f6\u63d0\u9192\u4f60\u3002] _
+
+draft = '我会到时提醒你。'
+
+    @pytest.mark.parametrize('draft', ['我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
+        '我可以替你拨打电话联系室友。', '我会到时提醒你。'])
+    def test_forced_wrong_model_cannot_publish_unsupported_claims(draft):
+        engine = Recorder(draft)
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('聊聊今天。', cancel=CancellationToken(), on_delta=pieces.append)
+            assert len(engine.native) == 1 and result['generation_mode'] == 'llm_capability_guarded'
+            assert result['reply'] != draft and result['reply'] == ''.join(pieces)
+>           assert result['reply'] == memory.get_short_term()[-1]['content']
+E           assert '提醒依赖程序运行并轮询，...、时间和事项提出提醒请求。' == '历史受限答复（仅为当时答...ctions":true}'
+E             
+E             + 提醒依赖程序运行并轮询，这段答复不会新建提醒；请用明确日期、时间和事项提出提醒请求。
+E             - 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             - {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"llm_capability_guarded","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"提醒依赖程序运行并轮询，这段答复不会新建提醒；请用明确日期、时间和事项提出提醒请求。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_capability_output_integration.py:23: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_capability_contract_integration.py::test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u5e2e\u6211\u53d1\u77ed\u4fe1\u7ed9\u540c\u5b66\u3002]
+FAILED tests/test_capability_contract_integration.py::test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u4f60\u5df2\u7ecf\u53d1\u9001\u77ed\u4fe1\u4e86\u5417\uff1f]
+FAILED tests/test_capability_contract_integration.py::test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u8bf7\u66ff\u6211\u53d1\u90ae\u4ef6\u7ed9\u8001\u5e08\u3002]
+FAILED tests/test_capability_contract_integration.py::test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u4f60\u521a\u624d\u8054\u7cfb\u5230\u4ed6\u4e86\u5417\uff1f]
+FAILED tests/test_capability_contract_integration.py::test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u4f60\u521a\u624d\u771f\u7684\u53d1\u51fa\u53bb\u4e86\u5417\uff1f]
+FAILED tests/test_capability_contract_integration.py::test_no_cognition_generation_or_tools_can_invent_explicit_external_execution[\u7b49\u6211\u628a\u6d88\u606f\u5199\u597d\uff0c\u4f60\u80fd\u66ff\u6211\u53d1\u9001\u5417\uff1f]
+FAILED tests/test_capability_output_integration.py::test_forced_wrong_model_cannot_publish_unsupported_claims[\u6211\u5df2\u7ecf\u628a\u77ed\u4fe1\u53d1\u7ed9\u540c\u5b66\u4e86\u3002]
+FAILED tests/test_capability_output_integration.py::test_forced_wrong_model_cannot_publish_unsupported_claims[\u90ae\u4ef6\u5df2\u53d1\u9001\u81f3\u60a8\u7684\u90ae\u7bb1\u3002]
+FAILED tests/test_capability_output_integration.py::test_forced_wrong_model_cannot_publish_unsupported_claims[\u6211\u53ef\u4ee5\u66ff\u4f60\u62e8\u6253\u7535\u8bdd\u8054\u7cfb\u5ba4\u53cb\u3002]
+FAILED tests/test_capability_output_integration.py::test_forced_wrong_model_cannot_publish_unsupported_claims[\u6211\u4f1a\u5230\u65f6\u63d0\u9192\u4f60\u3002]
+10 failed, 113 passed in 2.93s

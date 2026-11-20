@@ -9,7 +9,7 @@ from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken, Cancelled
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
-from writing_history_assertions import assert_writing_context
+from writing_history_assertions import assert_writing_context, assert_release_context
 
 
 @pytest.mark.parametrize('text', ['帮我发短信给同学。', '你已经发送短信了吗？',
@@ -25,7 +25,7 @@ def test_no_cognition_generation_or_tools_can_invent_explicit_external_execution
         assert result['generation_mode'] == result['analysis_mode'] == 'rules_capability_request'
         assert '没有接入' in result['reply'] and '发送成功' not in result['reply']
         assert not result['tool_calls'] and not result['action_receipts']['items']
-        assert memory.get_short_term()[-1]['content'] == result['reply']
+        assert_release_context(memory, result)
         row = memory._conn.execute("SELECT content FROM memory_messages WHERE role='assistant'").fetchone()
         assert row['content'] == result['reply'] and pieces == []
         assert bot._capability_snapshot.source_message_id == result['conversation']['user_message_id']
