@@ -1,0 +1,62 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_hard_supervisor_death_retires_signal_ignoring_direct_child ________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/c56-parent-death-red-v1/test_hard_supervisor_death_ret0')
+
+    def test_hard_supervisor_death_retires_signal_ignoring_direct_child(tmp_path):
+        folder=tmp_path/'hard-death';ready=tmp_path/'payload-ready'
+        code=('import pathlib,signal,sys,time; '
+            'signal.signal(signal.SIGTERM,signal.SIG_IGN); '
+            'signal.signal(signal.SIGINT,signal.SIG_IGN); '
+            'pathlib.Path(sys.argv[1]).write_text("ready"); time.sleep(60)')
+        launched=jobs.launch([sys.executable,'-B','-c',code,str(ready)],folder)
+        child=None;worker=None
+        unrelated=subprocess.Popen([sys.executable,'-B','-c','import time; time.sleep(60)'])
+        try:
+            state=wait_for(lambda:(s if (s:=jobs.status(folder))['child_verified_alive'] and ready.exists() else None))
+            child=state['child'];worker=state['worker']
+            assert jobs.matches(worker) and worker['pid']==launched['worker_pid']
+            os.kill(worker['pid'],signal.SIGKILL)
+            wait_for(lambda:not jobs.matches(worker))
+            end=time.monotonic()+2
+            while jobs.matches(child) and time.monotonic()<end:time.sleep(.02)
+            alive_after_parent_death=jobs.matches(child)
+            observed=jobs.status(folder)
+            print(json.dumps({'child_alive_after_parent_SIGKILL':alive_after_parent_death,
+                'original_status':observed,'unrelated_alive':unrelated.poll() is None}))
+            assert unrelated.poll() is None
+            assert observed['return_code'] is None  # Original parent cannot supply wait.
+>           assert not alive_after_parent_death,'Hard-killed supervisor left its direct CPU worker alive'
+E           AssertionError: Hard-killed supervisor left its direct CPU worker alive
+E           assert not True
+
+tests/test_supervisor_parent_death.py:56: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"child_alive_after_parent_SIGKILL": true, "original_status": {"state": "running", "started_utc": "2026-11-20T09:24:20.517563+00:00", "worker": {"pid": 3151459, "start_ticks": 110684819, "state": "R", "argv": ["/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python", "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/run_frozen_capability_job.py", "--worker", "/data/Users/zrh/data/hhu-ai-avatar/tmp/c56-parent-death-red-v1/test_hard_supervisor_death_ret0/hard-death", "--config-sha256", "03c80b930949d2202b30d91596abde87068713e387120dc2521c43ad0bd02ae4"], "process_group": 3151459}, "child": {"pid": 3151461, "start_ticks": 110684824, "state": "R", "argv": ["/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python", "-B", "-c", "import pathlib,signal,sys,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); signal.signal(signal.SIGINT,signal.SIG_IGN); pathlib.Path(sys.argv[1]).write_text(\"ready\"); time.sleep(60)", "/data/Users/zrh/data/hhu-ai-avatar/tmp/c56-parent-death-red-v1/test_hard_supervisor_death_ret0/payload-ready"], "process_group": 3151461}, "return_code": null, "stop_signal": null, "context": {}, "heartbeat_utc": "2026-11-20T09:24:20.519416+00:00", "worker_verified_alive": false, "child_verified_alive": true}, "unrelated_alive": true}
+__________ test_worker_cli_reentry_preserves_original_terminal_bytes ___________
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/c56-parent-death-red-v1/test_worker_cli_reentry_preser0')
+
+    def test_worker_cli_reentry_preserves_original_terminal_bytes(tmp_path):
+        folder=tmp_path/'terminal'
+        jobs.launch([sys.executable,'-B','-c','print("executed-once")'],folder)
+        state=wait_for(lambda:(s if (s:=jobs.status(folder))['state']=='completed' else None))
+        wait_for(lambda:not jobs.matches(state['worker']))
+        original={p.name:p.read_bytes() for p in folder.iterdir() if p.is_file()}
+        rerun=subprocess.run([sys.executable,'-B',str(SCRIPT),'--worker',str(folder),
+            '--config-sha256',jobs.digest(folder/'config.json')],capture_output=True,text=True)
+        print(json.dumps({'rerun_returncode':rerun.returncode,'original_terminal':state,
+            'after_cli_reentry':jobs.status(folder)}))
+>       assert rerun.returncode!=0,'Direct worker CLI must reject an already-attempted job'
+E       AssertionError: Direct worker CLI must reject an already-attempted job
+E       assert 0 != 0
+E        +  where 0 = CompletedProcess(args=['/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python', '-B', '/data/Users/zrh/repo...onfig-sha256', '2f384adee3bc58bb6c33fcbced9a3ae5a1932d7ebb5f16c73023e704ac92ef78'], returncode=0, stdout='', stderr='').returncode
+
+tests/test_supervisor_parent_death.py:72: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"rerun_returncode": 0, "original_terminal": {"state": "completed", "started_utc": "2026-11-20T09:24:22.657687+00:00", "worker": {"pid": 3151467, "start_ticks": 110685033, "state": "R", "argv": ["/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python", "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/run_frozen_capability_job.py", "--worker", "/data/Users/zrh/data/hhu-ai-avatar/tmp/c56-parent-death-red-v1/test_worker_cli_reentry_preser0/terminal", "--config-sha256", "2f384adee3bc58bb6c33fcbced9a3ae5a1932d7ebb5f16c73023e704ac92ef78"], "process_group": 3151467}, "child": {"pid": 3151468, "start_ticks": 110685038, "state": "R", "argv": ["/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python", "-B", "-c", "print(\"executed-once\")"], "process_group": 3151468}, "return_code": 0, "stop_signal": null, "context": {}, "heartbeat_utc": "2026-11-20T09:24:22.659567+00:00", "ended_utc": "2026-11-20T09:24:22.860185+00:00", "worker_verified_alive": false, "child_verified_alive": false}, "after_cli_reentry": {"state": "failed", "started_utc": "2026-11-20T09:24:22.922981+00:00", "worker": {"pid": 3151472, "start_ticks": 110685060, "state": "R", "argv": ["/data/Users/zrh/data/hhu-ai-avatar/envs/hhu-ai-avatar/bin/python", "-B", "/data/Users/zrh/repo/hhu-ai-avatar/scripts/lab/run_frozen_capability_job.py", "--worker", "/data/Users/zrh/data/hhu-ai-avatar/tmp/c56-parent-death-red-v1/test_worker_cli_reentry_preser0/terminal", "--config-sha256", "2f384adee3bc58bb6c33fcbced9a3ae5a1932d7ebb5f16c73023e704ac92ef78"], "process_group": 3151378}, "child": null, "return_code": null, "stop_signal": null, "context": {}, "error": "FileExistsError(17, 'File exists')", "ended_utc": "2026-11-20T09:24:22.923894+00:00", "worker_verified_alive": false, "child_verified_alive": false}}
+=========================== short test summary info ============================
+FAILED tests/test_supervisor_parent_death.py::test_hard_supervisor_death_retires_signal_ignoring_direct_child
+FAILED tests/test_supervisor_parent_death.py::test_worker_cli_reentry_preserves_original_terminal_bytes
+2 failed in 2.51s
