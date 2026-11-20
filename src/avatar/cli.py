@@ -66,7 +66,8 @@ def main(argv=None):
         try:
             _repl(avatar, use_tts=args.tts)
         finally:
-            avatar.close()
+            avatar.memory.close()
+            avatar.llm.close()
         return 0
     parser.print_help()
     return 0
