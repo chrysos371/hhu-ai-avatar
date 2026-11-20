@@ -799,8 +799,16 @@ class Avatar:
         delivery_guard_active = bool(self.delivery_check_enabled and self.tasks.current is not None
             and boundary.reply is None and reminder is None and cancelled_reminder_id is None
             and not reminder_error and not use_web and control is None and reminder_query is None)
+        number_requested = False
+        number_format_result = None
+        if (self.capability_contract_enabled and boundary.reply is None and control is None
+                and reminder_query is None and not use_web and not self.boundaries.fiction
+                and self.speaker_scope.scope == 'current_user' and self.speaker_scope.allows_actions
+                and self._response_frame is not None and self._response_frame.frame == 'ordinary'):
+            from .brain.number_formats import requested
+            number_requested = requested(user_text)
         buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
-                        or self.final_reply_reviewer is not None)
+                        or self.final_reply_reviewer is not None or number_requested)
         streamed_prefix = []
         capability_output_rules = ()
         grounding_action = None
@@ -966,7 +974,13 @@ class Avatar:
         writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
         if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
-        if self.final_reply_reviewer is not None and generation_mode in {'llm', 'llm_capability_guarded'}:
+        if number_requested and generation_mode in {'llm', 'llm_capability_guarded'}:
+            from .brain.number_formats import review
+            number_format_result = review(reply, user_text)
+            reply = number_format_result.reply
+            if number_format_result.rules:
+                generation_mode = 'llm_format_guarded'
+        if self.final_reply_reviewer is not None and generation_mode in {'llm', 'llm_capability_guarded', 'llm_format_guarded'}:
             reviewed, metadata = self.final_reply_reviewer(user_text, reply)
             if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
                 raise ValueError('final reply reviewer returned invalid data')
@@ -990,7 +1004,7 @@ class Avatar:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
         repair_succeeded = repair_succeeded and not final_delivery_issues
-        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition', 'llm_capability_guarded'}
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition', 'llm_capability_guarded', 'llm_format_guarded'}
                               or self._response_review is not None) and on_delta):
             emit_checked(reply)
         elif generation_mode in {'llm', 'llm_capability_guarded'} and on_delta:
@@ -1110,6 +1124,13 @@ class Avatar:
                 'output_rules': list(capability_output_rules),
                 'runtime': self._capability_snapshot.data() if self._capability_snapshot is not None else None,
                 'frame': self._response_frame.metadata() if self._response_frame is not None else None}
+        if number_format_result is not None:
+            result['format_contract'] = {'version': 1, 'source_message_id': self._current_message_id,
+                'requested': True, 'applied': bool(number_format_result.rules),
+                'rules': list(number_format_result.rules), 'reason': number_format_result.reason,
+                'arithmetic_consistent': number_format_result.arithmetic_consistent,
+                'semantic_answer_verified': False, 'stream_buffered': True,
+                'scope': 'bounded_ascii_decimal_or_additive_expression_presentation'}
         if reported_sender_reply is not None:
             result['reported_communication'] = reported_sender_reply.metadata()
         if query_reply is not None:
