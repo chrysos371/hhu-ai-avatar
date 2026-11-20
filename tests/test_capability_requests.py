@@ -14,6 +14,8 @@ from avatar.brain.capability_requests import explicit_unavailable_request as par
     ('你可以替我发送私信吗？', 'message'),
     ('能不能把这条SMS转发给他？', 'sms'),
     ('等我把消息写好，你能替我发送吗？', 'message'),
+    ('把“报告已校对”发到实验室群里。', 'message'),
+    ('请替我把“仪器预约改到周三”邮件通知值班老师。', 'email'),
 ])
 def test_explicit_execution_has_truthful_nonexecuting_response(text, channel):
     result = parse(text)

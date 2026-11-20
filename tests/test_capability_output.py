@@ -9,6 +9,7 @@ from avatar.brain.capability_output import review_output
     '我可以替你拨打电话联系室友。', '已经帮你发送短信。',
     '我没有短信接口，但我已经发出短信了。', '需要我帮你发送邮件吗？',
     '我会到时提醒你。',
+    '我已经把安排发到群里了。', '我可以帮你发邮件。', '我已经发了短信。',
 ])
 def test_ordinary_reply_cannot_assert_or_offer_unavailable_execution(reply):
     checked = review_output(reply)
