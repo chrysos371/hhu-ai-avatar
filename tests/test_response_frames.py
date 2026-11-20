@@ -23,9 +23,35 @@ from avatar.cancellation import Cancelled
     ('你刚才真的发出去了吗？', True, False),
     ('不写了。', True, False),
     ('帮我写一条短信。不写了，现在聊现实。', False, None),
+    ('我已把邮件发给老师，接着写对方回复。', False, True),
+    ('我已处理完材料，随后写一条通知。', False, True),
+    ('我看到朋友接着写了一封邮件。', False, False),
+    ('朋友说：“接着写对方回复。”', False, False),
+    ('请解释朋友接着写回复这句话。', False, False),
+    ('我已把邮件发给老师，接着写对方回复合适吗？', False, False),
 ])
 def test_explicit_grammar_does_not_treat_quote_as_instruction(text, writing, expected):
     assert _advance_frame(text, writing)[0] is expected
+
+
+def test_novel_reply_subtask_reaches_actual_source_bound_writing_prompt():
+    from avatar.main import Avatar
+    from test_capability_prompt_lab import Recorder
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Recorder('老师回复：“材料已查收，谢谢。”')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        bot.respond('我来扮演小说角色。')
+        source = '我已把邮件发给老师，接着写对方回复。'
+        result = bot.respond(source)
+        frame = result['capability_contract']['frame']
+        assert frame['frame'] == 'writing'
+        assert frame['root_id'] == result['conversation']['user_message_id']
+        system = engine.native[-1][0]['content']
+        assert '写作任务' in system and source in system
+        assert result['speaker_attribution']['scope'] == 'fictional_character'
+        assert not result['speaker_attribution']['persistent_facts_allowed']
+        assert not result['speaker_attribution']['turn_tools_allowed']
+        assert not bot.reminders.list() and memory.get_user_profile() == {}
 
 
 def observe(memory, frames, text, session='s'):
