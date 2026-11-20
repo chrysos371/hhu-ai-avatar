@@ -22,6 +22,18 @@ from avatar.gpu_resources import select_available_gpu
 from avatar.lab.native_tool_wire import ToolWireError, request_tools, adapt_completion, template_messages
 
 
+def parent_death_signal():
+    """Report this running provider's actual kernel setting after model load."""
+    if not sys.platform.startswith('linux'):
+        return None
+    import ctypes
+    libc=ctypes.CDLL(None,use_errno=True)
+    value=ctypes.c_int()
+    if libc.prctl(2,ctypes.byref(value),0,0,0) != 0:
+        return None
+    return value.value
+
+
 def sha(path):
     digest = hashlib.sha256()
     with Path(path).open('rb') as stream:
@@ -283,6 +295,7 @@ def main():
         'provider_source_sha256':sha(__file__),'tool_adapter_enabled':args.enable_tools,
         'tool_adapter_source_sha256':sha(ROOT/'src/avatar/lab/native_tool_wire.py'),
         'process_gpu_mib_after_load':allocated,
+        'parent_death_signal':parent_death_signal(),
         'pid':os.getpid()},indent=2)+'\n')
     stopping=threading.Event()
     def shutdown(signum, frame):

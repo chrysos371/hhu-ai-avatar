@@ -197,6 +197,7 @@ def run(args):
                     if metadata is not None:break
                 time.sleep(.1)
             if (metadata['pid'] != process.pid or metadata['backend'] != 'cuda'
+                    or metadata.get('parent_death_signal') != 9
                     or metadata['model_sha256'] != specification['sha256']
                     or metadata['provider_source_sha256'] != frozen['sha256']['scripts/serve_local_model_eval.py']):
                 raise ValueError('Provider runtime identity mismatch')

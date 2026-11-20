@@ -140,6 +140,7 @@ def run(args):
                 time.sleep(.1)
             validate_provider_identity(metadata,{'models_registry':REGISTRY,'models_registry_sha256':registry_sha,'provider_backend':'cuda'})
             if (metadata['pid']!=process.pid or metadata['model_id']!=args.model
+                    or metadata.get('parent_death_signal')!=9
                     or metadata['provider_source_sha256']!=frozen['sha256']['scripts/serve_local_model_eval.py']
                     or metadata['resource_selector_sha256']!=frozen['sha256']['src/avatar/gpu_resources.py']):raise ValueError('Runtime provider source/PID mismatch')
             expected={'n_gpu_layers':-1,'n_ctx':8192,'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'concurrent_sequences':1}

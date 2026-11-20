@@ -130,6 +130,7 @@ def test_truncated_warmup_stops_before_second_call_and_cleans_owned_provider(tmp
         def __init__(self,*a,**k):
             self.returncode=None
             metadata={'pid':self.pid,'model_id':args.model,'provider_source_sha256':'provider-sha','resource_selector_sha256':'resource-sha','configuration':{'n_gpu_layers':-1,'n_ctx':8192,'temperature':0,'seed':42,'max_tokens_cap':512,'thinking':False,'concurrent_sequences':1},'chosen_gpu':{'index':0},'url':'fixture'}
+            metadata['parent_death_signal']=9  # Explicit process fixture, not kernel evidence.
             (args.output/'provider-ready.json').write_text(json.dumps(metadata))
         def poll(self):return self.returncode
         def terminate(self):self.returncode=0

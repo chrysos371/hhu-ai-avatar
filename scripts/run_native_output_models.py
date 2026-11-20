@@ -182,6 +182,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                             if metadata is not None: break
                         time.sleep(.1)
                     assert metadata['pid'] == process.pid
+                    if metadata.get('parent_death_signal') != 9:
+                        raise ValueError('Running provider lost its actual parent-death protection')
                     verify_development_inputs(key)
                     if metadata.get('registry_sha256') != registry_sha256 or metadata.get('registry_path') != str(registry_path.relative_to(ROOT)):
                         raise ValueError('Provider runtime registry differs from pinned selection')
