@@ -359,6 +359,8 @@ class MemoryStore:
                            "THEN 'current_user' ELSE 'unverified' END, "
                            "source_ids_json='[]' WHERE id=1")
         self._conn.execute('DELETE FROM memory_chat_results')
+        if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='memory_role_state' AND type='table'").fetchone():
+            self._conn.execute('DELETE FROM memory_role_state')
         self._conn.execute('DELETE FROM memory_summary_items')
         if self._conn.execute("SELECT 1 FROM sqlite_master WHERE name='operation_drafts' AND type='table'").fetchone():
             self._conn.execute("UPDATE operation_drafts SET parameters_json='{}',baseline_json='{}',diff_json='[]',warnings_json='[]',token_hash='' WHERE operation_type='memory.batch'")

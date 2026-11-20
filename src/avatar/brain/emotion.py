@@ -163,6 +163,39 @@ class EmotionEngine:
         self._validate_revision(revision)
         self._context_revision = revision
 
+    def role_snapshot(self) -> dict:
+        """Finite role values only; never export a previous user observation."""
+        state = self.state
+        return dict(valence=state.valence, arousal=state.arousal, energy=self.energy,
+                    half_life_seconds=self.half_life_seconds, decay=self.decay)
+
+    def restore_role_snapshot(self, data: dict, *, elapsed: float, revision: int) -> None:
+        """Apply real elapsed decay with fresh local monotonic clock anchors."""
+        if (type(data) is not dict or set(data) != {
+                'valence', 'arousal', 'energy', 'half_life_seconds', 'decay'}
+                or data['half_life_seconds'] != self.half_life_seconds
+                or data['decay'] != self.decay
+                or type(elapsed) not in (int, float) or not math.isfinite(elapsed) or elapsed < 0):
+            raise ValueError('invalid role snapshot policy or elapsed time')
+        for key, lo, hi in [('valence', -1, 1), ('arousal', -1, 1), ('energy', 0, 1)]:
+            value = data[key]
+            if type(value) not in (int, float) or not math.isfinite(value) or not lo <= value <= hi:
+                raise ValueError('invalid role snapshot value')
+        if (type(data['half_life_seconds']) not in (int, float)
+                or type(data['decay']) not in (int, float, type(None))
+                or data['decay'] is not None and not 0 <= data['decay'] <= 1):
+            raise ValueError('invalid role snapshot decay')
+        self._validate_revision(revision)
+        factor = self.decay ** elapsed if self.decay is not None else 2 ** (-elapsed / self.half_life_seconds)
+        now = self._clock()
+        self._state = EmotionState(data['valence'] * factor, data['arousal'] * factor)
+        self._energy = .5 + (data['energy'] - .5) * 2 ** (-elapsed / 21600)
+        self._last_tick = self._energy_tick = now
+        self.user_state = EmotionState()
+        self._observation_text = ''
+        self._has_observation = False
+        self._context_revision = revision
+
     @property
     def energy(self) -> float:
         """Role activity, independent of sentiment; relaxes toward .5 in six hours."""
