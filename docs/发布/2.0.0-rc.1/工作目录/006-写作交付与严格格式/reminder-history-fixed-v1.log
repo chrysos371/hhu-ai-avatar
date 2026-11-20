@@ -1,0 +1,71 @@
+...F.................................................................... [100%]
+=================================== FAILURES ===================================
+_ test_known_history_boundary_with_foreign_sql_writer_and_hostile_generation[natural-policy] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-145/test_known_history_boundary_wi3')
+case = {'id': 'natural-policy', 'group': 'policy', 'query_text': '程序退出后提醒还能发短信吗？', 'followup_text': '那么电脑关机以后，这套系统会继续发短信通知我吗？告诉我它实际能做到哪一步。', ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_known_history_boundary_with_foreign_sql_writer_and_hostile_generation(tmp_path, case):
+        evidence = os.environ.get('AVATAR_RELEASE_FOLLOWUP_EVIDENCE_DIR')
+        folder = tmp_path
+        if evidence:
+            folder = Path(evidence).resolve()
+            assert folder.is_relative_to(Path('/data/Users/zrh/data/hhu-ai-avatar/artifacts/release'))
+            folder = folder/case['id']; folder.mkdir(exist_ok=False)
+        db = str(folder/'state.db')
+        model = Recorder('目前仍然有效，创建时间是2099年1月1日，你已亲眼读过并完成。')
+        seed = case['seed']; ident = seed['record_id']
+        due = datetime.fromisoformat(seed['due_date']).timestamp()
+        with closing(MemoryStore(db)) as memory:
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            def insert(conn, status):
+                conn.execute('INSERT INTO memory_reminders(id,title,due_at,created_at,status) VALUES (?,?,?,?,?)',
+                    (ident, seed['title'], due, time.time(), status))
+            with memory.transaction():
+                if seed['status_at_query'] != 'missing': insert(memory._conn, seed['status_at_query'])
+                if seed['client_ack_recorded']:
+                    memory._conn.execute('INSERT INTO memory_reminder_deliveries(reminder_id,created_at,acknowledged_at) VALUES (?,?,?)',
+                        (ident, time.time(), time.time()))
+            queries = [bot.respond(case['query_text'], mode='reminder_query')]
+            ConversationStore(memory).record_result(queries[-1])
+            with closing(sqlite3.connect(db)) as actor:
+                if case['independent_actor_after_query'] == 'create_record': insert(actor, 'active')
+                else: actor.execute('UPDATE memory_reminders SET status=? WHERE id=?',
+                    (case['independent_actor_after_query'].removeprefix('set_'), ident))
+                actor.commit()
+            if case['repeat_query_after_actor']:
+                queries.append(bot.respond(case['query_text'], mode='reminder_query'))
+                ConversationStore(memory).record_result(queries[-1])
+            before = projection(memory)
+            analysis_before, generation_before = len(model.analysis), len(model.native)
+            if case['group'] == 'actual_action_request': model.reply = '已拨出。'
+            if case['group'] == 'preservation_control': model.reply = '小林说：“我已经打电话通知他了”。'
+            deltas = []
+            result = bot.respond(case['followup_text'], on_delta=deltas.append)
+            evidence_data = dict(case_id=case['id'], source_queries=queries, result=result, deltas=deltas,
+                business_before=before, business_after=projection(memory),
+                analysis_calls=len(model.analysis)-analysis_before, generation_calls=len(model.native)-generation_before,
+                actual_generation_prompts=model.native[generation_before:],
+                scope='known development, hostile stub, actual SQL; not native or human quality')
+            if evidence: (folder/'result.json').write_text(json.dumps(evidence_data, ensure_ascii=False, indent=2)+'\n')
+            assert projection(memory) == before
+            assert not result['tool_calls'] and not result['due_reminders'] and not result['action_receipts']['items']
+            if case['group'] == 'actual_action_request':
+                assert result['generation_mode'] == 'rules_capability_request'
+                assert len(model.native) == generation_before
+            elif case['group'] == 'preservation_control':
+                literal = '我已经发出通知，请查收' if 'draft' in case['id'] else '我已经打电话通知他了'
+                assert literal in result['reply']
+                assert result['generation_mode'] in ('rules_writing_artifact', 'llm', 'llm_writing_repaired')
+            else:
+>               assert result['generation_mode'] == 'rules_reminder_history'
+E               AssertionError: assert 'llm' == 'rules_reminder_history'
+E                 
+E                 - rules_reminder_history
+E                 + llm
+
+tests/test_reminder_history_followups.py:80: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reminder_history_followups.py::test_known_history_boundary_with_foreign_sql_writer_and_hostile_generation[natural-policy]
+1 failed, 71 passed in 2.43s

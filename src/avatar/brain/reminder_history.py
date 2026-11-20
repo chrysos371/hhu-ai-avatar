@@ -24,6 +24,10 @@ _HISTORY = re.compile(r'刚才|上次|前面|此前|前后|第二次|第一次|�
 _TOPIC = re.compile(r'查询|查到|没查到|记录|提醒|客户端确认')
 _QUESTION = re.compile(r'[?？]|吗|么|是否|什么|一样|变化|解释|说说|说明|能直接|能断定|足够判断')
 _AXIS = re.compile(r'状态|有效|取消|完成|读过|阅读|已读|客户端确认|不存在|看到了什么|查到|一样|变化|证据|时间')
+_POLICY_FOLLOWUP = re.compile(r'(?:那么|那)(?:电脑|程序|服务)(?:关机|退出|关闭|停止)'
+    r'(?:以后|之后|后)[，,]?(?:这套系统|系统|你)(?:会继续|还能|还会|会|能)'
+    r'(?:发短信|发邮件|打电话)(?:通知我)?吗[？?]'
+    r'(?:告诉我它实际能做到哪一步[。.]?)?')
 
 
 def request_kind(text):
@@ -36,7 +40,7 @@ def request_kind(text):
     if explicit_unavailable_request(text) is not None:
         return None
     target = derive_read_target(text)
-    if target.route == 'read_policy':
+    if target.route == 'read_policy' or _POLICY_FOLLOWUP.fullmatch(clean):
         return 'policy'
     if _HISTORY.search(clean) and _TOPIC.search(clean) and _QUESTION.search(clean) and _AXIS.search(clean):
         return 'history'
