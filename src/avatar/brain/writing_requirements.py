@@ -82,6 +82,8 @@ class WritingRequirementStore:
 
     @classmethod
     def _ids(cls, raw, root, cursor):
+        if type(root) is not int or type(cursor) is not int or not 0 < root <= cursor:
+            return None
         try:
             ids = json.loads(raw)
         except (TypeError, ValueError):
@@ -112,7 +114,7 @@ class WritingRequirementStore:
                         if len(pending) <= 64:
                             ids += [r['id'] for r in pending if not _POLISH.fullmatch(r['content'].strip())]
                             status = 'verified'
-                elif frame.root_id > (previous[3] if previous else 0):
+                elif (not previous or type(previous[3]) is int) and frame.root_id > (previous[3] if previous else 0):
                     pending = self.conn.execute("SELECT id,content FROM memory_messages WHERE role='user' "
                         'AND id>=? AND id<=? ORDER BY id LIMIT 65', (frame.root_id, frame.cursor)).fetchall()
                     if len(pending) <= 64:
