@@ -651,6 +651,15 @@ class Avatar:
                           if boundary.reply is None and control is None else None)
         query_reply = None
         query_reader = None
+        reported_sender_reply = None
+        if (self.capability_contract_enabled and boundary.reply is None and control is None
+                and reminder_query is None and self.speaker_scope.scope == 'current_user'
+                and self.speaker_scope.allows_actions and not self.boundaries.fiction):
+            from .brain.communication_sources import reported_sender
+            reported_sender_reply = reported_sender(self.memory, text=user_text, session_id=self.session_id,
+                source_message_id=self._current_message_id, revision=turn_context_revision, scope=self.speaker_scope)
+            if reported_sender_reply is not None:
+                capability_request = None
         if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
@@ -682,6 +691,9 @@ class Avatar:
                 # The response is a fixed confirmation boundary. No analysis output
                 # can be used here, so do not send this unknown-scope text to a model.
                 self.analysis_mode = 'rules_speaker_scope'
+                self.emotion.update(user_text)
+            elif reported_sender_reply is not None:
+                self.analysis_mode = 'rules_reported_sender'
                 self.emotion.update(user_text)
             elif capability_request is not None:
                 self.analysis_mode = 'rules_capability_request'
@@ -725,22 +737,26 @@ class Avatar:
             except ValueError as exc:
                 reminder_error = str(exc)
                 cancelled_reminder_id = None
-        self._turn_facts = ([] if control is not None or reminder_query is not None or capability_request is not None
+        self._turn_facts = ([] if control is not None or reminder_query is not None
+                            or capability_request is not None or reported_sender_reply is not None
                             else self.memory.recall(query=user_text, limit=5))
         self._knowledge_context=[];self._knowledge_degraded=False
         knowledge_store=self._admin_store()
-        if knowledge_store and boundary.reply is None and control is None and reminder_query is None and capability_request is None:
+        if (knowledge_store and boundary.reply is None and control is None and reminder_query is None
+                and capability_request is None and reported_sender_reply is None):
             try:
                 from .brain.knowledge import KnowledgeService
                 self._knowledge_context=KnowledgeService(knowledge_store).search(user_text[:200],limit=3)
             except Exception:
                 self._knowledge_degraded=True
                 logger.warning('知识检索失败，继续使用对话与已确认记忆')
-        if self.summary_enabled and control is None and reminder_query is None and capability_request is None:
+        if (self.summary_enabled and control is None and reminder_query is None
+                and capability_request is None and reported_sender_reply is None):
             self.summaries.refresh(self.session_id)
         self._due_reminders = (self.reminders.claim_due(checkpoint=checkpoint_context, receipt_context=receipt_context)
                                if boundary.reply is None and control is None and reminder_query is None
-                               and capability_request is None and self.speaker_scope.allows_actions else [])
+                               and capability_request is None and reported_sender_reply is None
+                               and self.speaker_scope.allows_actions else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
@@ -765,6 +781,8 @@ class Avatar:
         response_source_ids.update(self.speaker_scope.context_source_ids)
         response_source_ids.update(self._history_source_ids)
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
+        if reported_sender_reply is not None:
+            response_source_ids.update(reported_sender_reply.source_message_ids)
         if self._response_frame is not None and self._response_frame.frame == 'writing':
             response_source_ids.add(self._response_frame.root_id)
         if (self.capability_contract_enabled and boundary.reply is None and control is None
@@ -816,6 +834,9 @@ class Avatar:
             reply = f'已取消提醒 #{cancelled_reminder_id}。'
         elif reminder_error:
             reply = reminder_error
+        elif reported_sender_reply is not None:
+            reply = reported_sender_reply.reply
+            generation_mode = 'rules_reported_sender'
         elif capability_request is not None:
             reply = capability_request.reply()
             generation_mode = 'rules_capability_request'
@@ -1085,6 +1106,8 @@ class Avatar:
                 'output_rules': list(capability_output_rules),
                 'runtime': self._capability_snapshot.data() if self._capability_snapshot is not None else None,
                 'frame': self._response_frame.metadata() if self._response_frame is not None else None}
+        if reported_sender_reply is not None:
+            result['reported_communication'] = reported_sender_reply.metadata()
         if query_reply is not None:
             result['reminder_query'] = query_reply.metadata
         if query_reader is not None:
