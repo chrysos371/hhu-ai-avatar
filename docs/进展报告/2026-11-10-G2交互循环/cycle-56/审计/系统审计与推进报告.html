@@ -1,0 +1,47 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C56 父死亡保护与终态留痕系统审计报告</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}@media(max-width:600px){table{table-layout:fixed}}</style></head><body><main><h1>C56 父死亡保护与终态留痕系统审计报告</h1><p class="meta">2026-11-20T17:45:53+08:00 · 源 76a86ceaca83</p><p class="verdict">两个直接worker工程问题限定关闭；多级provider链仍有开放边界；无新模型质量批准</p>
+<section><h2>结论与范围</h2>
+<p>C56限定修复并验证了直接worker在监督器硬终止后的自动退役，以及worker命令重入破坏已有终态的问题。原2项真实CPU红测转绿，完整当前Python2562通过/1跳过，812项当前/Git输入在测试前后保持。</p>
+<p>本轮0新增真实LLM/训练/GPU实验，没有新模型质量批准。C55两个失败adapter持续隔离、默认模型不变；不能把工程通过或历史2548/1复用当本轮新实验。</p>
+<p>系统补充审计发现更深一层边界：真实CPU三层Popen形状中manager信号9、孙payload信号0；硬杀监督器后manager退役、孙payload仍活。所有自建残留精确清理，无关自建CPU对照存活。该项OPEN，未宣称实际GPU provider泄漏或任意进程树已经测过。</p>
+<p><a href="收尾核验/system-evidence.json">系统数据</a></p>
+<p><a href="工作目录/002-当前软件回归/python-first-binding.json">完整Python源码绑定</a></p>
+<p><a href="工作目录/001-父死亡保护与终态留痕/red-v1.log">原2项红测</a></p>
+</section>
+<section><h2>实际实验与回归</h2>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>项目</th><th>实际结果</th><th>解释边界</th></tr></thead><tbody>
+<tr><td>原实现真实CPU红测</td><td>2失败；2.51秒</td><td>直接子任务残留；旧成功终态被重入改为failed/null，payload没有重复执行</td></tr>
+<tr><td>定向控制</td><td>28+10+2=40通过</td><td>包含原26与新回归；与完整套件重叠，不把次数相加作独立证据</td></tr>
+<tr><td>完整当前Python</td><td>2562通过/1跳过；183.91秒；812输入稳定</td><td>新增guard/测试及全部evals/training/config纳入；无前端或原生质量验收宣称</td></tr>
+<tr><td>真实exec/独立venv</td><td>内核信号9，sys.prefix/argv保留</td><td>保护器在新解释器安装后exec，不使用多线程preexec_fn</td></tr>
+<tr><td>独立CPU回执/正常停止</td><td>9实际任务原料复核；payload ready后停止，实际wait=-2</td><td>两身份退役；硬杀原父后wait仍未知，不从running/null伪造成功</td></tr>
+<tr><td>多级链实际边界</td><td>manager=9、孙payload=0；manager死/孙仍活</td><td>只模拟CPU形状；全部精确清理，实际GPU provider链未验证</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/001-父死亡保护与终态留痕/supervisor-green-binding-v1.json">28控制绑定</a></p>
+<p><a href="工作目录/001-父死亡保护与终态留痕/guard-controls-binding-v1.json">10 guard控制绑定</a></p>
+<p><a href="工作目录/001-父死亡保护与终态留痕/claim-controls-binding-v1.json">并发claim控制</a></p>
+<p><a href="工作目录/003-独立CPU留痕复核/cpu-receipts-v1.json">9任务与exec后停止原料</a></p>
+<p><a href="工作目录/004-多级进程链边界/chain-cpu-v1.json">多级链负结果</a></p>
+</section>
+<section><h2>工程修复及未解决问题</h2>
+<p>新保护器绑定配置/源码SHA、实际父PID与启动身份，设置后再次核对父身份以关闭先死竞态；监督器观察最终payload argv，避免把过渡保护器命令误认为真实工作进程。正常返回、失败7、显式停止非零保留真实wait结果。</p>
+<p>直接重入在任何status替换前拒绝旧已尝试任务，并用x独占监督claim抵挡并发。监督器被硬杀时不能恢复其原wait回执，历史未知终态保持；不声称断电持久化、跨OS或凭据变化后仍受保护。</p>
+<p>真实父已退出的控制属于实际CPU进程；设置后的调度竞态和syscall失败路径是明确标记的合成seam，不冒充实际内核失败。Linux与Python一级文档链接见设计依据，工程结论以本机实验限定。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>单项</th><th>状态</th><th>实际证据/后续</th></tr></thead><tbody>
+<tr><td>001 直接子任务父死亡退役</td><td>限定关闭</td><td>ready payload即便忽略SIGINT/SIGTERM，父SIGKILL后仍自动退役；可信直接子任务范围</td></tr>
+<tr><td>002 worker重入覆盖终态</td><td>限定关闭</td><td>旧格式4状态及新claim重入拒绝，原文件字节保留；两并发入口只有一个实际执行</td></tr>
+<tr><td>003 多级provider形状孙进程</td><td>OPEN / P1</td><td>fork后信号清零，CPU payload仍活；下轮明确保护项目manager→provider边并复测</td></tr>
+</tbody></table></div>
+<p><a href="问题单/001-父死亡后直接子任务残留.md">001直接父死亡问题</a></p>
+<p><a href="问题单/002-worker直接重入覆盖已有终态.md">002终态覆盖问题</a></p>
+<p><a href="问题单/003-多级provider形状的孙进程未受保护.md">003进程链边界</a></p>
+<p><a href="工作目录/001-父死亡保护与终态留痕/设计依据.md">技术依据与适用范围</a></p>
+</section>
+<section><h2>系统完整性与下一轮</h2>
+<p>54旧封存/12694项与9集中资产入口保持；另核C55实际阶段1867项原料、14 adapter文件及111外部冻结绑定。C55旧534源在其原Git版本核验，当前其中只有监督器源按本轮有意改变；不拿旧冻结认证新源，也不回写旧证据。</p>
+<p>本轮2项限定关闭/1项OPEN；C55自然回复门槛仍失败（新外部联合9/18对基座6/18），材料覆盖、独立人评、真人物理设备、口型和多日全链路仍开放。P0保留全部失败与候选隔离；P1下一轮补明确manager→provider边保护和正常生命周期；随后登记当前能力/来源契约实模机制对照，按实际余量选择GPU并核退役。</p>
+<p>持续远期目标仍active。此次没有达到模型语义或整体代际跃迁，封存后继续下一轮，不把审计通过当任务总体完成。</p>
+<p><a href="../进展.md">过程进展</a></p>
+<p><a href="../../cycle-55/审计/系统审计与推进报告.md">C55失败对照报告</a></p>
+<p><a href="../../远期目标与验收路线.md">远期目标与验收</a></p>
+</section>
+</main></body></html>
