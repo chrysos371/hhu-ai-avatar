@@ -1,0 +1,38 @@
+........................................................................ [ 46%]
+......................................F................................. [ 93%]
+..........                                                               [100%]
+=================================== FAILURES ===================================
+______________ test_freeze_validates_raw_identity_before_parsing _______________
+
+frozen = (PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-62/test_freeze_validates_raw_iden0'), PosixPa...evals/interaction/cycle-25/structured-provider-protocol.json', 'models': ['qwen3-4b-q4_k_m', 'qwen3-14b-q4_k_m'], ...})
+
+    def test_freeze_validates_raw_identity_before_parsing(frozen):
+        root,path,document=frozen;expected=sha256(path.read_bytes()).hexdigest()
+>       assert verify_freeze(path,expected,next(iter(MODELS)),root=root)==document
+
+tests/test_structured_provider_probe.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-62/test_freeze_validates_raw_iden0/frozen.json')
+expected = '5969128303f1f8f6838bf03a8c74e45001e884bfc1599d7d1562f103e837fcf7'
+model = 'qwen3-4b-q4_k_m'
+root = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-62/test_freeze_validates_raw_iden0')
+
+    def verify_freeze(path, expected, model, *, root=ROOT):
+        raw = path.read_bytes()
+        if sha256(raw).hexdigest() != expected:
+            raise ValueError('Freeze descriptor identity changed')
+        data = json.loads(raw)
+        if (data.get('scope') != 'standalone_native_structure_diagnostic' or data.get('backend') != 'cuda'
+                or data.get('protocol') != PROTOCOL or model not in data.get('models', []) or model not in MODELS):
+            raise ValueError('Frozen execution contract mismatch')
+        required = {PROTOCOL, 'scripts/probe_structured_provider.py', 'scripts/serve_local_model_eval.py',
+                    'src/avatar/gpu_resources.py', 'evals/interaction/cycle-02/model-scale-protocol.json', *MODELS.values(), *PROTECTION_SOURCES}
+        if not required <= data.get('sha256', {}).keys():
+>           raise ValueError('Frozen inputs incomplete')
+E           ValueError: Frozen inputs incomplete
+
+scripts/probe_structured_provider.py:43: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_structured_provider_probe.py::test_freeze_validates_raw_identity_before_parsing
+1 failed, 153 passed in 9.63s
