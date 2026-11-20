@@ -624,6 +624,7 @@ class Avatar:
             self.tasks.current = None
             self._task_context_revision = turn_context_revision
         history_reader = None
+        calculation_reader = None
         def checkpoint_context():
             self._checkpoint()
             revision = self.memory.context_revision
@@ -636,6 +637,8 @@ class Avatar:
                 self.writing_requirement_store.ensure_current(self._writing_requirements, self._response_frame)
             if history_reader is not None:
                 history_reader.ensure_current()
+            if calculation_reader is not None:
+                calculation_reader.ensure_current()
         def emit_checked(piece):
             checkpoint_context()
             if on_delta:
@@ -695,6 +698,7 @@ class Avatar:
         query_reply = None
         query_reader = None
         history_reply = None
+        calculation_reply = None
         reported_sender_reply = None
         if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
@@ -736,6 +740,16 @@ class Avatar:
                     history_reader = HistoryReader(self.memory, text=user_text,
                         user_id=self._current_message_id, session_id=self.session_id, revision=turn_context_revision)
                     history_reply = history_reader.result
+                    checkpoint_context()
+            if (self.capability_contract_enabled and boundary.reply is None and control is None
+                    and reminder_query is None and capability_request is None and reported_sender_reply is None
+                    and history_reply is None and not use_web and self.speaker_scope.scope == 'current_user'
+                    and self.speaker_scope.allows_actions and not self.boundaries.fiction):
+                from .brain.source_calculation import CalculationReader, requested as calculation_requested
+                if calculation_requested(user_text) is not None:
+                    calculation_reader = CalculationReader(self.memory, text=user_text,
+                        user_id=self._current_message_id, session_id=self.session_id, revision=turn_context_revision)
+                    calculation_reply = calculation_reader.result
                     checkpoint_context()
             if boundary.reply is not None:
                 self.emotion.update(user_text)
@@ -797,7 +811,7 @@ class Avatar:
             except ValueError as exc:
                 reminder_error = str(exc)
                 cancelled_reminder_id = None
-        self._turn_facts = ([] if control is not None or reminder_query is not None or history_reply is not None
+        self._turn_facts = ([] if control is not None or reminder_query is not None or history_reply is not None or calculation_reply is not None
                             or capability_request is not None or reported_sender_reply is not None
                             else self.memory.recall(query=user_text, limit=5))
         self._knowledge_context=[];self._knowledge_degraded=False
@@ -831,7 +845,7 @@ class Avatar:
                                if boundary.reply is None and control is None and reminder_query is None
                                and capability_request is None and reported_sender_reply is None
                                and self.speaker_scope.allows_actions and not writing_delivery_active
-                               and not writing_source_unverified and history_reply is None else [])
+                               and not writing_source_unverified and history_reply is None and calculation_reply is None else [])
         # 3. 行为决策
         store=self._admin_store()
         override=EmotionOverrideService(store).active() if store and boundary.reply is None else None
@@ -860,6 +874,8 @@ class Avatar:
             response_source_ids.update(reported_sender_reply.source_message_ids)
         if history_reply is not None:
             response_source_ids.update(history_reply.source_message_ids)
+        if calculation_reply is not None:
+            response_source_ids.update(calculation_reply.source_message_ids)
         if self._response_frame is not None and self._response_frame.frame == 'writing':
             response_source_ids.add(self._response_frame.root_id)
         if self._writing_requirements is not None:
@@ -946,6 +962,9 @@ class Avatar:
         elif history_reply is not None:
             reply = history_reply.reply
             generation_mode = 'rules_reminder_history'
+        elif calculation_reply is not None:
+            reply = calculation_reply.reply
+            generation_mode = 'rules_source_calculation'
         elif use_web:
             from .tools.web_agent import WebAgent
             if self.web_agent is None:
@@ -1325,6 +1344,8 @@ class Avatar:
             result['reminder_query'] = query_reply.metadata
         if history_reply is not None:
             result['reminder_history'] = history_reply.metadata
+        if calculation_reply is not None:
+            result['source_calculation'] = calculation_reply.metadata
         if query_reader is not None:
             query_reader.ensure_current()
         if control is not None:

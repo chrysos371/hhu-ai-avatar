@@ -6,7 +6,7 @@ answer remains historical data, including a well-formatted numeric answer.
 import json
 
 MODES = frozenset({'rules_capability_request', 'rules_reported_sender',
-                   'llm_format_guarded', 'llm_capability_guarded'})
+                   'llm_format_guarded', 'llm_capability_guarded', 'rules_source_calculation'})
 PREFIX = '历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：\n'
 
 
@@ -36,7 +36,19 @@ def verified_content(memory, result, *, user_id, assistant_id, text, scope, revi
                 or type(frame.get('revision')) is not int or frame['revision'] != revision
                 or memory.context_revision != revision):
             return None
-        if mode == 'rules_capability_request':
+        if mode == 'rules_source_calculation':
+            from .source_calculation import build
+            if scope != 'current_user' or result['speaker_attribution'].get('turn_tools_allowed') is not True:
+                return None
+            expected = build(memory, text=text, user_id=user_id, revision=revision)
+            if (expected is None or reply != expected.reply
+                    or canonical(result.get('source_calculation')) != canonical(expected.metadata)):
+                return None
+            ids = {row[0] for row in memory._conn.execute("SELECT source_id FROM memory_response_context "
+                "WHERE message_id=? AND source_type='message'", (assistant_id,))}
+            if not set(expected.source_message_ids) <= ids:
+                return None
+        elif mode == 'rules_capability_request':
             from .capability_requests import explicit_unavailable_request
             request = explicit_unavailable_request(text)
             if (scope != 'current_user' or result['speaker_attribution'].get('turn_tools_allowed') is not True

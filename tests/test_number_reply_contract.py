@@ -1,4 +1,8 @@
-"""Known C30 format failure: arithmetic correctness and presentation differ."""
+"""Presentation of existing answers, independent of source calculation.
+
+Original contextual C30/C31 questions now have dedicated end-to-end source
+tests in test_source_calculation; this suite keeps the formatter's properties.
+"""
 from contextlib import closing
 
 import pytest
@@ -8,7 +12,7 @@ from avatar.cancellation import CancellationToken, Cancelled
 from avatar.main import Avatar
 from test_capability_prompt_lab import Recorder
 
-BUDGET = '更正后两项预算上限合计是多少元？只回答数字；没有资料则回答无法确认。'
+BUDGET = '370加590是多少？只回答数字；没有资料则回答无法确认。'
 
 
 @pytest.mark.parametrize('question,raw,expected', [

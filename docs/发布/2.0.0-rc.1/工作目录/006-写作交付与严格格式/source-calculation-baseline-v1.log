@@ -1,0 +1,308 @@
+FFFFFFFFFFF....                                                          [100%]
+=================================== FAILURES ===================================
+_ test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[material-37-28-46-83] _
+
+kind = 'material', a = '37', b = '28', updated = '46', expected = '83'
+
+    @pytest.mark.parametrize('kind,a,b,updated,expected', [
+        ('material', '37', '28', '46', '83'),
+        ('budget', '370', '640', '590', '960'),
+        ('material', '8', '91', '2', '10'),
+        ('material', '0', '30', '0', '0'),
+        ('budget', '12.50', '0', '2.25', '14.75'),
+        ('budget', '9007199254740993', '1', '1', '9007199254740994'),
+    ])
+    def test_two_source_values_and_later_replacement_are_calculated_without_generated_answer(kind,a,b,updated,expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93')
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            if kind == 'material':
+                first = bot.respond(f'材料清单为纸板{a}张、卡纸{b}张。请只确认。')
+                second = bot.respond(f'数量更新：卡纸改为{updated}张，纸板不变。请只确认。')
+            else:
+                first = bot.respond(f'排版预算上限为{a}元，场地预算上限为{b}元。请只确认。')
+                second = bot.respond(f'更正：场地预算上限改为{updated}元，排版不变。请只确认。')
+            before = projection(memory); generations = len(model.native); analyses = len(model.analysis)
+            pieces = []
+            result = bot.respond(MATERIAL if kind == 'material' else BUDGET, on_delta=pieces.append)
+>           assert result['reply'] == expected and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '83'
+E             
+E             - 83
+E             + 93)
+
+tests/test_source_calculation.py:39: AssertionError
+_ test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[budget-370-640-590-960] _
+
+kind = 'budget', a = '370', b = '640', updated = '590', expected = '960'
+
+    @pytest.mark.parametrize('kind,a,b,updated,expected', [
+        ('material', '37', '28', '46', '83'),
+        ('budget', '370', '640', '590', '960'),
+        ('material', '8', '91', '2', '10'),
+        ('material', '0', '30', '0', '0'),
+        ('budget', '12.50', '0', '2.25', '14.75'),
+        ('budget', '9007199254740993', '1', '1', '9007199254740994'),
+    ])
+    def test_two_source_values_and_later_replacement_are_calculated_without_generated_answer(kind,a,b,updated,expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93')
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            if kind == 'material':
+                first = bot.respond(f'材料清单为纸板{a}张、卡纸{b}张。请只确认。')
+                second = bot.respond(f'数量更新：卡纸改为{updated}张，纸板不变。请只确认。')
+            else:
+                first = bot.respond(f'排版预算上限为{a}元，场地预算上限为{b}元。请只确认。')
+                second = bot.respond(f'更正：场地预算上限改为{updated}元，排版不变。请只确认。')
+            before = projection(memory); generations = len(model.native); analyses = len(model.analysis)
+            pieces = []
+            result = bot.respond(MATERIAL if kind == 'material' else BUDGET, on_delta=pieces.append)
+>           assert result['reply'] == expected and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '960'
+E             
+E             - 960
+E             + 93)
+
+tests/test_source_calculation.py:39: AssertionError
+_ test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[material-8-91-2-10] _
+
+kind = 'material', a = '8', b = '91', updated = '2', expected = '10'
+
+    @pytest.mark.parametrize('kind,a,b,updated,expected', [
+        ('material', '37', '28', '46', '83'),
+        ('budget', '370', '640', '590', '960'),
+        ('material', '8', '91', '2', '10'),
+        ('material', '0', '30', '0', '0'),
+        ('budget', '12.50', '0', '2.25', '14.75'),
+        ('budget', '9007199254740993', '1', '1', '9007199254740994'),
+    ])
+    def test_two_source_values_and_later_replacement_are_calculated_without_generated_answer(kind,a,b,updated,expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93')
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            if kind == 'material':
+                first = bot.respond(f'材料清单为纸板{a}张、卡纸{b}张。请只确认。')
+                second = bot.respond(f'数量更新：卡纸改为{updated}张，纸板不变。请只确认。')
+            else:
+                first = bot.respond(f'排版预算上限为{a}元，场地预算上限为{b}元。请只确认。')
+                second = bot.respond(f'更正：场地预算上限改为{updated}元，排版不变。请只确认。')
+            before = projection(memory); generations = len(model.native); analyses = len(model.analysis)
+            pieces = []
+            result = bot.respond(MATERIAL if kind == 'material' else BUDGET, on_delta=pieces.append)
+>           assert result['reply'] == expected and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '10'
+E             
+E             - 10
+E             + 93)
+
+tests/test_source_calculation.py:39: AssertionError
+_ test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[material-0-30-0-0] _
+
+kind = 'material', a = '0', b = '30', updated = '0', expected = '0'
+
+    @pytest.mark.parametrize('kind,a,b,updated,expected', [
+        ('material', '37', '28', '46', '83'),
+        ('budget', '370', '640', '590', '960'),
+        ('material', '8', '91', '2', '10'),
+        ('material', '0', '30', '0', '0'),
+        ('budget', '12.50', '0', '2.25', '14.75'),
+        ('budget', '9007199254740993', '1', '1', '9007199254740994'),
+    ])
+    def test_two_source_values_and_later_replacement_are_calculated_without_generated_answer(kind,a,b,updated,expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93')
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            if kind == 'material':
+                first = bot.respond(f'材料清单为纸板{a}张、卡纸{b}张。请只确认。')
+                second = bot.respond(f'数量更新：卡纸改为{updated}张，纸板不变。请只确认。')
+            else:
+                first = bot.respond(f'排版预算上限为{a}元，场地预算上限为{b}元。请只确认。')
+                second = bot.respond(f'更正：场地预算上限改为{updated}元，排版不变。请只确认。')
+            before = projection(memory); generations = len(model.native); analyses = len(model.analysis)
+            pieces = []
+            result = bot.respond(MATERIAL if kind == 'material' else BUDGET, on_delta=pieces.append)
+>           assert result['reply'] == expected and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '0'
+E             
+E             - 0
+E             + 93)
+
+tests/test_source_calculation.py:39: AssertionError
+_ test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[budget-12.50-0-2.25-14.75] _
+
+kind = 'budget', a = '12.50', b = '0', updated = '2.25', expected = '14.75'
+
+    @pytest.mark.parametrize('kind,a,b,updated,expected', [
+        ('material', '37', '28', '46', '83'),
+        ('budget', '370', '640', '590', '960'),
+        ('material', '8', '91', '2', '10'),
+        ('material', '0', '30', '0', '0'),
+        ('budget', '12.50', '0', '2.25', '14.75'),
+        ('budget', '9007199254740993', '1', '1', '9007199254740994'),
+    ])
+    def test_two_source_values_and_later_replacement_are_calculated_without_generated_answer(kind,a,b,updated,expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93')
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            if kind == 'material':
+                first = bot.respond(f'材料清单为纸板{a}张、卡纸{b}张。请只确认。')
+                second = bot.respond(f'数量更新：卡纸改为{updated}张，纸板不变。请只确认。')
+            else:
+                first = bot.respond(f'排版预算上限为{a}元，场地预算上限为{b}元。请只确认。')
+                second = bot.respond(f'更正：场地预算上限改为{updated}元，排版不变。请只确认。')
+            before = projection(memory); generations = len(model.native); analyses = len(model.analysis)
+            pieces = []
+            result = bot.respond(MATERIAL if kind == 'material' else BUDGET, on_delta=pieces.append)
+>           assert result['reply'] == expected and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '14.75'
+E             
+E             - 14.75
+E             + 93)
+
+tests/test_source_calculation.py:39: AssertionError
+_ test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[budget-9007199254740993-1-1-9007199254740994] _
+
+kind = 'budget', a = '9007199254740993', b = '1', updated = '1'
+expected = '9007199254740994'
+
+    @pytest.mark.parametrize('kind,a,b,updated,expected', [
+        ('material', '37', '28', '46', '83'),
+        ('budget', '370', '640', '590', '960'),
+        ('material', '8', '91', '2', '10'),
+        ('material', '0', '30', '0', '0'),
+        ('budget', '12.50', '0', '2.25', '14.75'),
+        ('budget', '9007199254740993', '1', '1', '9007199254740994'),
+    ])
+    def test_two_source_values_and_later_replacement_are_calculated_without_generated_answer(kind,a,b,updated,expected):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93')
+            bot = Avatar(memory=memory, llm=model, capability_contract_enabled=True, role_state_enabled=True)
+            if kind == 'material':
+                first = bot.respond(f'材料清单为纸板{a}张、卡纸{b}张。请只确认。')
+                second = bot.respond(f'数量更新：卡纸改为{updated}张，纸板不变。请只确认。')
+            else:
+                first = bot.respond(f'排版预算上限为{a}元，场地预算上限为{b}元。请只确认。')
+                second = bot.respond(f'更正：场地预算上限改为{updated}元，排版不变。请只确认。')
+            before = projection(memory); generations = len(model.native); analyses = len(model.analysis)
+            pieces = []
+            result = bot.respond(MATERIAL if kind == 'material' else BUDGET, on_delta=pieces.append)
+>           assert result['reply'] == expected and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '9007199254740994'
+E             
+E             - 9007199254740994
+E             + 93)
+
+tests/test_source_calculation.py:39: AssertionError
+_ test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[unit] _
+
+fault = 'unit'
+
+    @pytest.mark.parametrize('fault', ['unit', 'unsupported_update', 'extra_value', 'unknown_label'])
+    def test_ambiguous_or_incompatible_current_sources_are_not_silently_summed(fault):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93'); bot = Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            bot.respond('材料清单为纸板37张、卡纸28张。请只确认。')
+            source = {'unit':'数量更新：卡纸改为46元，纸板不变。请只确认。',
+                'unsupported_update':'卡纸减少了一些，具体数量不清楚。',
+                'extra_value':'材料清单为纸板37张、卡纸28张、标签2张。请只确认。',
+                'unknown_label':'数量更新：标签改为46张，纸板不变。请只确认。'}[fault]
+            bot.respond(source)
+            result = bot.respond(MATERIAL)
+>           assert result['reply'] == '无法确认' and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '无法确认'
+E             
+E             - 无法确认
+E             + 93)
+
+tests/test_source_calculation.py:61: AssertionError
+_ test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[unsupported_update] _
+
+fault = 'unsupported_update'
+
+    @pytest.mark.parametrize('fault', ['unit', 'unsupported_update', 'extra_value', 'unknown_label'])
+    def test_ambiguous_or_incompatible_current_sources_are_not_silently_summed(fault):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93'); bot = Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            bot.respond('材料清单为纸板37张、卡纸28张。请只确认。')
+            source = {'unit':'数量更新：卡纸改为46元，纸板不变。请只确认。',
+                'unsupported_update':'卡纸减少了一些，具体数量不清楚。',
+                'extra_value':'材料清单为纸板37张、卡纸28张、标签2张。请只确认。',
+                'unknown_label':'数量更新：标签改为46张，纸板不变。请只确认。'}[fault]
+            bot.respond(source)
+            result = bot.respond(MATERIAL)
+>           assert result['reply'] == '无法确认' and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '无法确认'
+E             
+E             - 无法确认
+E             + 93)
+
+tests/test_source_calculation.py:61: AssertionError
+_ test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[extra_value] _
+
+fault = 'extra_value'
+
+    @pytest.mark.parametrize('fault', ['unit', 'unsupported_update', 'extra_value', 'unknown_label'])
+    def test_ambiguous_or_incompatible_current_sources_are_not_silently_summed(fault):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93'); bot = Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            bot.respond('材料清单为纸板37张、卡纸28张。请只确认。')
+            source = {'unit':'数量更新：卡纸改为46元，纸板不变。请只确认。',
+                'unsupported_update':'卡纸减少了一些，具体数量不清楚。',
+                'extra_value':'材料清单为纸板37张、卡纸28张、标签2张。请只确认。',
+                'unknown_label':'数量更新：标签改为46张，纸板不变。请只确认。'}[fault]
+            bot.respond(source)
+            result = bot.respond(MATERIAL)
+>           assert result['reply'] == '无法确认' and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '无法确认'
+E             
+E             - 无法确认
+E             + 93)
+
+tests/test_source_calculation.py:61: AssertionError
+_ test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[unknown_label] _
+
+fault = 'unknown_label'
+
+    @pytest.mark.parametrize('fault', ['unit', 'unsupported_update', 'extra_value', 'unknown_label'])
+    def test_ambiguous_or_incompatible_current_sources_are_not_silently_summed(fault):
+        with closing(MemoryStore(':memory:')) as memory:
+            model = Recorder('93'); bot = Avatar(memory=memory,llm=model,capability_contract_enabled=True,role_state_enabled=True)
+            bot.respond('材料清单为纸板37张、卡纸28张。请只确认。')
+            source = {'unit':'数量更新：卡纸改为46元，纸板不变。请只确认。',
+                'unsupported_update':'卡纸减少了一些，具体数量不清楚。',
+                'extra_value':'材料清单为纸板37张、卡纸28张、标签2张。请只确认。',
+                'unknown_label':'数量更新：标签改为46张，纸板不变。请只确认。'}[fault]
+            bot.respond(source)
+            result = bot.respond(MATERIAL)
+>           assert result['reply'] == '无法确认' and result['generation_mode'] == 'rules_source_calculation'
+E           AssertionError: assert ('93' == '无法确认'
+E             
+E             - 无法确认
+E             + 93)
+
+tests/test_source_calculation.py:61: AssertionError
+________ test_no_source_does_not_treat_model_number_as_source_evidence _________
+
+    def test_no_source_does_not_treat_model_number_as_source_evidence():
+        with closing(MemoryStore(':memory:')) as memory:
+            result = Avatar(memory=memory,llm=Recorder('93'),capability_contract_enabled=True).respond(BUDGET)
+>           assert result['reply'] == '无法确认'
+E           AssertionError: assert '93' == '无法确认'
+E             
+E             - 无法确认
+E             + 93
+
+tests/test_source_calculation.py:68: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_source_calculation.py::test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[material-37-28-46-83]
+FAILED tests/test_source_calculation.py::test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[budget-370-640-590-960]
+FAILED tests/test_source_calculation.py::test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[material-8-91-2-10]
+FAILED tests/test_source_calculation.py::test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[material-0-30-0-0]
+FAILED tests/test_source_calculation.py::test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[budget-12.50-0-2.25-14.75]
+FAILED tests/test_source_calculation.py::test_two_source_values_and_later_replacement_are_calculated_without_generated_answer[budget-9007199254740993-1-1-9007199254740994]
+FAILED tests/test_source_calculation.py::test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[unit]
+FAILED tests/test_source_calculation.py::test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[unsupported_update]
+FAILED tests/test_source_calculation.py::test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[extra_value]
+FAILED tests/test_source_calculation.py::test_ambiguous_or_incompatible_current_sources_are_not_silently_summed[unknown_label]
+FAILED tests/test_source_calculation.py::test_no_source_does_not_treat_model_number_as_source_evidence
+11 failed, 4 passed in 0.97s
