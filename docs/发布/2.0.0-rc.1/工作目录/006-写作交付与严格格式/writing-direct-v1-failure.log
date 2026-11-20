@@ -1,0 +1,94 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_exact_verbatim_source_is_direct_and_has_no_generated_prefix_or_name[\u7f72\u540d\u7528\u3010\u5c0f\u660e\u3011\uff0c\u538b\u7f29\u5230\u4e24\u53e5\u8bdd\u3002] _
+
+literal = '署名用【小明】，压缩到两句话。'
+
+    @pytest.mark.parametrize('literal', ['署名用【小明】，压缩到两句话。','需要我帮你寄出邮件吗？'])
+    def test_exact_verbatim_source_is_direct_and_has_no_generated_prefix_or_name(literal):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine=Replies(['小明，这句话可以写成：'+literal])
+            result=Avatar(memory=memory,llm=engine,capability_contract_enabled=True).respond(
+                '原样写出这句话：“'+literal+'”')
+>           assert result['reply']==literal and not engine.native
+E           AssertionError: assert ('小明，这句话可以写成：署名用【小明】，压缩到两句话。' == '署名用【小明】，压缩到两句话。'
+E             
+E             - 署名用【小明】，压缩到两句话。
+E             + 小明，这句话可以写成：署名用【小明】，压缩到两句话。)
+
+tests/test_writing_direct_sources.py:17: AssertionError
+_ test_exact_verbatim_source_is_direct_and_has_no_generated_prefix_or_name[\u9700\u8981\u6211\u5e2e\u4f60\u5bc4\u51fa\u90ae\u4ef6\u5417\uff1f] _
+
+literal = '需要我帮你寄出邮件吗？'
+
+    @pytest.mark.parametrize('literal', ['署名用【小明】，压缩到两句话。','需要我帮你寄出邮件吗？'])
+    def test_exact_verbatim_source_is_direct_and_has_no_generated_prefix_or_name(literal):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine=Replies(['小明，这句话可以写成：'+literal])
+            result=Avatar(memory=memory,llm=engine,capability_contract_enabled=True).respond(
+                '原样写出这句话：“'+literal+'”')
+>           assert result['reply']==literal and not engine.native
+E           AssertionError: assert ('小明，这句话可以写成：需要我帮你寄出邮件吗？' == '需要我帮你寄出邮件吗？'
+E             
+E             - 需要我帮你寄出邮件吗？
+E             + 小明，这句话可以写成：需要我帮你寄出邮件吗？)
+
+tests/test_writing_direct_sources.py:17: AssertionError
+_ test_explicit_fictional_counterparty_is_delivered_without_a_model_offer[\u6211\u5df2\u628a\u90ae\u4ef6\u53d1\u7ed9\u8001\u5e08\uff0c\u63a5\u7740\u5199\u5bf9\u65b9\u56de\u590d\u3002] _
+
+root = '我已把邮件发给老师，接着写对方回复。'
+
+    @pytest.mark.parametrize('root', ['我已把邮件发给老师，接着写对方回复。',
+        '我刚刚将短信发送给导师，随后拟对方回复。'])
+    def test_explicit_fictional_counterparty_is_delivered_without_a_model_offer(root):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine=Replies(['只提议代写而没有正文。'])
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+            bot.respond('我来扮演一个虚构角色。')
+            result=bot.respond(root)
+>           assert result['generation_mode']=='rules_writing_artifact' and not engine.native
+E           AssertionError: assert ('llm' == 'rules_writing_artifact'
+E             
+E             - rules_writing_artifact
+E             + llm)
+
+tests/test_writing_direct_sources.py:32: AssertionError
+_ test_explicit_fictional_counterparty_is_delivered_without_a_model_offer[\u6211\u521a\u521a\u5c06\u77ed\u4fe1\u53d1\u9001\u7ed9\u5bfc\u5e08\uff0c\u968f\u540e\u62df\u5bf9\u65b9\u56de\u590d\u3002] _
+
+root = '我刚刚将短信发送给导师，随后拟对方回复。'
+
+    @pytest.mark.parametrize('root', ['我已把邮件发给老师，接着写对方回复。',
+        '我刚刚将短信发送给导师，随后拟对方回复。'])
+    def test_explicit_fictional_counterparty_is_delivered_without_a_model_offer(root):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine=Replies(['只提议代写而没有正文。'])
+            bot=Avatar(memory=memory,llm=engine,capability_contract_enabled=True)
+            bot.respond('我来扮演一个虚构角色。')
+            result=bot.respond(root)
+>           assert result['generation_mode']=='rules_writing_artifact' and not engine.native
+E           AssertionError: assert ('llm' == 'rules_writing_artifact'
+E             
+E             - rules_writing_artifact
+E             + llm)
+
+tests/test_writing_direct_sources.py:32: AssertionError
+_ test_additional_source_material_is_not_silently_overridden_by_verbatim_route _
+
+    def test_additional_source_material_is_not_silently_overridden_by_verbatim_route():
+        with closing(MemoryStore(':memory:')) as memory:
+            body='原句。谢谢。'
+            engine=Replies([body])
+            result=Avatar(memory=memory,llm=engine,capability_contract_enabled=True).respond(
+                '原样写出这句话：“原句。”，再加一句感谢。')
+            assert result['reply']==body and len(engine.native)==1
+>           assert result['writing_requirements']['verbatim_literal'] is None
+E           KeyError: 'verbatim_literal'
+
+tests/test_writing_direct_sources.py:45: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_writing_direct_sources.py::test_exact_verbatim_source_is_direct_and_has_no_generated_prefix_or_name[\u7f72\u540d\u7528\u3010\u5c0f\u660e\u3011\uff0c\u538b\u7f29\u5230\u4e24\u53e5\u8bdd\u3002]
+FAILED tests/test_writing_direct_sources.py::test_exact_verbatim_source_is_direct_and_has_no_generated_prefix_or_name[\u9700\u8981\u6211\u5e2e\u4f60\u5bc4\u51fa\u90ae\u4ef6\u5417\uff1f]
+FAILED tests/test_writing_direct_sources.py::test_explicit_fictional_counterparty_is_delivered_without_a_model_offer[\u6211\u5df2\u628a\u90ae\u4ef6\u53d1\u7ed9\u8001\u5e08\uff0c\u63a5\u7740\u5199\u5bf9\u65b9\u56de\u590d\u3002]
+FAILED tests/test_writing_direct_sources.py::test_explicit_fictional_counterparty_is_delivered_without_a_model_offer[\u6211\u521a\u521a\u5c06\u77ed\u4fe1\u53d1\u9001\u7ed9\u5bfc\u5e08\uff0c\u968f\u540e\u62df\u5bf9\u65b9\u56de\u590d\u3002]
+FAILED tests/test_writing_direct_sources.py::test_additional_source_material_is_not_silently_overridden_by_verbatim_route
+5 failed in 0.85s
