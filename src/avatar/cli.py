@@ -10,6 +10,7 @@ import sys
 from . import __version__
 from .application_assets import check_frontend
 from .paths import project_data_root
+from .release_options import release_options
 
 
 def doctor():
@@ -29,6 +30,7 @@ def doctor():
     if root.is_relative_to(Path('/data')) and not os.path.ismount('/data'):
         data_available = False
     return {'version': __version__, 'python': sys.version.split()[0],
+        'standard_entry_features': release_options(),
         'executable': sys.executable, 'core_dependencies': packages,
         'core_ready': all(packages.values()) and data_available,
         'data': {'root': str(root), 'writable_ancestor': str(ancestor), 'available': data_available},
@@ -62,7 +64,7 @@ def main(argv=None):
         return 0 if result['core_ready'] and (not args.require_ui or result['frontend']['available']) else 1
     if args.command == 'text':
         from .main import Avatar, _repl
-        avatar = Avatar()
+        avatar = Avatar(**release_options())
         try:
             _repl(avatar, use_tts=args.tts)
         finally:

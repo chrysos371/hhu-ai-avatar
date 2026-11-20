@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import sqlite3
 
 from avatar import __version__
 from avatar.application_assets import check_frontend
@@ -38,6 +39,18 @@ def test_text_exit_closes_real_database_without_model_configuration(tmp_path):
     result = invoke(tmp_path, 'text', input='quit\n')
     assert result.returncode == 0, result.stderr
     assert (tmp_path/'memory.db').is_file() and '再见' in result.stdout
+
+
+def test_standard_text_entry_uses_release_contract_and_recovers_actual_sql_across_processes(tmp_path):
+    first=invoke(tmp_path,'text',input='我叫陆遥。\n原样输出这句话：“发布正文。”\nquit\n')
+    assert first.returncode==0,first.stderr
+    second=invoke(tmp_path,'text',input='我叫什么名字？\nquit\n')
+    assert second.returncode==0 and '目前记录你使用的名字是陆遥' in second.stdout
+    with sqlite3.connect(tmp_path/'memory.db') as conn:
+        values=[json.loads(r[0]) for r in conn.execute('SELECT result_json FROM memory_chat_results ORDER BY message_id')]
+        assert [r['generation_mode'] for r in values]==['rules_profile_source','rules_writing_artifact','rules_profile_source']
+        assert all('capability_contract' in r for r in values)
+        assert conn.execute('SELECT COUNT(*) FROM memory_role_state').fetchone()[0]==1
 
 
 def test_web_arguments_are_validated_by_existing_parser(tmp_path):

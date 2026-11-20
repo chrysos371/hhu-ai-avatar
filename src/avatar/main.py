@@ -1451,7 +1451,8 @@ def _repl(avatar: Avatar, use_tts: bool = False) -> None:
 def main() -> None:
     """CLI 入口：`python -m avatar.main [--tts]`。"""
     use_tts = "--tts" in sys.argv
-    avatar = Avatar()
+    from .release_options import release_options
+    avatar = Avatar(**release_options())
     _repl(avatar, use_tts=use_tts)
 
 

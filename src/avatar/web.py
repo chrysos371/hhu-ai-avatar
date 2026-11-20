@@ -742,7 +742,9 @@ def main(argv=None):
             from .ears.asr import FunASREngine
             asr = FunASREngine(model=str(model), device=args.asr_device)
     try:
+        from .release_options import release_options
         server = create_server(args.db, port=args.port, legacy_writes=False,
+                               **release_options(),
                                knowledge_embedder=embedder, asr_engine=asr,
                                identity_grounding=args.identity_grounding,
                                profile_grounding=args.profile_grounding,
