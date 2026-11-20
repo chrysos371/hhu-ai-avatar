@@ -40,22 +40,35 @@
     },
     {
       "id": "R01-004",
-      "status": "open_late_sdk_privacy_epoch",
+      "status": "fixed_targeted_late_sdk_epoch_pending_full_gate",
       "path": "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/问题单/R01-004_晚期隐私检查未同步SDK自动情绪.md",
       "evidence": "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/material-late-epoch-v1-failure.json",
       "historical_same_family": [
         "C33-004",
         "C39-002"
       ],
-      "release_impact": "observed new privacy epoch must synchronize automatic SDK affect before late cancellation"
+      "release_impact": "observed new privacy epoch must synchronize automatic SDK affect before late cancellation",
+      "resolution_evidence": [
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/material-late-epoch-v2.json",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/material-late-epoch-v3.json",
+        "tests/test_late_source_revision.py",
+        "tests/test_avatar_emotion_revision.py",
+        "src/avatar/main.py"
+      ]
     },
     {
       "id": "R01-005",
-      "status": "open_targeted_status_witness",
+      "status": "fixed_direct_status_capture_pending_full_gate",
       "path": "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/问题单/R01-005_定向pytest退出码缺少独立采集.md",
       "evidence": "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/定向测试退出码来源勘误.json",
       "release_impact": "use direct child status witnesses going forward; old manually inferred statuses qualified, full/native direct captures unaffected",
-      "product_defect": false
+      "product_defect": false,
+      "resolution_evidence": [
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/run_targeted_python.py",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/material-late-epoch-v2.json",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/material-late-epoch-v3.json",
+        "docs/发布/2.0.0-rc.1/工作目录/006-写作交付与严格格式/定向测试退出码来源勘误.json"
+      ]
     }
   ]
 }
