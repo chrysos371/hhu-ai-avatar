@@ -1,0 +1,34 @@
+..................F..................................................... [ 90%]
+........                                                                 [100%]
+=================================== FAILURES ===================================
+_ test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values[redacted] _
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-150/test_invalid_or_incomplete_lat3')
+fault = 'redacted'
+
+    @pytest.mark.parametrize('fault',['wrong_pair','no_result','missing_dependency','redacted','incomplete_later_user'])
+    def test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values(tmp_path,fault):
+        with closing(MemoryStore(str(tmp_path/'sources.db'))) as memory:
+            bot,model,first,update = sources(memory)
+            aid=update['conversation']['assistant_message_id']
+            with memory.transaction():
+                if fault=='wrong_pair':
+                    update['conversation']['user_message_id']=first['conversation']['user_message_id']
+                    memory._conn.execute('UPDATE memory_chat_results SET result_json=? WHERE message_id=?',(json.dumps(update),aid))
+                elif fault=='no_result': memory._conn.execute('DELETE FROM memory_chat_results WHERE message_id=?',(aid,))
+                elif fault=='missing_dependency': memory._conn.execute('DELETE FROM memory_response_context WHERE message_id=?',(aid,))
+                elif fault=='redacted': memory._conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?",(update['conversation']['user_message_id'],))
+                else:
+                    ident=memory.add_message('user','数量更新：卡纸改为99张，纸板不变。请只确认。',bot.session_id)
+                    bot.speaker_context_store.observe('数量更新：卡纸改为99张，纸板不变。请只确认。',memory.context_revision,ident)
+            result=bot.respond(MATERIAL)
+>           assert result['reply']=='无法确认' and not result['source_calculation']['calculation_verified']
+E           AssertionError: assert ('此前说话者语境无法核验，...以明确声明继续扮演的角色。' == '无法确认'
+E             
+E             - 无法确认
+E             + 此前说话者语境无法核验，本轮没有写入真人资料或执行真实操作。请单独发送“回到现实”确认，再提出真实请求；也可以明确声明继续扮演的角色。)
+
+tests/test_source_calculation_integrity.py:41: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_source_calculation_integrity.py::test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values[redacted]
+1 failed, 79 passed in 2.48s

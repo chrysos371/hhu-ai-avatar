@@ -38,6 +38,11 @@ def test_invalid_or_incomplete_later_sources_do_not_resurrect_old_values(tmp_pat
                 ident=memory.add_message('user','数量更新：卡纸改为99张，纸板不变。请只确认。',bot.session_id)
                 bot.speaker_context_store.observe('数量更新：卡纸改为99张，纸板不变。请只确认。',memory.context_revision,ident)
         result=bot.respond(MATERIAL)
+        if fault=='redacted':
+            assert result['generation_mode']=='rules_speaker_scope'
+            assert 'source_calculation' not in result
+            bot.respond('回到现实')
+            result=bot.respond(MATERIAL)
         assert result['reply']=='无法确认' and not result['source_calculation']['calculation_verified']
 
 
