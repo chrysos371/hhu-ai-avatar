@@ -16,6 +16,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
+GUARD = Path(__file__).resolve().with_name('guard_direct_child.py')
 sys.path.insert(0, str(ROOT/'src'))
 sys.path.insert(0, str(ROOT/'scripts'))
 from avatar.paths import project_data_root
@@ -116,7 +117,8 @@ def launch(command, job, *, context=None, environment=None):
         raise ValueError('Only explicit nonsecret compute-thread overrides are recorded')
     job = job.absolute(); job.mkdir(parents=True, exist_ok=False)
     config = {'command': command, 'cwd': str(ROOT), 'context': context or {},
-        'environment': environment or {}, 'controller_sha256': digest(Path(__file__).resolve()), 'created_utc': utc()}
+        'environment': environment or {}, 'controller_sha256': digest(Path(__file__).resolve()),
+        'parent_death_guard_sha256': digest(GUARD), 'created_utc': utc()}
     write_json(job/'config.json', config)
     write_json(job/'status.json', {'state': 'queued', 'created_utc': config['created_utc']})
     command = [sys.executable, str(Path(__file__).resolve()), '--worker', str(job),
@@ -127,6 +129,52 @@ def launch(command, job, *, context=None, environment=None):
     write_json(job/'launch.json', {'worker_pid': worker.pid, 'worker_identity': process(worker.pid),
         'launcher_pid': os.getpid(), 'launched_utc': utc(), 'detached_session': True})
     return {'job': str(job), 'worker_pid': worker.pid}
+
+
+def signal_owned_child(child, identity, signum):
+    # A successful exec intentionally changes argv. PID/start ticks and the
+    # fresh session remain stable throughout that one owned transition.
+    current = process(child.pid)
+    if (identity and current and current['state'] != 'Z'
+            and current['start_ticks'] == identity['start_ticks']
+            and current['process_group'] == child.pid):
+        os.killpg(child.pid, signum)
+        return True
+    return False
+
+
+def observe_protected_exec(child, job, config, expected, state, requested):
+    state['payload_argv_observed'] = False
+    end = time.monotonic() + 10  # Exec readiness only; never a job deadline.
+    while child.poll() is None:
+        current = process(child.pid)
+        if current and current['argv'] == config['command']:
+            state['child'] = current
+            state['payload_argv_observed'] = True
+            break
+        if requested and state['stop_signal'] is None:
+            if signal_owned_child(child, state['child'], signal.SIGINT):
+                state['stop_signal'] = requested[0]
+                state['state'] = 'stopping'
+        if time.monotonic() >= end:
+            raise RuntimeError('Protected payload exec readiness exceeded 10 seconds')
+        time.sleep(.01)
+    receipt = job/'parent-death-guard.json'
+    if receipt.exists():
+        guard = json.loads(receipt.read_text())
+        if not (guard['installed'] and guard['pid'] == child.pid
+                and guard['parent_pid'] == os.getpid()
+                and guard['process_group'] == child.pid
+                and guard['kernel_parent_death_signal'] == signal.SIGKILL
+                and guard['config_sha256'] == expected
+                and guard['guard_sha256'] == config['parent_death_guard_sha256']
+                and guard['target_argv'] == config['command']
+                and (state['child'] is None or guard['start_ticks'] == state['child']['start_ticks'])):
+            raise ValueError('Actual parent-death guard receipt differs')
+        state['parent_death_guard_sha256'] = digest(receipt)
+    elif child.poll() == 0 or state['payload_argv_observed']:
+        raise ValueError('Payload success/exec cannot omit actual parent-death guard')
+    write_json(job/'status.json', state)
 
 
 def supervise(job, expected):
@@ -153,6 +201,8 @@ def supervise(job, expected):
         config = json.loads(config_path.read_text()); state['context'] = config['context']
         if digest(Path(__file__).resolve()) != config['controller_sha256']:
             raise ValueError('Supervisor source changed before worker startup')
+        if digest(GUARD) != config['parent_death_guard_sha256']:
+            raise ValueError('Parent-death guard source changed before worker startup')
         if config['context'].get('freeze'):
             import fcntl
             lease = (project_data_root(ROOT)/'tmp/capability-supervisor.lock').open('a')
@@ -164,14 +214,17 @@ def supervise(job, expected):
                 raise ValueError('Experiment selection changed after launch')
         env = dict(os.environ); env.update(config['environment'])
         with (job/'experiment.log').open('xb') as stream:
-            child = subprocess.Popen(config['command'], cwd=config['cwd'], env=env,
+            guarded = [sys.executable, '-B', str(GUARD), '--job', str(job),
+                '--config-sha256', expected, '--parent-pid', str(os.getpid())]
+            child = subprocess.Popen(guarded, cwd=config['cwd'], env=env,
                 stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
             state['child'] = process(child.pid); write_json(job/'status.json', state)
+            observe_protected_exec(child, job, config, expected, state, requested)
             last = 0.
             while child.poll() is None:
                 if requested and state['stop_signal'] is None:
                     state['stop_signal'] = requested[0]; state['state'] = 'stopping'
-                    if matches(state['child']): os.killpg(child.pid, signal.SIGINT)
+                    signal_owned_child(child, state['child'], signal.SIGINT)
                 if time.monotonic()-last >= 5:
                     state['heartbeat_utc'] = utc(); write_json(job/'status.json', state); last = time.monotonic()
                 time.sleep(.2)
@@ -180,7 +233,7 @@ def supervise(job, expected):
     except Exception as error:
         state['state'] = 'failed'; state['error'] = repr(error)
         if child is not None and child.poll() is None:
-            if matches(state['child']): os.killpg(child.pid, signal.SIGINT)
+            signal_owned_child(child, state['child'], signal.SIGKILL)
             state['return_code'] = child.wait()
     finally:
         if lease is not None: lease.close()
