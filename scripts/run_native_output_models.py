@@ -13,7 +13,9 @@ from serve_local_model_eval import load_registry
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
+sys.path.insert(0, str(ROOT / 'scripts/lab'))
 from avatar.paths import project_data_root
+from owned_provider import PROTECTION_SOURCES, start_provider, finish_provider
 
 
 def gpu_snapshot():
@@ -104,6 +106,9 @@ def main(output, provider_python, stage='development', model_key=None, candidate
              'scripts/serve_local_model_eval.py', 'scripts/evaluate_native_output_audit.py',
              str(Path(__file__).resolve().relative_to(ROOT)),
              'evals/interaction/cycle-15/native-output-protocol.json', str(registry_path.relative_to(ROOT))]
+    paths += list(PROTECTION_SOURCES)
+    if stage in ('prospective','capability_pair') and not set(PROTECTION_SOURCES) <= frozen['sha256'].keys():
+        raise ValueError('Frozen provider protection inputs incomplete')
     paths += [m['metadata'] for m in registry['models'] if m.get('metadata')]
     if stage == 'development' and protocol is not None:
         paths.append(str(protocol.resolve().relative_to(ROOT)))
@@ -166,7 +171,8 @@ def main(output, provider_python, stage='development', model_key=None, candidate
             with (folder/'provider.log').open('x') as provider_log:
                 try:
                     if stage == 'capability_pair': verify_capability_inputs()
-                    process = subprocess.Popen(command, cwd=ROOT, env=env, stdout=provider_log, stderr=subprocess.STDOUT)
+                    process, protection = start_provider(command, folder/'provider-process', cwd=ROOT, env=env, stdout=provider_log)
+                    row['provider_protection'] = protection
                     row['provider_pid'] = process.pid; save()
                     while True:
                         if process.poll() is not None: raise RuntimeError(f'{key} exited before ready: {process.returncode}')
@@ -209,6 +215,7 @@ def main(output, provider_python, stage='development', model_key=None, candidate
                     if process is not None:
                         if process.poll() is None: process.terminate()
                         row['provider_exit'] = process.wait()
+                        row['provider_protection_terminal'] = finish_provider(process, folder/'provider-process')
                         # Resource cleanup timeout only; not an experiment time
                         # limit or a reason to restart an observation.
                         for _ in range(100):

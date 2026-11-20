@@ -1,5 +1,6 @@
 """Protect each explicit native-provider edge; preserve real launch/wait evidence."""
 import json
+import os
 from pathlib import Path
 import signal
 import subprocess
@@ -18,8 +19,9 @@ def immutable(path,value):
 
 
 def start_provider(command,directory,*,cwd,env,stdout):
-    if not command or not command[0] or any(not isinstance(v,str) or '\0' in v for v in command):
+    if not isinstance(command,(list,tuple)) or not command or not command[0] or any(not isinstance(v,str) or '\0' in v for v in command):
         raise ValueError('Provider requires explicit argv')
+    command=list(command)
     directory=Path(directory).absolute();directory.mkdir(parents=True,exist_ok=False)
     config={'command':command,'cwd':str(Path(cwd).absolute()),'context':{'process_role':'native_provider'},
         'environment':{k:env[k] for k in ('CUDA_VISIBLE_DEVICES','LD_LIBRARY_PATH','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS') if k in env},
@@ -28,7 +30,7 @@ def start_provider(command,directory,*,cwd,env,stdout):
         'supervisor_utility_sha256':jobs.digest(Path(jobs.__file__).resolve()),'created_utc':jobs.utc()}
     immutable(directory/'config.json',config)
     expected=jobs.digest(directory/'config.json')
-    state={'state':'starting_provider','worker':jobs.process(__import__('os').getpid()),
+    state={'state':'starting_provider','worker':jobs.process(os.getpid()),
         'child':None,'return_code':None,'stop_signal':None,'context':config['context']}
     jobs.write_json(directory/'status.json',state)
     child=None
