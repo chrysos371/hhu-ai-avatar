@@ -439,12 +439,17 @@
           "sha256": "b400d8471cfe749d15a48feaf66dcf9d4cd5c7334eb4653d94c37eb51b002c24"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_audio_resampling.py",
+        "src/avatar/utils/audio.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2；状态：已修复，专项复测通过。"
-      ]
+      ],
+      "release_review": "抗混叠低通及有界分块取消已实现；原同信号抑制-78.02/-70.84dB和通带最大0.150dB是历史实测，不冒称中文人声增益。"
     },
     {
       "id": "C02-002",
@@ -457,16 +462,21 @@
           "sha256": "56e60e936e1e08acb37cf75504fc83f8f50e59a27812711e75bf22b913017d65"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_audio_decode_budget.py",
+        "src/avatar/utils/audio.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2；状态：已修复，专项复测通过。",
         "120 秒限制在 load_audio 全量读取之后执行。300 秒、300096 字节的合成 MP3（低于 8MiB 输入上限）会先由 soundfile.read 分配 4801536 帧、19206144 字节，再返回 speech_too_long。输入字节限制不能代表解码后内存限制；当前单并发降低同时放大风险，但没有解决单文件放大。",
         "原始证据：[audio-audit-before.json](../evidence/audio-audit-before.json) decoder。数据是本机合成静音，没有外部用户音频。环境无 ffmpeg，探针改用已安装 soundfile 的 MP3 编码，未改变 300 秒测试目标。",
         "读取可用元数据后提前拒绝明确超长音频；即使元数据不可靠也给每个解码后端设置读取上限。原 300 秒样本在解码分配前返回同一 422；正常短 MP3/WAV 可读，解码失败仍遵守降级策略，资源锁可复用。不得用该结果宣称所有第三方解码器漏洞或所有内存峰值问题已解决。",
         "load_audio 增加可选时长预算：WAV 与 soundfile 元数据超限提前拒绝；soundfile 读取帧数有上限，librosa 后备显式 duration，两者再次校验实际长度。SpeechService 将专用时长异常映射为原 422 并释放忙锁。原 300 秒 MP3 decoder_reads=[]，不再进入全量 sf.read 分配，耗时约 1.4ms；高频抑制数据保持通过。音频预算/信号/语音/取消专项 22 passed，含恢复后重试。结果见 [audio-after-budget.json](../evidence/audio-after-budget.json)，最终审计补源码哈希。该门禁不等于所有解码器漏洞或整个服务的内存上界证明。"
-      ]
+      ],
+      "release_review": "解码前元数据预算和各后备解码器有界读取已实现；并非任意第三方解码器内存上界证明。"
     },
     {
       "id": "C02-003",
@@ -479,12 +489,17 @@
           "sha256": "7ad12d13e4b4454b99ae17d3674635490455aa82b185afea89001cc4669ab04f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_training_review.py",
+        "tests/test_training_data_admission.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2（验证可复现性）；状态：已修复，专项通过。"
-      ]
+      ],
+      "release_review": "导出测试只为自己的临时根注册授权，生产写入根门禁保持；当前完整测试直接可运行。"
     },
     {
       "id": "C02-004",
@@ -497,13 +512,19 @@
           "sha256": "7fcf22ecb1e523e22df75f1b328de4b2db01dc14a4acae2058326b1667ef54e2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "frontend/src/features/chat/ChatPage.tsx",
+        "frontend/src/features/chat/AvatarStage.tsx",
+        "frontend/src/features/chat/ChatPage.test.tsx",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2；状态：已修复，原浏览器复测通过。",
         "对话页查询 persona 当前版本，形象、标题、消息标签、输入占位与播放器统一用确认后的名字；不可用时用中性“角色”称呼，文字发送不等待配置查询。原浏览器 1 passed/3.1s，API 名称与标题、播放器一致为“星澜”；组件 33 passed、类型与构建通过。快照见 [persona-name-after.json](../evidence/persona-name-after.json)。已有语音测试改为验证当前名称后的状态/播放器后缀，继续验证实际音频行为。"
-      ]
+      ],
+      "release_review": "确认后人设名称动态进入聊天/播放器，不渲染未确认草案；历史浏览器红→绿保留，最终发布浏览器仍须重跑。"
     },
     {
       "id": "C02-005",
@@ -516,12 +537,16 @@
           "sha256": "f16120816efb5f5b48d1375d1f1c8fe4f70aedd46cb7ce87256927ced3dd0809"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "frontend/e2e/real-voice.spec.ts",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2（实验可追溯性）；状态：已修复并验证拒绝复用。"
-      ]
+      ],
+      "release_review": "浏览器证据使用每测试目录或显式新目录，已有测量拒绝覆盖；旧OOM不是此门禁成功。"
     },
     {
       "id": "C02-006",
@@ -534,12 +559,18 @@
           "sha256": "e1646fd57ce2c1e9585af62f12d41706a81613b531a13227988c3eb78f23ecd6"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "src/avatar/lab/native_tool_wire.py",
+        "scripts/serve_local_model_eval.py",
+        "tests/test_model_scale_runner_registry.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P1（评估有效性）；状态：已修复，真实同题重跑通过有效性门槛。"
-      ]
+      ],
+      "release_review": "原生消息可选字段规范化与降级有效性门禁已实现；首次28请求模板失败不能重计为真实模型质量。"
     },
     {
       "id": "C02-007",
@@ -552,12 +583,17 @@
           "sha256": "6b7f1d67e30f1145f674d97615d0d004c1c4433e6fc9d687d26bd3df9de09769"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_main.py",
+        "src/avatar/web_api.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2；状态：已修复，专项通过。"
-      ]
+      ],
+      "release_review": "配置缺失和服务失败生成模式区分，实际安装规则模式/恢复测试已有；新guard另有可识别generation_mode，不重标纯模型。"
     },
     {
       "id": "C02-008",
@@ -570,12 +606,17 @@
           "sha256": "b4f4615ccd2401f8995509146863da53902ca98542b48eafc8ce48911cdd2444"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_training_review.py",
+        "tests/test_training_data_admission.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P1（评估/训练隔离）；状态：已修复，原探针与专项通过。"
-      ]
+      ],
+      "release_review": "评测声明递归保护覆盖cases/turns及正负fixture输入，实际训练加载器还有逐行来源/跨split验证；不宣称任意语义近似全识别。"
     },
     {
       "id": "C02-009",
@@ -588,12 +629,16 @@
           "sha256": "6c4973fa626485d7d26b53e80b9460b33c8f4ba1e00e3e91799d61f783ded084"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_defect",
+      "release_impact": "G04_release_blocking_until_repaired",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-02/审计/issues/G2C2-009.md",
+        "docs/发布/2.0.0-rc.1/目标验收台账.json"
+      ],
       "original_status_candidates": [
         "级别：P1（事实归属）；状态：多轮实测与有界资料约束已完成；自由对话归属未放行。"
-      ]
+      ],
+      "release_review": "当前自由对话主体归属仍是G04已知P1；不能以数据库正确、窄路由或旧最终52/52关闭。"
     },
     {
       "id": "C02-010",
@@ -606,12 +651,17 @@
           "sha256": "4f7594ad226d4eb6366658d176a957bc6f5fa6025073364c5dfac3be7e9e526d"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_fact_connectives.py",
+        "tests/test_main.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2；状态：已修复，专项复测通过。"
-      ]
+      ],
+      "release_review": "连接词本人及更喜欢承接只在明确同句主体范围入库，未知指代仍保守。"
     },
     {
       "id": "C02-011",
@@ -624,12 +674,17 @@
           "sha256": "e236639b40168bcd53614e58d1f4a1965a90c57dada37323d067d24135d78780"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_fact_quote_suffix.py",
+        "tests/test_facts.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2（记忆覆盖）；状态：已修复，正反例与旧安全回归通过。"
-      ]
+      ],
+      "release_review": "闭合引用后本人自述尾段原文连续，外层假设/问句仍拒绝；引用前省略链不被伪造合成。"
     },
     {
       "id": "C02-012",
@@ -642,12 +697,17 @@
           "sha256": "42b3465ecea8da9db8710e5bdf6c8693e02bfbf25092b1b88c8c49f36c88c757"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_default_exposure_experimental_endpoint_not_promoted",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "frontend/e2e/real-voice.spec.ts",
+        "frontend/src/features/chat/ChatPage.test.tsx",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2；状态：默认风险已回退并验证；增强端点算法尚未放行。"
-      ]
+      ],
+      "release_review": "只关闭未经人声门槛就默认启用端点的暴露：默认手动结束，自动端点仍实验选择；原CER9.8765%对6.5256%失败不改写，物理与真人增强按授权留待后续。"
     },
     {
       "id": "C02-013",
@@ -660,12 +720,17 @@
           "sha256": "ba543d6b3e7e1c89bae9b567dcae5d3bc6dd7370df9dbbcf655a49b6bc83025f"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_companion_eval.py",
+        "tests/test_long_dialogue_eval.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2（评测正确性）；状态：已版本化修正并验证，旧分数保留。"
-      ]
+      ],
+      "release_review": "允许的未知表达测量政策已版本化，原题/旧分保留；事后重评分不是独立模型验收。"
     },
     {
       "id": "C02-014",
@@ -678,12 +743,18 @@
           "sha256": "c795ac1977e1d991cdaafdd36cf45608eac48cde6373c40034c4f38abca7d924"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "src/avatar/gpu_resources.py",
+        "tests/test_gpu_resources.py",
+        "docs/发布/2.0.0-rc.1/工作目录/002-provider进程链修复/normal-result-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P2（资源约束）；状态：选择器已修复，11 项 CPU 正反例通过，显式 mask=6 的真实 4B 加载已通过。"
-      ]
+      ],
+      "release_review": "纯选择器尊重显式索引/UUID/禁用/同组/余量；本次两个真实GPU生命周期继续按实际余量/UUID选择并记录，不固定6—7。"
     },
     {
       "id": "C02-015",
@@ -696,12 +767,17 @@
           "sha256": "7ed9bd279a956e9c54f4d2a8acd1ca48b645c60308ccfb02efd0f63589cfa4b7"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_measurement_process_scope_product_quality_separate",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-55/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/计划与现状.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P1（评估有效性）；状态：已增强显式逐轮规则与代理复核留痕；通用语义质量仍未批准；相关产品问题 G2C2-009 仍未关闭。"
-      ]
+      ],
+      "release_review": "评测流程已要求逐轮原文/来源/生成路径，C55对198回复逐条source/span审阅且拒绝质量失败候选，发布计划禁止只看最终字面分。原模型归属/身体问题由009/016继续跟踪，未批准一般语义。"
     },
     {
       "id": "C02-016",
@@ -714,12 +790,16 @@
           "sha256": "95ff113daf38b9fc48d17e198e1995327d6d7d2685143f465a488cdc4bc5d645"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_defect",
+      "release_impact": "G04_release_blocking_until_repaired",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-02/审计/issues/G2C2-016.md",
+        "docs/发布/2.0.0-rc.1/目标验收台账.json"
+      ],
       "original_status_candidates": [
         "级别：P1；状态：已通过来源声明路由消除已测明确承诺；自由生成边界仍开放。"
-      ]
+      ],
+      "release_review": "当前默认自由生成身体/线下承诺仍是G04已知P1；旧lab未批准，不以新外部通信guard冒充身体边界全解决。"
     },
     {
       "id": "C02-017",
@@ -732,12 +812,17 @@
           "sha256": "2150751cacc07198870af0889d667b421f0421336da40aae293e257afcd3e362"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_known_candidate_defect_candidate_not_promoted",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "src/avatar/brain/profile_grounding.py",
+        "tests/test_profile_grounding.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P1；状态：候选默认关闭，已限制已知自我/关系对象，专项已通过；广泛情绪适用性未放行。此项是新增候选代码审查发现，不是原先线上功能已暴露。"
-      ]
+      ],
+      "release_review": "已限制自我/关系/生命整体评价，不把它们机械确认成普通爱好；只关闭该候选已知代码缺陷，不启用资料确认候选或承诺心理语义完备。"
     },
     {
       "id": "C02-018",
@@ -750,12 +835,17 @@
           "sha256": "36a4999dd44ee48db992133ae7ff134e6e1ba9170df944b5d03fc596c8f98740"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_defect_in_stated_scope",
+      "resolution_evidence": [
+        "tests/test_streaming.py",
+        "tests/test_profile_grounding.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v1-binding.json"
+      ],
       "original_status_candidates": [
         "级别：P1（取消生命周期）；状态：发送前已补检查并验证；新候选默认关闭。"
-      ]
+      ],
+      "release_review": "缓冲输出前取消/版本检查已落实，当前关联真实SDK/流式/来源检查通过；不宣称网络发送和任意外部信号绝对原子。"
     },
     {
       "id": "C03-001",
