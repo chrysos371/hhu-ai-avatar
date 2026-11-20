@@ -127,8 +127,12 @@ class Avatar:
         if role_state_enabled:
             from .brain.speaker_context import SpeakerContextStore
             self.speaker_context_store = SpeakerContextStore(memory)
-        # Installed by the standard Web path only, after current-source admission.
+        # Explicit release SDK configuration uses the same verified recovery as
+        # Web. The Web caller still owns its independent opt-out below.
         self.conversation_context_store = None
+        if capability_contract_enabled and role_state_enabled:
+            from .brain.conversation_context import ConversationContextStore
+            self.conversation_context_store = ConversationContextStore(memory)
         self._history_source_ids = set()
         self.capability_contract_enabled = capability_contract_enabled
         self._capability_sources = frozenset()
@@ -909,10 +913,11 @@ class Avatar:
         contract_profile = bool(self.capability_contract_enabled and self._response_frame is not None
             and self._response_frame.frame == 'ordinary' and self.speaker_scope.scope == 'current_user'
             and self.speaker_scope.allows_facts and not self.boundaries.fiction)
+        profile_limit = False
         if contract_profile:
             from .brain.profile_source import ProfileReader
             profile_reader = ProfileReader(self.memory)
-            contract_profile = len(profile_reader.rows) <= 128
+            profile_limit = len(profile_reader.rows) > 128
         buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
                         or self.final_reply_reviewer is not None or number_requested or writing_delivery_active
                         or contract_profile and bool(profile_reader.profile.get('偏好') or profile_reader.profile.get('爱好')))
@@ -934,11 +939,11 @@ class Avatar:
         streamed_prefix = []
         capability_output_rules = ()
         grounding_action = None
-        profile = (profile_reader.profile if contract_profile else
+        profile = ({} if profile_limit else profile_reader.profile if contract_profile else
             self.memory.get_user_profile() if self.profile_grounding_enabled else {})
         real_profile_active = (self.profile_grounding_enabled or contract_profile) and self.speaker_scope.allows_facts
         profile_reply, lookup_action = lookup_profile(user_text, profile) if real_profile_active else (None, None)
-        if real_profile_active and profile_reply is None:
+        if real_profile_active and profile_reply is None and not profile_limit:
             profile_reply, lookup_action = acknowledge_disclosure(user_text, profile)
         if boundary.reply is not None:
             reply = boundary.reply
@@ -998,6 +1003,9 @@ class Avatar:
         elif writing_source_unverified:
             reply = '无法完整核验当前稿件要求，请重新发送完整正文和修改要求。'
             generation_mode = 'rules_writing_source'
+        elif profile_limit:
+            reply = '当前用户资料超过128条的可核验范围，请先在记忆管理页整理；我暂不能可靠使用这些资料回答。'
+            generation_mode = 'rules_profile_source_limit'
         elif profile_reply is not None:
             reply, grounding_action = profile_reply, lookup_action
             generation_mode = ('rules_profile_source' if contract_profile else
@@ -1318,7 +1326,7 @@ class Avatar:
             "strategy": decision.strategy,
             "analysis_mode": self.analysis_mode,
             "generation_mode": generation_mode,
-            "identity_grounding": self.subject_prompt_enabled,
+            "identity_grounding": self.subject_prompt_enabled or self.capability_contract_enabled,
             "profile_grounding": {"enabled": self.profile_grounding_enabled,
                                   "release_source_contract": contract_profile,
                                   "action": grounding_action, "scope": "profile_lookup_declaration_and_copied_preference", "version": 2,

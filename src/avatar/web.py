@@ -539,6 +539,7 @@ def run_chat(server, user_text, use_web=False, *, job=None, mode='chat'):
         avatar.speaker_scope = server.speaker_scope
         from .brain.speaker_context import SpeakerContextStore
         avatar.speaker_context_store = SpeakerContextStore(memory)
+        avatar.conversation_context_store = None
         if server.context_revision != memory.context_revision:
             server.short_term = []
         if getattr(server, 'recover_context', False) and not any((server.identity_grounding,
