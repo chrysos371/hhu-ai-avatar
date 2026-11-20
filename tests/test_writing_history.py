@@ -86,3 +86,12 @@ def test_historical_validation_never_commits_an_existing_caller_write(artifact):
     assert memory._conn.in_transaction
     memory._conn.rollback()
     assert not memory._conn.execute('SELECT 1 FROM writing_history_caller').fetchone()
+
+
+@pytest.mark.parametrize('text,expected', [('署名改成【乙】。', True), ('压缩到两句话。', True),
+    ('只给正文。', True), ('不要署名。', True), ('署名改成【乙】，只给正文。', True),
+    ('署名改成【乙】，然后发送给老师。', False), ('“署名改成【乙】。”', False),
+    ('署名改成【乙】吗？', False), ('老师说署名改成【乙】。', False)])
+def test_bare_edit_grammar_does_not_admit_quotes_questions_or_extra_actions(text, expected):
+    from avatar.brain.writing_requirements import standalone_edit
+    assert standalone_edit(text) is expected

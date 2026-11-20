@@ -12,6 +12,7 @@ from ..cancellation import Cancelled
 
 _POLISH = re.compile(r'(?:请)?(?:再)?(?:短一点|简短一点|自然一点|口语一点|礼貌一点|正式一点)[。！!]?')
 _SIGNATURE = re.compile(r'署名(?:请)?(?:用|改成|改为|写成|为)')
+_SIGNATURE_VALUE = r'\s*(【[^【】\n]{1,40}】|“[^“”\n]{1,40}”|「[^「」\n]{1,40}」|[^，,。；;\n？！!?\s]{1,40})'
 _RELEASE = re.compile(r'(?:不要|不用|无需|去掉|删除)署名')
 _SENTENCES = re.compile(r'(?:压缩到|控制在|改成|改为|写成|写)([一二两三四五六七八九十1-9]|10)句(?:话)?')
 _BODY = re.compile(r'只(?:给|要|输出|回复|交付)(?:正文|稿件正文)')
@@ -51,7 +52,7 @@ def _compile_sources(sources):
                 omitted = True
             for match in _SIGNATURE.finditer(instruction):
                 offset = clause.start() + match.end()
-                value = re.match(r'\s*(【[^【】\n]{1,40}】|“[^“”\n]{1,40}”|「[^「」\n]{1,40}」|[^，,。；;\n？！!?\s]{1,40})', text[offset:])
+                value = re.match(_SIGNATURE_VALUE, text[offset:])
                 if value:
                     signature = value.group(1)
                     omitted = False
@@ -67,6 +68,25 @@ def _compile_sources(sources):
 
 def compile_sources(sources):
     return _compile_sources(sources)[:3]
+
+
+def standalone_edit(text):
+    """Finite bare controls may continue an existing, independently valid root."""
+    if type(text) is not str or not 0 < len(text) <= 2000:
+        return False
+    clean = re.sub(r'【[^【】\n]*】', lambda m: ' ' * len(m.group()), visible_source(text))
+    clauses = list(re.finditer(r'[^，,。；;\n]+', clean))
+    if not clauses:
+        return False
+    for match in clauses:
+        visible = match.group().strip()
+        raw = text[match.start():match.end()].strip()
+        if re.fullmatch(_SIGNATURE.pattern + _SIGNATURE_VALUE, raw):
+            if _compile_sources(((1, raw),))[0] is None:
+                return False
+        elif not any(pattern.fullmatch(visible) for pattern in (_RELEASE, _SENTENCES, _BODY)):
+            return False
+    return True
 
 
 @dataclass(frozen=True)

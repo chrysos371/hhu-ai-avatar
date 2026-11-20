@@ -1,0 +1,17 @@
+..............F...................................                       [100%]
+=================================== FAILURES ===================================
+_ test_material_controls_outside_window_and_changed_current_root_do_not_rewrite_history _
+
+    def test_material_controls_outside_window_and_changed_current_root_do_not_rewrite_history():
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('正文。'), capability_contract_enabled=True)
+            bot.respond('帮我写一条请假短信，署名用【甲】，只给正文。')
+            bot.respond('署名改成【乙】。')
+            for _ in range(40): result = bot.respond('再自然一点。')
+>           assert result['writing_requirements']['signature'] == '【乙】'
+E           AssertionError: assert None == '【乙】'
+
+tests/test_writing_history.py:71: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_history.py::test_material_controls_outside_window_and_changed_current_root_do_not_rewrite_history
+1 failed, 49 passed in 2.66s

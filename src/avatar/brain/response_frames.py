@@ -38,6 +38,10 @@ def _advance_frame(text, writing):
     if (writing and _REWRITE.match(clean)
             and re.match(r'^(?:请|麻烦)?(?:把|将)(?:它|这(?:句|条|段|封)|上一版|刚才那(?:句|条|段))', clean)):
         return True, False
+    if writing:
+        from .writing_requirements import standalone_edit
+        if standalone_edit(text):
+            return True, False
     if _META.match(clean) and not _WRITING_SUBTASK.search(clean):
         return False, False
     tracker = TaskTracker()
