@@ -43,11 +43,16 @@ def names():
     selected.update(str(p.relative_to(ROOT)) for p in (Path(__file__), OLD/'gpu_lifecycle.py',
         util.REFERENCE, util.REGISTRY, util.METADATA, HERE/'native-cases-v2.json',
         HERE/'原生写作与来源门控协议-v2.md', HERE/'native-preflight-v2.json',
+        HERE/'native_driver_controls_v2.py', HERE/'native-driver-controls-v2.json',
+        HERE/'native-driver-controls-raw-v2.json',
         HERE/'python-writing-v4-binding.json', HERE/'python-writing-v4.log'))
     return sorted(selected)
 
 
 def freeze():
+    controls = read(HERE/'native-driver-controls-v2.json')
+    assert controls['passed'] and controls['actual_native_generate_calls'] == 0
+    assert {n: digest(ROOT/n) for n in controls['source_sha256']} == controls['source_sha256']
     regression = read(HERE/'python-writing-v4-binding.json')
     assert regression['actual_returncode'] == 0 and regression['source_unchanged']
     assert {n: digest(ROOT/n) for n in regression['source_sha256']} == regression['source_sha256']
@@ -86,7 +91,7 @@ def canonical(value):
 
 def validate_native_record(row, messages, response, form):
     schema = form.get('json_schema', {}).get('schema') if isinstance(form, dict) else None
-    if not (row.get('outcome') == 'completed' and row.get('finish_reason') == 'stop'
+    if not (isinstance(row, dict) and row.get('outcome') == 'completed' and row.get('finish_reason') == 'stop'
             and row.get('messages') == messages and row.get('response') == response
             and row.get('response_format') == form
             and row.get('response_format_sha256') == canonical(form)
