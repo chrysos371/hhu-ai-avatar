@@ -659,9 +659,8 @@ def create_server(
     server.legacy_writes = legacy_writes
     server.knowledge_embedder = knowledge_embedder
     server.chat_events = []
-    server.frontend_dir = Path(
-        frontend_dir or Path(__file__).resolve().parents[2] / "frontend/dist"
-    ).resolve()
+    from .application_assets import frontend_directory
+    server.frontend_dir = Path(frontend_dir if frontend_dir is not None else frontend_directory()).resolve()
     server.token = secrets.token_urlsafe(32)
     server.nonce = secrets.token_urlsafe(24)
     server.session_id = secrets.token_hex(16)
@@ -678,7 +677,7 @@ def create_server(
     return server
 
 
-def main():
+def main(argv=None):
     from .config import config
 
     parser = argparse.ArgumentParser(description="Avatar 单用户本机管理页面")
@@ -698,7 +697,7 @@ def main():
                         help='实验性固定原文槽位修正，需同时开启--task-delivery-check及模型JSON schema支持')
     parser.add_argument('--no-context-recovery', action='store_true',
                         help='不从持久历史续接模型上下文；本进程仍保留临时对话窗口')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.literal_composition and not args.task_delivery_check:
         parser.error('--literal-composition 需要 --task-delivery-check')
     if not 0 <= args.port <= 65535:
