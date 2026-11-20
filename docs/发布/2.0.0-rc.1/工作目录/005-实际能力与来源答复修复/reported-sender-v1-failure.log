@@ -1,0 +1,67 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_sender_is_read_from_verified_user_report_without_new_model_or_execution[\u6211\u521a\u624d\u81ea\u5df1\u7ed9\u540c\u5b66\u53d1\u4e86\u77ed\u4fe1\uff0c\u4ed6\u8fd8\u6ca1\u56de\u3002-\u662f\u8c01\u53d1\u7684\u77ed\u4fe1\uff1f-user] _
+
+source = '我刚才自己给同学发了短信，他还没回。', question = '是谁发的短信？', actor = 'user'
+
+    @pytest.mark.parametrize('source,question,actor', [
+        ('我刚才自己给同学发了短信，他还没回。', '是谁发的短信？', 'user'),
+        ('室友说他已经把通知发给班长了，我没有发送。', '到底是谁发送的？', '室友'),
+    ])
+    def test_sender_is_read_from_verified_user_report_without_new_model_or_execution(source, question, actor):
+        engine = Recorder('收到你的说明。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            original = bot.respond(source)['conversation']['user_message_id']
+            counts = len(engine.native), len(engine.analysis)
+            engine.reply = '是我发送的，我已经替你处理了。'
+            result = bot.respond(question)
+>           assert result['generation_mode'] == 'rules_reported_sender'
+E           AssertionError: assert 'llm' == 'rules_reported_sender'
+E             
+E             - rules_reported_sender
+E             + llm
+
+tests/test_reported_sender_contract.py:23: AssertionError
+_ test_sender_is_read_from_verified_user_report_without_new_model_or_execution[\u5ba4\u53cb\u8bf4\u4ed6\u5df2\u7ecf\u628a\u901a\u77e5\u53d1\u7ed9\u73ed\u957f\u4e86\uff0c\u6211\u6ca1\u6709\u53d1\u9001\u3002-\u5230\u5e95\u662f\u8c01\u53d1\u9001\u7684\uff1f-\u5ba4\u53cb] _
+
+source = '室友说他已经把通知发给班长了，我没有发送。', question = '到底是谁发送的？', actor = '室友'
+
+    @pytest.mark.parametrize('source,question,actor', [
+        ('我刚才自己给同学发了短信，他还没回。', '是谁发的短信？', 'user'),
+        ('室友说他已经把通知发给班长了，我没有发送。', '到底是谁发送的？', '室友'),
+    ])
+    def test_sender_is_read_from_verified_user_report_without_new_model_or_execution(source, question, actor):
+        engine = Recorder('收到你的说明。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            original = bot.respond(source)['conversation']['user_message_id']
+            counts = len(engine.native), len(engine.analysis)
+            engine.reply = '是我发送的，我已经替你处理了。'
+            result = bot.respond(question)
+>           assert result['generation_mode'] == 'rules_reported_sender'
+E           AssertionError: assert 'llm' == 'rules_reported_sender'
+E             
+E             - rules_reported_sender
+E             + llm
+
+tests/test_reported_sender_contract.py:23: AssertionError
+_ test_missing_sender_source_is_explicitly_bounded_unknown_and_not_a_model_guess _
+
+    def test_missing_sender_source_is_explicitly_bounded_unknown_and_not_a_model_guess():
+        engine = Recorder('是我发的。')
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond('是谁发的短信？')
+>           assert result['generation_mode'] == 'rules_reported_sender'
+E           AssertionError: assert 'llm' == 'rules_reported_sender'
+E             
+E             - rules_reported_sender
+E             + llm
+
+tests/test_reported_sender_contract.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reported_sender_contract.py::test_sender_is_read_from_verified_user_report_without_new_model_or_execution[\u6211\u521a\u624d\u81ea\u5df1\u7ed9\u540c\u5b66\u53d1\u4e86\u77ed\u4fe1\uff0c\u4ed6\u8fd8\u6ca1\u56de\u3002-\u662f\u8c01\u53d1\u7684\u77ed\u4fe1\uff1f-user]
+FAILED tests/test_reported_sender_contract.py::test_sender_is_read_from_verified_user_report_without_new_model_or_execution[\u5ba4\u53cb\u8bf4\u4ed6\u5df2\u7ecf\u628a\u901a\u77e5\u53d1\u7ed9\u73ed\u957f\u4e86\uff0c\u6211\u6ca1\u6709\u53d1\u9001\u3002-\u5230\u5e95\u662f\u8c01\u53d1\u9001\u7684\uff1f-\u5ba4\u53cb]
+FAILED tests/test_reported_sender_contract.py::test_missing_sender_source_is_explicitly_bounded_unknown_and_not_a_model_guess
+3 failed in 0.80s
