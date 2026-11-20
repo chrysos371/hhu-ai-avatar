@@ -1,0 +1,236 @@
+FFFFFFFFFF                                                               [100%]
+=================================== FAILURES ===================================
+_ test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u3010\u59d3\u540d\u3011\u60a8\u597d\uff0c\u4eca\u5929\u6211\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-\u5e2e\u6211\u5199\u4e00\u6761\u7ed9\u8001\u5e08\u7684\u8bf7\u5047\u77ed\u4fe1\uff0c\u7f72\u540d\u7528\u3010\u59d3\u540d\u3011\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u8001\u5e08\u60a8\u597d\uff0c\u56e0\u3010\u8bf7\u5047\u539f\u56e0\u3011\u7533\u8bf7\u8bf7\u5047\uff0c\u656c\u8bf7\u6279\u51c6\u3002\n\u3010\u59d3\u540d\u3011-signature_not_last_line] _
+
+draft = '【姓名】您好，今天我身体不适，申请请假。', user_text = '帮我写一条给老师的请假短信，署名用【姓名】，只给正文。'
+corrected = '老师您好，因【请假原因】申请请假，敬请批准。\n【姓名】', issue = 'signature_not_last_line'
+
+    @pytest.mark.parametrize('draft,user_text,corrected,issue', [
+        ('【姓名】您好，今天我身体不适，申请请假。', '帮我写一条给老师的请假短信，署名用【姓名】，只给正文。',
+         '老师您好，因【请假原因】申请请假，敬请批准。\n【姓名】', 'signature_not_last_line'),
+        ('申请请假，敬请批准。\n【姓名】', '帮我写一条请假短信，署名用【姓名】，压缩到两句话，只给正文。',
+         '老师您好。申请请假，敬请批准。\n【姓名】', 'sentence_count'),
+        ('当然可以，以下是正文：老师您好，申请请假。', '帮我写一条请假短信，只给正文。',
+         '老师您好，申请请假。', 'body_preface'),
+        ('今天身体不适，申请请假。', '帮我写一条请假短信，只给正文。',
+         '因【请假原因】申请请假。', 'unsupported_source_detail'),
+    ])
+    def test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example(draft, user_text, corrected, issue):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([draft, corrected])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(user_text, cancel=CancellationToken(), on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == corrected
+E           AssertionError: assert '【姓名】您好，今天我身体不适，申请请假。' == '老师您好，因【请假原因】申请请假，敬请批准。\n【姓名】'
+E             
+E             + 【姓名】您好，今天我身体不适，申请请假。
+E             - 老师您好，因【请假原因】申请请假，敬请批准。
+E             - 【姓名】
+
+tests/test_writing_delivery_contract.py:47: AssertionError
+_ test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u7533\u8bf7\u8bf7\u5047\uff0c\u656c\u8bf7\u6279\u51c6\u3002\n\u3010\u59d3\u540d\u3011-\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u7f72\u540d\u7528\u3010\u59d3\u540d\u3011\uff0c\u538b\u7f29\u5230\u4e24\u53e5\u8bdd\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u8001\u5e08\u60a8\u597d\u3002\u7533\u8bf7\u8bf7\u5047\uff0c\u656c\u8bf7\u6279\u51c6\u3002\n\u3010\u59d3\u540d\u3011-sentence_count] _
+
+draft = '申请请假，敬请批准。\n【姓名】', user_text = '帮我写一条请假短信，署名用【姓名】，压缩到两句话，只给正文。'
+corrected = '老师您好。申请请假，敬请批准。\n【姓名】', issue = 'sentence_count'
+
+    @pytest.mark.parametrize('draft,user_text,corrected,issue', [
+        ('【姓名】您好，今天我身体不适，申请请假。', '帮我写一条给老师的请假短信，署名用【姓名】，只给正文。',
+         '老师您好，因【请假原因】申请请假，敬请批准。\n【姓名】', 'signature_not_last_line'),
+        ('申请请假，敬请批准。\n【姓名】', '帮我写一条请假短信，署名用【姓名】，压缩到两句话，只给正文。',
+         '老师您好。申请请假，敬请批准。\n【姓名】', 'sentence_count'),
+        ('当然可以，以下是正文：老师您好，申请请假。', '帮我写一条请假短信，只给正文。',
+         '老师您好，申请请假。', 'body_preface'),
+        ('今天身体不适，申请请假。', '帮我写一条请假短信，只给正文。',
+         '因【请假原因】申请请假。', 'unsupported_source_detail'),
+    ])
+    def test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example(draft, user_text, corrected, issue):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([draft, corrected])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(user_text, cancel=CancellationToken(), on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == corrected
+E           AssertionError: assert '申请请假，敬请批准。\n【姓名】' == '老师您好。申请请假，敬请批准。\n【姓名】'
+E             
+E             - 老师您好。申请请假，敬请批准。
+E             ? -----
+E             + 申请请假，敬请批准。
+E               【姓名】
+
+tests/test_writing_delivery_contract.py:47: AssertionError
+_ test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u5f53\u7136\u53ef\u4ee5\uff0c\u4ee5\u4e0b\u662f\u6b63\u6587\uff1a\u8001\u5e08\u60a8\u597d\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u8001\u5e08\u60a8\u597d\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-body_preface] _
+
+draft = '当然可以，以下是正文：老师您好，申请请假。', user_text = '帮我写一条请假短信，只给正文。'
+corrected = '老师您好，申请请假。', issue = 'body_preface'
+
+    @pytest.mark.parametrize('draft,user_text,corrected,issue', [
+        ('【姓名】您好，今天我身体不适，申请请假。', '帮我写一条给老师的请假短信，署名用【姓名】，只给正文。',
+         '老师您好，因【请假原因】申请请假，敬请批准。\n【姓名】', 'signature_not_last_line'),
+        ('申请请假，敬请批准。\n【姓名】', '帮我写一条请假短信，署名用【姓名】，压缩到两句话，只给正文。',
+         '老师您好。申请请假，敬请批准。\n【姓名】', 'sentence_count'),
+        ('当然可以，以下是正文：老师您好，申请请假。', '帮我写一条请假短信，只给正文。',
+         '老师您好，申请请假。', 'body_preface'),
+        ('今天身体不适，申请请假。', '帮我写一条请假短信，只给正文。',
+         '因【请假原因】申请请假。', 'unsupported_source_detail'),
+    ])
+    def test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example(draft, user_text, corrected, issue):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([draft, corrected])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(user_text, cancel=CancellationToken(), on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == corrected
+E           AssertionError: assert '当然可以，以下是正文：老师您好，申请请假。' == '老师您好，申请请假。'
+E             
+E             - 老师您好，申请请假。
+E             + 当然可以，以下是正文：老师您好，申请请假。
+
+tests/test_writing_delivery_contract.py:47: AssertionError
+_ test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u56e0\u3010\u8bf7\u5047\u539f\u56e0\u3011\u7533\u8bf7\u8bf7\u5047\u3002-unsupported_source_detail] _
+
+draft = '今天身体不适，申请请假。', user_text = '帮我写一条请假短信，只给正文。'
+corrected = '因【请假原因】申请请假。', issue = 'unsupported_source_detail'
+
+    @pytest.mark.parametrize('draft,user_text,corrected,issue', [
+        ('【姓名】您好，今天我身体不适，申请请假。', '帮我写一条给老师的请假短信，署名用【姓名】，只给正文。',
+         '老师您好，因【请假原因】申请请假，敬请批准。\n【姓名】', 'signature_not_last_line'),
+        ('申请请假，敬请批准。\n【姓名】', '帮我写一条请假短信，署名用【姓名】，压缩到两句话，只给正文。',
+         '老师您好。申请请假，敬请批准。\n【姓名】', 'sentence_count'),
+        ('当然可以，以下是正文：老师您好，申请请假。', '帮我写一条请假短信，只给正文。',
+         '老师您好，申请请假。', 'body_preface'),
+        ('今天身体不适，申请请假。', '帮我写一条请假短信，只给正文。',
+         '因【请假原因】申请请假。', 'unsupported_source_detail'),
+    ])
+    def test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example(draft, user_text, corrected, issue):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([draft, corrected])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond(user_text, cancel=CancellationToken(), on_delta=pieces.append)
+>           assert result['reply'] == ''.join(pieces) == corrected
+E           AssertionError: assert '今天身体不适，申请请假。' == '因【请假原因】申请请假。'
+E             
+E             - 因【请假原因】申请请假。
+E             + 今天身体不适，申请请假。
+
+tests/test_writing_delivery_contract.py:47: AssertionError
+__________ test_exhausted_repair_does_not_publish_known_invalid_draft __________
+
+    def test_exhausted_repair_does_not_publish_known_invalid_draft():
+        with closing(MemoryStore(':memory:')) as memory:
+            bad = '今天身体不适，申请请假。'
+            engine = Replies([bad, bad])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('帮我写一条请假短信，只给正文。', cancel=CancellationToken(), on_delta=pieces.append)
+>           assert len(engine.native) == 2
+E           AssertionError: assert 1 == 2
+E            +  where 1 = len([[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '帮我写一条请假短信，只给正文。'}]])
+E            +    where [[{'role': 'system', 'content': '你是小海，一个温柔又有点好奇心的AI伙伴。\n角色当前情绪：中性（valence=0.00, arousal=0.00），用户观测：valence=0.00, arous...息建议或整套计划。未提供的日期、期限等信息不要编造，可以留占位。用户只想倾听时不主动安排任务；对方已拒绝邀请时尊重拒绝，不劝继续追邀。'}, {'role': 'user', 'content': '帮我写一条请假短信，只给正文。'}]] = <test_writing_delivery_contract.Replies object at 0x7fdbe26224d0>.native
+
+tests/test_writing_delivery_contract.py:65: AssertionError
+_ test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call[\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u539f\u56e0\u662f\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002] _
+
+text = '帮我写一条请假短信，原因是今天身体不适，只给正文。', body = '今天身体不适，申请请假。'
+
+    @pytest.mark.parametrize('text,body', [
+        ('帮我写一条请假短信，原因是今天身体不适，只给正文。', '今天身体不适，申请请假。'),
+        ('帮我写一段小说台词，只给正文。', '“今天身体不适，我想请假。”'),
+        ('帮我写一条问候短信，只给正文。', '你明天方便见面吗？'),
+    ])
+    def test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call(text, body):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([body])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(text)
+            assert result['reply'] == body and len(engine.native) == 1
+>           assert not result['writing_delivery']['initial_issues']
+E           KeyError: 'writing_delivery'
+
+tests/test_writing_delivery_contract.py:82: KeyError
+_ test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call[\u5e2e\u6211\u5199\u4e00\u6bb5\u5c0f\u8bf4\u53f0\u8bcd\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u201c\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u6211\u60f3\u8bf7\u5047\u3002\u201d] _
+
+text = '帮我写一段小说台词，只给正文。', body = '“今天身体不适，我想请假。”'
+
+    @pytest.mark.parametrize('text,body', [
+        ('帮我写一条请假短信，原因是今天身体不适，只给正文。', '今天身体不适，申请请假。'),
+        ('帮我写一段小说台词，只给正文。', '“今天身体不适，我想请假。”'),
+        ('帮我写一条问候短信，只给正文。', '你明天方便见面吗？'),
+    ])
+    def test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call(text, body):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([body])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(text)
+            assert result['reply'] == body and len(engine.native) == 1
+>           assert not result['writing_delivery']['initial_issues']
+E           KeyError: 'writing_delivery'
+
+tests/test_writing_delivery_contract.py:82: KeyError
+_ test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call[\u5e2e\u6211\u5199\u4e00\u6761\u95ee\u5019\u77ed\u4fe1\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u4f60\u660e\u5929\u65b9\u4fbf\u89c1\u9762\u5417\uff1f] _
+
+text = '帮我写一条问候短信，只给正文。', body = '你明天方便见面吗？'
+
+    @pytest.mark.parametrize('text,body', [
+        ('帮我写一条请假短信，原因是今天身体不适，只给正文。', '今天身体不适，申请请假。'),
+        ('帮我写一段小说台词，只给正文。', '“今天身体不适，我想请假。”'),
+        ('帮我写一条问候短信，只给正文。', '你明天方便见面吗？'),
+    ])
+    def test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call(text, body):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([body])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            result = bot.respond(text)
+            assert result['reply'] == body and len(engine.native) == 1
+>           assert not result['writing_delivery']['initial_issues']
+E           KeyError: 'writing_delivery'
+
+tests/test_writing_delivery_contract.py:82: KeyError
+_____________ test_released_signature_is_not_revived_from_history ______________
+
+    def test_released_signature_is_not_revived_from_history():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['申请请假。\n【姓名】', '申请请假。\n【姓名】', '申请请假。'])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('帮我写一条请假短信，署名用【姓名】。')
+            result = bot.respond('再短一点，不要署名。')
+>           assert result['reply'] == '申请请假。'
+E           AssertionError: assert '申请请假。\n【姓名】' == '申请请假。'
+E             
+E             - 申请请假。
+E             + 申请请假。
+E             ?      +
+E             + 【姓名】
+
+tests/test_writing_delivery_contract.py:91: AssertionError
+_ test_copyable_writing_does_not_claim_due_reminder_without_presenting_notification _
+
+    def test_copyable_writing_does_not_claim_due_reminder_without_presenting_notification():
+        with closing(MemoryStore(':memory:')) as memory:
+            bot = Avatar(memory=memory, llm=Replies(['申请请假。','普通回复。']), capability_contract_enabled=True)
+            reminder = bot.reminders.create('提醒我明天下午3点去图书馆')
+            with memory.transaction():
+                memory._conn.execute("UPDATE memory_reminders SET due_at=? WHERE id=?", (time.time()-1, reminder['id']))
+            result = bot.respond('帮我写一条请假短信，只给正文。')
+>           assert result['reply'] == '申请请假。' and result['due_reminders'] == []
+E           AssertionError: assert ('申请请假。\n到期提醒：去图书馆' == '申请请假。'
+E             
+E             - 申请请假。
+E             + 申请请假。
+E             ?      +
+E             + 到期提醒：去图书馆)
+
+tests/test_writing_delivery_contract.py:102: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_writing_delivery_contract.py::test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u3010\u59d3\u540d\u3011\u60a8\u597d\uff0c\u4eca\u5929\u6211\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-\u5e2e\u6211\u5199\u4e00\u6761\u7ed9\u8001\u5e08\u7684\u8bf7\u5047\u77ed\u4fe1\uff0c\u7f72\u540d\u7528\u3010\u59d3\u540d\u3011\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u8001\u5e08\u60a8\u597d\uff0c\u56e0\u3010\u8bf7\u5047\u539f\u56e0\u3011\u7533\u8bf7\u8bf7\u5047\uff0c\u656c\u8bf7\u6279\u51c6\u3002\n\u3010\u59d3\u540d\u3011-signature_not_last_line]
+FAILED tests/test_writing_delivery_contract.py::test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u7533\u8bf7\u8bf7\u5047\uff0c\u656c\u8bf7\u6279\u51c6\u3002\n\u3010\u59d3\u540d\u3011-\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u7f72\u540d\u7528\u3010\u59d3\u540d\u3011\uff0c\u538b\u7f29\u5230\u4e24\u53e5\u8bdd\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u8001\u5e08\u60a8\u597d\u3002\u7533\u8bf7\u8bf7\u5047\uff0c\u656c\u8bf7\u6279\u51c6\u3002\n\u3010\u59d3\u540d\u3011-sentence_count]
+FAILED tests/test_writing_delivery_contract.py::test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u5f53\u7136\u53ef\u4ee5\uff0c\u4ee5\u4e0b\u662f\u6b63\u6587\uff1a\u8001\u5e08\u60a8\u597d\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u8001\u5e08\u60a8\u597d\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-body_preface]
+FAILED tests/test_writing_delivery_contract.py::test_invalid_draft_is_buffered_and_one_repair_uses_sources_without_bad_example[\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002-\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u56e0\u3010\u8bf7\u5047\u539f\u56e0\u3011\u7533\u8bf7\u8bf7\u5047\u3002-unsupported_source_detail]
+FAILED tests/test_writing_delivery_contract.py::test_exhausted_repair_does_not_publish_known_invalid_draft
+FAILED tests/test_writing_delivery_contract.py::test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call[\u5e2e\u6211\u5199\u4e00\u6761\u8bf7\u5047\u77ed\u4fe1\uff0c\u539f\u56e0\u662f\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u7533\u8bf7\u8bf7\u5047\u3002]
+FAILED tests/test_writing_delivery_contract.py::test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call[\u5e2e\u6211\u5199\u4e00\u6bb5\u5c0f\u8bf4\u53f0\u8bcd\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u201c\u4eca\u5929\u8eab\u4f53\u4e0d\u9002\uff0c\u6211\u60f3\u8bf7\u5047\u3002\u201d]
+FAILED tests/test_writing_delivery_contract.py::test_source_supplied_fiction_and_legitimate_artifact_question_keep_one_call[\u5e2e\u6211\u5199\u4e00\u6761\u95ee\u5019\u77ed\u4fe1\uff0c\u53ea\u7ed9\u6b63\u6587\u3002-\u4f60\u660e\u5929\u65b9\u4fbf\u89c1\u9762\u5417\uff1f]
+FAILED tests/test_writing_delivery_contract.py::test_released_signature_is_not_revived_from_history
+FAILED tests/test_writing_delivery_contract.py::test_copyable_writing_does_not_claim_due_reminder_without_presenting_notification
+10 failed in 0.89s
