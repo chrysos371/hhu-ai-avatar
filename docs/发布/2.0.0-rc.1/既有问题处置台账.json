@@ -2637,11 +2637,19 @@
           "sha256": "efd902a3f32c6c98f680af45ec7568a727aa54865109dea91376a3acc933b667"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "rejected_candidate_not_promoted",
+      "release_impact": "candidate_isolated; C19_original_root_still_open",
+      "resolution_evidence": [
+        "src/avatar/lab/capability_prompt.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-source-span-review-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C23-v4开发未通过（继承C19-001/P1，不新增生产根因）"
+      ],
+      "release_review": "旧v4加长提示未使4B能力提议归零，14B改善不覆盖4B；保留失败候选/来源，继承C19-001。新原生v1内容也未过，不把局部提示进步冒充已上线修复。",
+      "residual_product_roots": [
+        "C19-001"
       ]
     },
     {
@@ -2659,13 +2667,21 @@
           "sha256": "3b904ba288592fd60c44b8d9febe6a363958bd306df51672bb3596c106356e52"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_capability_freeze_identity.py",
+        "tests/test_capability_pair_freeze.py",
+        "scripts/evaluate_capability_pair.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-freeze-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C23-002 / P1研究：冻结描述符本体变化未在执行边界拒绝",
         "状态：限定身份/派发缺口已修，相关69通过/5.99s，完整1496/1/102.78s与210源/测试已绑定452a810，红测源8fe9e4e；属于研究执行身份/可复现性，不新增产品隐私根因。"
-      ]
+      ],
+      "release_review": "入口/每臂/结束固定描述符原字节SHA，监督器向runner/sampler显式传期望身份，禁止后层重新接受变更；仅执行边界，不追溯撤回在途请求。当前原生独立协议也有同一身份实证。",
+      "residual_product_roots": []
     },
     {
       "id": "C24-001",
@@ -2678,15 +2694,23 @@
           "sha256": "e23a5ef548d18c31295c86d7baf4931520dfa8c6edefe73807edfa6f06a7cb2a"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "tests/test_reminder_delivery_api.py",
+        "tests/test_action_receipts.py",
+        "frontend/e2e/reminder-delivery-privacy.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-24/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C24-001 · 认领状态被误称已提示（P2）",
         "状态：限定范围已修并复测。基线业务02b4d5e；浏览器探针57d5baf/3cfdbbf，归档49fca84/8a51fd8。范围是管理网页文案，不宣称实际用户漏收事故。",
         "认领证据不足以支持已显示文案。当前at-most-once合同本身已明确，不把缺少ACK自动升级为新的生产P1；持久可重取/确认属于下一步可靠性功能。一般模型能力诚实性C19-001仍开放。",
         "1. 两网页均将认领显示为“已标记到期，显示未确认”等准确状态，不更改旧认领合同或补写历史确认。"
-      ]
+      ],
+      "release_review": "认领与客户端ACK分开显示，新持久待确认事件支持响应丢失/导航/重启重取同事件、显式确认和隐私版本拒绝；旧due一次行为兼容。不是人类已读或外部送达。",
+      "residual_product_roots": []
     },
     {
       "id": "C25-001",
@@ -2699,15 +2723,22 @@
           "sha256": "d587890395b2ebb209e4b9997c3a6786533a657044c20483438e9b5c7ff50b6b"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "scripts/serve_local_model_eval.py",
+        "tests/test_native_provider_trace_identity.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-alignment-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C25-001 · 结构化提供方trace缺少schema身份（P2研究基础设施）",
         "状态：限定研究范围已修并以真实提供方复测。不是生产用户数据安全事件。",
         "Phase A原始4B/14B各10条trace，合20条，其中8条grammar请求均analysis=true，即使它们是固定状态或草稿生成。trace记录messages/prompt hash/原生response，但没有response_format/schema/原始请求摘要。客户端确实保留完整请求并以原生id绑定，因此本轮诊断可复核；仅靠trace不能还原当时哪一个结构约束生效，也不能把analysis布尔当真实请求用途。",
         "先受控红测，再实现、单元复测，并以新版本真实CUDA4B小样本验证服务端trace和客户端body/schema摘要一致。原Phase A已另行退休，旧冻结与两模型原始数据不回写；新实跑不得冒称原两模型用过修复。此修复不解决草稿义务或通用模型语义P1。"
-      ]
+      ],
+      "release_review": "实际provider trace包含原始请求体SHA、response_format及canonical格式/schemaSHA，analysis旧布尔仅grammar兼容；新原生v1另96/96客户端消息/格式/原文严格对应，wire SHA只服务端记录不伪称客户端独立字节复算。",
+      "residual_product_roots": []
     },
     {
       "id": "C25-002",
@@ -2720,13 +2751,19 @@
           "sha256": "19ebb2a97c1a68eeaf6f34c87adc6374ebbd55361ff58b1155ca656712860c9c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-25/审计/系统审计与推进报告.md",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-25/审计/系统审计与推进报告.html",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C25-002 · 报告窄屏长词溢出（P3文档呈现）",
         "状态：已修并真实Chromium复测。报告初版ef28ec1 SHA37dcbaf4a25c9f73f0c7cac9876c2e09fe6d080484e0124a2deed566dfce0557。"
-      ]
+      ],
+      "release_review": "旧报告长hash窄屏溢出通过overflow-wrap:anywhere保留完整内容后双视口实测关闭；只限该报告，最终发布HTML仍须独立1440/390复测，不改封存文件。",
+      "residual_product_roots": []
     },
     {
       "id": "C26-001",
@@ -2739,13 +2776,20 @@
           "sha256": "ef1d8eb86d94fb633bfb8e8dbe421e94a62c8b3963fa359a64ee5e275f9ede8d"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "scripts/serve_local_model_eval.py",
+        "tests/test_native_model_registry.py",
+        "tests/test_model_scale_runner_registry.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C26-001 · 注册表默认根目录未定义（P2研究入口）",
         "修复：模块明确声明canonical项目ROOT，并沿用该根注入src；新增实际默认root读取和真实OS CLI错SHA拒绝（无权重/无GPU）测试，不放宽旧冻结/后端断言。随后重跑入口与冻结回归，再提交runner接线；状态以原始后续日志为准。"
-      ]
+      ],
+      "release_review": "注册表canonical ROOT明确，真实默认root读取/CLI错SHA拒绝覆盖；不是GPU启动失败或模型质量结论。",
+      "residual_product_roots": []
     },
     {
       "id": "C26-002",
@@ -2758,12 +2802,19 @@
           "sha256": "b154be8ec560ab39d99405b311cb75a6a01f87ffa97169a26906b6a86e41eb11"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect; final_release_gates_pending",
+      "resolution_evidence": [
+        "scripts/run_native_output_models.py",
+        "tests/test_model_scale_runner_registry.py",
+        "tests/test_model_scale_execution_freeze.py",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "# C26-002 · 当前默认入口忽略旧候选/分区参数（P2研究调用契约）"
-      ]
+      ],
+      "release_review": "当前默认execution-freeze拒绝旧candidate_freeze/partition/pair_protocol不适用组合，在输出/派发前拒绝；旧研究入口沿各自契约。",
+      "residual_product_roots": []
     },
     {
       "id": "C26-003",
@@ -2776,11 +2827,21 @@
           "sha256": "a03d33563d77f9195432b81d6ca2319cb1b61444aac8adb286692cf2414ac94a"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "active_product_quality_root_linked",
+      "release_impact": "blocks_G04_source_and_delivery_quality",
+      "resolution_evidence": [
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/native-source-span-review-v1.json",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/原生通信门控-v1-结论.md",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-26/审计/系统审计与推进报告.md",
+        "docs/发布/2.0.0-rc.1/工作目录/005-实际能力与来源答复修复/python-capability-v4-binding.json"
+      ],
       "original_status_candidates": [
         "状态：开放；优先级P1（质量），与C19-001能力诚实性分开记录，不新增为无依据外发计数。"
+      ],
+      "release_review": "32B已给发送者回答错误和纯正文额外引导语是来源/交付质量，不能增加模型规模当修复。新来源只读候选7项有局部改善但未启用、写作交付仍失败；G04继续阻断，外发声称不重复统计。",
+      "residual_product_roots": [
+        "C02-009",
+        "C03-010"
       ]
     },
     {
