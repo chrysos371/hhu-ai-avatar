@@ -21,7 +21,12 @@ def main():
     assert {n: digest(Path(manifest['root'])/n) for n in manifest['sha256']} == manifest['sha256']
     requests = sorted(RAW.glob('trials/*/call-*-request.json'), key=lambda p: int(p.name.split('-')[1]))
     lines = (RAW/'trace.jsonl').read_bytes().splitlines(keepends=True)
-    assert len(requests) == len(lines) == 172
+    result = json.loads((HERE/'native-result-v5.json').read_text())
+    count = result['actual_generate_calls']
+    assert type(count) is int and 0 < count <= 260
+    assert result['engineering_passed'] and result['actual_worker_wait_code'] == 0
+    assert result['completed_trials'] == 62 and result['completed_turns'] == 104
+    assert len(requests) == len(lines) == count == result['actual_client_native_calls']
     rows, offset = [], 0
     for number, (request, line) in enumerate(zip(requests, lines), 1):
         assert int(request.name.split('-')[1]) == number
@@ -47,7 +52,7 @@ def main():
             response_schema_sha256=native['response_schema_sha256']))
         offset += len(line)
     assert {n: digest(Path(manifest['root'])/n) for n in manifest['sha256']} == manifest['sha256']
-    report = dict(passed=True, actual_generate_calls=172, new_generate_calls=0,
+    report = dict(passed=True, actual_generate_calls=count, new_generate_calls=0,
         source_sha256=digest(Path(__file__)), raw_manifest_sha256=digest(HERE/'native-raw-manifest-v5.json'),
         scope='post-run exact logical messages/format/schema/native raw-output alignment; '
             'wire hash is provider-recorded, not independently reconstructed client wire bytes; no content approval',
@@ -55,7 +60,7 @@ def main():
     with (HERE/'native-alignment-v5.json').open('x') as stream:
         json.dump(report, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
-    print('172 exact native/client message, format/schema and raw-response matches; zero new inference')
+    print(count, 'exact native/client message, format/schema and raw-response matches; zero new inference')
 
 
 if __name__ == '__main__':
