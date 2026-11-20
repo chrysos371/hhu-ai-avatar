@@ -10,19 +10,25 @@ from ..cancellation import Cancelled
 from .capabilities import snapshot
 from .facts import _mask_quoted
 
-_SEND = r'(?:发(?:送|出|给|到|进|了|过|的|短信|邮件|消息)|寄出|拨打|拨通|打电话|联系)'
+_SEND = r'(?:发(?:送|出|给|到|进|了|过|的|短信|邮件|消息)|寄出)'
 _ACTION = re.compile(_SEND)
-_ROLE = r'室友|朋友|同学|老师|家人|他|她'
+_NAMED_ROLE = r'室友|朋友|同学|老师|家人|班长'
+_ROLE = _NAMED_ROLE + r'|他|她'
 _ACTOR = re.compile(r'^(?:其实|实际上)?(?:是)?(?P<actor>我|'+_ROLE+r')'
     r'(?P<lead>[^，,。！？!?；;\n]{0,32}?)'+_SEND)
 _NOT_ASSERTED = re.compile(r'没有|不是|不曾|没|尚未|并未|未曾|如果|假设|可能|是否|'
-    r'希望|打算|准备|计划|要求|请你|让你|叫你|让别人|会|将|能不能|可不可以')
+    r'希望|打算|准备|计划|要求|请你|让你|叫你|让别人|会|将|能不能|可不可以|不知道|不清楚|听说')
+
+_QUESTION = re.compile(r'(?:请问)?(?:到底|究竟)?(?:是)?谁(?:把(?:这条|那条|这封|那封)?'
+    r'(?:短信|邮件|消息|通知))?(?:发(?:送|出)?(?:的|了)?|寄出(?:的|了)?)'
+    r'(?:(?:这条|那条|这封|那封)?(?:短信|邮件|消息|通知))?(?:的)?(?:呢|啊)?[？?。]?')
 
 
 def sender_question(text):
     clean = _mask_quoted(text).strip()
-    return (len(clean) <= 100 and '谁' in clean and bool(_ACTION.search(clean))
-        and '发明' not in clean and not re.match(r'^(?:请)?(?:帮我)?(?:分析|点评|解释|评价)', clean))
+    # Only a complete actor-only question may bypass semantic cognition.
+    # Mixed distress, requests and explanations must retain normal analysis.
+    return bool(_QUESTION.fullmatch(clean))
 
 
 @dataclass(frozen=True)
@@ -71,6 +77,11 @@ def reported_sender(memory, *, text, session_id, source_message_id, revision, sc
             actors = set()
             for piece in re.finditer(r'[^，,。！？!?；;\n]+[，,。！？!?；;\n]?', clean):
                 clause = piece.group().strip()
+                # The outer reporter is not automatically the embedded sender.
+                clause = re.sub(r'^(?:我)?听说(?=(?:'+_NAMED_ROLE+r'))', '', clause)
+                clause = re.sub(r'^(?:我|'+_ROLE+r')说(?=(?:'+_NAMED_ROLE+r'))', '', clause)
+                if re.match(r'^(?:'+_ROLE+r')说我', clause):
+                    continue  # Quoted first person is ambiguous without a speaker binding.
                 if re.match(r'^我的(?:室友|朋友|同学|老师|家人)', clause):
                     clause = clause[2:]
                 elif re.match(r'^我(?:室友|朋友|同学|老师|家人)', clause):

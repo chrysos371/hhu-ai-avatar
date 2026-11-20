@@ -652,18 +652,19 @@ class Avatar:
         query_reply = None
         query_reader = None
         reported_sender_reply = None
-        if (self.capability_contract_enabled and boundary.reply is None and control is None
-                and reminder_query is None and self.speaker_scope.scope == 'current_user'
-                and self.speaker_scope.allows_actions and not self.boundaries.fiction):
-            from .brain.communication_sources import reported_sender
-            reported_sender_reply = reported_sender(self.memory, text=user_text, session_id=self.session_id,
-                source_message_id=self._current_message_id, revision=turn_context_revision, scope=self.speaker_scope)
-            if reported_sender_reply is not None:
-                capability_request = None
         if self.task_contract_enabled and reminder_query is None:
             self.tasks.update(user_text)
         # 2. 认知分析（LLM 驱动：情绪 + 记忆提取，失败回退规则）
         try:
+            if (self.capability_contract_enabled and boundary.reply is None and control is None
+                    and reminder_query is None and self.speaker_scope.scope == 'current_user'
+                    and self.speaker_scope.allows_actions and not self.boundaries.fiction):
+                from .brain.communication_sources import reported_sender
+                reported_sender_reply = reported_sender(self.memory, text=user_text, session_id=self.session_id,
+                    source_message_id=self._current_message_id, revision=turn_context_revision, scope=self.speaker_scope)
+                checkpoint_context()
+                if reported_sender_reply is not None:
+                    capability_request = None
             if (reminder_query is not None and self.speaker_scope.scope == 'current_user'
                     and self.speaker_scope.allows_actions):
                 query_source = QuerySource(self._current_message_id, self.session_id, turn_context_revision,
@@ -694,7 +695,8 @@ class Avatar:
                 self.emotion.update(user_text)
             elif reported_sender_reply is not None:
                 self.analysis_mode = 'rules_reported_sender'
-                self.emotion.update(user_text)
+                # A pure source read supplies no new affect observation. Keep
+                # valid prior state; decide() still applies elapsed-time decay.
             elif capability_request is not None:
                 self.analysis_mode = 'rules_capability_request'
                 self._extract_facts(user_text)
