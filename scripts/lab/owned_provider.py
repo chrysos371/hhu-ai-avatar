@@ -9,7 +9,8 @@ import sys
 import run_frozen_capability_job as jobs
 
 PROTECTION_SOURCES=('scripts/lab/owned_provider.py',
-    'scripts/lab/run_frozen_capability_job.py','scripts/lab/guard_direct_child.py')
+    'scripts/lab/run_frozen_capability_job.py','scripts/lab/guard_direct_child.py',
+    'src/avatar/__init__.py','src/avatar/paths.py')
 
 
 def immutable(path,value):

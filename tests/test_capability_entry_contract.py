@@ -49,6 +49,7 @@ def exercise(tmp_path, monkeypatch, entry, declared, selected):
         if entry == 'runner':
             monkeypatch.setattr(runner, 'subprocess', SimpleNamespace(
                 check_output=subprocess.check_output, Popen=boundary, STDOUT=subprocess.STDOUT))
+            monkeypatch.setattr(runner, 'start_provider', boundary)
             monkeypatch.setattr(runner, 'gpu_snapshot', lambda: 'controlled unused GPU observation')
             monkeypatch.setattr(runner, 'gpu_processes', lambda: '')
             runner.main(output, Path(sys.executable), stage='capability_pair',

@@ -122,6 +122,7 @@ def test_current_defaults_rejects_ignored_candidate_or_partition_inputs(tmp_path
     class Dispatch(RuntimeError):pass
     def forbidden(*args,**kwargs):calls.append(True);raise Dispatch('controlled attempted dispatch, no model/GPU')
     monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=forbidden,STDOUT=subprocess.STDOUT))
+    monkeypatch.setattr(runner,'start_provider',forbidden)
     monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory');monkeypatch.setattr(runner,'gpu_processes',lambda:'')
     with pytest.raises(ValueError,match='Current-default execution'):
         runner.main(output,Path(sys.executable),protocol=PROTOCOL,model_key='qwen3-4b-q4_k_m',

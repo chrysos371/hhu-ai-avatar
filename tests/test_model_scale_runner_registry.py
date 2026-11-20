@@ -36,8 +36,9 @@ def test_bad_registry_contract_rejected_before_output_or_provider(tmp_path,chang
 def test_valid_new_registry_reaches_controlled_provider_boundary(tmp_path,monkeypatch,model,relative):
     monkeypatch.chdir(ROOT)
     calls=[]
-    def boundary(command,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
+    def boundary(command,directory,**kwargs):calls.append(command);raise BoundaryReached('controlled spawn; no GPU/model')
     monkeypatch.setattr(runner,'subprocess',SimpleNamespace(check_output=subprocess.check_output,Popen=boundary,STDOUT=subprocess.STDOUT))
+    monkeypatch.setattr(runner,'start_provider',boundary)
     monkeypatch.setattr(runner,'gpu_snapshot',lambda:'controlled unused inventory')
     monkeypatch.setattr(runner,'gpu_processes',lambda:'')
     output=tmp_path/'owned-output';expected=sha256(REGISTRY.read_bytes()).hexdigest()

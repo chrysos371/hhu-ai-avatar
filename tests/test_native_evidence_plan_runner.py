@@ -134,7 +134,10 @@ def test_truncated_warmup_stops_before_second_call_and_cleans_owned_provider(tmp
         def poll(self):return self.returncode
         def terminate(self):self.returncode=0
         def wait(self,**k):return self.returncode
-    monkeypatch.setattr(runner.subprocess,'Popen',OwnedProvider)
+    # This HTTP/truncation fixture deliberately bypasses process protection;
+    # real kernel/chain behavior is exercised separately with owned CPU children.
+    monkeypatch.setattr(runner,'start_provider',lambda *a,**k:(OwnedProvider(),{'fixture':True}))
+    monkeypatch.setattr(runner,'finish_provider',lambda p,d:{'fixture':True,'actual_provider_wait_code':p.returncode})
     monkeypatch.setattr(runner.subprocess,'check_output',lambda *a,**k:'fixture-head\n')
     calls=[]
     def truncated(url,value):
