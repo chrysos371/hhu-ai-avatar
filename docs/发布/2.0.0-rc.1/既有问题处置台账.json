@@ -3659,14 +3659,20 @@
           "sha256": "0ac0cf323ff03c11915ccd1db4dbb5013de43e718b2e409a99d24d7e046b28a4"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/lib/usePrivateStateQuery.ts",
+        "frontend/e2e/state-privacy.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/审计/收尾核验/browser-independent-proof.json"
+      ],
       "original_status_candidates": [
         "# C35-000 继承C34-004：自动状态页面旧缓存",
         "P2，已在限定工程范围关闭。原问题单封存不回写。",
         "服务端context与快照同次读取绑定；页面先读元数据，再读带实例/隐私版本的状态。高版本、实例改变或版本不可用先隐藏、取消并移除两类缓存，epoch拒不可取消旧Promise。元数据超时15秒，复用有上界等待/退避。手工编辑逐字段保存，自动预填随epoch失效；人工override独立。"
-      ]
+      ],
+      "release_review": "C34-004后续同根：两页各3次固定约1秒窗旧DOM3/3→0/3，收到新epoch或版本不可用先隐藏，不能保证SQL提交瞬时同步离线屏幕。修后8补充及2工具失败全保留，现源hook/默认浏览器回归在位，最终新源浏览器重验待。",
+      "residual_product_roots": []
     },
     {
       "id": "C35-001",
@@ -3679,15 +3685,19 @@
           "sha256": "c8bb70ec0a40f6e9fd03a54b7d9c92945e42e23548d34221ff6387f6274dbfd0"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/实验/supplement-emotion_native_cross_window_broadcast-fixed/evaluation.json"
+      ],
       "original_status_candidates": [
         "优先级P3（注入工具），已定位并修正关闭。下文首跑待定位描述及两次失败为历史记录。",
         "固定8项真实浏览器补充中7项通过，emotion_native_cross_window_broadcast失败：原生通知后出现第二次state-bootstrap及revision1等待，但5秒内未找到自动状态DOM。SQL已红删/revision1，新API0、浏览器无pageerror；所有自有服务清理完成。不能据此声称跨窗口控制通过，也不能直接认定通知丢失。",
         "[诊断evaluation](../../实验/supplement-emotion_native_cross_window_broadcast-diagnostic/evaluation.json)明确记录：原生通知触发第二bootstrap返回revision1，实际emotion请求200/context1/全0；随后驱动releaseMetadata使所有新revision1等待也route.abort，连续net::ERR_FAILED，错误DOM无旧值。由此定位为P3注入范围错误：原本只应保持旧watch，实际也阻断健康新版本watch。产品隐藏不可用数据符合设计，无产品修改证据需求。",
         "## 修正结果：P3已关闭"
-      ]
+      ],
+      "release_review": "跨窗口广播已发生，注入器却把新revision1健康watch也abort，产品隐藏符合设计；首跑与诊断两失败保留。只持旧revision0后相同产品/bundle与5秒断言实测通过，关闭注入范围错误，不算产品修复或新根因。",
+      "residual_product_roots": []
     },
     {
       "id": "C35-002",
@@ -3700,12 +3710,16 @@
           "sha256": "13d5f8559f44ffd0fe1a69d328f8e6692ec2f5a39b9f3fe698ccac15b7a526e5"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/审计/工作目录/002-系统回归/bootstrap-deadline-fixed.log"
+      ],
       "original_status_candidates": [
         "P3，已纠正并关闭，原提交/日志不改写。"
-      ]
+      ],
+      "release_review": "首log实际31通过1失败，错误32全通过陈述已勘误；仅fake timer第二次act通知flush修测试，产品hook未改。原失败/诊断/精确patch/修后32均保留，后42及192全量另有证据。",
+      "residual_product_roots": []
     },
     {
       "id": "C35-003",
@@ -3718,13 +3732,17 @@
           "sha256": "cacec589e0f860a3798e2fecb35e45099c86503276c47e46f8cc31df5ad66b3c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/审计/收尾核验/browser-independent-proof.json"
+      ],
       "original_status_candidates": [
         "优先级P3，修正后独立复核通过，已关闭。",
         "修后独立复核通过，[proof](../收尾核验/browser-independent-proof.json)及[log](../工作目录/002-系统回归/independent-evidence-fixed.log)。412 before/433 primary-after均严格Git历史，最新433 fixed完整当前+历史；33旧seal（5736周期项+88迁移项）一致，P3关闭。"
-      ]
+      ],
+      "release_review": "旧冻结严格对Git历史，误拿当前可变辅助采证代码要求旧字节会假拒绝；修后只对冻结bundle档案要求当前保持，修后产品/最新freeze仍当前+历史严格核验。原失败及修后独立proof都保留，未降低历史门槛。",
+      "residual_product_roots": []
     },
     {
       "id": "C35-004",
@@ -3737,14 +3755,20 @@
           "sha256": "a0dd286823ee96c068792b860fdd90aa685b389ff68becc8f19b66b26f344bf2"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "AGENTS.md",
+        "README.md",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/审计/工作目录/002-系统回归/entry-doc-links.json"
+      ],
       "original_status_candidates": [
         "P2文档/交接一致性，已同步并通过链接/显示核验，关闭。",
         "源码与实测已恢复推进，但README迁移段仍写用户暂停继续有效，当前工程段仍仅C34且页面传播开放；backend及路线也未同步C35结果，数据根README仍写暂停。旧封存报告中的暂停为当时状态，应保留。",
         "目标：只更新可变入口及数据根指引，明确本轮1835/1、192、15/16与两页3/3→0/3结果、修后8控制及2失败；数据根指引去除易陈旧的执行状态，统一指向主仓库当前约定。记录外置README前后SHA，不回写迁移封存中的历史SHA。收尾检查本轮MD链接/HTML及文档关键数据一致。"
-      ]
+      ],
+      "release_review": "恢复后旧暂停/页面开放陈述已按当时C35证据修正，原封存状态保留。当前用户又明确有限发布收敛且完成后暂停，已由现AGENTS/README顶端覆盖；不能沿用历史恢复文字重启研究循环。外置README来源与原88迁移seal区别清楚。",
+      "residual_product_roots": []
     },
     {
       "id": "C35-005",
@@ -3757,12 +3781,18 @@
           "sha256": "adcadea3c2ebbec720f21c457b89a277138a993ae94a19b0b0ef5b6d2489d637"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/src/lib/usePrivateStateQuery.ts",
+        "frontend/src/lib/usePrivateStateQuery.test.tsx",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-35/审计/工作目录/002-系统回归/bootstrap-deadline-fixed.log"
+      ],
       "original_status_candidates": [
         "P2，已修复并在受控范围关闭。"
-      ]
+      ],
+      "release_review": "首次metadata读取补15秒拥有者/ticket计时、取消/卸载清理、迟到拒绝及可恢复错误；fake timer只验证逻辑不伪称真实网络15秒样本。当前hook和相关单测在位，独立fresh195/lint实际通过，最终浏览器仍再验。",
+      "residual_product_roots": []
     },
     {
       "id": "C36-000",
@@ -3775,14 +3805,19 @@
           "sha256": "b6d2af7700378a319b52a1710d1faba91dad7efdd4c43cd4621edd12f61e9c9d"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/e2e/state-privacy.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/工作目录/001-日常浏览器回归/full-browser-final-binding.json"
+      ],
       "original_status_candidates": [
         "P2维护覆盖，限定工程范围关闭。",
         "C35专项固定两页各3次及8故障/正控通过，但旧默认浏览器15通过/16可选跳过没有这两页独立来源红删后的固定1秒状态断言。此处是持续防退化覆盖缺口，不重复统计C34-004为新产品残留。",
         "修正JSON模块加载及采证器分支两个独立P3后，[完整默认17通过/16跳过](../工作目录/001-日常浏览器回归/full-browser-final.log)、[426源/实际8模块与协议/5bundle身份](../工作目录/001-日常浏览器回归/full-browser-final-binding.json)通过；[情绪原记录](../工作目录/001-日常浏览器回归/full-browser-records/emotion.json)、[概览原记录](../工作目录/001-日常浏览器回归/full-browser-records/dashboard.json)。新1835/1 Python、192前端及type/lint/build通过。0native/GPU，不扩为真人/通用语义/多日或通知传播分位数验收。"
-      ]
+      ],
+      "release_review": "继承C34-004维护覆盖，默认加入两页真实来源inspect/独立forget/版本+1/API0/固定1000ms DOM不重试控制，非新产品根因。原17/16及426身份通过；现state-privacy.spec仍默认在位，最终新包浏览器再验，不冒称多日或真实人评。",
+      "residual_product_roots": []
     },
     {
       "id": "C36-001",
@@ -3795,12 +3830,17 @@
           "sha256": "f5bce60be2cdf0cf7c820a97ae3c9745c8423cb82289afe7776202a72c17355e"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "frontend/e2e/state-privacy.spec.ts",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/工作目录/001-日常浏览器回归/witness-fixed-browser_targeted-final-binding.json"
+      ],
       "original_status_candidates": [
         "P3测试兼容，修正后通过并关闭。"
-      ]
+      ],
+      "release_review": "Node22直接加载JSON导入空收集，tsc/Vite通过不保证Playwright加载；改fs/URL读取已提交协议，SHA仍绑定。首空收集0产品样本保留，修后两实际页通过6.6秒及新严格身份通过。",
+      "residual_product_roots": []
     },
     {
       "id": "C36-002",
@@ -3813,12 +3853,17 @@
           "sha256": "3af93aecaa3e73687a40865e48793f5fab59cf78f459d46a9ec6dc78ff3aa2aa"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/工作目录/001-日常浏览器回归/esm-fixed-runtime-reconstruction.json",
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/工作目录/001-日常浏览器回归/witness-fixed-browser_targeted-final-binding.json"
+      ],
       "original_status_candidates": [
         "P3工具，修正后新执行通过并关闭。"
-      ]
+      ],
+      "release_review": "两页用例真通过但targeted遗漏runtime_matches导致总工具失败，并非SHA不符。统一浏览器/定向分支后新执行严格身份通过，原失败JSON不补写；独立重建只是旁证，不追认旧总gate已成功。",
+      "residual_product_roots": []
     },
     {
       "id": "C36-003",
@@ -3831,12 +3876,16 @@
           "sha256": "2b22a17cbab46d9637bc6705dbc8c4d068d5b1582fc228bfc24c07dcf36ec99c"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "original_scope_disposed; final_release_gates_pending",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-36/审计/收尾核验/system-evidence.json"
+      ],
       "original_status_candidates": [
         "P3工具，已修正并独立复核通过，关闭。"
-      ]
+      ],
+      "release_review": "confirmation_status是列表计算字段，inspect无此字段；原call已保存两者，改同id列表source_backed与inspect真实user来源交叉核验。六页面原记录未改/未重跑挑样，严格Git/历史seal/集中入口独立复核通过。",
+      "residual_product_roots": []
     },
     {
       "id": "C37-001",
