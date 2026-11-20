@@ -230,12 +230,17 @@
           "sha256": "44e78200359354c0a126320bccf5a92dabf07bb1c3ce062c57227dc99e773b07"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_web_concurrency.py"
+      ],
       "original_status_candidates": [
         "优先级：P1。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "读前BEGIN IMMEDIATE及嵌套保存点避免初始化锁升级；不把固定并发探针泛化为任意负载。"
     },
     {
       "id": "C01-002",
@@ -248,12 +253,17 @@
           "sha256": "b13f78f1f0e9a7fda650a2fe709e5259b8ba66a2b45d4ffef99f24190f1706c6"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_context_erasure.py"
+      ],
       "original_status_candidates": [
         "优先级：P1。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "读取/订阅前刷新隐私版本，任务/SSE/音频和迟到工作结果失效，旧编号仍防重放。"
     },
     {
       "id": "C01-003",
@@ -266,13 +276,18 @@
           "sha256": "ddcf96efeb4afd512a54ef33ecdaf77fde4b10113f7aef984a96eb584330e306"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_turns.py::test_expired_job_is_scrubbed_on_read_without_another_submission"
+      ],
       "original_status_candidates": [
         "优先级：P2。状态：已修复，最终回归与审计探针通过。",
         "只在新任务提交时清理；安静状态下已过期内容可无限期读取。"
-      ]
+      ],
+      "release_review": "get/提交/订阅时清过期终态内容，账本去重保留。"
     },
     {
       "id": "C01-004",
@@ -285,12 +300,17 @@
           "sha256": "e142a4cfd94d77017d5a45607c7a91fd71e095b0b43acec09800da25eeed5258"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_lipsync.py"
+      ],
       "original_status_candidates": [
         "优先级：P2。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "绝对噪声底和最终静音闭嘴保持；参数只经合成信号，真人校准按授权延期。"
     },
     {
       "id": "C01-005",
@@ -303,12 +323,17 @@
           "sha256": "a73388d364a7dc0f2f2e3077f7c46598bdef9f5c24193b66af46515cea4e30f9"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_web_runtime.py::test_connection_backpressure_and_header_timeout_release_capacity"
+      ],
       "original_status_candidates": [
         "优先级：P2。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "HTTP并发入口容量与请求头等待边界限制，关闭连接后容量恢复。"
     },
     {
       "id": "C01-006",
@@ -321,12 +346,17 @@
           "sha256": "540f0fbe7400634e58b4aa19447aac0cac8d1e87cf453b37f79249a3efbed5d3"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_streaming.py::test_stream_has_total_deadline_even_when_chunks_beat_read_timeout"
+      ],
       "original_status_candidates": [
         "优先级：P2。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "异步传输总请求时限覆盖持续分块，取消关闭真实SDK连接；此为单请求边界，不是实验整轮截止。"
     },
     {
       "id": "C01-007",
@@ -339,12 +369,17 @@
           "sha256": "786c4cf215a304b39ce166256bc8994ee3893da488011cd1483a6fd17a9cc477"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_response_erasure.py"
+      ],
       "original_status_candidates": [
         "优先级：P1。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "实际SQLite来源/事实依赖清理派生助手，旧不可追踪记录保守脱敏，删除竞争阻止重写。"
     },
     {
       "id": "C01-008",
@@ -357,13 +392,18 @@
           "sha256": "b6bedc81dd694eea049220b0dca0b0d69256fa5186608fe2bd1af88adcbda9cc"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_turn_subscribers.py::test_disconnecting_one_subscriber_preserves_the_surviving_stream"
+      ],
       "original_status_candidates": [
         "优先级：P2。状态：已修复，最终回归与审计探针通过。",
         "同一任务建立两个真实 HTTP 事件订阅，主动断开第一个，第二个收到 cancelled 而非 result，最终状态 cancelled。"
-      ]
+      ],
+      "release_review": "按存活订阅数决定取消，单个断连不影响已建立的另一订阅。"
     },
     {
       "id": "C01-009",
@@ -376,12 +416,17 @@
           "sha256": "7c212bafd32d5016dfd66f01c23a44f74e99c34ff5d6086b09a98dfc693c2b63"
         }
       ],
-      "release_disposition": "pending_review",
-      "release_impact": "unassessed",
-      "resolution_evidence": [],
+      "release_disposition": "closed_in_original_engineering_scope",
+      "release_impact": "no_remaining_original_code_defect",
+      "resolution_evidence": [
+        "docs/进展报告/2026-11-10-G2交互循环/cycle-01/审计/evidence/audit-release.json",
+        "docs/发布/2.0.0-rc.1/工作目录/003-既有问题逐项复核/c01-current-v1-binding.json",
+        "tests/test_turn_subscribers.py::test_event_cursor_rejects_future_ambiguous_and_malformed_values"
+      ],
       "original_status_candidates": [
         "优先级：P2。状态：已修复，最终回归与审计探针通过。"
-      ]
+      ],
+      "release_review": "游标格式/范围/重复值和未知字段拒绝，合法重放保持。"
     },
     {
       "id": "C02-001",
