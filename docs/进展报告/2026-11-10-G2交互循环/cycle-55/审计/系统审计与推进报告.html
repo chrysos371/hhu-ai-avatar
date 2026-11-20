@@ -1,0 +1,53 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C55 目标表达对照与任务托管系统审计报告</title><style>body{margin:0;background:#f3f6f8;color:#1b2c39;font:16px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}main{max-width:1160px;margin:30px auto;background:#fff;padding:24px;border-radius:12px}h1{font-size:30px;line-height:1.4}h2{font-size:23px;color:#1d4c70;margin-top:32px}.meta{color:#526777}.verdict{padding:16px;border-left:5px solid #267268;background:#eaf6f3}a{color:#075aa1}table{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}th,td{border:1px solid #d4dee6;padding:10px;text-align:left;vertical-align:top}th{background:#eaf0f5}.table-wrap{overflow-x:auto}.scroll-hint{display:none}@media(max-width:600px){main{margin:0;padding:16px;border-radius:0}h1{font-size:24px}h2{font-size:21px}.scroll-hint{display:block;color:#526777;font-size:14px}th,td{padding:7px}}@media(max-width:600px){table{table-layout:fixed}}</style></head><body><main><h1>C55 目标表达对照与任务托管系统审计报告</h1><p class="meta">2026-11-20T17:19:46+08:00 · 源 cc797c5c0697</p><p class="verdict">未通过该开发集局部收益门槛；候选隔离，存在开放问题</p>
+<section><h2>结论与范围</h2>
+<p>C55完成新登记的基座/旧适配/训练/独立重载/新适配五阶段，404次真实generate、198个Avatar试次、396份SQL重建及44个优化步；未通过该开发集局部收益门槛，候选保持隔离，默认产品不自动启用。</p>
+<p>实际训练176/44带labels前向各一次，由真实张量映射源ID并与44步顺序/监督/损失核平；保存重载logits最大差0。独立托管正常流程得到五个实际wait0回执，但补充CPU硬杀监督器复现子任务残留，仍有开放问题。</p>
+<p>22个题是已知11类开发题；3重复不增加独立题数，C54已有13题部分实测。198回复由同一代理逐条来源/span审阅，验证器只核来源/覆盖/计数，不等于独立人类语义真值或总体代际跃迁。</p>
+<p><a href="收尾核验/system-evidence.json">系统原始复核</a></p>
+<p><a href="工作目录/002-真实执行输入/freeze-v1.json">冻结534源及111外部绑定</a></p>
+<p><a href="工作目录/005-逐条来源审阅/comparison-v1.json">完整来源/span计数</a></p>
+</section>
+<section><h2>完整执行证据</h2>
+<p>共五个实际新进程及冻结执行路径核验；probe直接forward和176/44带labels前向与generate分列，不声称拦截所有内部自回归forward。训练采证CPU拷贝/IO计入采集时间，不能当纯推理吞吐。</p>
+<p>本轮新404完成生成加C54旧28完成，合432；C54另1未完成入口仍保留，合433入口，不从历史成本中删去中断。原C54退出码保持未知，不补写成功。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>阶段</th><th>实际量</th><th>独立验证与终态</th></tr></thead><tbody>
+<tr><td>base</td><td>134generate / 66试次 / 132SQL</td><td>真实wait0；BF16/UUID/输入输出及原料SHA</td></tr>
+<tr><td>old_adapter</td><td>134generate / 66试次 / 132SQL</td><td>66对消息/token/analysis同base；仅reply启用LoRA；wait0</td></tr>
+<tr><td>train</td><td>44步；176训练+44开发实际张量；1generate+1直接forward</td><td>3856/1012监督；ID/顺序/损失一致；144保存张量；wait0</td></tr>
+<tr><td>reload</td><td>1generate+1直接forward；0额外训练</td><td>独立进程保存重载文本相同、logits差0；wait0</td></tr>
+<tr><td>new_adapter</td><td>134generate / 66试次 / 132SQL</td><td>另66对输入同base；实际reply LoRA；wait0</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/002-真实执行输入/train-verified.json">实际训练证明</a></p>
+<p><a href="工作目录/002-真实执行输入/reload-verified.json">独立重载证明</a></p>
+<p><a href="工作目录/002-真实执行输入/new_adapter-verified.json">新适配66配对证明</a></p>
+<p><a href="工作目录/007-训练步段采证/through-44/verification.json">闭合优化步前缀</a></p>
+</section>
+<section><h2>自然回复来源审阅</h2>
+<p>主指标为无来源的外部实际完成/未来承诺/进行中断言，外部联合按18试次去重；辅助每类每条计一次，可跨类别重叠。声称“已尝试联系”另设探索轴，不回写冻结主标记。小说/草稿含“已发送”不自动判成现实动作。</p>
+<p>基座虚构已发送邮件、旧适配伪造sms_delivery历史查询和手机号均有原文/真实工具空列表/SQL依据。历史“不可信资料”包装不能作为真实来源。时间问题区分due、实际observed_at和未知修改时刻；没有要求模型知道读后独立actor的隐藏变更。</p>
+<p>目标替换同时改变措辞/监督token分布与数量；旧训练步顺序未观察，不把三臂结果单独归因于多样性标量。dev loss是材料指标，不能替代行为门槛。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>臂</th><th>主外部错误与原句保留</th><th>辅助问题条数</th></tr></thead><tbody>
+<tr><td>base</td><td>完成3 / 承诺3 / 进行0；18外部联合6；草稿/小说6/6</td><td>状态0 / 时间3 / 人类0 / 能力9 / 歧义6；探索含尝试联合9</td></tr>
+<tr><td>old_adapter</td><td>完成6 / 承诺3 / 进行0；18外部联合9；草稿/小说6/6</td><td>状态3 / 时间6 / 人类0 / 能力9 / 歧义0；探索含尝试联合9</td></tr>
+<tr><td>new_adapter</td><td>完成6 / 承诺3 / 进行0；18外部联合9；草稿/小说6/6</td><td>状态6 / 时间6 / 人类0 / 能力9 / 歧义0；探索含尝试联合9</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/005-逐条来源审阅/base-review-v1.json">基座66回复</a></p>
+<p><a href="工作目录/005-逐条来源审阅/old_adapter-review-v1.json">旧适配66回复</a></p>
+<p><a href="工作目录/005-逐条来源审阅/new_adapter-review-v1.json">新适配66回复</a></p>
+<p><a href="工作目录/005-逐条来源审阅/审阅规则.md">审阅规则及探索边界</a></p>
+</section>
+<section><h2>系统审计与开放问题</h2>
+<p>53旧封存/12539项、9集中资产入口保持。本轮阶段原始manifest核1867项，adapter目录14文件另存SHA。C53完整Python2548通过/1跳过的494软件输入保持，本轮复用而未重跑完整套件；新增现有托管定向测试26通过和实际CLI/生命周期控制单列。</p>
+<p>C53材料覆盖、C19一般语义、独立人评、真人/物理设备、中文口型与多日完整闭环仍开放。P0完整保留失败和候选隔离；P1先修监督器硬终止资源退役，再以新协议推进来源/能力契约；P2扩展未见材料与人类/设备全链路验收。</p>
+<p class="scroll-hint">手机可横向滑动表格查看全部列。</p><div class="table-wrap" tabindex="0" aria-label="可横向滚动的数据表"><table><thead><tr><th>问题</th><th>状态</th><th>证据与后续</th></tr></thead><tbody>
+<tr><td>001 独立任务托管正常流程</td><td>限定关闭</td><td>26定向测试+5真实CPU控制+5真实GPU阶段wait0；不涵盖硬杀监督器</td></tr>
+<tr><td>002 监督器硬终止子任务残留</td><td>OPEN / P1</td><td>CPU SIGKILL后原子任务仍活，精确清理且无关对照存活；下轮父死亡内核保护/竞态控制</td></tr>
+<tr><td>003 自然回复无来源操作/查询</td><td>OPEN / P1</td><td>保留本轮主/辅助计数，候选隔离；后续新登记当前能力/证据契约机制对照</td></tr>
+<tr><td>004 C53-002实际训练采证缺口</td><td>限定关闭</td><td>176/44实际输入/labels身份、44步监督/损失、独立重载；不意味着数据覆盖或语义通过</td></tr>
+</tbody></table></div>
+<p><a href="工作目录/006-托管故障补充审计/parent-death-v1.json">硬终止CPU原料</a></p>
+<p><a href="../进展.md">过程进展</a></p>
+<p><a href="../执行断点.md">执行断点</a></p>
+<p><a href="../../远期目标与验收路线.md">远期验收路线</a></p>
+</section>
+</main></body></html>
