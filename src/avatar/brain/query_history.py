@@ -41,7 +41,7 @@ def query_history_content(reply, metadata, *, text, source_message_id, session_i
         if (metadata.get('route') != target.route or metadata.get('reason') != target.reason
                 or canonical(metadata.get('arguments')) != target.arguments_json
                 or canonical(metadata.get('evidence')) != target.evidence_json
-                or metadata.get('business_data_read') is not (target.route == 'read_state')):
+                or metadata.get('business_data_read') is not (target.route in ('read_state', 'read_list'))):
             return None
     except (TypeError, ValueError, OverflowError):
         return None

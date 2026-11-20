@@ -5,6 +5,7 @@ state at one snapshot; a client ACK is not a human read receipt.
 """
 from dataclasses import dataclass
 from datetime import datetime
+import json
 import math
 import re
 import time
@@ -43,6 +44,9 @@ def parse_query(text):
     if not isinstance(text, str):
         return None
     clean = text.strip()
+    from .reminder_query_targets import explicit_list_query
+    if explicit_list_query(text):
+        return ReminderQuery('list')
     # Preserve the existing explicit WebAgent list alias; this service handles
     # numbered reads/conditions, not the old list tool's dispatch.
     if clean == '查看提醒':
@@ -85,6 +89,16 @@ def resolve_query(store, command, text, context, *, checkpoint=None):
                 or source['session_id'] != context.session_id):
             raise Cancelled('reminder query source or revision changed')
         result = _render_query(conn, command, context)
+        if command.kind in ('status', 'conditions', 'list'):
+            from .reminder_query_targets import derive_read_target
+            target = derive_read_target(text)
+            expected = {'status': 'read_state', 'conditions': 'read_policy', 'list': 'read_list'}[command.kind]
+            if target.route != expected:
+                raise Cancelled('automatic query has no matching historical source representation')
+            result.metadata.update(version=2, mode='reminder_query', route=target.route,
+                reason=target.reason, arguments=target.arguments, evidence=target.evidence,
+                session_id=context.session_id, model_calls=0, semantic_intent_verified=False,
+                business_data_read=target.route in ('read_state', 'read_list'))
         if checkpoint:
             checkpoint()
         return result
@@ -106,6 +120,29 @@ def _render_query(conn, command, context):
         reply = ('本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。'
             '服务退出期间无法自动投递，记录保存不等于已经送达。'
             '当前没有短信、邮件或电话提醒通道；客户端确认也不证明你已阅读。')
+    elif command.kind == 'list':
+        count = conn.execute('SELECT COUNT(*) FROM memory_reminders').fetchone()[0]
+        rows = conn.execute('SELECT id,title,due_at,status FROM memory_reminders ORDER BY id LIMIT 20').fetchall()
+        metadata.update(record_count=count, has_more=count > 20, list_limit=20, records=[])
+        try:
+            lines = []
+            labels = {'active': '有效', 'cancelled': '已取消', 'completed': '已完成'}
+            for row in rows:
+                if (not isinstance(row['title'], str) or len(row['title']) > 500
+                        or row['status'] not in labels or type(row['due_at']) not in (int, float)
+                        or not math.isfinite(row['due_at'])):
+                    raise ValueError('invalid stored reminder list record')
+                due = datetime.fromtimestamp(row['due_at'], CHINA).strftime('%Y-%m-%d %H:%M')
+                metadata['records'].append(dict(row))
+                title = json.dumps(row['title'], ensure_ascii=False)
+                lines.append(f'编号{row["id"]}：{title}，{due}（北京时间），{labels[row["status"]]}。')
+            reply = (f'当前本机共有{count}条提醒记录（包含已取消、已完成记录）。'
+                + ('以下仅列前20条；其余请在提醒管理页查看。' if count > 20 else '')
+                + ('\n'+'\n'.join(lines) if lines else '')
+                + '\n这些是本机记录，不代表外部送达或已阅读；到期显示仍依赖程序运行和轮询。')
+        except (ValueError, OverflowError, OSError):
+            metadata.update(records=[], state_error='stored_reminder_list_unavailable')
+            reply = '提醒列表存在暂时无法可靠读取的记录，请在提醒管理页检查；这不表示没有提醒。'
     else:
         row = conn.execute('''SELECT r.id,r.title,r.due_at,r.status,r.notified_at,
             d.acknowledged_at AS client_ack FROM memory_reminders r

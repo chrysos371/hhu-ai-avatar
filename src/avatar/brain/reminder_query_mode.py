@@ -87,9 +87,10 @@ class ReminderQueryReader:
         with self._snapshot() as conn:
             self._authorize(conn)
             target = derive_read_target(self.text)
-            if target.route in ('read_state', 'read_policy'):
+            if target.route in ('read_state', 'read_policy', 'read_list'):
                 command = (ReminderQuery('status', target.arguments['reminder_id'])
-                           if target.route == 'read_state' else ReminderQuery('conditions'))
+                           if target.route == 'read_state' else ReminderQuery(
+                               'list' if target.route == 'read_list' else 'conditions'))
                 result = _render_query(conn, command, self.source)
                 reply, metadata = result.reply, result.metadata
             else:
@@ -102,7 +103,7 @@ class ReminderQueryReader:
             metadata.update(version=2, mode='reminder_query', route=target.route,
                 reason=target.reason, arguments=target.arguments, evidence=target.evidence,
                 session_id=self.source.session_id, model_calls=0,
-                semantic_intent_verified=False, business_data_read=target.route == 'read_state')
+                semantic_intent_verified=False, business_data_read=target.route in ('read_state', 'read_list'))
             self.checkpoint()
         self.ensure_current()
         return QueryReply(reply, metadata)

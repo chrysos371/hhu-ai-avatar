@@ -11,6 +11,13 @@ from .facts import _mask_quoted
 STATE = 'read_reminder_state'
 POLICY = 'read_reminder_delivery_policy'
 
+_LIST_QUERY = re.compile(r'(?:请)?(?:(?:列出|列一下|显示)(?:所有|全部|我的)?提醒(?:列表|记录)?'
+    r'|查看(?:所有|全部|我的)?提醒(?:列表|记录))[。！？!?]?')
+
+
+def explicit_list_query(text):
+    return isinstance(text, str) and bool(_LIST_QUERY.fullmatch(text.strip()))
+
 
 _ID = re.compile(
     r'(?:提醒(?:的编号|编号|#)?[ \t]*(?P<before>[0-9]+)'
@@ -173,6 +180,8 @@ def derive_read_target(text):
     elif writing or mutation or external:
         route = 'no_read'
         reason = 'writing_request' if writing else 'mutation_request' if mutation else 'external_action_request'
+    elif explicit_list_query(text):
+        route, reason = 'read_list', 'explicit_list_query'
     elif not query:
         route, reason = 'no_read', 'not_a_query'
     elif policy.runtime_spans and policy.record_reference and policy.record_state:

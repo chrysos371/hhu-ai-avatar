@@ -687,7 +687,8 @@ class Avatar:
                 self.emotion.update(user_text)
             elif reminder_query is not None:
                 self.analysis_mode = 'rules_reminder_query'
-                self.emotion.update(user_text)
+                if reminder_query.kind != 'list':
+                    self.emotion.update(user_text)
             elif self.speaker_scope.scope == 'unverified':
                 # The response is a fixed confirmation boundary. No analysis output
                 # can be used here, so do not send this unknown-scope text to a model.
@@ -1006,8 +1007,9 @@ class Avatar:
                 raise Cancelled('context changed before reply commit')
             self._checkpoint()
             context_reply = reply
-            if query_reader is not None:
-                query_reader.ensure_current()
+            if query_reply is not None and query_reply.metadata.get('mode') == 'reminder_query':
+                if query_reader is not None:
+                    query_reader.ensure_current()
                 from .brain.query_history import query_history_content
                 context_reply = query_history_content(reply, query_reply.metadata, text=user_text,
                     source_message_id=self._current_message_id, session_id=self.session_id,
