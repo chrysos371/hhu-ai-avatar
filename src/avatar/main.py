@@ -120,6 +120,11 @@ class Avatar:
         self.capability_contract_enabled = capability_contract_enabled
         self._capability_sources = frozenset()
         self._capability_snapshot = None
+        self._response_frame = None
+        self.response_frames = None
+        if capability_contract_enabled:
+            from .brain.response_frames import ResponseFrames
+            self.response_frames = ResponseFrames(memory)
         # Trusted in-process experiment hook; defaults install no reviewer.
         self.final_reply_reviewer = None
         self._response_review = None
@@ -195,6 +200,10 @@ class Avatar:
                 '本地回执只证明所列本地提交，不证明当前状态、外部送达或人类确认；'
                 '有界列表缺少记录不等于全部历史没有。历史读取必须注明当时，不能当成现在；'
                 '到期时间不是观测/记录时间，不能从无ACK推定已同意或已完成。\n')
+            if self._response_frame is not None and self._response_frame.frame == 'writing':
+                capability_context += ('本轮是来源可核验的写作任务，下列根请求只用于当前稿件，'
+                    '不是画像事实或现实操作授权；以当前明确修改为准，只交付正文，不追加代发邀约：'
+                    + json.dumps(self.response_frames.root_text(self._response_frame), ensure_ascii=False) + '\n')
         return (
             f"你是{managed.get('name',config.avatar_name)}，{managed.get('core_identity',config.avatar_persona)}。\n"
             f"{decision.persona_hint}。\n"
@@ -246,6 +255,13 @@ class Avatar:
             revision=self._turn_context_revision, scope=self.speaker_scope,
             known_source_ids=self._capability_sources)
         return self._capability_snapshot
+
+    def _guard_capability_output(self, reply):
+        from .brain.capability_output import review_output
+        frame = self._response_frame
+        root = self.response_frames.root_text(frame) if frame is not None else ''
+        return review_output(reply, frame=frame.frame if frame is not None else 'unverified',
+            root_text=root, fictional=self.boundaries.fiction or self.speaker_scope.scope == 'fictional_character')
 
     def _extract_facts(self, text: str) -> None:
         """从用户输入提取简单事实写入长期记忆（规则版，LLM 不可用时的回退）。"""
@@ -564,6 +580,7 @@ class Avatar:
         self._history_source_ids = set()
         self._capability_sources = frozenset()
         self._capability_snapshot = None
+        self._response_frame = None
         self._checkpoint()
         self.memory.get_short_term()  # Refresh external deletion/correction before taking a snapshot.
         turn_context_revision = self.memory.context_revision
@@ -610,6 +627,9 @@ class Avatar:
                     self.memory.add_short_term(message.role, message.content)
                 self._history_source_ids.update(window.source_ids)
             self.memory.add_short_term("user", user_text)
+            if self.response_frames is not None:
+                self._response_frame = self.response_frames.observe(user_text, turn_context_revision,
+                    self._current_message_id, session_id=self.session_id)
         boundary = self.boundaries.assess(user_text)
         checkpoint_context()
         capability_request = None
@@ -743,6 +763,8 @@ class Avatar:
         response_source_ids.update(self.speaker_scope.context_source_ids)
         response_source_ids.update(self._history_source_ids)
         response_source_ids.update(row['message_id'] for row in self.conversation_summary()['items'])
+        if self._response_frame is not None and self._response_frame.frame == 'writing':
+            response_source_ids.add(self._response_frame.root_id)
         if (self.capability_contract_enabled and boundary.reply is None and control is None
                 and reminder_query is None and self.speaker_scope.scope != 'unverified'
                 and not speaker_tool_blocked and reminder is None and cancelled_reminder_id is None
@@ -757,6 +779,7 @@ class Avatar:
         buffer_reply = (self.profile_grounding_enabled or delivery_guard_active
                         or self.final_reply_reviewer is not None)
         streamed_prefix = []
+        capability_output_rules = ()
         grounding_action = None
         profile = self.memory.get_user_profile() if self.profile_grounding_enabled else {}
         real_profile_active = self.profile_grounding_enabled and self.speaker_scope.allows_facts
@@ -816,15 +839,27 @@ class Avatar:
             try:
                 if cancel is not None and hasattr(self.llm, 'stream_chat'):
                     pending = ''
+                    raw_completed = ''
                     def checked_delta(piece):
-                        nonlocal pending
+                        nonlocal pending, raw_completed
                         pending += piece
-                        while (match := re.search(r'[。！？!?\n]', pending)):
+                        from .brain.facts import _mask_quoted
+                        while (match := re.search(r'[。！？!?\n]',
+                                _mask_quoted(pending) if self.capability_contract_enabled else pending)):
                             sentence, pending = pending[:match.end()], pending[match.end():]
+                            raw_completed += sentence
                             if on_delta and not buffer_reply:
-                                safe, _ = self.boundaries.review_output(sentence)
-                                emit_checked(safe)
-                                streamed_prefix.append(safe)
+                                if self.capability_contract_enabled:
+                                    safe, _ = self.boundaries.review_output(self._guard_capability_output(raw_completed).reply)
+                                    prefix = ''.join(streamed_prefix)
+                                    if not safe.startswith(prefix):
+                                        raise Cancelled('source-bound output prefix changed during review')
+                                    emit_checked(safe[len(prefix):])
+                                    streamed_prefix.append(safe[len(prefix):])
+                                else:
+                                    safe, _ = self.boundaries.review_output(sentence)
+                                    emit_checked(safe)
+                                    streamed_prefix.append(safe)
                     reply = self.llm.stream_chat(self._messages(decision, user_text),
                         temperature=decision.temperature, cancel=cancel, on_delta=checked_delta)
                 else:
@@ -895,10 +930,15 @@ class Avatar:
         output_checker = getattr(self.boundaries, 'review_output', None)
         if output_checker is not None:
             reply, output_adjustment = output_checker(reply)
+        if self.capability_contract_enabled and (generation_mode == 'llm' or use_web):
+            guarded = self._guard_capability_output(reply)
+            reply, capability_output_rules = guarded.reply, guarded.rules
+            if capability_output_rules:
+                generation_mode = 'llm_capability_guarded' if generation_mode == 'llm' else 'tools_capability_guarded'
         writing_contract_active = self.task_contract_enabled and self.tasks.current is not None
         if real_profile_active and generation_mode == 'llm' and not writing_contract_active:
             reply, grounding_action = review_profile_reply(user_text, reply, profile)
-        if self.final_reply_reviewer is not None and generation_mode == 'llm':
+        if self.final_reply_reviewer is not None and generation_mode in {'llm', 'llm_capability_guarded'}:
             reviewed, metadata = self.final_reply_reviewer(user_text, reply)
             if not isinstance(reviewed, str) or not reviewed.strip() or not isinstance(metadata, dict):
                 raise ValueError('final reply reviewer returned invalid data')
@@ -922,10 +962,10 @@ class Avatar:
             reply += '\n到期提醒：' + '；'.join(r['title'] for r in self._due_reminders)
         final_delivery_issues = self.tasks.inspect(reply) if delivery_guard_active else []
         repair_succeeded = repair_succeeded and not final_delivery_issues
-        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition'}
+        if (buffer_reply and (generation_mode in {'llm', 'llm_literal_composition', 'llm_capability_guarded'}
                               or self._response_review is not None) and on_delta):
             emit_checked(reply)
-        elif generation_mode == 'llm' and on_delta:
+        elif generation_mode in {'llm', 'llm_capability_guarded'} and on_delta:
             # Sentence checks leave closing quotes, emoji and unpunctuated
             # text pending. Complete only an unchanged, checked final prefix;
             # never append a stale tail after a whole-output replacement.
@@ -1036,6 +1076,11 @@ class Avatar:
         }
         if self._response_review is not None:
             result['response_review'] = self._response_review
+        if self.capability_contract_enabled:
+            result['capability_contract'] = {'version': 1, 'semantic_verifier': False,
+                'output_rules': list(capability_output_rules),
+                'runtime': self._capability_snapshot.data() if self._capability_snapshot is not None else None,
+                'frame': self._response_frame.metadata() if self._response_frame is not None else None}
         if query_reply is not None:
             result['reminder_query'] = query_reply.metadata
         if query_reader is not None:

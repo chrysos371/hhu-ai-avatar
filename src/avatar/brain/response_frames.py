@@ -18,6 +18,8 @@ _END = re.compile(r'^(?:我们)?(?:先|再)?(?:不写了|先不写|不要写了|
 def _advance_frame(text, writing):
     """Return (writing, new root); quoted requests never become instructions."""
     clean = _mask_quoted(text).strip()
+    if re.match(r'^(?:请)?提醒我', clean):
+        return False, False  # A local reminder title is not a writing contract.
     if _END.match(clean): return False, False
     # Mixed end/request clauses are not silently assigned a creative frame.
     if re.search(r'[，,。；;]\s*(?:不写了|不要写了|取消写作|回到现实)', clean):
@@ -46,6 +48,20 @@ class ResponseFrame:
 
 class ResponseFrames:
     LIMIT = 64
+
+    def root_text(self, frame):
+        if frame.frame != 'writing':
+            return ''
+        if self.memory.context_revision != frame.revision:
+            raise Cancelled('writing root context changed')
+        state = self.conn.execute('SELECT * FROM memory_response_frames WHERE id=1').fetchone()
+        source = self.conn.execute('SELECT role,content FROM memory_messages WHERE id=?', (frame.root_id,)).fetchone()
+        if (not state or state['cursor'] != frame.cursor or state['context_revision'] != frame.revision
+                or state['frame'] != 'writing' or state['root_id'] != frame.root_id
+                or not source or source['role'] != 'user' or source['content'] == '[redacted]'
+                or _advance_frame(source['content'], False)[0] is not True):
+            raise Cancelled('writing root no longer matches source-bound control')
+        return source['content']
 
     def __init__(self, memory):
         self.memory, self.conn = memory, memory._conn
