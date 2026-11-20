@@ -4,12 +4,13 @@ import json
 from pathlib import Path
 from execution_common import JOBS,STAGES,verify_freeze
 from reuse import load
-from supervision import jobs,command,context
+from supervision import jobs,command,context,previous_jobs
 
 
 def run(args):
     verify_freeze(args.freeze,args.expected_freeze_sha256)
     load('run_execution').previous_stage_check(args.stage,args.expected_freeze_sha256)
+    previous_jobs(args.stage,args.expected_freeze_sha256)
     print(json.dumps(jobs.launch(command(args.stage,args.expected_freeze_sha256),JOBS/args.stage,
         context=context(args.stage,args.expected_freeze_sha256),
         environment={'OMP_NUM_THREADS':'4','OPENBLAS_NUM_THREADS':'4'}),ensure_ascii=False))

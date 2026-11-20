@@ -3,7 +3,7 @@ import importlib.util
 import os
 from pathlib import Path
 import sys
-from execution_common import ROOT,AUDIT,ASSETS,WORK,JOBS,STAGES,read,sha,require
+from execution_common import ROOT,AUDIT,ASSETS,WORK,RUN,JOBS,STAGES,read,sha,require
 
 SOURCE=ROOT/'scripts/lab/run_frozen_capability_job.py'
 spec=importlib.util.spec_from_file_location('c55_durable_jobs',SOURCE)
@@ -66,3 +66,11 @@ def terminal(stage,expected,marker):
     return {'actual_child_wait_returncode':0,'supervisor_retired':True,
         'job_files_sha256':{p.name:sha(p) for p in folder.iterdir() if p.is_file()},
         'job_root':str(folder),'supervisor_source_sha256':sha(SOURCE)}
+
+
+def previous_jobs(stage,expected):
+    for previous in STAGES[:STAGES.index(stage)]:
+        proof=read(RUN/'ledger'/f'{previous}-verified.json')
+        marker=read(RUN/previous/'process-result.json')
+        require(proof['supervised_retirement']==terminal(previous,expected,marker),
+            'previous supervisor terminal bytes changed')

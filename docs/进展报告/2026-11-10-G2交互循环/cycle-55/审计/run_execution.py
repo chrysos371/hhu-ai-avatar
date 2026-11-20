@@ -3,12 +3,13 @@ import argparse
 from pathlib import Path
 from execution_common import STAGES,verify_freeze
 from reuse import load
-from supervision import admission
+from supervision import admission,previous_jobs
 
 
 def run(args):
     verify_freeze(args.freeze,args.expected_freeze_sha256)
     admission(args.stage,args.expected_freeze_sha256)
+    previous_jobs(args.stage,args.expected_freeze_sha256)
     # Reused functions import C55 execution_common; their immutable __file__
     # remains C54, correctly binding the existing labeled observer's source.
     load('run_execution').run(args)
