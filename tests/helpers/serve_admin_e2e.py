@@ -36,7 +36,7 @@ from avatar.config import config
 from avatar.brain.memory import MemoryStore
 from avatar.brain.reminders import ReminderStore
 from avatar.web import create_server
-from avatar.paths import temporary_dir
+from avatar.paths import temporary_dir, project_data_root
 from avatar.lab.transport_fixture import controlled_provider
 
 modules = (avatar.main, avatar.web, avatar.web_api, avatar.web_state,
@@ -50,6 +50,8 @@ state_protocol_path = project_root / 'evals/interaction/cycle-36/maintained-stat
 state_protocol = json.loads(state_protocol_path.read_text())
 query_protocol_path = project_root / 'evals/interaction/cycle-39/explicit-reminder-query-protocol.json'
 runtime_binding = {'reminder_query_protocol_sha256': sha256(query_protocol_path.read_bytes()).hexdigest(), 'state_privacy_protocol_sha256': sha256(state_protocol_path.read_bytes()).hexdigest(), 'project_root': str(project_root), 'python_prefix': sys.prefix,
+    'capability_contract_enabled': os.getenv('AVATAR_E2E_CAPABILITY_CONTRACT') == '1',
+    'role_state_enabled': os.getenv('AVATAR_E2E_ROLE_STATE') == '1',
     'query_history_protocol_sha256': sha256((project_root / 'evals/interaction/cycle-46/query-history-protocol.json').read_bytes()).hexdigest(),
     'query_mode_protocol_sha256': sha256((project_root / 'evals/interaction/cycle-45/product-query-protocol.json').read_bytes()).hexdigest(),
     'module_paths': {name: str(path) for name, path in module_paths.items()},
@@ -67,7 +69,18 @@ if '--check-project-runtime' in sys.argv:
 print('Browser fixture runtime: '+json.dumps(runtime_binding, ensure_ascii=False), flush=True)
 
 temporary_dir().mkdir(parents=True, exist_ok=True)
-folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=temporary_dir())
+if os.getenv('AVATAR_E2E_RETAIN_STATE'):
+    retained = Path(os.environ['AVATAR_E2E_RETAIN_STATE']).resolve()
+    if not retained.is_relative_to(project_data_root().resolve()):
+        raise ValueError('Retained fixture state must stay in project data')
+    retained.mkdir(parents=True, exist_ok=False)
+    class RetainedFolder:
+        name = str(retained)
+        def cleanup(self):
+            pass  # Deliberately archived in place; never owns a user database.
+    folder = RetainedFolder()
+else:
+    folder = tempfile.TemporaryDirectory(prefix="admin-e2e-", dir=temporary_dir())
 provider_context = ExitStack()
 reminder_delivery_case = os.getenv('AVATAR_E2E_REMINDER_DELIVERY_CASE')
 if reminder_delivery_case:
@@ -125,7 +138,9 @@ server = create_server(
     identity_grounding=os.getenv("AVATAR_E2E_IDENTITY_GROUNDING") == "1",
     profile_grounding=os.getenv("AVATAR_E2E_PROFILE_GROUNDING") == "1",
     task_delivery_check=os.getenv("AVATAR_E2E_TASK_DELIVERY") == "1",
-    literal_composition=os.getenv("AVATAR_E2E_LITERAL_COMPOSITION") == "1"
+    literal_composition=os.getenv("AVATAR_E2E_LITERAL_COMPOSITION") == "1",
+    capability_contract_enabled=os.getenv('AVATAR_E2E_CAPABILITY_CONTRACT') == '1',
+    role_state_enabled=os.getenv('AVATAR_E2E_ROLE_STATE') == '1',
 )
 
 # Offline fixtures exercise real browser codecs/AudioWorklet without network or models.

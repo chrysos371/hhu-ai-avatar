@@ -19,12 +19,14 @@ def immutable(path,value):
         stream.write('\n');stream.flush()
 
 
-def start_provider(command,directory,*,cwd,env,stdout):
+def start_provider(command,directory,*,cwd,env,stdout,process_role='native_provider'):
     if not isinstance(command,(list,tuple)) or not command or not command[0] or any(not isinstance(v,str) or '\0' in v for v in command):
         raise ValueError('Provider requires explicit argv')
     command=list(command)
+    if process_role not in ('native_provider','browser_fixture','browser_probe'):
+        raise ValueError('Unknown protected child role')
     directory=Path(directory).absolute();directory.mkdir(parents=True,exist_ok=False)
-    config={'command':command,'cwd':str(Path(cwd).absolute()),'context':{'process_role':'native_provider'},
+    config={'command':command,'cwd':str(Path(cwd).absolute()),'context':{'process_role':process_role},
         'environment':{k:env[k] for k in ('CUDA_VISIBLE_DEVICES','LD_LIBRARY_PATH','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS') if k in env},
         'parent_death_guard_sha256':jobs.digest(jobs.GUARD),
         'provider_launcher_sha256':jobs.digest(Path(__file__).resolve()),
