@@ -167,3 +167,13 @@ def test_negative_user_source_supports_negative_draft_but_not_opposite_positive_
         result = bot.respond('帮我写一条请假短信，不是生病，原因留空，只给正文。')
         assert len(engine.native) == expected_calls
         assert result['reply'] == (draft if expected_calls == 1 else '因【原因】申请请假。')
+
+
+def test_new_explicit_negative_detail_overrides_old_positive_source():
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Replies(['今天生病，申请请假。', '生病了，申请请假。', '因【原因】申请请假。'])
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        bot.respond('帮我写一条请假短信，今天生病，只给正文。')
+        result = bot.respond('再自然一点，实际不是生病，原因留空。')
+        assert result['reply'] == '因【原因】申请请假。' and len(engine.native) == 3
+        assert 'unsupported_source_detail' in result['writing_delivery']['initial_issues']

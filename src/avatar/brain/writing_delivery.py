@@ -52,8 +52,10 @@ def inspect(reply, requirements, *, fictional=False):
         visible = re.sub(r'【[^【】\n]*】', '', body)
         for match in _LEAVE_DETAILS.finditer(visible):
             token = match.group()
-            supported = any(any(not _NEGATED.search(text[max(0, m.start()-8):m.start()])
-                for m in re.finditer(re.escape(token), text)) for _, text in requirements.sources)
+            negative = bool(_NEGATED.search(visible[max(0, match.start()-8):match.start()]))
+            observations = [bool(_NEGATED.search(text[max(0, m.start()-8):m.start()]))
+                for _, text in requirements.sources for m in re.finditer(re.escape(token), text)]
+            supported = bool(observations) and observations[-1] == negative
             if not supported:
                 issues.append('unsupported_source_detail')
                 break
