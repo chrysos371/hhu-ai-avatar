@@ -122,7 +122,7 @@ def test_privacy_change_inside_source_read_clears_old_automatic_affect(tmp_path,
 
 @pytest.mark.parametrize('question', [
     '我很难过，是谁发的短信？',
-    '我真的撑不住了，到底是谁发送的？',
+    '我实在忐忑不安，到底是谁发送的？',
     '是谁发的短信？我现在很害怕。',
 ])
 def test_mixed_sender_question_retains_regular_cognition(question):
@@ -132,6 +132,16 @@ def test_mixed_sender_question_retains_regular_cognition(question):
         result = bot.respond(question)
         assert result['analysis_mode'] != 'rules_reported_sender'
         assert len(engine.analysis) == len(engine.native) == 1
+
+
+def test_safety_clarification_precedes_sender_routing_without_model():
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Recorder('不应生成')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        result = bot.respond('我真的撑不住了，到底是谁发送的？')
+        assert result['analysis_mode'] != 'rules_reported_sender'
+        assert '伤害自己' in result['reply']
+        assert not engine.analysis and not engine.native
 
 
 def test_pure_sender_read_does_not_replace_existing_affect_with_rule_zero():
