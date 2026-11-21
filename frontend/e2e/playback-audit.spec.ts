@@ -101,13 +101,23 @@ async function setPosition(page: Page, rate: number, position: number) {
     audio.currentTime = value.position; await seeked; await audio.play();
   }, { rate, position });
 }
-async function samples(page: Page, mapping: [string, { time: number; segment: number }][], count: number): Promise<Sample[]> {
-  return page.evaluate(async ({ mapping, count }) => {
+async function samples(page: Page, mapping: [string, { time: number; segment: number }][], count: number, background = false): Promise<Sample[]> {
+  return page.evaluate(async ({ mapping, count, background }) => {
     const codes = Object.fromEntries(mapping), rows: Sample[] = [];
     const audio = document.querySelector('audio[aria-label$="语音播放器"]') as HTMLAudioElement;
     const stage = document.querySelector('.avatar-stage')!;
-    await new Promise<void>(resolve => {
+    let stop!: () => void;
+    let started = !background;
+    const recording = new Promise<void>(resolve => {
+      let finished = false, raf = 0;
+      stop = () => { finished = true; cancelAnimationFrame(raf); resolve(); };
       const tick = () => {
+        if (finished) return;
+        // Register before send; count only from the first actual playback.
+        if (!started) {
+          started = !!audio.getAttribute('src') && !audio.paused && !audio.ended;
+          if (!started) { raf = requestAnimationFrame(tick); return; }
+        }
         const open = stage.getAttribute('data-mouth-open') ?? '', code = codes[open];
         const radius = stage.querySelector('ellipse[cy="156"]')?.getAttribute('ry');
         const canvas = stage.querySelector('canvas'), gl = canvas?.getContext('webgl2');
@@ -122,10 +132,27 @@ async function samples(page: Page, mapping: [string, { time: number; segment: nu
           modelMappedTime: modelOpen === null ? null : codes[modelOpen.toFixed(3)]?.time ?? null,
           modelHeight: canvas ? Number(canvas.dataset.mouthHeight) : null,
           modelRenders: canvas ? Number(canvas.dataset.renderCount) : null, modelContextLost: gl?.isContextLost() ?? null });
-        if (rows.length < count) requestAnimationFrame(tick); else resolve();
-      }; requestAnimationFrame(tick);
-    }); return rows;
-  }, { mapping, count });
+        if (rows.length < count) raf = requestAnimationFrame(tick); else stop();
+      }; raf = requestAnimationFrame(tick);
+    });
+    if (background) {
+      const scope = window as typeof window & { __auditSegmentSamples?: { rows: Sample[]; recording: Promise<void>; stop: () => void } };
+      if (scope.__auditSegmentSamples) throw Error('Segment observer already registered');
+      scope.__auditSegmentSamples = { rows, recording, stop };
+      return [];
+    }
+    await recording; return rows;
+  }, { mapping, count, background });
+}
+async function finishSegmentSamples(page: Page, stop = false): Promise<Sample[]> {
+  return page.evaluate(async stop => {
+    const scope = window as typeof window & { __auditSegmentSamples?: { rows: Sample[]; recording: Promise<void>; stop: () => void } };
+    const observer = scope.__auditSegmentSamples;
+    if (!observer) return [];
+    if (stop) observer.stop();
+    await observer.recording;
+    return observer.rows;
+  }, stop);
 }
 function clockGate(rows: Sample[]) {
   const active = rows.slice(2).filter(row => !row.paused && !row.ended && !row.seeking);
@@ -192,7 +219,8 @@ test('plays all final segments in order with fresh clocks', async ({ page }, inf
     rows: [] as Sample[], requests: control.requests, mediaEvents: [] as unknown[], completed: false, failure: null as string | null };
   file.save(report);
   try {
-    await open(page); await chat(page, true); report.rows = await samples(page, control.mapping, 480); file.save(report);
+    await open(page); await samples(page, control.mapping, 480, true);
+    await chat(page, true); report.rows = await finishSegmentSamples(page); file.save(report);
     expect(control.requests.map(row => row.text).join('')).toBe(readFileSync('../evals/interaction/cycle-08/final-three-segments.txt', 'utf8').trim());
     expect(control.requests).toHaveLength(3); expect(control.requests.every(row => row.headerToken)).toBe(true);
     const seen = [...new Set(report.rows.filter(row => !row.paused && row.frameSegment !== null).map(row => row.frameSegment))];
@@ -200,7 +228,10 @@ test('plays all final segments in order with fresh clocks', async ({ page }, inf
     expect(report.rows.slice(-6).every(row => row.ended && row.open === '0.000' && !row.speaking)).toBe(true);
     report.completed = true;
   } catch (error) { report.failure = String(error); throw error; }
-  finally { report.mediaEvents = await mediaEvents(page).catch(() => []); file.save(report); }
+  finally {
+    report.rows = await finishSegmentSamples(page, true).catch(() => report.rows);
+    report.mediaEvents = await mediaEvents(page).catch(() => []); file.save(report);
+  }
 });
 
 test('stop during prefetch survives injected queued play and late completion', async ({ page }, info) => {
