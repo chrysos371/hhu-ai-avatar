@@ -1,0 +1,20 @@
+.........................................F                               [100%]
+=================================== FAILURES ===================================
+_____ test_native_resend_offer_cannot_become_an_available_external_service _____
+
+    def test_native_resend_offer_cannot_become_an_available_external_service():
+        raw = '哦，那你要确认一下是不是漏掉了？如果需要的话，我可以帮你一起提醒班长或者重新发一遍。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '室友说他已经把通知发给班长了，我没有发送。')
+>           assert '我可以帮你一起提醒班长或者重新发一遍' not in result['reply']
+E           AssertionError: assert '我可以帮你一起提醒班长或者重新发一遍' not in '哦，那你要确认一下是不...提醒班长或者重新发一遍。'
+E             
+E             '我可以帮你一起提醒班长或者重新发一遍' is contained here:
+E               哦，那你要确认一下是不是漏掉了？如果需要的话，我可以帮你一起提醒班长或者重新发一遍。
+
+tests/test_release_native_v11_regressions.py:16: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_release_native_v11_regressions.py::test_native_resend_offer_cannot_become_an_available_external_service
+1 failed, 41 passed in 1.07s
