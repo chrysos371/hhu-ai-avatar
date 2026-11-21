@@ -23,6 +23,8 @@ _SYSTEM = re.compile(r'(?:本系统|本程序|本服务|这套系统|这个系�
     r'(?:能|可以|会|支持|提供)[^'+_STOP+r']{0,24}'+_SEND)
 _TEXT_WORK = re.compile(r'(?:修改|改写|润色|编辑|生成|起草|拟写)[^'+_STOP+r']{0,18}'
     r'(?:内容|草稿|文案|措辞|模板)')
+_SUBMISSION_TEXT = re.compile(r'(?:整理|润色|编辑|检查|起草|拟写|改写)(?:需要|准备|要)?'
+    r'(?:递交|提交|转交)的?(?:材料|说明|文案|正文|内容|草稿)')
 _THEN_SEND = re.compile(r'(?:并|然后|再|接着|随后)[^'+_STOP+r']{0,8}'+_SEND)
 _RECEIPT = re.compile(r'(?:我|我们|本系统)(?:已经|已|刚刚|刚才)?收到[^'+_STOP+r']{0,24}(?:短信|邮件|微信|私信)')
 _CHANNEL = re.compile(r'短信|邮件|电邮|微信|QQ|私信|电话|拨号|邮箱|手机号|收件人|群|'
@@ -75,7 +77,7 @@ def _external_clause(clean, *, root_text=''):
     # Negation is local to this clause; a later "但我已经发出" is reviewed anew.
     if _NEGATIVE.search(clean):
         return None
-    if _TEXT_WORK.search(clean) and not _THEN_SEND.search(clean):
+    if (_TEXT_WORK.search(clean) or _SUBMISSION_TEXT.search(clean)) and not _THEN_SEND.search(clean):
         return None
     if _RECEIPT.search(clean):
         return 'unsupported_external_receipt'
@@ -138,12 +140,12 @@ def review_output(reply, *, frame='ordinary', root_text='', fictional=False):
                 text = '当前写作主体无法核验，请重新发送完整正文或明确虚构语境；这段对话不会承诺现实到场'
             elif body_why:
                 text = '我没有真实身体，不能在线下陪同或声称亲身经历；可以在这里帮你做准备或聊聊感受'
+            elif frame == 'unverified':
+                text = '当前写作主体无法核验；我没有外部代发或电话接口，请明确是在代拟正文还是询问实际操作'
             elif why == 'unsupported_proxy_commitment':
                 text = '我没有替你向他人答应，也不能替你作出现实承诺；请由你本人决定并告知对方'
             elif why == 'unsupported_submission':
                 text = '我没有递交或转交接口，不能替你实际提交材料；可以在这里帮你整理文字'
-            elif frame == 'unverified':
-                text = '当前写作主体无法核验；我没有外部代发或电话接口，请明确是在代拟正文还是询问实际操作'
             elif local_promise and not why:
                 text = '提醒依赖程序运行并轮询，这段答复不会新建提醒；请用明确日期、时间和事项提出提醒请求'
             elif why == 'unsupported_external_receipt':
