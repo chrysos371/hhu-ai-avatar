@@ -46,6 +46,8 @@ def test_mixed_source_response_revalidates_raw_history_after_cognition():
 
 
 def test_mixed_actor_answer_recovers_from_verified_persistent_history(tmp_path):
+    import json
+    from avatar.brain.release_history import PREFIX
     path = str(tmp_path/'mixed-restart.db')
     with closing(MemoryStore(path)) as memory:
         bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
@@ -53,7 +55,10 @@ def test_mixed_actor_answer_recovers_from_verified_persistent_history(tmp_path):
         reply = bot.respond('我有些难过，是谁发的短信？')['reply']
     with closing(MemoryStore(path)) as memory:
         bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
-        assert any(row['role'] == 'assistant' and row['content'] == reply for row in memory.get_short_term())
+        assert any(row['role'] == 'assistant' and row['content'].startswith(PREFIX)
+                   and json.loads(row['content'][len(PREFIX):])['reply'] == reply
+                   for row in memory.get_short_term())
+        assert memory._conn.execute("SELECT content FROM memory_messages WHERE role='assistant' ORDER BY id DESC LIMIT 1").fetchone()[0] == reply
 
 
 @pytest.mark.parametrize('source,question,actor', [
