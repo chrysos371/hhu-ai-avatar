@@ -51,11 +51,11 @@ def test_mixed_actor_answer_recovers_from_verified_persistent_history(tmp_path):
     path = str(tmp_path/'mixed-restart.db')
     with closing(MemoryStore(path)) as memory:
         bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
-        bot.respond('继续聊聊。')  # Recovery is source-bound to the new user row.
         bot.respond('我刚才自己发了短信。')
         reply = bot.respond('我有些难过，是谁发的短信？')['reply']
     with closing(MemoryStore(path)) as memory:
         bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
+        bot.respond('继续聊聊。')  # Recovery is source-bound to the new user row.
         assert any(row['role'] == 'assistant' and row['content'].startswith(PREFIX)
                    and json.loads(row['content'][len(PREFIX):])['reply'] == reply
                    for row in memory.get_short_term())
