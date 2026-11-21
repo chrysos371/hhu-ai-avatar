@@ -297,6 +297,13 @@ class Avatar:
         self._checkpoint_prompt_context()
         frame = self._response_frame
         root = self.response_frames.root_text(frame) if frame is not None else ''
+        if frame is not None and frame.frame == 'ordinary':
+            source = self.memory._conn.execute(
+                "SELECT content FROM memory_messages WHERE id=? AND role='user' AND session_id=?",
+                (self._current_message_id, self.session_id)).fetchone()
+            if not source or not source['content'] or source['content'] == '[redacted]':
+                raise Cancelled('ordinary output source unavailable')
+            root = source['content']
         return review_output(reply, frame=frame.frame if frame is not None else 'unverified',
             root_text=root, fictional=(self.boundaries.fiction and not self.boundaries.literary_analysis)
                 or self.speaker_scope.scope == 'fictional_character')
