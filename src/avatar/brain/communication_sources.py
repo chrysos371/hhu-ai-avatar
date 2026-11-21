@@ -39,17 +39,25 @@ def mixed_sender_question(text):
         or re.fullmatch(_QUESTION.pattern+r'\s*'+affect+r'[。！!]?$', clean))
 
 
+def compound_sender_question(text):
+    clean = _mask_quoted(text).strip()
+    return bool(re.fullmatch(_QUESTION.pattern+r'\s*你(?:接下来|之后|随后)会做什么[？?。]?', clean))
+
+
 @dataclass(frozen=True)
 class ReportedSender:
     reported_actor: str | None
     source_message_ids: tuple[int, ...]
     mixed_affect: bool = False
+    assistant_plan: bool = False
 
     @property
     def reply(self):
         reply = self.source_reply
         if self.mixed_affect:
             reply += '如果你愿意，可以说说是什么让你难过或不安，我会在这里倾听。'
+        if self.assistant_plan:
+            reply += '接下来我只在这里作文字回应，没有替你联系任何人或执行外部操作。'
         return reply
 
     @property
@@ -67,13 +75,17 @@ class ReportedSender:
             'complete_history': False, 'semantic_verifier': False}
         if self.mixed_affect:
             data['mixed_affect'] = True
+        if self.assistant_plan:
+            data['assistant_plan'] = True
         return data
 
 
 def answer_from_contexts(contexts, *, text):
-    if not sender_question(text) and not mixed_sender_question(text):
+    if not sender_question(text) and not mixed_sender_question(text) and not compound_sender_question(text):
         return None
     answer = from_contexts(contexts)
+    if compound_sender_question(text):
+        return replace(answer, assistant_plan=True)
     if mixed_sender_question(text):
         # Unknown/ambiguous sources retain ordinary conversation. A known actor
         # is answered only from authenticated history, with normal cognition.
@@ -82,7 +94,7 @@ def answer_from_contexts(contexts, *, text):
 
 
 def reported_sender(memory, *, text, session_id, source_message_id, revision, scope):
-    if not sender_question(text) and not mixed_sender_question(text):
+    if not sender_question(text) and not mixed_sender_question(text) and not compound_sender_question(text):
         return None
     if scope.scope != 'current_user' or not scope.allows_actions:
         raise Cancelled('Sender-source query requires an independent verified real-user turn')

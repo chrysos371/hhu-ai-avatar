@@ -59,8 +59,8 @@ def verified_content(memory, result, *, user_id, assistant_id, text, scope, revi
                 return None
         elif mode == 'rules_reported_sender':
             from .speaker_scope import SpeakerScope
-            from .communication_sources import answer_from_contexts, sender_question, mixed_sender_question
-            if scope != 'current_user' or not (sender_question(text) or mixed_sender_question(text)):
+            from .communication_sources import answer_from_contexts, sender_question, mixed_sender_question, compound_sender_question
+            if scope != 'current_user' or not (sender_question(text) or mixed_sender_question(text) or compound_sender_question(text)):
                 return None
             rows = memory._conn.execute("SELECT DISTINCT m.id,m.content FROM memory_messages m "
                 "JOIN memory_response_context c ON c.source_id=m.id AND c.source_type='message' "

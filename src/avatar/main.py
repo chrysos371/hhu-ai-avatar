@@ -788,7 +788,8 @@ class Avatar:
                 # can be used here, so do not send this unknown-scope text to a model.
                 self.analysis_mode = 'rules_speaker_scope'
                 self.emotion.update(user_text)
-            elif reported_sender_reply is not None and not reported_sender_reply.mixed_affect:
+            elif (reported_sender_reply is not None and not reported_sender_reply.mixed_affect
+                    and not reported_sender_reply.assistant_plan):
                 self.analysis_mode = 'rules_reported_sender'
                 # A pure source read supplies no new affect observation. Keep
                 # valid prior state; decide() still applies elapsed-time decay.
