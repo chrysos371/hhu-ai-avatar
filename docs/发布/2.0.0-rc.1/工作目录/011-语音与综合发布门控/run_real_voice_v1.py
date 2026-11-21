@@ -49,6 +49,8 @@ def main():
         assert {m.name:sha256(stream.extractfile(m).read()).hexdigest() for m in stream if m.isfile()}==before
     ui={str(f.relative_to(UI)):digest(f) for f in sorted(UI.rglob('*')) if f.is_file()}
     assert ui==json.loads((UI.parent/'build-result.json').read_text())['ui_sha256']
+    external_paths=[ROOT/'data/g2-cycle-01/voice-corpus/voice0-text2.wav',*[p for p in (ASSETS/'models/faster-whisper-small').iterdir() if p.is_file()]]
+    external={str(p.resolve()):digest(p) for p in external_paths}
     raw.mkdir(parents=True)
     files,options=SUITES[args.suite]
     env={k:v for k,v in os.environ.items() if not k.startswith('AVATAR_E2E_')}
@@ -65,15 +67,16 @@ def main():
     stats=report.get('stats',{});runtime=json.loads((raw/'fixture-runtime.json').read_text()) if (raw/'fixture-runtime.json').exists() else {}
     stable=all(digest(ROOT/f)==h for f,h in before.items())
     ui_stable=all(digest(UI/f)==h for f,h in ui.items())
-    passed=bool(result.returncode==0 and stable and ui_stable and stats.get('unexpected')==0
+    external_stable=all(digest(Path(p))==h for p,h in external.items())
+    passed=bool(result.returncode==0 and stable and ui_stable and external_stable and stats.get('unexpected')==0
         and stats.get('expected',0)>0 and not report.get('errors') and runtime.get('capability_contract_enabled') is True
         and runtime.get('role_state_enabled') is True and runtime.get('frontend_dir')==str(UI.resolve()))
     proof=dict(suite=args.suite,source_ref=head,source_sha256=before,source_inputs=len(before),source_unchanged=stable,
         ui_sha256=ui,ui_unchanged=ui_stable,argv=argv,actual_returncode=result.returncode,
         stats=stats,passed=passed,seconds_including_server_browser_cleanup=time.monotonic()-started,
         whole_stage_wallclock_cutoff=None,required_fixture_options=options,
-        scope='actual browser/local HTTP/SSE with standard source/role configuration and retained controlled fixtures; no native model/physical or human approval',
-        raw=str(raw),raw_sha256={str(f.relative_to(raw)):digest(f) for f in sorted(raw.rglob('*')) if f.is_file()})
+        scope='actual browser upload of one known synthetic WAV, real local CPU ASR, controlled HTTP model and real Edge-TTS; current packaged UI; no native model/physical/human or multi-day approval',
+        external_sha256=external,external_unchanged=external_stable,raw=str(raw),raw_sha256={str(f.relative_to(raw)):digest(f) for f in sorted(raw.rglob('*')) if f.is_file()})
     with proof_path.open('x') as f:json.dump(proof,f,ensure_ascii=False,indent=2);f.write('\n')
     print(json.dumps({k:proof[k] for k in ('suite','actual_returncode','stats','passed','seconds_including_server_browser_cleanup')}))
     assert passed,'browser failure retained'
