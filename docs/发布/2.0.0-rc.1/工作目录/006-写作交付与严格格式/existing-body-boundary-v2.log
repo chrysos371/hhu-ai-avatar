@@ -1,0 +1,22 @@
+...................................................F.......              [100%]
+=================================== FAILURES ===================================
+_ test_body_guard_preserves_negation_report_quotes_online_planning_and_hypotheticals[\u5ba4\u53cb\u8bf4\u6211\u4eec\u4e00\u8d77\u53bb\u6253\u7f51\u7403\u3002] _
+
+raw = '室友说我们一起去打网球。'
+
+    @pytest.mark.parametrize('raw', ['我不能陪你去打网球。', '我们不会一起去爬山。', '我没有爬过山。',
+                                   '室友说我们一起去打网球。', '你说我昨天喝了奶茶。', '“我们一起去打网球。”是引文。',
+                                   '我们可以一起讨论爬山的路线。', '我可以帮你规划爬山路线。',
+                                   '假设我有身体，我们可以一起去爬山。', '如果我有真实身体，我会陪你去爬山。'])
+    def test_body_guard_preserves_negation_report_quotes_online_planning_and_hypotheticals(raw):
+        from avatar.brain.capability_output import review_output
+>       assert review_output(raw).reply == raw
+E       AssertionError: assert '我没有真实身体，不能在线...这里帮你做准备或聊聊感受。' == '室友说我们一起去打网球。'
+E         
+E         - 室友说我们一起去打网球。
+E         + 我没有真实身体，不能在线下陪同或声称亲身经历；可以在这里帮你做准备或聊聊感受。
+
+tests/test_existing_release_root_gaps.py:45: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_existing_release_root_gaps.py::test_body_guard_preserves_negation_report_quotes_online_planning_and_hypotheticals[\u5ba4\u53cb\u8bf4\u6211\u4eec\u4e00\u8d77\u53bb\u6253\u7f51\u7403\u3002]
+1 failed, 58 passed in 1.06s
