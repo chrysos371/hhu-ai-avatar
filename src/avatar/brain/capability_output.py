@@ -43,6 +43,7 @@ _BODY_SELF = re.compile(r'我(?:明天|今晚|周末|下次|现在|这就|马上
     r'爬过山|跑过步|游过泳|(?:吃|喝)(?:过|了)[^'+_STOP+r']{0,10}(?:饭|火锅|咖啡|奶茶|可乐|茶|饮料)|'
     r'(?:去|来)?'+_PHYSICAL_ACTIVITY+r')')
 _COUNTERFACTUAL_BODY = re.compile(r'假设|假如|比如|例如|如果(?:我|我们)(?:有|拥有)(?:真实)?身体')
+_BODY_REPORTED = re.compile(r'(?:室友|朋友|同学|老师|导师|家人|班长)(?:说|提到|写道)')
 
 
 def _body_clause(clean, *, sentence_context):
@@ -54,7 +55,7 @@ def _body_clause(clean, *, sentence_context):
             contrast_end = max((m.end() for m in re.finditer(r'但是|不过|然而|但', clean[:match.start()])), default=0)
             before = clean[contrast_end:match.start()]
             lead = match.groupdict().get('lead', '') or ''
-            if (_REPORTED.search(before) or _PLANNING.search(before) or _PLANNING.search(lead)
+            if (_REPORTED.search(before) or _BODY_REPORTED.search(before) or _PLANNING.search(before) or _PLANNING.search(lead)
                     or re.search(r'不是|并非', before) or _NEGATIVE.search(before) or _NEGATIVE.search(lead)):
                 continue
             return 'unsupported_offline_offer' if pattern is _BODY_JOINT or re.search(r'陪你|和你|跟你|同你|去|到', match.group()) else 'unsupported_physical_experience'
