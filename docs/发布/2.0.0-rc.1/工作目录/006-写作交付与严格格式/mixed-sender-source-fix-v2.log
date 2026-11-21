@@ -1,0 +1,22 @@
+....F..................                                                  [100%]
+=================================== FAILURES ===================================
+______ test_mixed_actor_answer_recovers_from_verified_persistent_history _______
+
+tmp_path = PosixPath('/data/Users/zrh/data/hhu-ai-avatar/tmp/pytest-of-root/pytest-175/test_mixed_actor_answer_recove0')
+
+    def test_mixed_actor_answer_recovers_from_verified_persistent_history(tmp_path):
+        path = str(tmp_path/'mixed-restart.db')
+        with closing(MemoryStore(path)) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
+            bot.respond('我刚才自己发了短信。')
+            reply = bot.respond('我有些难过，是谁发的短信？')['reply']
+        with closing(MemoryStore(path)) as memory:
+            bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
+>           assert any(row['role'] == 'assistant' and row['content'] == reply for row in memory.get_short_term())
+E           assert False
+E            +  where False = any(<generator object test_mixed_actor_answer_recovers_from_verified_persistent_history.<locals>.<genexpr> at 0x7f0b04735bd0>)
+
+tests/test_reported_sender_contract.py:56: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_reported_sender_contract.py::test_mixed_actor_answer_recovers_from_verified_persistent_history
+1 failed, 22 passed in 1.07s
