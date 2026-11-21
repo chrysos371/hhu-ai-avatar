@@ -68,3 +68,51 @@ def test_unaccepted_obligation_cannot_be_replaced_by_schedule_uncertainty():
         assert result['generation_mode'] == 'rules_writing_artifact'
         assert result['writing_delivery']['source_fallback']['used']
         assert not result['action_receipts']['items']
+
+
+@pytest.mark.parametrize('draft', ['我还没同意，先看课表再说。', '我尚未答应，请不要先安排。',
+                                  '“我尚未同意，请等我决定。”'])
+def test_explicit_not_agreed_has_semantic_aliases_without_forcing_a_literal_template(draft):
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Replies([draft])
+        result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+            '请帮我写一句回复，明确我尚未同意，不要替我承诺。')
+        assert result['reply'] == draft and len(engine.native) == 1
+        assert not result['writing_delivery']['final_issues']
+
+
+@pytest.mark.parametrize('text', ['原样输出：“明确我尚未同意”。', '老师说明确我尚未同意。',
+                                 '如果明确我尚未同意会怎样？', '不要明确我尚未同意。',
+                                 '明确我不是不同意。'])
+def test_quoted_reported_conditional_negated_and_nested_negation_do_not_grant_stance_control(text):
+    from avatar.brain.writing_stance import requirement
+    assert requirement([(1, text)]) is None
+
+
+def test_new_explicit_positive_directive_releases_previous_negative_stance():
+    from avatar.brain.writing_stance import requirement
+    assert requirement([(1, '明确我尚未同意。'), (3, '改成我已经同意。')]) is None
+
+
+def test_source_fallback_does_not_drop_additional_material_to_fix_stance():
+    with closing(MemoryStore(':memory:')) as memory:
+        bad = '我还没确定时间。'
+        engine = Replies([bad, bad])
+        result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+            '请帮我写一句回复，明确我尚未同意，不要替我承诺，必须保留【蓝纸】。')
+        assert result['generation_mode'] == 'rules_writing_validation'
+        assert not result['writing_delivery']['source_fallback']['used']
+
+
+def test_not_agreed_draft_and_constraint_recover_after_actual_sdk_restart(tmp_path):
+    path = str(tmp_path/'stance-restart.db')
+    bad = '我还没确定好时间，等我安排好再告诉你。'
+    with closing(MemoryStore(path)) as memory:
+        bot = Avatar(memory=memory, llm=Replies([bad, bad]), capability_contract_enabled=True, role_state_enabled=True)
+        previous = bot.respond('请帮我写一句回复，明确我尚未同意，不要替我承诺。')
+    with closing(MemoryStore(path)) as memory:
+        bot = Avatar(memory=memory, llm=Replies([bad, bad]), capability_contract_enabled=True, role_state_enabled=True)
+        result = bot.respond('再自然一点。')
+        assert result['reply'] == previous['reply']
+        assert result['writing_requirements']['stance_requirement']['state'] == 'not_agreed'
+        assert result['writing_requirements']['source_message_ids'][0] == previous['conversation']['user_message_id']

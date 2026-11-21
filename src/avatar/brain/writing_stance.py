@@ -21,6 +21,8 @@ def requirement(sources):
             prefix = re.split(r'[，,。；;！？!?\n]', clean[:match.start()])[-1]
             if re.search(r'如果|假设|假如|不要|不必|别|并非|不是', prefix):
                 continue
+            if prefix.strip() and not re.fullmatch(r'(?:请|麻烦)(?:你)?(?:在回复(?:里|中))?', prefix.strip()):
+                continue  # A reporter or arbitrary narrative grants no control.
             state = (dict(version=1, state='not_agreed', source_message_ids=[source_id],
                           real_consent_verified=False, semantic_verifier=False)
                      if match['state'] not in ('已经', '已') else None)
