@@ -1,0 +1,52 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_____ test_native_resend_offer_cannot_become_an_available_external_service _____
+
+    def test_native_resend_offer_cannot_become_an_available_external_service():
+        raw = '哦，那你要确认一下是不是漏掉了？如果需要的话，我可以帮你一起提醒班长或者重新发一遍。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '室友说他已经把通知发给班长了，我没有发送。')
+>           assert '我可以帮你一起提醒班长或者重新发一遍' not in result['reply']
+E           AssertionError: assert '我可以帮你一起提醒班长或者重新发一遍' not in '哦，那你要确认一下是不...提醒班长或者重新发一遍。'
+E             
+E             '我可以帮你一起提醒班长或者重新发一遍' is contained here:
+E               哦，那你要确认一下是不是漏掉了？如果需要的话，我可以帮你一起提醒班长或者重新发一遍。
+
+tests/test_release_native_v11_regressions.py:16: AssertionError
+__ test_native_mixed_affect_question_answers_known_actor_and_keeps_cognition ___
+
+    def test_native_mixed_affect_question_answers_known_actor_and_keeps_cognition():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('收到。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('我刚才给朋友发了短信。')
+            analysis, generated = len(engine.analysis), len(engine.native)
+            engine.reply = '我不能查看或确认你发短信的具体内容或对方是谁。如果你愿意，可以告诉我更多细节，我会在这里倾听你。'
+            result = bot.respond('我有些难过，是谁发的短信？')
+>           assert '按你之前的自述，是你自己发的' in result['reply']
+E           AssertionError: assert '按你之前的自述，是你自己发的' in '我不能查看或确认你发短信的具体内容或对方是谁。如果你愿意，可以告诉我更多细节，我会在这里倾听你。'
+
+tests/test_release_native_v11_regressions.py:29: AssertionError
+___ test_native_classroom_repair_is_not_supported_by_a_generic_family_leave ____
+
+    def test_native_classroom_repair_is_not_supported_by_a_generic_family_leave():
+        raw = '尊敬的老师：您好，因明天需要参加家里的活动，我将无法正常上课，敬请谅解。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies([raw, raw])
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '帮我写一封请假邮件，我明天要参加家里的活动，只给正文。')
+>           assert '上课' not in result['reply'] and '老师' not in result['reply']
+E           AssertionError: assert ('上课' not in '尊敬的老师：您好，因明...无法正常上课，敬请谅解。'
+E             
+E             '上课' is contained here:
+E               尊敬的老师：您好，因明天需要参加家里的活动，我将无法正常上课，敬请谅解。
+E             ?                             ++)
+
+tests/test_release_native_v11_regressions.py:41: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_release_native_v11_regressions.py::test_native_resend_offer_cannot_become_an_available_external_service
+FAILED tests/test_release_native_v11_regressions.py::test_native_mixed_affect_question_answers_known_actor_and_keeps_cognition
+FAILED tests/test_release_native_v11_regressions.py::test_native_classroom_repair_is_not_supported_by_a_generic_family_leave
+3 failed in 0.86s
