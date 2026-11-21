@@ -52,6 +52,10 @@ def build_fallback(requirements, *, current_text, fictional=False):
             'explicit_fiction_counterparty_reply_v1', requirements.source_message_ids)
     if fictional or requirements.author_role is not None:
         return None
+    from .writing_stance import fallback as stance_fallback
+    stance = stance_fallback(requirements)
+    if stance is not None:
+        return SourceArtifact(stance, 'explicit_not_agreed_reply_v1', requirements.source_message_ids)
     recipient, event, seen_root = '', None, False
     for index, (_, text) in enumerate(requirements.sources):
         # Split only at punctuation outside quotes/placeholders. A quoted

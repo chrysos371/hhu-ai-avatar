@@ -159,7 +159,7 @@ class WritingRequirements:
 
     def data(self):
         contract = self.literal_contract
-        return dict(version=1, source_verified=self.source_verified, signature=self.signature,
+        result = dict(version=1, source_verified=self.source_verified, signature=self.signature,
                     sentence_count=self.sentence_count, body_only=self.body_only,
                     source_message_ids=list(self.source_message_ids), reason=self.reason,
                     signature_omitted=self.signature_omitted, forbidden_signatures=list(self.forbidden_signatures),
@@ -168,6 +168,12 @@ class WritingRequirements:
                     required_literals=list(contract.required_literals) if contract else [],
                     forbidden_literals=list(contract.forbidden_literals) if contract else [],
                     semantic_verifier=False)
+        if self.source_verified:
+            from .writing_stance import requirement
+            stance = requirement(self.sources)
+            if stance is not None:
+                result['stance_requirement'] = stance
+        return result
 
 
 class WritingRequirementStore:

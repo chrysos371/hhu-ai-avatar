@@ -27,6 +27,8 @@ def inspect(reply, requirements, *, fictional=False):
     if not isinstance(reply, str) or not reply.strip():
         return ('empty_body',)
     issues = []
+    from .writing_stance import inspect as inspect_stance
+    issues.extend(inspect_stance(reply, requirements.sources))
     contract = requirements.literal_contract
     if contract is not None:
         issues.extend('missing_literal:' + value for value in contract.required_literals if value not in reply)
