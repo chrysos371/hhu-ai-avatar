@@ -17,8 +17,8 @@ def build():
             ('拿到2.0.0安装包', '''<p>本服务器发行物在 <code>/data/Users/zrh/data/hhu-ai-avatar/releases/2.0.0</code>。
             其中有wheel、源码包、SHA256SUMS和README。若在另一台机器使用，先通过你有权限的方式复制该目录。
             当前没有PyPI发布，也没有GitHub Release二进制附件。</p>'''),
-            ('准备独立Python环境', '''<p>声明支持Python≥3.10，本版实际验证3.10.12。下面是Linux/macOS风格Shell示例；系统及设备仍以实际环境为准。
-            在你自己的工作目录创建环境，不需要在代码仓库内安装，也无需安装Node来使用已打包网页。</p>'''+code('python3 -m venv .venv\nsource .venv/bin/activate\n# 将wheel复制到当前目录后\npython -m pip install ./hhu_ai_avatar-2.0.0-py3-none-any.whl\nhhu-avatar --version\nhhu-avatar doctor --require-ui')),
+            ('准备独立Python环境', '''<p>声明支持Python≥3.10，本版实际验证3.10.12。下面是Bash示例；本版实际验证环境是Linux/Python 3.10.12，不把其他操作系统称为已测。
+            在新建的独立运行目录（不是源码仓库）创建环境，不需要在代码仓库内安装，也无需安装Node来使用已打包网页。</p>'''+code('python3 -m venv .venv\nsource .venv/bin/activate\n# 将wheel复制到当前目录后\npython -m pip install ./hhu_ai_avatar-2.0.0-py3-none-any.whl\nhhu-avatar --version\nhhu-avatar doctor --require-ui')),
             ('核验文件后启动', '<p>在发行物目录可运行 <code>sha256sum -c SHA256SUMS</code>。上一步版本应为2.0.0；doctor是离线安装检查，不会替你验证模型账号、语音网络或麦克风。</p>'+code('mkdir -p ./my-avatar-data\nexport HHU_AVATAR_DATA_ROOT="$PWD/my-avatar-data"\nOPENBLAS_NUM_THREADS=4 OMP_NUM_THREADS=4 hhu-avatar web --port 8765 --db "$PWD/my-avatar-data/avatar.db"')),
             ('打开带token的完整入口', '''<p>终端会显示类似 <code>http://127.0.0.1:8765/#一段随机token</code> 的链接，使用浏览器完整打开。
             请保持终端服务运行，退出用Ctrl+C。重启后使用新打印的入口，继续指定原数据库才能保留记录。</p>'''),
