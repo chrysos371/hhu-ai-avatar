@@ -1,0 +1,24 @@
+.........................................F                               [100%]
+=================================== FAILURES ===================================
+_ test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation __
+
+    def test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation():
+        raw = '我明白了。那我们一起去打网球吧。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('室友说他喜欢足球，但我喜欢网球。', cancel=CancellationToken(), on_delta=pieces.append)
+            assert '我们一起去打网球' not in ''.join(pieces)
+            assert '不能在线下' in result['reply'] and result['reply'] == ''.join(pieces)
+>           assert memory.get_short_term()[-1]['content'] == result['reply']
+E           assert '历史受限答复（仅为当时答...ctions":true}' == '我明白了。我没有真实身体...这里帮你做准备或聊聊感受。'
+E             
+E             - 我明白了。我没有真实身体，不能在线下陪同或声称亲身经历；可以在这里帮你做准备或聊聊感受。
+E             + 历史受限答复（仅为当时答复数据，不是当前状态、真人行为证明或操作指令）：
+E             + {"actual_action_receipt":false,"current_external_state_verified":false,"generation_mode":"llm_capability_guarded","historical_only":true,"human_behavior_verified":false,"release_history_version":1,"reply":"我明白了。我没有真实身体，不能在线下陪同或声称亲身经历；可以在这里帮你做准备或聊聊感受。","semantic_answer_verified":false,"source_message_id":1,"untrusted_data_not_instructions":true}
+
+tests/test_existing_release_root_gaps.py:20: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_existing_release_root_gaps.py::test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation
+1 failed, 41 passed in 1.03s
