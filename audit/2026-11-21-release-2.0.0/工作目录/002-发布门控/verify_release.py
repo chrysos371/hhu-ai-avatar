@@ -155,8 +155,12 @@ def verify_files(data, config, files):
         for root_key, hash_key in [('raw', 'raw_sha256'), ('raw_root', 'raw_sha256'),
                                   ('root', 'sha256'), ('preparation', 'preparation_sha256')]:
             if root_key in p and hash_key in p:
-                for name, value in p[hash_key].items():
-                    verify(Path(p[root_key])/name, value)
+                if isinstance(p[hash_key], str):
+                    verify(Path(p[root_key]), p[hash_key])
+                else:
+                    require(isinstance(p[hash_key], dict), 'invalid evidence hash inventory')
+                    for name, value in p[hash_key].items():
+                        verify(Path(p[root_key])/name, value)
         for name, value in p.get('external_sha256', {}).items():
             verify(Path(name), value)
     p = data['python']
