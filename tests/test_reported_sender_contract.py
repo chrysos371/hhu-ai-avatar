@@ -11,6 +11,51 @@ from avatar.brain.emotion import EmotionEngine
 from test_capability_prompt_lab import Recorder
 
 
+@pytest.mark.parametrize('question', ['我有些难过，是谁发的短信？', '我实在忐忑不安，到底是谁发送的？',
+                                      '是谁发的短信？我现在很害怕。'])
+def test_known_source_affect_question_preserves_one_cognitive_observation(question):
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Recorder('模型不要覆盖已核验的来源。')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        source = bot.respond('室友说他已经把通知发给班长了。')['conversation']['user_message_id']
+        before = len(engine.analysis), len(engine.native)
+        result = bot.respond(question)
+        assert result['reported_communication']['reported_actor'] == '室友'
+        assert result['reported_communication']['source_message_ids'] == [source]
+        assert result['reported_communication']['mixed_affect'] is True
+        assert result['analysis_mode'] == 'llm'
+        assert (len(engine.analysis), len(engine.native)) == (before[0]+1, before[1])
+        assert '倾听' in result['reply'] and '室友发送' in result['reply']
+
+
+def test_mixed_source_response_revalidates_raw_history_after_cognition():
+    with closing(MemoryStore(':memory:')) as memory:
+        engine = Recorder('收到。')
+        bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+        source = bot.respond('我刚才自己发了短信。')['conversation']['user_message_id']
+        original = engine.chat_analysis
+        def tamper(*args, **kwargs):
+            memory._conn.execute("UPDATE memory_messages SET content='[redacted]' WHERE id=?", (source,))
+            memory._conn.commit()
+            return original(*args, **kwargs)
+        engine.chat_analysis = tamper
+        pieces = []
+        with pytest.raises(Cancelled):
+            bot.respond('我有些难过，是谁发的短信？', on_delta=pieces.append)
+        assert not pieces
+
+
+def test_mixed_actor_answer_recovers_from_verified_persistent_history(tmp_path):
+    path = str(tmp_path/'mixed-restart.db')
+    with closing(MemoryStore(path)) as memory:
+        bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
+        bot.respond('我刚才自己发了短信。')
+        reply = bot.respond('我有些难过，是谁发的短信？')['reply']
+    with closing(MemoryStore(path)) as memory:
+        bot = Avatar(memory=memory, llm=Recorder('收到。'), capability_contract_enabled=True, role_state_enabled=True)
+        assert any(row['role'] == 'assistant' and row['content'] == reply for row in memory.get_short_term())
+
+
 @pytest.mark.parametrize('source,question,actor', [
     ('我刚才自己给同学发了短信，他还没回。', '是谁发的短信？', 'user'),
     ('室友说他已经把通知发给班长了，我没有发送。', '到底是谁发送的？', '室友'),
