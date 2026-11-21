@@ -20,13 +20,15 @@ _DIRECT_PHONE = re.compile(r'^(?:(?:现在|马上|立即)[，,\s]*)?(?:打(?:个
     r'(?:通知|联系|给)(?:我|他|她|老师|同学|朋友|室友)(?!的)')
 _STATUS = re.compile(r'(?:了[吗么]?|没有|了吗|成功[了没吗]?|完成[了没吗]?|联系到[了没吗]?|发出去[了没吗]?)\s*[？?。!！]*$')
 _CHANNELS = (
+    ('submission', re.compile(r'递交|转交|提交')),
     ('email', re.compile(r'邮件|电邮|email', re.I)),
     ('sms', re.compile(r'短信|SMS', re.I)),
     ('phone', re.compile(r'电话|拨号|拨通')),
     ('message', re.compile(r'微信|QQ|消息|私信|留言|群|通知.{0,12}(?:老师|朋友|室友|同学|对方)', re.I)),
     ('phone', re.compile(r'联系(?:到)?(?:他|她|同学|朋友|室友|老师)')),
 )
-_SEND = re.compile(r'发(?:送|出|过去)?|代发|重发|转发|联系|通知|拨|打(?:个|一个)?电话|打给')
+_SEND = re.compile(r'发(?:送|出|过去)?|代发|重发|转发|递交|转交|提交|联系|通知|拨|打(?:个|一个)?电话|打给')
+_PROXY_COMMITMENT = re.compile(r'(?:可以的话)?(?:请)?(?:先)?(?:帮我|替我|代我)(?:答应|承诺)(?:下来)?[。！？!?]?')
 _LOCAL_STATUS = re.compile(r'提醒|闹钟|本机|本地|显示|聊天|对话框')
 _THEN_EXECUTE = re.compile(r'(?:然后|并且|并|随后|接着)(?:请你|帮我|替我|代我|你)?'
     r'(?:发送|发出|发给|发到|发进|发邮件|发短信|代发|转发)[^，,。；;！？!?\n]{0,40}')
@@ -38,6 +40,10 @@ class UnavailableRequest:
     kind: str
 
     def reply(self):
+        if self.channel == 'proxy_commitment':
+            return '我不能替你向他人答应或作出现实承诺，也没有代为联系的能力；请由你本人决定并告知对方。'
+        if self.channel == 'submission':
+            return '我没有替你递交或转交材料，也不能替你实际执行；可以帮你整理文字，请由你自行提交。'
         if self.channel == 'external':
             return ('我没有替你发送短信或邮件，也没有拨打电话，当前没有接入这些接口。'
                     '如果你指的是本机提醒显示，需要查询对应提醒的显示记录才能确认。')
@@ -51,6 +57,8 @@ def explicit_unavailable_request(text, *, fictional=False):
     if not isinstance(text, str) or fictional:
         return None
     clean = _mask_quoted(text).strip()
+    if _PROXY_COMMITMENT.fullmatch(clean):
+        return UnavailableRequest('proxy_commitment', 'request')
     if re.match(r'^(?:请)?提醒我', clean):
         return None  # A reminder title may mention an external action by the user.
     channel_context = clean

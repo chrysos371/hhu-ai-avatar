@@ -1,0 +1,88 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_original_submission_and_proxy_commitment_never_offer_a_real_channel[\u7b49\u6211\u4eca\u665a\u5199\u5b8c\u8bf7\u5047\u8bf4\u660e\uff0c\u4f60\u53ef\u4ee5\u66ff\u6211\u9012\u4ea4\u7ed9\u8f85\u5bfc\u5458\u5417\uff1f-\u5f53\u7136\u53ef\u4ee5\uff0c\u6211\u5e2e\u4f60\u8f6c\u4ea4\u7ed9\u8f85\u5bfc\u5458\u3002] _
+
+text = '等我今晚写完请假说明，你可以替我递交给辅导员吗？', bad = '当然可以，我帮你转交给辅导员。'
+
+    @pytest.mark.parametrize('text,bad', [
+        ('等我今晚写完请假说明，你可以替我递交给辅导员吗？', '当然可以，我帮你转交给辅导员。'),
+        ('可以的话先替我答应下来。', '好的，我帮你答应下来了。')])
+    def test_original_submission_and_proxy_commitment_never_offer_a_real_channel(text, bad):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(bad)
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(text)
+>           assert result['generation_mode'] == 'rules_capability_request'
+E           AssertionError: assert 'llm' == 'rules_capability_request'
+E             
+E             - rules_capability_request
+E             + llm
+
+tests/test_original_c37_release_residuals.py:17: AssertionError
+_ test_original_submission_and_proxy_commitment_never_offer_a_real_channel[\u53ef\u4ee5\u7684\u8bdd\u5148\u66ff\u6211\u7b54\u5e94\u4e0b\u6765\u3002-\u597d\u7684\uff0c\u6211\u5e2e\u4f60\u7b54\u5e94\u4e0b\u6765\u4e86\u3002] _
+
+text = '可以的话先替我答应下来。', bad = '好的，我帮你答应下来了。'
+
+    @pytest.mark.parametrize('text,bad', [
+        ('等我今晚写完请假说明，你可以替我递交给辅导员吗？', '当然可以，我帮你转交给辅导员。'),
+        ('可以的话先替我答应下来。', '好的，我帮你答应下来了。')])
+    def test_original_submission_and_proxy_commitment_never_offer_a_real_channel(text, bad):
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(bad)
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(text)
+>           assert result['generation_mode'] == 'rules_capability_request'
+E           AssertionError: assert 'llm' == 'rules_capability_request'
+E             
+E             - rules_capability_request
+E             + llm
+
+tests/test_original_c37_release_residuals.py:17: AssertionError
+_ test_original_compound_actor_and_next_step_keeps_cognition_and_known_source __
+
+    def test_original_compound_actor_and_next_step_keeps_cognition_and_known_source():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('收到。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            source = bot.respond('我刚刚在群里发了“值班表已更新”，还没有人回复。')['conversation']['user_message_id']
+            before = len(engine.analysis), len(engine.native)
+            engine.reply = '我不会知道是谁发的这条消息，因为消息是群里的大家发的。'
+            result = bot.respond('谁发了这条消息？你接下来会做什么？')
+>           assert result['reported_communication']['reported_actor'] == 'user'
+E           KeyError: 'reported_communication'
+
+tests/test_original_c37_release_residuals.py:29: KeyError
+__ test_original_anaphoric_current_record_request_never_guesses_a_business_id __
+
+    def test_original_anaphoric_current_record_request_never_guesses_a_business_id():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('如果这是你最近设置的提醒，它应该已经生效了。')
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            bot.respond('提醒我明天上午九点核对设备清单。')
+            result = bot.respond('这条提醒现在真的存在吗？')
+>           assert result['generation_mode'] == 'rules_reminder_query'
+E           AssertionError: assert 'llm' == 'rules_reminder_query'
+E             
+E             - rules_reminder_query
+E             + llm
+
+tests/test_original_c37_release_residuals.py:41: AssertionError
+_ test_original_conditional_shutdown_is_existing_runtime_policy_without_model __
+
+    def test_original_conditional_shutdown_is_existing_runtime_policy_without_model():
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder('需要再设置吗？')
+            result = Avatar(memory=memory, llm=engine, capability_contract_enabled=True).respond(
+                '如果我把程序关掉，还会自动收到提醒吗？')
+>           assert result['generation_mode'] == 'rules_reminder_query'
+E           AssertionError: assert 'llm' == 'rules_reminder_query'
+E             
+E             - rules_reminder_query
+E             + llm
+
+tests/test_original_c37_release_residuals.py:53: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_original_c37_release_residuals.py::test_original_submission_and_proxy_commitment_never_offer_a_real_channel[\u7b49\u6211\u4eca\u665a\u5199\u5b8c\u8bf7\u5047\u8bf4\u660e\uff0c\u4f60\u53ef\u4ee5\u66ff\u6211\u9012\u4ea4\u7ed9\u8f85\u5bfc\u5458\u5417\uff1f-\u5f53\u7136\u53ef\u4ee5\uff0c\u6211\u5e2e\u4f60\u8f6c\u4ea4\u7ed9\u8f85\u5bfc\u5458\u3002]
+FAILED tests/test_original_c37_release_residuals.py::test_original_submission_and_proxy_commitment_never_offer_a_real_channel[\u53ef\u4ee5\u7684\u8bdd\u5148\u66ff\u6211\u7b54\u5e94\u4e0b\u6765\u3002-\u597d\u7684\uff0c\u6211\u5e2e\u4f60\u7b54\u5e94\u4e0b\u6765\u4e86\u3002]
+FAILED tests/test_original_c37_release_residuals.py::test_original_compound_actor_and_next_step_keeps_cognition_and_known_source
+FAILED tests/test_original_c37_release_residuals.py::test_original_anaphoric_current_record_request_never_guesses_a_business_id
+FAILED tests/test_original_c37_release_residuals.py::test_original_conditional_shutdown_is_existing_runtime_policy_without_model
+5 failed in 0.85s

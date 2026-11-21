@@ -112,7 +112,8 @@ def verified_content(memory, result, *, user_id, assistant_id, text, scope, revi
                 rules = contract.get('output_rules')
                 allowed = {'unsupported_external_offer', 'unsupported_external_claim',
                            'unsupported_external_receipt', 'unsupported_local_reminder_promise',
-                           'unsupported_offline_offer', 'unsupported_physical_experience'}
+                           'unsupported_offline_offer', 'unsupported_physical_experience',
+                           'unsupported_proxy_commitment', 'unsupported_submission'}
                 if (type(rules) is not list or not 1 <= len(rules) <= 4
                         or any(type(rule) is not str or rule not in allowed for rule in rules)
                         or review_output(reply, frame=frame['frame'], fictional=scope == 'fictional_character').reply != reply):

@@ -12,7 +12,7 @@ from .facts import _mask_quoted
 
 _STOP = r'，,。！？!?；;\n'
 _RESEND = r'(?:重新|再)发(?:一(?:次|遍))?'
-_SEND = r'(?:发(?:送|出|给|到|进|了|过|短信|邮件|微信|消息|QQ)|'+_RESEND+r'|代发|转发|拨打|拨通|联系|通知)'
+_SEND = r'(?:发(?:送|出|给|到|进|了|过|短信|邮件|微信|消息|QQ)|'+_RESEND+r'|代发|转发|递交|转交|提交|拨打|拨通|联系|通知)'
 _SELF = re.compile(r'(?:我|我们)(?P<lead>[^'+_STOP+r']{0,36}?)'+_SEND+r'[^'+_STOP+r']{0,40}')
 _OFFER = re.compile(r'(?:需要|要不要|是否需要)(?:我|我们)[^'+_STOP+r']{0,24}'+_SEND+r'[^'+_STOP+r']{0,40}')
 _IMPLICIT = re.compile(r'^(?:已经|已|刚才|刚刚|马上|这就|可以|会)(?:帮你|替你|为你)?'
@@ -33,6 +33,7 @@ _PLANNING = re.compile(r'如果|假设|假如|例如|比如|如何|怎么|方法
 _IN_CHAT = re.compile(r'在(?:这个)?(?:聊天|对话|这里)|(?:发送|发给)[^'+_STOP+r']{0,8}(?:代码|示例|建议|模板)')
 _SOURCE_OFFER = re.compile(r'需不需要|要不要|是否需要|需要我|表示[^'+_STOP+r']{0,12}(?:愿意|可以)[^'+_STOP+r']{0,12}(?:帮忙|代发|发送|转发)')
 _LOCAL_PROMISE = re.compile(r'(?:我|我们)(?:一定|保证|会|将|到时|稍后)[^'+_STOP+r']{0,24}提醒你')
+_PROXY_COMMITMENT = re.compile(r'我(?:已经|已|会|可以)?(?:帮你|替你|代你)(?:答应|承诺)(?:下来了|下来|了)?')
 _PHYSICAL_ACTIVITY = (r'(?:爬山|慢跑|跑步|散步|游泳|骑(?:车|自行车)|'
     r'打(?:网球|羽毛球|篮球|乒乓球)|吃(?:饭|火锅)|喝(?:咖啡|奶茶|饮料|可乐))')
 _BODY_JOINT = re.compile(r'我们(?P<lead>[^'+_STOP+r']{0,24}?)一起(?:去|来)?'+_PHYSICAL_ACTIVITY)
@@ -78,6 +79,8 @@ def _external_clause(clean, *, root_text=''):
         return None
     if _RECEIPT.search(clean):
         return 'unsupported_external_receipt'
+    if _PROXY_COMMITMENT.search(clean):
+        return 'unsupported_proxy_commitment'
     offer = _OFFER.search(clean)
     matches = list(_SELF.finditer(clean))
     implicit = _IMPLICIT.search(clean)
@@ -89,6 +92,8 @@ def _external_clause(clean, *, root_text=''):
     own = [m for m in matches if not re.search(r'(?<![帮替为给])你|他说|她说|对方', m.group('lead'))]
     contextual_resend = bool(own and re.search(_RESEND, clean)
         and re.search(r'短信|邮件|通知|消息', root_text))
+    if (own or offer) and re.search(r'递交|转交|提交', clean):
+        return 'unsupported_submission'
     if not (_CHANNEL.search(clean) or offer and _CHANNEL.search(root_text) or contextual_resend):
         return None
     if offer:
@@ -133,6 +138,10 @@ def review_output(reply, *, frame='ordinary', root_text='', fictional=False):
                 text = '当前写作主体无法核验，请重新发送完整正文或明确虚构语境；这段对话不会承诺现实到场'
             elif body_why:
                 text = '我没有真实身体，不能在线下陪同或声称亲身经历；可以在这里帮你做准备或聊聊感受'
+            elif why == 'unsupported_proxy_commitment':
+                text = '我没有替你向他人答应，也不能替你作出现实承诺；请由你本人决定并告知对方'
+            elif why == 'unsupported_submission':
+                text = '我没有递交或转交接口，不能替你实际提交材料；可以在这里帮你整理文字'
             elif frame == 'unverified':
                 text = '当前写作主体无法核验；我没有外部代发或电话接口，请明确是在代拟正文还是询问实际操作'
             elif local_promise and not why:
