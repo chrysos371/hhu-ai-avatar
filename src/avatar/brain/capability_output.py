@@ -47,13 +47,15 @@ _COUNTERFACTUAL_BODY = re.compile(r'假设|假如|比如|例如|如果(?:我|我
 
 def _body_clause(clean, *, sentence_context):
     """Explicit self/joint physical predicates only; no general pronoun inference."""
-    if _COUNTERFACTUAL_BODY.search(sentence_context) or _NEGATIVE.search(clean):
+    if _COUNTERFACTUAL_BODY.search(sentence_context):
         return None
     for pattern in (_BODY_JOINT, _BODY_SELF):
         for match in pattern.finditer(clean):
-            before = clean[:match.start()]
+            contrast_end = max((m.end() for m in re.finditer(r'但是|不过|然而|但', clean[:match.start()])), default=0)
+            before = clean[contrast_end:match.start()]
             lead = match.groupdict().get('lead', '') or ''
-            if _REPORTED.search(before) or _PLANNING.search(before) or _PLANNING.search(lead) or _NEGATIVE.search(lead):
+            if (_REPORTED.search(before) or _PLANNING.search(before) or _PLANNING.search(lead)
+                    or re.search(r'不是|并非', before) or _NEGATIVE.search(before) or _NEGATIVE.search(lead)):
                 continue
             return 'unsupported_offline_offer' if pattern is _BODY_JOINT or re.search(r'陪你|和你|跟你|同你|去|到', match.group()) else 'unsupported_physical_experience'
     return None

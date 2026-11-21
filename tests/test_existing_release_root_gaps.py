@@ -1,5 +1,7 @@
 """Two original audit roots missing from the prior 53-scenario release gate."""
 from contextlib import closing
+import json
+import pytest
 
 from avatar.brain.memory import MemoryStore
 from avatar.cancellation import CancellationToken
@@ -17,8 +19,39 @@ def test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation(
         result = bot.respond('室友说他喜欢足球，但我喜欢网球。', cancel=CancellationToken(), on_delta=pieces.append)
         assert '我们一起去打网球' not in ''.join(pieces)
         assert '不能在线下' in result['reply'] and result['reply'] == ''.join(pieces)
-        assert memory.get_short_term()[-1]['content'] == result['reply']
+        assert memory._conn.execute("SELECT content FROM memory_messages WHERE role='assistant' ORDER BY id DESC LIMIT 1").fetchone()[0] == result['reply']
+        from avatar.brain.release_history import PREFIX
+        assert json.loads(memory.get_short_term()[-1]['content'][len(PREFIX):])['reply'] == result['reply']
         assert len(engine.native) == len(engine.analysis) == 1
+
+
+@pytest.mark.parametrize('raw', ['我们下次一起去爬山。', '我会陪你去打网球。', '我昨天喝了奶茶。',
+                               '我以前爬过山。', '我下次去你的宿舍。', '我没有身体但我会陪你去爬山。'])
+def test_explicit_body_claims_are_guarded_in_ordinary_source_frames(raw):
+    from avatar.brain.capability_output import review_output
+    assert review_output(raw).rules
+    assert review_output(raw, frame='writing').reply == raw
+    assert review_output(raw, fictional=True).reply == raw
+    unknown = review_output(raw, frame='unverified')
+    assert '写作主体无法核验' in unknown.reply
+
+
+@pytest.mark.parametrize('raw', ['我不能陪你去打网球。', '我们不会一起去爬山。', '我没有爬过山。',
+                               '室友说我们一起去打网球。', '你说我昨天喝了奶茶。', '“我们一起去打网球。”是引文。',
+                               '我们可以一起讨论爬山的路线。', '我可以帮你规划爬山路线。',
+                               '假设我有身体，我们可以一起去爬山。', '如果我有真实身体，我会陪你去爬山。'])
+def test_body_guard_preserves_negation_report_quotes_online_planning_and_hypotheticals(raw):
+    from avatar.brain.capability_output import review_output
+    assert review_output(raw).reply == raw
+
+
+def test_body_guard_keeps_every_previously_published_sentence_prefix():
+    from avatar.brain.capability_output import review_output
+    text = '我明白了。我们下次一起去打网球。可以在这里聊聊你的计划。'
+    final = review_output(text).reply
+    for index, char in enumerate(text):
+        if char in '。':
+            assert final.startswith(review_output(text[:index+1]).reply)
 
 
 def test_unaccepted_obligation_cannot_be_replaced_by_schedule_uncertainty():
