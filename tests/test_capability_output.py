@@ -4,6 +4,20 @@ import pytest
 from avatar.brain.capability_output import review_output
 
 
+@pytest.mark.parametrize('reply', ['我可以帮你一起提醒班长或者重新发一遍。', '我帮你再发一次。'])
+def test_resend_binds_to_current_notification_source_without_a_repeated_channel(reply):
+    root = '室友说他已经把通知发给班长了，我没有发送。'
+    assert review_output(reply, root_text=root).rules
+    assert review_output(reply, frame='writing', root_text='帮我写一条短信：'+reply).reply == reply
+    assert review_output(reply, root_text=root, fictional=True).reply == reply
+
+
+@pytest.mark.parametrize('reply', ['你可以重新发一遍。', '他说我可以重新发一遍。', '我不能帮你重新发一遍。',
+                                      '“我可以重新发一遍。”是引文。', '如果你要重新发一遍，可以自己操作。'])
+def test_resend_does_not_turn_user_advice_reporting_negation_or_quotes_into_execution(reply):
+    assert review_output(reply, root_text='室友把通知发给班长了。').reply == reply
+
+
 @pytest.mark.parametrize('reply', [
     '我已经把短信发给同学了。', '邮件已发送至您的邮箱。',
     '我可以替你拨打电话联系室友。', '已经帮你发送短信。',

@@ -11,7 +11,8 @@ import re
 from .facts import _mask_quoted
 
 _STOP = r'，,。！？!?；;\n'
-_SEND = r'(?:发(?:送|出|给|到|进|了|过|短信|邮件|微信|消息|QQ)|代发|转发|拨打|拨通|联系|通知)'
+_RESEND = r'(?:重新|再)发(?:一(?:次|遍))?'
+_SEND = r'(?:发(?:送|出|给|到|进|了|过|短信|邮件|微信|消息|QQ)|'+_RESEND+r'|代发|转发|拨打|拨通|联系|通知)'
 _SELF = re.compile(r'(?:我|我们)(?P<lead>[^'+_STOP+r']{0,36}?)'+_SEND+r'[^'+_STOP+r']{0,40}')
 _OFFER = re.compile(r'(?:需要|要不要|是否需要)(?:我|我们)[^'+_STOP+r']{0,24}'+_SEND+r'[^'+_STOP+r']{0,40}')
 _IMPLICIT = re.compile(r'^(?:已经|已|刚才|刚刚|马上|这就|可以|会)(?:帮你|替你|为你)?'
@@ -57,10 +58,12 @@ def _external_clause(clean, *, root_text=''):
     system = _SYSTEM.search(clean)
     if not (offer or matches or implicit or passive or system):
         return None
-    if not (_CHANNEL.search(clean) or offer and _CHANNEL.search(root_text)):
-        return None
     # "我知道你发送..." is attribution to the user, not the assistant's action.
     own = [m for m in matches if not re.search(r'(?<![帮替为给])你|他说|她说|对方', m.group('lead'))]
+    contextual_resend = bool(own and re.search(_RESEND, clean)
+        and re.search(r'短信|邮件|通知|消息', root_text))
+    if not (_CHANNEL.search(clean) or offer and _CHANNEL.search(root_text) or contextual_resend):
+        return None
     if offer:
         return 'unsupported_external_offer'
     if own or implicit or passive or system:
