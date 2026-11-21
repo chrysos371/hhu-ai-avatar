@@ -638,6 +638,7 @@ class Avatar:
         history_reader = None
         calculation_reader = None
         profile_reader = None
+        reported_sender_reply = None
         def checkpoint_context():
             self._checkpoint()
             revision = self.memory.context_revision
@@ -654,6 +655,12 @@ class Avatar:
                 calculation_reader.ensure_current()
             if profile_reader is not None:
                 profile_reader.ensure_current()
+            if reported_sender_reply is not None:
+                from .brain.communication_sources import reported_sender
+                current = reported_sender(self.memory, text=user_text, session_id=self.session_id,
+                    source_message_id=self._current_message_id, revision=turn_context_revision, scope=self.speaker_scope)
+                if current != reported_sender_reply:
+                    raise Cancelled('reported sender source changed before continuation')
         def emit_checked(piece):
             checkpoint_context()
             if on_delta:
@@ -781,7 +788,7 @@ class Avatar:
                 # can be used here, so do not send this unknown-scope text to a model.
                 self.analysis_mode = 'rules_speaker_scope'
                 self.emotion.update(user_text)
-            elif reported_sender_reply is not None:
+            elif reported_sender_reply is not None and not reported_sender_reply.mixed_affect:
                 self.analysis_mode = 'rules_reported_sender'
                 # A pure source read supplies no new affect observation. Keep
                 # valid prior state; decide() still applies elapsed-time decay.
