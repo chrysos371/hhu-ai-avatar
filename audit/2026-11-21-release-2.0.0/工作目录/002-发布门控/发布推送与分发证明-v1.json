@@ -1,0 +1,94 @@
+{
+  "publication": {
+    "passed": true,
+    "tag": "v2.0.0",
+    "target_commit": "7eaafdc3af93c4acee6f7fe66da4af9401f1d474",
+    "remote_refs": {
+      "refs/heads/main": "7eaafdc3af93c4acee6f7fe66da4af9401f1d474",
+      "refs/tags/v2.0.0": "d7d8f48c285e432c4373a6df643c8e76c8b6c5f6",
+      "refs/tags/v2.0.0^{}": "7eaafdc3af93c4acee6f7fe66da4af9401f1d474"
+    },
+    "actual_steps": [
+      {
+        "label": "annotated-tag",
+        "argv": [
+          "git",
+          "tag",
+          "-a",
+          "v2.0.0",
+          "7eaafdc3af93c4acee6f7fe66da4af9401f1d474",
+          "-F",
+          "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/final-publication-v1/tag-message.txt"
+        ],
+        "actual_returncode": 0
+      },
+      {
+        "label": "push-main",
+        "argv": [
+          "git",
+          "-c",
+          "core.sshCommand=ssh -i /root/Users/zrh/.ssh/id_ed25519_github -o IdentitiesOnly=yes",
+          "push",
+          "origin",
+          "main"
+        ],
+        "actual_returncode": 0
+      },
+      {
+        "label": "push-tag",
+        "argv": [
+          "git",
+          "-c",
+          "core.sshCommand=ssh -i /root/Users/zrh/.ssh/id_ed25519_github -o IdentitiesOnly=yes",
+          "push",
+          "origin",
+          "refs/tags/v2.0.0"
+        ],
+        "actual_returncode": 0
+      },
+      {
+        "label": "verify-remote",
+        "argv": [
+          "git",
+          "-c",
+          "core.sshCommand=ssh -i /root/Users/zrh/.ssh/id_ed25519_github -o IdentitiesOnly=yes",
+          "ls-remote",
+          "origin",
+          "refs/heads/main",
+          "refs/tags/v2.0.0",
+          "refs/tags/v2.0.0^{}"
+        ],
+        "actual_returncode": 0
+      }
+    ],
+    "git_author": "spinner-bot",
+    "approval_sha256": "fea2dc76f1ef3374423830101703c9ab90c2ca50ef48b9ee832b5c3d6eaf5b75",
+    "github_release_assets_uploaded": false,
+    "distribution": "annotated Git tag and exact locally retained wheel/sdist",
+    "utc": "2026-11-21T01:30:14.750158+00:00"
+  },
+  "raw": "/data/Users/zrh/data/hhu-ai-avatar/artifacts/release/final-publication-v1",
+  "raw_sha256": {
+    "verify-remote.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "push-main.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "push-tag.stderr": "dd5bcaa7331158506f35135d5ccd0891c5a5233c41b2dab45f615d7667cd46a3",
+    "verify-remote.stdout": "96dae49b6e3a39a03b399cd43502092f1f9065a37022924e5703c5c1f05b783a",
+    "push-main.stderr": "b5849f7ec03140aed6256197e5461372e76b99d2029beeb8b071e913eddb6efb",
+    "tag-message.txt": "9165f70e51fd2a1845f60d50a8b82e8db8f297c86f887a8ea155f0cb11444183",
+    "progress.json": "6cb1279d2a495794842237f5596ca9f11f8ac3c644b16848e701555a400d458b",
+    "annotated-tag.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "annotated-tag.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "push-tag.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result.json": "533a821c3a8c61b2a3fe02b7fb14ff80c3f716b12bab6cc0fe5e21cc6d08f781"
+  },
+  "stable_distribution": "/data/Users/zrh/data/hhu-ai-avatar/releases/2.0.0",
+  "distribution_sha256": {
+    "distribution.json": "6b1683250ca954ec3f1d79b46c0421c6c497df07468660139c3785508af40f97",
+    "hhu_ai_avatar-2.0.0-py3-none-any.whl": "a3249784a0082c11d09e114c82ab800baabb65778810186a1288781485fd1a00",
+    "SHA256SUMS": "392781417bb421eeac0d5dcf47ae1ae4f1f2c4e58b41470b34285fc934a5b346",
+    "README.txt": "5c3cd297e53b337993280e85e7a026e4d3cadcf1431329fbbc341b934e9606e6",
+    "hhu_ai_avatar-2.0.0.tar.gz": "fb2b5a0a3a124048885217b1f70381a613ba1e5487ac6850384c5977b378aeb0"
+  },
+  "project_status": "soft_paused_after_finite_release",
+  "remaining_tasks": "docs/发布/2.0.0-rc.1/下次启动待办.md"
+}
