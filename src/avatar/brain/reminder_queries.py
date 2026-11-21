@@ -21,6 +21,8 @@ _NATURAL_STATUS = re.compile(r'(?:请)?提醒(?:编号|#)[ \t]*([0-9]{1,19})'
     r'(?:现在)?(?:是什么状态|状态是什么|还有效吗|取消了吗|完成了吗)[。！？!?]?')
 _NATURAL_POLICY = re.compile(r'(?:程序|服务)(?:退出|关闭|停止|关机)后提醒'
     r'(?:还)?(?:能|会)(?:发短信|发邮件|打电话)吗[。！？!?]?')
+_NATURAL_REFERENCE = re.compile(r'(?:这条|那条)提醒(?:现在)?(?:真的存在吗|还存在吗)[。！？!?]?')
+_NATURAL_SHUTDOWN = re.compile(r'如果我把(?:程序|服务)(?:关掉|关闭|停止)[，,]还会自动收到提醒吗[。！？!?]?')
 
 
 @dataclass(frozen=True)
@@ -50,13 +52,16 @@ def parse_query(text, *, allow_natural=False):
     if not isinstance(text, str):
         return None
     clean = text.strip()
-    if allow_natural and (_NATURAL_STATUS.fullmatch(clean) or _NATURAL_POLICY.fullmatch(clean)):
+    if allow_natural and (_NATURAL_STATUS.fullmatch(clean) or _NATURAL_POLICY.fullmatch(clean)
+                          or _NATURAL_REFERENCE.fullmatch(clean) or _NATURAL_SHUTDOWN.fullmatch(clean)):
         from .reminder_query_targets import derive_read_target
         target = derive_read_target(text)
         if target.route == 'read_state':
             return ReminderQuery('status', target.arguments['reminder_id'])
         if target.route == 'read_policy':
             return ReminderQuery('conditions')
+        if target.route == 'clarify_reference' and _NATURAL_REFERENCE.fullmatch(clean):
+            return ReminderQuery('reference')
     from .reminder_query_targets import explicit_list_query
     if explicit_list_query(text):
         return ReminderQuery('list')
@@ -102,10 +107,11 @@ def resolve_query(store, command, text, context, *, checkpoint=None, allow_natur
                 or source['session_id'] != context.session_id):
             raise Cancelled('reminder query source or revision changed')
         result = _render_query(conn, command, context)
-        if command.kind in ('status', 'conditions', 'list'):
+        if command.kind in ('status', 'conditions', 'list', 'reference'):
             from .reminder_query_targets import derive_read_target
             target = derive_read_target(text)
-            expected = {'status': 'read_state', 'conditions': 'read_policy', 'list': 'read_list'}[command.kind]
+            expected = {'status': 'read_state', 'conditions': 'read_policy', 'list': 'read_list',
+                        'reference': 'clarify_reference'}[command.kind]
             if target.route != expected:
                 raise Cancelled('automatic query has no matching historical source representation')
             result.metadata.update(version=2, mode='reminder_query', route=target.route,
@@ -129,6 +135,9 @@ def _render_query(conn, command, context):
         'external_delivery_channels': [], 'human_reading_verified': False}
     if command.kind == 'invalid':
         reply = '请使用“查询提醒编号1”或“查看提醒送达条件”。提醒编号须为有效的正整数，且一条消息只包含一个查询。'
+    elif command.kind == 'reference':
+        from .reminder_query_mode import _CONTROL_REPLIES
+        reply = _CONTROL_REPLIES['clarify_reference']
     elif command.kind == 'conditions':
         reply = ('本机提醒依赖程序运行并处理到期事项；网页接收还需要页面在线并轮询。'
             '服务退出期间无法自动投递，记录保存不等于已经送达。'
