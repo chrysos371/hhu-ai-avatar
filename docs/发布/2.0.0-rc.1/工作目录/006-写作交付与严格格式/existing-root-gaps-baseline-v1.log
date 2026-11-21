@@ -1,0 +1,38 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation __
+
+    def test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation():
+        raw = '我明白了。那我们一起去打网球吧。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Recorder(raw)
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            pieces = []
+            result = bot.respond('室友说他喜欢足球，但我喜欢网球。', cancel=CancellationToken(), on_delta=pieces.append)
+>           assert '我们一起去打网球' not in ''.join(pieces)
+E           AssertionError: assert '我们一起去打网球' not in '我明白了。那我们一起去打网球吧。'
+E             
+E             '我们一起去打网球' is contained here:
+E               我明白了。那我们一起去打网球吧。
+
+tests/test_existing_release_root_gaps.py:18: AssertionError
+____ test_unaccepted_obligation_cannot_be_replaced_by_schedule_uncertainty _____
+
+    def test_unaccepted_obligation_cannot_be_replaced_by_schedule_uncertainty():
+        turns = ['我没有答应周五帮室友整理资料，只说要先看自己的课表。',
+                 '他发来“太好了，那我等你完成”。', '请帮我写一句回复，明确我尚未同意，不要替我承诺。']
+        bad = '我还没确定好时间，等我安排好再告诉你。'
+        with closing(MemoryStore(':memory:')) as memory:
+            engine = Replies(['收到。', '收到。', bad, bad])
+            bot = Avatar(memory=memory, llm=engine, capability_contract_enabled=True)
+            for text in turns[:-1]:
+                bot.respond(text)
+            result = bot.respond(turns[-1])
+>           assert '尚未同意' in result['reply'] or '还没同意' in result['reply']
+E           AssertionError: assert ('尚未同意' in '我还没确定好时间，等我安排好再告诉你。' or '还没同意' in '我还没确定好时间，等我安排好再告诉你。')
+
+tests/test_existing_release_root_gaps.py:34: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_existing_release_root_gaps.py::test_ordinary_mixed_preference_must_not_stream_a_real_joint_body_invitation
+FAILED tests/test_existing_release_root_gaps.py::test_unaccepted_obligation_cannot_be_replaced_by_schedule_uncertainty
+2 failed in 0.86s
