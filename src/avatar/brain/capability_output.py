@@ -33,6 +33,30 @@ _PLANNING = re.compile(r'如果|假设|假如|例如|比如|如何|怎么|方法
 _IN_CHAT = re.compile(r'在(?:这个)?(?:聊天|对话|这里)|(?:发送|发给)[^'+_STOP+r']{0,8}(?:代码|示例|建议|模板)')
 _SOURCE_OFFER = re.compile(r'需不需要|要不要|是否需要|需要我|表示[^'+_STOP+r']{0,12}(?:愿意|可以)[^'+_STOP+r']{0,12}(?:帮忙|代发|发送|转发)')
 _LOCAL_PROMISE = re.compile(r'(?:我|我们)(?:一定|保证|会|将|到时|稍后)[^'+_STOP+r']{0,24}提醒你')
+_PHYSICAL_ACTIVITY = (r'(?:爬山|慢跑|跑步|散步|游泳|骑(?:车|自行车)|'
+    r'打(?:网球|羽毛球|篮球|乒乓球)|吃(?:饭|火锅)|喝(?:咖啡|奶茶|饮料|可乐))')
+_BODY_JOINT = re.compile(r'我们(?P<lead>[^'+_STOP+r']{0,24}?)一起(?:去|来)?'+_PHYSICAL_ACTIVITY)
+_BODY_SELF = re.compile(r'我(?:明天|今晚|周末|下次|现在|这就|马上|会|将|要|准备|打算|以前|昨天|曾经|刚刚|上次)?'
+    r'(?:也|还|亲自|去|已经|又|能|可以|愿意){0,4}(?:'
+    r'(?:陪你|和你|跟你|同你)(?:一起|去|来|马上|亲自){0,4}'+_PHYSICAL_ACTIVITY+r'|'
+    r'(?:去|到)你(?:的)?(?:家|宿舍)|(?:去|到)现场|'
+    r'爬过山|跑过步|游过泳|(?:吃|喝)(?:过|了)[^'+_STOP+r']{0,10}(?:饭|火锅|咖啡|奶茶|可乐|茶|饮料)|'
+    r'(?:去|来)?'+_PHYSICAL_ACTIVITY+r')')
+_COUNTERFACTUAL_BODY = re.compile(r'假设|假如|比如|例如|如果(?:我|我们)(?:有|拥有)(?:真实)?身体')
+
+
+def _body_clause(clean, *, sentence_context):
+    """Explicit self/joint physical predicates only; no general pronoun inference."""
+    if _COUNTERFACTUAL_BODY.search(sentence_context) or _NEGATIVE.search(clean):
+        return None
+    for pattern in (_BODY_JOINT, _BODY_SELF):
+        for match in pattern.finditer(clean):
+            before = clean[:match.start()]
+            lead = match.groupdict().get('lead', '') or ''
+            if _REPORTED.search(before) or _PLANNING.search(before) or _PLANNING.search(lead) or _NEGATIVE.search(lead):
+                continue
+            return 'unsupported_offline_offer' if pattern is _BODY_JOINT or re.search(r'陪你|和你|跟你|同你|去|到', match.group()) else 'unsupported_physical_experience'
+    return None
 
 
 @dataclass(frozen=True)
@@ -80,12 +104,16 @@ def review_output(reply, *, frame='ordinary', root_text='', fictional=False):
     ends = [m.end() for m in re.finditer('['+_STOP+']', masked)]
     if not ends or ends[-1] != len(reply):
         ends.append(len(reply))
-    start = 0
+    start = sentence_start = 0
     pieces, rules = [], []
     for end in ends:
         raw, clean = reply[start:end], masked[start:end]
         start = end
         why = _external_clause(clean.strip(), root_text=root_text)
+        body_why = _body_clause(clean.strip(), sentence_context=masked[sentence_start:end]) if frame != 'writing' else None
+        if raw[-1:] in '。！？!?；;\n':
+            sentence_start = end
+        why = why or body_why
         local_promise = bool(_LOCAL_PROMISE.search(clean) and not _NEGATIVE.search(clean)
             and not _REPORTED.search(clean) and not _PLANNING.search(clean))
         if frame == 'writing':
@@ -98,7 +126,11 @@ def review_output(reply, *, frame='ordinary', root_text='', fictional=False):
                 rules.append(why)
                 continue
         if why or local_promise:
-            if frame == 'unverified':
+            if body_why and frame == 'unverified':
+                text = '当前写作主体无法核验，请重新发送完整正文或明确虚构语境；这段对话不会承诺现实到场'
+            elif body_why:
+                text = '我没有真实身体，不能在线下陪同或声称亲身经历；可以在这里帮你做准备或聊聊感受'
+            elif frame == 'unverified':
                 text = '当前写作主体无法核验；我没有外部代发或电话接口，请明确是在代拟正文还是询问实际操作'
             elif local_promise and not why:
                 text = '提醒依赖程序运行并轮询，这段答复不会新建提醒；请用明确日期、时间和事项提出提醒请求'
